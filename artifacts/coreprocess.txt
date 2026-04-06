@@ -1,0 +1,85 @@
+CORE development process: 
+
+We will be doing the following to build a webapp and mobile app:
+1. Research what we'll build on a high level (requirements, tech stack, costs, features, functionality, and more)
+2. create a blueprint for the necessary components and funtionality of our project and come up 
+   with a plan to implement based on modern industry practices, recomendations, and the tools and components we use to build with  
+3. Build and Implement
+4. test by going through our work and ensuring we've achieved our goals and removing any unintended outcomes.  
+
+Each step should be a back and forth. Especially during ressarch and planning, don't move forward until we've agreed on contracts.
+Before moving to the next phase change or decision, ensure you review and create/edit our relevant schematics and recap.txt in the artifacts folder with what we decided on. 
+
+This will be for claude instances to use and to pickup all relevant context.
+
+current focus: build an MVP model for a working demo 
+--------------------------------------------------------------------------------------------------------------------------------------
+
+1. Research and analysis:
+
+consider that i am solo developing this with agile principles. I want to develop this project from a mobile users perspective first over the webpage.
+Most users will access this through an app on the phone. 
+
+define the problem: bad exercise tracking apps in the marketplace, too much clutter and confusion, unintuitive and more  
+
+competition: heavy (research others in the marketplace)
+
+user stories: ask when applicable at every stage of development and cross reference with current schematic updates. 
+
+We will building an minimum viable product (MVP) for a workout tracking website. 
+The goal is to have a barebones site that we can iterate on. 
+The site needs a React frontend, a node backend and a lightweight DB. 
+I want to focus on the react application first, but let's write it so that when we build a backend, we can easily migrate the code. 
+We will still need a light weight DB that's compatible with react.
+
+
+--------------------------------------------------------------------------------------------------------------------------------------------
+2. create an architectural blueprint: 
+
+make sure this is clear and easy to read, and well organized. make sure each addition accounts for current and future requirements, scope, and goals
+
+- tech stack: necessary for MVP build, future features, user flow, DB structure and relationships, frameworks, etc.  
+
+- architectural design: want front and backend for the future but dont need backend for MVP.   
+
+- reference any UML, images, mockups i provide and save the ones I ask you to for reference 
+
+- update the artifacts with the relevant blueprint planning decisions we made after researching, and working out the details of every 
+   relevant addition. 
+
+- refactoring code: consider necessary changes for current build, updates/ features i am working on, and future features ive postponed 
+
+-----------------------------------------------------------------------------------------------------------------------------------------------
+
+3. Develop: 
+
+implement step by step from the foundational elements. disccuss options and ask me questions throughout the whole process. This should be 
+a detailed back and forth. explain every proposed change in detail and provide examples when possible. provide pros and cons with change options
+for clarity of outcomes and future development considerations. 
+
+- frontend : UI/UX on web mobile and devices (tablets watch etc). mostly focused on mobile and web for starters. 
+- backend (not now) : API , DB integration, etc  
+
+   
+-----------------------------------------------------------------------------------------------------------------------------------------------
+4. test and debug: 
+
+apply each of these methods when applicable 
+
+include any testing i missed that feels approprate for this program 
+
+- unit testing:  find any unintended interactions or outcomes across every page, button, db functions 
+- integration testing: later 
+- end to end testing: later  
+- bug tracking: compile a list to fix as we encounter each bug and update the list when the bugs are fixed 
+- runtime optimization if relevant. 
+
+
+-----------------------------------------------------------------------------------------------------------------------------------------------
+
+5. Iteration
+
+repeat steps 1-4 for every new feature added in this stage. we will start this after the MVP is complete.
+then we will continue to polish, add features, tests new ideas, build and update new versions of the app for release. 
+
+refactoring old code to update efficiency or work with new features

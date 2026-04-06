@@ -1,0 +1,152 @@
+WORKOUT TRACKER V2 — RECAP
+===========================
+Last updated: 2026-04-05
+
+---
+
+PROJECT CONTEXT
+----------------
+Problem: Existing workout tracking apps are cluttered, confusing, and unintuitive on mobile.
+Goal: Clean, minimal, mobile-first MVP focused on fast workout logging.
+
+Developer: Solo, agile. No deadlines. Scope kept small — build mobile first, web second.
+
+Stack:
+  - React 18 + TypeScript + Vite 5 + React Router v7
+  - CSS Modules
+  - Dexie.js v4 (IndexedDB) — no backend for MVP; service layer abstraction makes migration clean
+
+---
+
+CURRENT STATE
+--------------
+Phase: Blueprint complete. UI design standards polished. No code written yet. Ready to build.
+All decisions locked (#1–23). All must-fix items specced.
+UIdesign.txt expanded with: color system, alignment standards, button design standards, light mode palette.
+1 open design question remains (OD1 — green hex B vs C). All others locked.
+color-preview.html exists at project root for visual reference — open in browser to compare greens.
+
+Schema: V2 locked
+  - users:            id, email, password, name, height (inches), weight (lb), unitPreference ('imperial'|'metric'), createdAt
+  - exercises:        id, name, category, isCustom
+  - programs:         id, userId, name, createdAt
+  - workouts:         id, userId, programId, name, order, createdAt
+  - workoutExercises: id, workoutId, exerciseId, targetSets, targetReps, targetWeight, order
+  - workoutLogs:      id, userId, workoutId (nullable), name, startedAt, finishedAt (nullable)
+  - logExercises:     id, workoutLogId, exerciseId, notes (nullable), order
+  - logSets:          id, logExerciseId, setNumber, weight, reps, previousWeight, previousReps
+
+Auth: localStorage (key: workout_tracker_user_id) — persists across tab closes until explicit logout.
+
+Units: all weights stored in lb, heights in inches — canonical. Conversion to kg/cm at display time only via UserSettingsContext. unitPreference: 'imperial' (default) or 'metric' — one toggle controls all Layer 1 units. Layer 2 units (time, distance, calories) are universal or require new tables — unaffected.
+
+User flows:
+  - Logs:       Complete — quick-start and from-program finish flows fully locked
+  - Programs:   Complete
+  - Profile:    Deferred — placeholder spec only, no flow needed for MVP
+  - Statistics: Deferred — placeholder spec only, no flow needed for MVP
+
+---
+
+REMAINING BEFORE BUILD
+-----------------------
+Planning is complete. One UI decision outstanding:
+
+  OD1 — Accent green hex: B (#3BAF6A Leafy Mid) vs C (#2D9F58 Deeper Leafy)
+         View color-preview.html in browser to compare. Lock before building first component.
+
+The following are resolved in the spec and will be implemented at build time:
+  G2  — Edit Targets Modal: specced in programs.md (WorkoutTemplatePage)
+  G3  — .gitignore: created at project setup, no planning needed
+  R2  — Modal component: all confirm/discard/delete actions specced as Modal throughout logs.md and programs.md
+  G7  — Discard Workout: fully specced in logs.md (active workout layout)
+
+---
+
+NEXT STEPS (in order)
+----------------------
+Planning is complete. All decisions locked. Ready to build.
+
+Recommended build order:
+1. Project setup — Vite + React + TypeScript, folder structure, .gitignore, Dexie schema
+2. Auth — SignupPage (with unit preference step), LoginPage, AuthContext, localStorage session
+3. Core shared — BottomNav, Modal, ExerciseSearchModal, WorkoutFAB, UserSettingsContext, ActiveWorkoutContext
+4. Programs tab — ProgramsPage, ProgramDetailPage, WorkoutTemplatePage (inc. Edit Targets Modal)
+5. Logs tab — LogsPage, WorkoutDetailPage (active/read-only/edit modes, all finish flows)
+6. Profile tab — ProfilePage
+7. Statistics tab — placeholder ("Coming soon")
+
+---
+
+KEY FILES
+----------
+artifacts/master-schematics.md   — primary source of truth (DB, services, decisions, issue tracker)
+artifacts/tabs/logs.md           — Logs tab spec (user flows complete)
+artifacts/tabs/programs.md       — Programs tab spec (user flow complete)
+artifacts/tabs/profile.md        — Profile tab spec (placeholder — no flow for MVP)
+artifacts/tabs/statistics.md     — Statistics tab spec (placeholder — no flow for MVP)
+artifacts/tabs/workouts.md       — Resolved (P6): WorkoutDetailPage stays in logs.md
+artifacts/UIdesign.txt           — UI standards, color palette, component specs, design brainstorm
+artifacts/coreprocess.txt        — Development process
+artifacts/recap.txt              — This file
+
+---
+
+KEY DECISIONS LOCKED
+---------------------
+Full decision log with rationale lives in master-schematics.md (Decisions #1–23).
+Summary of the most important ones:
+
+  #1  Service layer abstraction — Dexie today, API calls tomorrow; no component changes needed
+  #2  Local auth, localStorage — plain text for MVP; persists until explicit logout
+  #3  Mobile-only layout — 480px max-width, bottom nav, 4 tabs
+  #10 Auto-save on blur everywhere — except WorkoutDetailPage edit mode (explicit Save Edits)
+  #12 Confirm only on destructive actions — delete and discard only
+  #13 Free navigation during active workout — workout persists in Dexie until finished or discarded
+  #14 ActiveWorkoutContext — initializes on app mount (not just login); drives FAB state app-wide
+  #15 WorkoutFAB — "Start Workout" on Logs tab only; "Resume Workout" all tabs when active; hidden on /logs/:id active mode
+  #17 Quick-start finish flow — "Save to program?" Modal; picker with existing programs + New Program; blank workout name; skip = unassigned log
+  #18 WorkoutLogService.create — atomically copies workoutExercises → logExercises when workoutId provided
+  #19 From-program finish flow — silent finish if exercises unchanged; Modal sync prompt if modified; order changes ignored
+  #20 Start Workout on empty template — blocked with inline message; FAB is the correct path for unplanned sessions
+  #21 WorkoutDetailPage mode-switching — finishedAt drives mode on load; Edit is local transition; back-tap in Edit confirms before discarding
+  #22 Unit storage — all weights in lb, heights in inches; unitPreference 'imperial'|'metric'; convert at display time only; Layer 2 units unaffected; per-entry override deferred post-MVP
+  #23 Unit visibility — unit label on all weight inputs; preference selected at signup; profile toggle note; powerlifting per-entry override is known future need
+  P7  Target derivation (createFromLog) — first set values; target = starting weight, not peak
+
+UI DESIGN DECISIONS LOCKED (UIdesign.txt session 4)
+  Nature theme       — subtle underlying theme; felt through color, not illustrated
+  Semantic colors    — Green=action, Gold=achievement, Red=danger, White=content
+  Surface palette    — warm tint locked: #1A1A17 / #242420 / #2E2E29
+  Text tiers         — primary #FFFFFF / label #C0C0C0 / secondary #8A8A8A / disabled #4A4A4A
+  Gold               — #D4A853, strictly achievement/completion moments only
+  Red                — #E05555, strictly delete/warning/alert/destructive only
+  Icon set           — Lucide (MIT, tree-shakeable)
+  Border-radius      — 8px inputs / 12px cards / 16px modals
+  Nav bar            — 14px tab labels, 2px accent line above active tab (not filled circle)
+  Page transitions   — slide for drill-down, instant for tab switches
+  Alignment          — page titles + single-focal content centered; multi-element content left-aligned
+  Button hierarchy   — Primary (green) / Destructive (red) / Secondary (ghost) / Ghost-inline
+  Button size        — 44px standard, 36px inline/ghost only
+  Button typography  — 15px weight 600, title case, flat (no gradients or shadows)
+  Button grouping    — primary LEFT, destructive/secondary RIGHT; stack 3+ vertically
+  Error surface      — global top banner on DB failure, danger color, dismissable
+  Auth layout        — full-screen dark, centered card, unit pref as two-button toggle
+  Light mode palette — values locked for future build (post-MVP); see UIdesign.txt section 4c
+  OD2 — Lucide icons: LOCKED
+  OD3 — Border-radius 8/12/16px: LOCKED
+  OD4 — Workout summary screen: post-MVP
+  OD5 — Elapsed timer: post-MVP
+
+---
+
+REJECTED OPTIONS — DO NOT RE-PROPOSE
+--------------------------------------
+  - Silent revert on invalid input → replaced with inline error, field stays editable
+  - Lock user to workout page until finished → replaced with free navigation + ActiveWorkoutContext
+  - Standalone workout templates → every workout belongs to a program; quick-start is the exception
+  - "Start Workout" FAB on all tabs → Logs tab only; Resume Workout globally when active
+  - Explicit Save button on Profile → auto-save on blur
+  - workoutSets table + isWarmup for MVP → deferred; lands with recommendation engine in v2
+  - Per-set targets on WorkoutTemplatePage for MVP → deferred to v2
+  - Heaviest set for target derivation → first set chosen; target = starting weight, not peak

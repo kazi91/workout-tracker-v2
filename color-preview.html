@@ -1,0 +1,739 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Workout Tracker — Color Preview</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    /* ── DARK MODE TOKENS ── */
+    :root {
+      --bg:              #0F0F0F;
+      --surface:         #1A1A17;
+      --surface-raised:  #242420;
+      --border:          #2E2E29;
+      --text-primary:    #FFFFFF;
+      --text-label:      #C0C0C0;   /* NEW — readable content descriptors in cards */
+      --text-secondary:  #8A8A8A;   /* hints, timestamps, placeholders only */
+      --text-disabled:   #4A4A4A;
+      --green-b:         #3BAF6A;
+      --green-c:         #2D9F58;
+      --gold:            #D4A853;
+      --gold-hover:      #C09040;
+      --danger:          #E05555;
+    }
+
+    /* ── LIGHT MODE TOKENS ── */
+    .light {
+      --bg:              #F4F7F4;
+      --surface:         #FFFFFF;
+      --surface-raised:  #EEF3EE;
+      --border:          #D4DDD4;
+      --text-primary:    #1A1A1A;
+      --text-label:      #3A4A3A;
+      --text-secondary:  #5A6A5A;
+      --text-disabled:   #A0ADA0;
+      --green-b:         #2D9F58;   /* darker green — more readable on white */
+      --green-c:         #1E7A42;
+      --gold:            #B8860B;   /* darker gold — #D4A853 washes on white */
+      --gold-hover:      #9A7009;
+      --danger:          #D03030;
+    }
+
+    body {
+      background: #111;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      padding: 32px 16px 80px;
+    }
+
+    /* ── PAGE HEADING ── */
+    .page-title {
+      font-size: 18px;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 4px;
+    }
+    .page-note {
+      font-size: 13px;
+      color: #666;
+      margin-bottom: 40px;
+    }
+
+    /* ── SECTION HEADING ── */
+    .section-head {
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: #555;
+      margin: 48px 0 16px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid #222;
+    }
+
+    /* ── COMPARISON COLUMNS ── */
+    .cols {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+      max-width: 880px;
+    }
+    .col-label {
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: #555;
+      margin-bottom: 14px;
+    }
+
+    /* ── PHONE MOCKUP — single column, centered ── */
+    .phone-row {
+      display: flex;
+      gap: 24px;
+      flex-wrap: wrap;
+      align-items: flex-start;
+    }
+    .phone {
+      width: 320px;
+      border-radius: 24px;
+      overflow: hidden;
+      border: 1.5px solid #333;
+      flex-shrink: 0;
+    }
+    .phone-screen {
+      background: var(--bg);
+      padding: 0 0 0;
+      min-height: 560px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ── APP SHELL ELEMENTS ── */
+    .app-header {
+      padding: 20px 16px 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-bottom: 1px solid var(--border);
+    }
+    .app-header-title {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--text-primary);
+      text-align: center;
+    }
+    .app-content {
+      flex: 1;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    /* ── BOTTOM NAV (updated) ── */
+    .nav {
+      display: flex;
+      background: var(--surface);
+      border-top: 1px solid var(--border);
+    }
+    .nav-item {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 8px 0 10px;
+      font-size: 14px;         /* was 12px — bumped for all-ages readability */
+      color: var(--text-secondary);
+      gap: 4px;
+      position: relative;
+    }
+    .nav-item.active-b { color: var(--green-b); }
+    .nav-item.active-c { color: var(--green-c); }
+    .nav-item.active-b::before,
+    .nav-item.active-c::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 20%; right: 20%;
+      height: 2px;
+      border-radius: 0 0 2px 2px;
+      background: currentColor;  /* line indicator — replaces filled circle */
+    }
+    .nav-icon {
+      width: 22px;
+      height: 22px;
+      border-radius: 4px;
+      background: currentColor;
+      opacity: 0.25;
+    }
+    .nav-icon.filled { opacity: 1; border-radius: 50%; width: 8px; height: 8px; }
+    /* Lucide placeholder — square with rounded corners at actual icon size */
+    .nav-icon-placeholder {
+      width: 20px; height: 20px;
+      border-radius: 4px;
+      background: currentColor;
+      opacity: 0.3;
+    }
+    .nav-icon-placeholder.active { opacity: 1; }
+
+    /* ── CARDS ── */
+    .card {
+      background: var(--surface);
+      border-radius: 12px;
+      padding: 14px 16px;
+    }
+    .card-title {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 6px;
+    }
+    .card-sub {
+      font-size: 13px;
+      color: var(--text-label);   /* was text-secondary — now readable */
+    }
+
+    /* ── MUSCLE GROUP CHIPS (additive idea) ── */
+    .chips { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 8px; }
+    .chip {
+      font-size: 11px;
+      font-weight: 500;
+      padding: 3px 8px;
+      border-radius: 99px;
+      background: var(--surface-raised);
+      color: var(--text-label);
+      border: 1px solid var(--border);
+    }
+    .chip.green {
+      background: color-mix(in srgb, var(--green-b) 15%, transparent);
+      color: var(--green-b);
+      border-color: color-mix(in srgb, var(--green-b) 30%, transparent);
+    }
+
+    /* ── BUTTONS ── */
+    .btn {
+      display: block;
+      width: 100%;
+      height: 44px;
+      border: none;
+      border-radius: 8px;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      color: #fff;
+    }
+    .btn-b      { background: var(--green-b); color: #fff; }
+    .btn-c      { background: var(--green-c); color: #fff; }
+    .btn-gold   { background: var(--gold); color: #0F0F0F; }
+    .btn-danger { background: var(--danger); color: #fff; }
+    .btn-ghost  {
+      background: transparent;
+      border: 1.5px solid var(--border);
+      color: var(--text-primary);
+    }
+    .btn-row { display: flex; gap: 8px; }
+    .btn-row .btn { flex: 1; }
+
+    /* ── INPUTS ── */
+    .field { display: flex; flex-direction: column; gap: 4px; }
+    .field-label { font-size: 12px; font-weight: 500; color: var(--text-label); }
+    .input-row {
+      display: flex;
+      align-items: center;
+      background: var(--surface-raised);
+      border: 1.5px solid var(--border);
+      border-radius: 8px;
+      height: 44px;
+      padding: 0 12px;
+      gap: 8px;
+    }
+    .input-row.focus-b { border-color: var(--green-b); }
+    .input-row.focus-c { border-color: var(--green-c); }
+    .input-row.error   { border-color: var(--danger); }
+    .input-val   { font-size: 16px; color: var(--text-primary); flex: 1; }
+    .input-unit  { font-size: 14px; color: var(--text-secondary); }
+    .input-error { font-size: 12px; color: var(--danger); padding-left: 2px; }
+
+    /* ── BADGE ── */
+    .badge {
+      display: inline-block;
+      font-size: 12px;
+      font-weight: 500;
+      border-radius: 6px;
+      padding: 2px 8px;
+      color: #fff;
+    }
+    .badge-b      { background: var(--green-b); }
+    .badge-c      { background: var(--green-c); }
+    .badge-gold   { background: var(--gold); color: #0F0F0F; }
+    .badge-danger { background: var(--danger); }
+
+    /* ── FAB ── */
+    .fab-area {
+      position: relative;
+      display: flex;
+      justify-content: flex-end;
+      padding-right: 4px;
+      margin-top: 4px;
+    }
+    .fab {
+      width: 52px; height: 52px;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 20px;
+      color: #fff;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.5);
+      flex-shrink: 0;
+    }
+    .fab-b { background: var(--green-b); }
+    .fab-c { background: var(--green-c); }
+
+    /* ── SET ROWS ── */
+    .set-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .set-num  { font-size: 13px; color: var(--text-secondary); width: 18px; text-align: center; }
+    .set-prev { font-size: 13px; color: var(--text-label); flex: 1; }
+    .set-box  {
+      background: var(--surface-raised);
+      border-radius: 6px;
+      height: 34px; width: 52px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 15px; font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    /* ── SURFACE SWATCHES ── */
+    .swatch-row { display: flex; gap: 8px; flex-wrap: wrap; }
+    .swatch {
+      border-radius: 10px;
+      padding: 12px 16px;
+      font-size: 12px;
+      font-weight: 500;
+      min-width: 130px;
+      border: 1px solid rgba(255,255,255,0.06);
+    }
+    .swatch-name { font-size: 13px; font-weight: 600; margin-bottom: 2px; }
+
+    /* ── DIVIDER ── */
+    .divider { border: none; border-top: 1px solid #1E1E1E; margin: 0; }
+
+    /* ── CARD ROW (title + badge inline) ── */
+    .card-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px; }
+
+  </style>
+</head>
+<body>
+
+  <div class="page-title">Workout Tracker V2 — UI Preview</div>
+  <div class="page-note">Refresh after edits. Double-click to open in browser.</div>
+
+
+  <!-- ═══════════════════════════════════════════════════════════
+       DARK MODE — PHONE LAYOUT
+  ════════════════════════════════════════════════════════════ -->
+  <div class="section-head">Dark Mode — Phone Layout (single column, centered)</div>
+  <div class="phone-row">
+
+    <!-- CANDIDATE B -->
+    <div>
+      <div class="col-label">Green B — #3BAF6A · Leafy Mid</div>
+      <div class="phone">
+        <div class="phone-screen" style="--bg:#0F0F0F;--surface:#1A1A17;--surface-raised:#242420;--border:#2E2E29;--text-primary:#FFF;--text-label:#C0C0C0;--text-secondary:#8A8A8A;--green-b:#3BAF6A;--gold:#D4A853;--danger:#E05555;">
+          <div class="app-header" style="background:#1A1A17;border-bottom:1px solid #2E2E29;">
+            <div class="app-header-title" style="color:#fff;">Logs</div>
+          </div>
+          <div class="app-content" style="background:#0F0F0F;">
+
+            <div class="card" style="background:#1A1A17;border-radius:12px;padding:14px 16px;">
+              <div class="card-row">
+                <div class="card-title" style="color:#fff;">Push Day A</div>
+                <span class="badge" style="background:#3BAF6A;color:#fff;">In Progress</span>
+              </div>
+              <div class="card-sub" style="color:#C0C0C0;font-size:13px;">3 exercises · Today 9:14 AM</div>
+              <div class="chips">
+                <div class="chip" style="background:rgba(59,175,106,0.12);color:#3BAF6A;border:1px solid rgba(59,175,106,0.25);font-size:11px;padding:3px 8px;border-radius:99px;">Chest</div>
+                <div class="chip" style="background:rgba(59,175,106,0.12);color:#3BAF6A;border:1px solid rgba(59,175,106,0.25);font-size:11px;padding:3px 8px;border-radius:99px;">Shoulders</div>
+                <div class="chip" style="background:rgba(59,175,106,0.12);color:#3BAF6A;border:1px solid rgba(59,175,106,0.25);font-size:11px;padding:3px 8px;border-radius:99px;">Triceps</div>
+              </div>
+            </div>
+
+            <div class="card" style="background:#1A1A17;border-radius:12px;padding:14px 16px;">
+              <div class="card-row">
+                <div class="card-title" style="color:#fff;">Pull Day B</div>
+              </div>
+              <div class="card-sub" style="color:#C0C0C0;font-size:13px;">4 exercises · Yesterday</div>
+              <div class="chips">
+                <div class="chip" style="background:#242420;color:#C0C0C0;border:1px solid #2E2E29;font-size:11px;padding:3px 8px;border-radius:99px;">Back</div>
+                <div class="chip" style="background:#242420;color:#C0C0C0;border:1px solid #2E2E29;font-size:11px;padding:3px 8px;border-radius:99px;">Biceps</div>
+              </div>
+            </div>
+
+            <div style="flex:1;"></div>
+
+            <div class="fab-area">
+              <div class="fab" style="background:#3BAF6A;">▶</div>
+            </div>
+
+          </div>
+          <div class="nav" style="background:#1A1A17;border-top:1px solid #2E2E29;">
+            <div class="nav-item active-b" style="--green-b:#3BAF6A;color:#3BAF6A;font-size:14px;padding:8px 0 10px;">
+              <div style="width:20px;height:20px;background:#3BAF6A;border-radius:4px;opacity:0.9;"></div>
+              Logs
+              <div style="position:absolute;top:0;left:20%;right:20%;height:2px;background:#3BAF6A;border-radius:0 0 2px 2px;"></div>
+            </div>
+            <div class="nav-item" style="color:#8A8A8A;font-size:14px;padding:8px 0 10px;">
+              <div style="width:20px;height:20px;background:#8A8A8A;border-radius:4px;opacity:0.3;"></div>
+              Programs
+            </div>
+            <div class="nav-item" style="color:#8A8A8A;font-size:14px;padding:8px 0 10px;">
+              <div style="width:20px;height:20px;background:#8A8A8A;border-radius:4px;opacity:0.3;"></div>
+              Stats
+            </div>
+            <div class="nav-item" style="color:#8A8A8A;font-size:14px;padding:8px 0 10px;">
+              <div style="width:20px;height:20px;background:#8A8A8A;border-radius:4px;opacity:0.3;"></div>
+              Profile
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CANDIDATE C -->
+    <div>
+      <div class="col-label">Green C — #2D9F58 · Deeper Leafy</div>
+      <div class="phone">
+        <div class="phone-screen" style="--bg:#0F0F0F;--surface:#1A1A17;--surface-raised:#242420;--border:#2E2E29;">
+          <div class="app-header" style="background:#1A1A17;border-bottom:1px solid #2E2E29;">
+            <div class="app-header-title" style="color:#fff;">Logs</div>
+          </div>
+          <div class="app-content" style="background:#0F0F0F;">
+
+            <div class="card" style="background:#1A1A17;border-radius:12px;padding:14px 16px;">
+              <div class="card-row">
+                <div class="card-title" style="color:#fff;">Push Day A</div>
+                <span class="badge" style="background:#2D9F58;color:#fff;">In Progress</span>
+              </div>
+              <div class="card-sub" style="color:#C0C0C0;font-size:13px;">3 exercises · Today 9:14 AM</div>
+              <div class="chips">
+                <div class="chip" style="background:rgba(45,159,88,0.12);color:#2D9F58;border:1px solid rgba(45,159,88,0.25);font-size:11px;padding:3px 8px;border-radius:99px;">Chest</div>
+                <div class="chip" style="background:rgba(45,159,88,0.12);color:#2D9F58;border:1px solid rgba(45,159,88,0.25);font-size:11px;padding:3px 8px;border-radius:99px;">Shoulders</div>
+                <div class="chip" style="background:rgba(45,159,88,0.12);color:#2D9F58;border:1px solid rgba(45,159,88,0.25);font-size:11px;padding:3px 8px;border-radius:99px;">Triceps</div>
+              </div>
+            </div>
+
+            <div class="card" style="background:#1A1A17;border-radius:12px;padding:14px 16px;">
+              <div class="card-row">
+                <div class="card-title" style="color:#fff;">Pull Day B</div>
+              </div>
+              <div class="card-sub" style="color:#C0C0C0;font-size:13px;">4 exercises · Yesterday</div>
+              <div class="chips">
+                <div class="chip" style="background:#242420;color:#C0C0C0;border:1px solid #2E2E29;font-size:11px;padding:3px 8px;border-radius:99px;">Back</div>
+                <div class="chip" style="background:#242420;color:#C0C0C0;border:1px solid #2E2E29;font-size:11px;padding:3px 8px;border-radius:99px;">Biceps</div>
+              </div>
+            </div>
+
+            <div style="flex:1;"></div>
+
+            <div class="fab-area">
+              <div class="fab" style="background:#2D9F58;">▶</div>
+            </div>
+
+          </div>
+          <div class="nav" style="background:#1A1A17;border-top:1px solid #2E2E29;">
+            <div class="nav-item" style="color:#2D9F58;font-size:14px;padding:8px 0 10px;position:relative;">
+              <div style="width:20px;height:20px;background:#2D9F58;border-radius:4px;opacity:0.9;"></div>
+              Logs
+              <div style="position:absolute;top:0;left:20%;right:20%;height:2px;background:#2D9F58;border-radius:0 0 2px 2px;"></div>
+            </div>
+            <div class="nav-item" style="color:#8A8A8A;font-size:14px;padding:8px 0 10px;">
+              <div style="width:20px;height:20px;background:#8A8A8A;border-radius:4px;opacity:0.3;"></div>
+              Programs
+            </div>
+            <div class="nav-item" style="color:#8A8A8A;font-size:14px;padding:8px 0 10px;">
+              <div style="width:20px;height:20px;background:#8A8A8A;border-radius:4px;opacity:0.3;"></div>
+              Stats
+            </div>
+            <div class="nav-item" style="color:#8A8A8A;font-size:14px;padding:8px 0 10px;">
+              <div style="width:20px;height:20px;background:#8A8A8A;border-radius:4px;opacity:0.3;"></div>
+              Profile
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+
+  <!-- ═══════════════════════════════════════════════════════════
+       DARK MODE — ACTIVE WORKOUT
+  ════════════════════════════════════════════════════════════ -->
+  <div class="section-head">Dark Mode — Active Workout Screen</div>
+  <div class="phone-row">
+    <div>
+      <div class="col-label">Green B in workout context</div>
+      <div class="phone">
+        <div class="phone-screen" style="background:#0F0F0F;">
+          <div class="app-header" style="background:#1A1A17;border-bottom:1px solid #2E2E29;">
+            <div style="font-size:15px;color:#8A8A8A;">← Back</div>
+            <div style="flex:1;text-align:center;font-size:17px;font-weight:700;color:#fff;">Push Day A</div>
+            <div style="font-size:14px;color:#8A8A8A;width:48px;"></div>
+          </div>
+          <div style="flex:1;overflow:auto;padding:16px;background:#0F0F0F;display:flex;flex-direction:column;gap:10px;">
+
+            <div class="card" style="background:#1A1A17;border-radius:12px;padding:14px 16px;">
+              <div style="font-size:16px;font-weight:600;color:#fff;margin-bottom:2px;">Bench Press</div>
+              <div style="font-size:13px;color:#C0C0C0;margin-bottom:12px;">Target: 135 lb × 8</div>
+              <div class="set-row" style="border-bottom:1px solid #2E2E29;padding:8px 0;">
+                <span class="set-num" style="color:#8A8A8A;width:18px;font-size:13px;">1</span>
+                <span class="set-prev" style="color:#C0C0C0;flex:1;font-size:13px;">135 × 8 last time</span>
+                <div class="set-box" style="background:#242420;border-radius:6px;height:34px;width:52px;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:600;color:#fff;">135</div>
+                <div style="font-size:12px;color:#8A8A8A;">×</div>
+                <div class="set-box" style="background:#242420;border-radius:6px;height:34px;width:52px;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:600;color:#fff;">8</div>
+              </div>
+              <div class="set-row" style="padding:8px 0;border:none;">
+                <span class="set-num" style="color:#8A8A8A;width:18px;font-size:13px;">2</span>
+                <span class="set-prev" style="color:#C0C0C0;flex:1;font-size:13px;">135 × 8 last time</span>
+                <div class="set-box" style="background:#242420;border-radius:6px;height:34px;width:52px;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:600;color:#8A8A8A;">—</div>
+                <div style="font-size:12px;color:#8A8A8A;">×</div>
+                <div class="set-box" style="background:#242420;border-radius:6px;height:34px;width:52px;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:600;color:#8A8A8A;">—</div>
+              </div>
+              <button style="width:100%;height:36px;background:rgba(59,175,106,0.12);border:1px solid rgba(59,175,106,0.3);border-radius:8px;color:#3BAF6A;font-size:14px;font-weight:600;margin-top:10px;cursor:pointer;">+ Add Set</button>
+            </div>
+
+          </div>
+          <div style="padding:12px 16px 16px;background:#1A1A17;border-top:1px solid #2E2E29;display:flex;gap:8px;">
+            <button style="flex:1;height:44px;background:#3BAF6A;border:none;border-radius:8px;color:#fff;font-size:15px;font-weight:600;cursor:pointer;">Finish Workout</button>
+            <button style="flex:1;height:44px;background:#E05555;border:none;border-radius:8px;color:#fff;font-size:15px;font-weight:600;cursor:pointer;">Discard</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ERROR / VALIDATION STATE -->
+    <div>
+      <div class="col-label">Input States — focus, error, label above</div>
+      <div style="background:#1A1A17;border-radius:16px;padding:20px;width:280px;display:flex;flex-direction:column;gap:12px;">
+        <div style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.08em;color:#555;margin-bottom:4px;">With label above field</div>
+
+        <div class="field">
+          <div class="field-label" style="color:#C0C0C0;font-size:12px;font-weight:500;">Weight</div>
+          <div class="input-row focus-b" style="background:#242420;border:1.5px solid #3BAF6A;border-radius:8px;height:44px;padding:0 12px;display:flex;align-items:center;gap:8px;">
+            <span style="font-size:16px;color:#fff;flex:1;">135</span>
+            <span style="font-size:14px;color:#8A8A8A;">lb</span>
+          </div>
+        </div>
+
+        <div class="field">
+          <div class="field-label" style="color:#C0C0C0;font-size:12px;font-weight:500;">Reps</div>
+          <div style="background:#242420;border:1.5px solid #E05555;border-radius:8px;height:44px;padding:0 12px;display:flex;align-items:center;">
+            <span style="font-size:16px;color:#8A8A8A;flex:1;">—</span>
+          </div>
+          <div style="font-size:12px;color:#E05555;padding-left:2px;">Reps are required</div>
+        </div>
+
+        <div class="field">
+          <div class="field-label" style="color:#C0C0C0;font-size:12px;font-weight:500;">Notes (optional)</div>
+          <div style="background:#242420;border:1.5px solid #2E2E29;border-radius:8px;height:44px;padding:0 12px;display:flex;align-items:center;">
+            <span style="font-size:16px;color:#4A4A4A;">Add a note...</span>
+          </div>
+        </div>
+
+        <button style="height:44px;background:#3BAF6A;border:none;border-radius:8px;color:#fff;font-size:15px;font-weight:600;cursor:pointer;">Save</button>
+        <button style="height:44px;background:transparent;border:1.5px solid #2E2E29;border-radius:8px;color:#fff;font-size:15px;font-weight:600;cursor:pointer;">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ═══════════════════════════════════════════════════════════
+       GOLD + RED — SEMANTIC COLORS
+  ════════════════════════════════════════════════════════════ -->
+  <div class="section-head">Gold & Red — Semantic Color Contexts</div>
+  <div class="phone-row">
+
+    <div>
+      <div class="col-label">Gold — Achievement / Completion</div>
+      <div style="background:#1A1A17;border-radius:16px;padding:20px;width:280px;display:flex;flex-direction:column;gap:10px;">
+        <div style="text-align:center;padding:16px 0 8px;">
+          <div style="font-size:32px;margin-bottom:8px;">🏆</div>
+          <div style="font-size:20px;font-weight:700;color:#D4A853;">Workout Complete</div>
+          <div style="font-size:14px;color:#C0C0C0;margin-top:4px;">Push Day A · 6 exercises</div>
+        </div>
+        <button style="height:44px;background:#D4A853;border:none;border-radius:8px;color:#0F0F0F;font-size:15px;font-weight:700;cursor:pointer;">Save to Programs</button>
+        <button style="height:44px;background:transparent;border:1.5px solid #2E2E29;border-radius:8px;color:#fff;font-size:15px;font-weight:600;cursor:pointer;">Skip</button>
+        <div style="display:flex;gap:8px;">
+          <span style="background:#D4A853;color:#0F0F0F;font-size:12px;font-weight:600;padding:2px 8px;border-radius:6px;">Chest</span>
+          <span style="background:rgba(212,168,83,0.15);color:#D4A853;font-size:12px;font-weight:500;padding:2px 8px;border-radius:6px;border:1px solid rgba(212,168,83,0.3);">PR</span>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <div class="col-label">Red — Destructive / Warning</div>
+      <div style="background:#1A1A17;border-radius:16px;padding:20px;width:280px;display:flex;flex-direction:column;gap:10px;">
+        <div style="background:#242420;border-radius:12px;padding:16px;">
+          <div style="font-size:16px;font-weight:700;color:#E05555;margin-bottom:6px;">Discard workout?</div>
+          <div style="font-size:14px;color:#C0C0C0;">All logged sets will be lost. This cannot be undone.</div>
+        </div>
+        <button style="height:44px;background:#E05555;border:none;border-radius:8px;color:#fff;font-size:15px;font-weight:600;cursor:pointer;">Discard Workout</button>
+        <button style="height:44px;background:transparent;border:1.5px solid #2E2E29;border-radius:8px;color:#fff;font-size:15px;font-weight:600;cursor:pointer;">Keep Going</button>
+        <div style="background:rgba(224,85,85,0.1);border:1px solid rgba(224,85,85,0.3);border-radius:8px;padding:10px 12px;font-size:13px;color:#E05555;">
+          ⚠ Storage almost full — save your workout soon
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ═══════════════════════════════════════════════════════════
+       LIGHT MODE CONCEPT
+  ════════════════════════════════════════════════════════════ -->
+  <div class="section-head">Light Mode — Green & Gold Theme (concept, post-MVP)</div>
+  <div class="phone-row">
+    <div>
+      <div class="col-label">Light Mode — Nature palette</div>
+      <div class="phone">
+        <div class="phone-screen" style="background:#F4F7F4;">
+          <div class="app-header" style="background:#FFFFFF;border-bottom:1px solid #D4DDD4;">
+            <div class="app-header-title" style="color:#1A1A1A;">Logs</div>
+          </div>
+          <div style="flex:1;padding:16px;background:#F4F7F4;display:flex;flex-direction:column;gap:10px;">
+
+            <div style="background:#FFFFFF;border-radius:12px;padding:14px 16px;">
+              <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
+                <div style="font-size:16px;font-weight:600;color:#1A1A1A;">Push Day A</div>
+                <span style="background:#2D9F58;color:#fff;font-size:12px;font-weight:500;padding:2px 8px;border-radius:6px;">In Progress</span>
+              </div>
+              <div style="font-size:13px;color:#3A4A3A;margin-bottom:8px;">3 exercises · Today 9:14 AM</div>
+              <div style="display:flex;gap:6px;">
+                <div style="background:rgba(45,159,88,0.1);color:#2D9F58;border:1px solid rgba(45,159,88,0.25);font-size:11px;padding:3px 8px;border-radius:99px;">Chest</div>
+                <div style="background:rgba(45,159,88,0.1);color:#2D9F58;border:1px solid rgba(45,159,88,0.25);font-size:11px;padding:3px 8px;border-radius:99px;">Shoulders</div>
+              </div>
+            </div>
+
+            <div style="background:#FFFFFF;border-radius:12px;padding:14px 16px;">
+              <div style="font-size:16px;font-weight:600;color:#1A1A1A;margin-bottom:6px;">Pull Day B</div>
+              <div style="font-size:13px;color:#3A4A3A;margin-bottom:8px;">4 exercises · Yesterday</div>
+              <div style="display:flex;gap:6px;">
+                <div style="background:#EEF3EE;color:#3A4A3A;border:1px solid #D4DDD4;font-size:11px;padding:3px 8px;border-radius:99px;">Back</div>
+                <div style="background:#EEF3EE;color:#3A4A3A;border:1px solid #D4DDD4;font-size:11px;padding:3px 8px;border-radius:99px;">Biceps</div>
+              </div>
+            </div>
+
+            <div style="flex:1;"></div>
+            <div style="display:flex;justify-content:flex-end;padding-right:4px;">
+              <div style="width:52px;height:52px;border-radius:50%;background:#2D9F58;display:flex;align-items:center;justify-content:center;font-size:20px;color:#fff;box-shadow:0 4px 14px rgba(45,159,88,0.35);">▶</div>
+            </div>
+          </div>
+
+          <div style="display:flex;background:#FFFFFF;border-top:1px solid #D4DDD4;">
+            <div style="flex:1;display:flex;flex-direction:column;align-items:center;padding:8px 0 10px;font-size:14px;color:#2D9F58;gap:4px;position:relative;">
+              <div style="width:20px;height:20px;background:#2D9F58;border-radius:4px;opacity:0.85;"></div>
+              Logs
+              <div style="position:absolute;top:0;left:20%;right:20%;height:2px;background:#2D9F58;border-radius:0 0 2px 2px;"></div>
+            </div>
+            <div style="flex:1;display:flex;flex-direction:column;align-items:center;padding:8px 0 10px;font-size:14px;color:#A0ADA0;gap:4px;">
+              <div style="width:20px;height:20px;background:#A0ADA0;border-radius:4px;opacity:0.3;"></div>
+              Programs
+            </div>
+            <div style="flex:1;display:flex;flex-direction:column;align-items:center;padding:8px 0 10px;font-size:14px;color:#A0ADA0;gap:4px;">
+              <div style="width:20px;height:20px;background:#A0ADA0;border-radius:4px;opacity:0.3;"></div>
+              Stats
+            </div>
+            <div style="flex:1;display:flex;flex-direction:column;align-items:center;padding:8px 0 10px;font-size:14px;color:#A0ADA0;gap:4px;">
+              <div style="width:20px;height:20px;background:#A0ADA0;border-radius:4px;opacity:0.3;"></div>
+              Profile
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div style="max-width:280px;">
+      <div class="col-label">Light mode palette</div>
+      <div style="display:flex;flex-direction:column;gap:6px;">
+        <div style="background:#F4F7F4;border:1px solid #D4DDD4;border-radius:8px;padding:10px 14px;">
+          <div style="font-size:13px;font-weight:600;color:#1A1A1A;">#F4F7F4</div>
+          <div style="font-size:12px;color:#5A6A5A;">Background — warm green-white</div>
+        </div>
+        <div style="background:#FFFFFF;border:1px solid #D4DDD4;border-radius:8px;padding:10px 14px;">
+          <div style="font-size:13px;font-weight:600;color:#1A1A1A;">#FFFFFF</div>
+          <div style="font-size:12px;color:#5A6A5A;">Surface — cards, modals</div>
+        </div>
+        <div style="background:#EEF3EE;border:1px solid #D4DDD4;border-radius:8px;padding:10px 14px;">
+          <div style="font-size:13px;font-weight:600;color:#1A1A1A;">#EEF3EE</div>
+          <div style="font-size:12px;color:#5A6A5A;">Surface raised — elevated</div>
+        </div>
+        <div style="background:#2D9F58;border-radius:8px;padding:10px 14px;">
+          <div style="font-size:13px;font-weight:600;color:#fff;">#2D9F58</div>
+          <div style="font-size:12px;color:rgba(255,255,255,0.75);">Green — darker for white BG</div>
+        </div>
+        <div style="background:#B8860B;border-radius:8px;padding:10px 14px;">
+          <div style="font-size:13px;font-weight:600;color:#fff;">#B8860B</div>
+          <div style="font-size:12px;color:rgba(255,255,255,0.75);">Gold — darker for white BG</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ═══════════════════════════════════════════════════════════
+       FULL PALETTE REFERENCE
+  ════════════════════════════════════════════════════════════ -->
+  <div class="section-head">Full Palette Reference — Dark Mode</div>
+  <div style="display:flex;flex-wrap:wrap;gap:8px;max-width:880px;">
+    <div style="background:#0F0F0F;border:1px solid #333;border-radius:8px;padding:10px 14px;min-width:120px;">
+      <div style="font-size:13px;font-weight:600;color:#fff;">#0F0F0F</div>
+      <div style="font-size:12px;color:#555;">Background</div>
+    </div>
+    <div style="background:#1A1A17;border:1px solid #333;border-radius:8px;padding:10px 14px;min-width:120px;">
+      <div style="font-size:13px;font-weight:600;color:#fff;">#1A1A17</div>
+      <div style="font-size:12px;color:#555;">Surface (warm)</div>
+    </div>
+    <div style="background:#242420;border:1px solid #333;border-radius:8px;padding:10px 14px;min-width:120px;">
+      <div style="font-size:13px;font-weight:600;color:#fff;">#242420</div>
+      <div style="font-size:12px;color:#555;">Surface Raised</div>
+    </div>
+    <div style="background:#3BAF6A;border-radius:8px;padding:10px 14px;min-width:120px;">
+      <div style="font-size:13px;font-weight:600;color:#fff;">#3BAF6A</div>
+      <div style="font-size:12px;color:rgba(255,255,255,0.7);">Green B (candidate)</div>
+    </div>
+    <div style="background:#2D9F58;border-radius:8px;padding:10px 14px;min-width:120px;">
+      <div style="font-size:13px;font-weight:600;color:#fff;">#2D9F58</div>
+      <div style="font-size:12px;color:rgba(255,255,255,0.7);">Green C (candidate)</div>
+    </div>
+    <div style="background:#D4A853;border-radius:8px;padding:10px 14px;min-width:120px;">
+      <div style="font-size:13px;font-weight:600;color:#0F0F0F;">#D4A853</div>
+      <div style="font-size:12px;color:rgba(0,0,0,0.5);">Gold</div>
+    </div>
+    <div style="background:#E05555;border-radius:8px;padding:10px 14px;min-width:120px;">
+      <div style="font-size:13px;font-weight:600;color:#fff;">#E05555</div>
+      <div style="font-size:12px;color:rgba(255,255,255,0.7);">Danger</div>
+    </div>
+    <div style="background:#FFFFFF;border-radius:8px;padding:10px 14px;min-width:120px;">
+      <div style="font-size:13px;font-weight:600;color:#0F0F0F;">#FFFFFF</div>
+      <div style="font-size:12px;color:#555;">Text Primary</div>
+    </div>
+    <div style="background:#C0C0C0;border-radius:8px;padding:10px 14px;min-width:120px;">
+      <div style="font-size:13px;font-weight:600;color:#0F0F0F;">#C0C0C0</div>
+      <div style="font-size:12px;color:#555;">Text Label (new)</div>
+    </div>
+    <div style="background:#8A8A8A;border-radius:8px;padding:10px 14px;min-width:120px;">
+      <div style="font-size:13px;font-weight:600;color:#0F0F0F;">#8A8A8A</div>
+      <div style="font-size:12px;color:#555;">Text Secondary</div>
+    </div>
+    <div style="background:#4A4A4A;border-radius:8px;padding:10px 14px;min-width:120px;">
+      <div style="font-size:13px;font-weight:600;color:#fff;">#4A4A4A</div>
+      <div style="font-size:12px;color:#666;">Text Disabled</div>
+    </div>
+  </div>
+
+</body>
+</html>

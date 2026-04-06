@@ -1,0 +1,636 @@
+WORKOUT TRACKER V2 — UI DESIGN REFERENCE
+==========================================
+Last updated: 2026-04-05
+
+Purpose: Establish UI standards before build begins. Brainstorm visual features and ideas,
+note what aligns with current plans and what changes each idea would require.
+This is a living document — update as decisions are made or ideas surface.
+Refer to coreprocess.txt and follow the fundamental philosophy behind the current task and project as a whole,
+across all stages of development.
+
+Cross-reference: master-schematics.md (layout contracts), all tab schematics (component specs)
+
+---
+
+TABLE OF CONTENTS
+------------------
+  1.  Core UI Principles
+  2.  Locked Layout Contracts
+  3.  Design Direction & Theme
+  4.  Color System
+      4a. Semantic Color Roles (locked)
+      4b. Background & Surface Palette
+      4c. Colors Under Consideration (pending visual test)
+      4d. Rejected Options
+  5.  Typography Scale
+  6.  Spacing System
+  7.  Alignment Standards
+  8.  Button Design Standards
+  9.  Component Standards
+  10. Interaction Patterns
+  11. UI Ideas Brainstorm
+  12. Open Design Questions
+  13. Decisions Locked
+
+---
+
+1. CORE UI PRINCIPLES
+----------------------
+These are derived from coreprocess.txt and user goals. Every design decision should be
+checked against this list before being accepted.
+
+  CLARITY FIRST
+    Every element must be immediately obvious — no learning curve.
+    If a user has to wonder what a button does, it has failed.
+    Use contrast + size + label together, never rely on color alone to communicate state.
+
+  ANTI-CLUTTER
+    This app exists because competitors are too busy.
+    Every element on screen must justify its presence.
+    When in doubt, remove it.
+
+  GYM CONTEXT
+    Users are at the gym — sweaty hands, bright lighting, mid-set.
+    Tap targets must be unambiguous. Text must be readable at a glance.
+    No interaction should require precision or concentration.
+
+  MOBILE FIRST
+    Design for thumb reach zones before mouse hover.
+    Every interaction pattern assumes a phone in one hand.
+
+  ALL AGES
+    No pattern recognition required for trendy interactions.
+    Icons always paired with labels. Generous spacing. High contrast.
+    Nothing that looks or feels like a social media app.
+
+  POLISHED AND PREMIUM
+    Feels like a quality tool, not a rushed MVP.
+    Consistent rules applied everywhere — no one-off treatments.
+    Every state is designed: empty, error, loading, completion. Nothing left blank.
+    Gold accent used sparingly — it feels premium precisely because it's rare.
+
+  TOOL, NOT SOCIAL APP
+    No gamification or vanity metrics on primary surfaces.
+    Future: rankings/leaderboards for exercises are a known future feature (not MVP).
+    The experience is about the user's own performance, not comparison.
+
+  MVP DISCIPLINE
+    If it requires a schema change, it is post-MVP by default.
+    Exceptions can be made for changes that are important enough — evaluate explicitly.
+
+---
+
+2. LOCKED LAYOUT CONTRACTS
+----------------------------
+From master-schematics.md. Non-negotiable for MVP.
+
+  - Mobile-only: 480px max-width, centered on larger screens
+  - Bottom navigation bar: 4 tabs — Logs | Programs | Statistics | Profile
+  - Bottom nav hidden on /login and /signup
+  - WorkoutFAB: floating action button, global, bottom-right
+  - CSS Modules: scoped per component, no global class conflicts
+  - No explicit save buttons (except WorkoutDetailPage edit mode)
+  - Modals for all destructive actions and multi-step flows
+  - Inline validation errors — field stays editable, error clears on valid input
+
+---
+
+3. DESIGN DIRECTION & THEME
+-----------------------------
+
+  OVERALL DIRECTION
+    Clean, fast, focused. Feels like a precision tool, not a social app.
+    The user is at the gym — the interface must get out of their way.
+    Dark mode primary. Premium. Uncluttered.
+
+  NATURE — SUBTLE UNDERLYING THEME (confirmed direction)
+    The app's color language evokes the natural world:
+      dark backgrounds  → forest floor at night, deep canopy
+      green accent      → living leaf, fresh growth
+      gold accent       → sunlight, warmth, achievement
+      white             → clean light, clarity
+      red               → embers, berries — danger, not traffic sign
+
+    What this means in practice:
+      - Color choices lean organic, not synthetic or corporate
+      - Surface colors carry a subtle warm undertone (barely visible, felt not seen)
+      - The palette as a whole reads "grounded" not "cold tech"
+
+    What it does NOT mean:
+      - No leaf icons, grass textures, or decorative nature motifs
+      - The app is still a clean functional tool
+      - The theme is felt through color, not illustrated
+
+    Pros:
+      + Distinctive in the fitness app market (competitors use blue, orange, red)
+      + Appeals to a broad age range — warm and inviting without being trendy
+      + Subtle enough not to conflict with clarity-first principle
+      + Green + gold is a premium pairing; feels intentional
+
+    Cons:
+      - Green is also a universal UI "success" signal — requires strict semantic discipline
+        to avoid confusion between "primary action" (green button) and "success state" (also green)
+      - Could be misread as a wellness/yoga app rather than a serious lifting tracker
+        — mitigated by the overall clean, tool-like design language
+
+  LIGHT / DARK MODE
+    Dark mode primary — gym lighting, battery, modern feel
+    Light mode: post-MVP (needs a full light palette before implementing)
+
+  TYPOGRAPHY APPROACH
+    System font stack — native feel, zero load cost, renders with OS-level polish
+      iOS:     -apple-system, SF Pro
+      Android: Roboto
+      Fallback: Segoe UI, sans-serif
+    No decorative fonts. Legibility at a glance is the only criterion.
+
+---
+
+4. COLOR SYSTEM
+----------------
+
+  4a. SEMANTIC COLOR ROLES (locked)
+  -----------------------------------
+  Each color has one job. No exceptions — mixing roles creates ambiguity.
+
+    GREEN   → Action / Interactive
+              Buttons, active tab indicator, focus rings, links, interactive states.
+              "Tap here. This is active."
+
+    GOLD    → Achievement / Completion
+              Workout finish moments, set-saved flash, completion badges, summary screen highlights.
+              Used sparingly — its rarity is what makes it feel earned.
+              "You did it."
+
+    RED     → Danger / Warning / Destructive
+              Delete, Discard, alerts, warnings, error borders, destructive modal actions.
+              Strictly limited to these cases. Never decorative.
+              "Stop. Be sure."
+
+    WHITE   → Content / Clarity
+              Primary text, icons on colored surfaces, labels.
+              "Read this."
+
+  4b. BACKGROUND & SURFACE PALETTE (dark mode — locked)
+  -------------------------------------------------------
+  Warm undertone applied throughout. Supports nature theme.
+
+    Background:     #0F0F0F  — near-black (not pure black — easier on eyes)
+    Surface:        #1A1A17  — cards, modals, input backgrounds
+    Surface raised: #242420  — elevated cards, active states
+    Border:         #2E2E29  — subtle dividers, input outlines
+
+    Text primary:   #FFFFFF  — headings, card titles, interactive labels
+    Text label:     #C0C0C0  — card subtitles and content descriptors that must be readable
+                              (e.g. "Bench · OHP · Triceps", exercise targets, in-card timestamps)
+    Text secondary: #8A8A8A  — placeholders, hints, truly de-emphasized info only
+    Text disabled:  #4A4A4A  — non-interactive states only
+
+    Danger:         #E05555  — destructive actions (Delete, Discard)
+    Danger hover:   #C94444
+
+    Gold:           #D4A853  — achievement / completion moments
+    Gold hover:     #C09040
+
+    NOTE: Green accent hex is pending final lock — candidates B and C in section 4c.
+
+  4c. COLORS UNDER CONSIDERATION (pending visual test)
+  ------------------------------------------------------
+  These are candidates. Do not lock until seen on screen.
+
+  GREEN ACCENT — CANDIDATE B: #3BAF6A  "Leafy Mid"
+    Character: Natural leaf green, warm, organic, fresh leaf in daylight.
+
+    Pros:
+      + Higher contrast on dark background — clears WCAG AA (4.5:1) for normal text
+      + Readable at 12px (tab labels, badges) without adjustment
+      + Warmer tone supports the nature theme
+      + Less saturated than A — doesn't feel synthetic or manufactured
+      + Pairs naturally with gold without competing
+
+    Cons:
+      - More saturated than C — could edge toward "garden center" rather than "deep forest"
+      - Slightly less premium/moody feel compared to C
+
+  GREEN ACCENT — CANDIDATE C: #2D9F58  "Deeper Leafy"
+    Character: Richer, more grounded, leans "looking into a canopy."
+
+    Pros:
+      + Deeper, richer tone — stronger premium/moody feel
+      + Stronger nature association — reads more "forest" than "park"
+      + More distinctive and less common in UI design
+
+    Cons:
+      - Lower contrast at small sizes — may fall below 4.5:1 at 12px on #0F0F0F
+      - Active tab labels (12px) may need a lightened variant to stay readable
+      - Slightly less warm than B — edges toward cool if not paired carefully with gold
+
+  SURFACE WARM TINT — LOCKED (applied in 4b)
+    Warm undertone confirmed after visual test. Applied to Surface, Surface raised, Border.
+    Effect is cumulative — felt as "grounded" rather than "cold tech" without being obvious.
+
+  LIGHT MODE PALETTE (post-MVP reference — lock values now, implement later)
+    Nature-themed light mode. Background tinted warm green-white, not clinical white.
+    Green and gold darken for contrast on light surfaces.
+
+      Background:       #F4F7F4  — warm green-white (morning fog on grass)
+      Surface:          #FFFFFF  — clean white cards
+      Surface raised:   #EEF3EE  — subtle sage tint on elevated elements
+      Border:           #D4DDD4  — warm grey-green
+      Text primary:     #1A1A1A  — near-black with green undertone
+      Text label:       #3A4A3A  — readable descriptors on light BG
+      Text secondary:   #5A6A5A  — muted forest green for hints/placeholders
+      Text disabled:    #A0ADA0
+      Green accent:     #2D9F58  — must darken vs dark mode; #3BAF6A fails contrast on white
+      Gold:             #B8860B  — must darken vs dark mode; #D4A853 washes out on white
+      Danger:           #D03030  — slightly deeper red for light background
+
+    Note: light mode toggle requires this palette + CSS variable swap. One-day implementation
+    once MVP ships. Do not build until MVP is complete.
+
+  TWO-ACCENT SYSTEM (green + gold — confirmed in principle, palette pending)
+    Using two intentional accent colors instead of one.
+
+    Pros:
+      + Semantic clarity — each color has one job, users learn the system quickly
+      + Premium feel — gold reserved for achievement moments feels earned
+      + Visually distinctive — no other fitness app uses this pairing
+      + Nature theme cohesion — green (life) + gold (light) is a natural pair
+
+    Cons:
+      - Requires strict discipline — if gold appears outside achievement contexts, it becomes noise
+      - More cognitive overhead to maintain consistency across components
+      - Two accent colors to document, test, and apply correctly
+
+  4d. REJECTED OPTIONS
+  ----------------------
+  Do not re-propose these.
+
+    Blue (#4F8EF7)
+      Rejected: safe and clean but generic — every second fitness app uses blue.
+      Does not support the nature theme.
+
+    Electric green (#39FF14)
+      Rejected: neon/tennis ball. Synthetic, harsh, inaccessible for all ages.
+      Directly contradicts "clear, visible, premium" and nature theme.
+
+    Warm orange (#F97316)
+      Rejected: energetic but reads as warning/alert in most UI contexts.
+      Would conflict with red's semantic role.
+
+    Pure dark forest green (#1A4731, #1B4332)
+      Rejected: too dark to use as an interactive element on a dark background.
+      Falls well below contrast requirements.
+
+---
+
+5. TYPOGRAPHY SCALE
+--------------------
+Keep it tight — mobile screen, every pixel counts.
+
+  Page title:     20px, weight 600
+  Section header: 16px, weight 600
+  Body / labels:  15px, weight 400
+  Secondary text: 13px, weight 400
+  Input text:     16px, weight 400   (16px prevents iOS auto-zoom on focus)
+  Button text:    15px, weight 600
+  Badge / tag:    12px, weight 500
+
+  Line height:    1.4 for body, 1.2 for headings
+  Letter spacing: default (no tight tracking — harder to read in motion)
+
+---
+
+6. SPACING SYSTEM
+------------------
+Base unit: 8px. All spacing is a multiple of 4px minimum, 8px preferred.
+Err generous — cramped feels cheap, spacious feels premium.
+
+  4px  — tight internal spacing (badge padding, icon gap)
+  8px  — default inner padding, small gaps
+  12px — input padding, card inner spacing
+  16px — section padding, standard gap between elements
+  24px — large section gap, modal padding
+  32px — page top padding
+  48px — bottom padding on scrollable pages (clears FAB and nav bar)
+
+---
+
+7. ALIGNMENT STANDARDS
+-----------------------
+Rule: alignment communicates structure. Use it deliberately, not decoratively.
+
+  CENTER-ALIGNED
+    Use when the screen has a single focal point and no competing elements.
+      - Page titles (all pages)
+      - Auth forms (login, signup)
+      - Modal content
+      - Empty state (icon + message + hint)
+      - Completion / achievement moments (finish flow gold screen)
+
+  LEFT-ALIGNED
+    Use when content has multiple elements the user needs to scan or compare.
+      - Card content (title, subtitle, metadata)
+      - Exercise rows and set rows
+      - List items
+      - Input fields and their labels
+      - Error messages (sit directly below their field)
+      - Section headers / date dividers
+
+  RIGHT-ALIGNED
+    Reserved for contextual UI that belongs to the right edge.
+      - FAB label ("Resume Workout")
+      - Timestamps on list items when paired with left-aligned title
+      - Badges on cards (right side of card header row)
+
+  NEVER
+    - Center body text inside cards — breaks scanning flow
+    - Mix alignments within the same content block
+    - Center error messages — they must read as attached to the field
+
+---
+
+8. BUTTON DESIGN STANDARDS
+---------------------------
+Ground rules for all buttons across the app. Every button decision should
+trace back to one of these rules.
+
+  HIERARCHY — four types, each with one job
+  ------------------------------------------
+    PRIMARY     — the main action on a screen or in a modal
+                  Green fill, white text. One per screen/modal. Never two primaries together.
+                  Examples: "Start Workout", "Finish Workout", "Save", "Create Program"
+
+    DESTRUCTIVE — irreversible or dangerous actions
+                  Red fill, white text. Always inside a confirmation modal — never fires directly.
+                  Examples: "Delete", "Discard Workout", "Remove Exercise"
+
+    SECONDARY   — supporting actions, cancellation, low-stakes choices
+                  No fill. Border: 1.5px, border color. White text.
+                  Examples: "Cancel", "Keep Editing", "Skip", "Go Back"
+
+    GHOST / INLINE — contextual actions embedded in a list or card
+                  No fill, no border. Green text (if action) or text-label color (if neutral).
+                  Smaller than full buttons — used for in-context add actions.
+                  Examples: "+ Add Set", "+ Add Exercise"
+
+  SIZE
+  -----
+    Standard height:   44px — non-negotiable minimum (thumb target)
+    Ghost / inline:    36px — only in-card, never as a standalone CTA
+    Width (mobile):    Full-width within its container (preferred)
+                       Exception: side-by-side button pairs split container 50/50 with 8px gap
+    Min width (future web/tablet): 120px with horizontal padding 20px
+
+  TYPOGRAPHY
+  -----------
+    Font size:     15px
+    Font weight:   600
+    Case:          Title case ("Start Workout", not "START WORKOUT" or "start workout")
+    No icons inside buttons unless the icon adds meaning (e.g. a play icon on "Start Workout")
+    Icon + label:  icon left, 8px gap, label — never icon-only on a primary action
+
+  TEXTURE & APPEARANCE
+  ---------------------
+    Border-radius:    8px — all button types
+    Shadow:           none — flat design; FAB is the only element with a drop shadow
+    Fill opacity:     100% active, 50% disabled — no in-between states
+    No gradients:     solid fill only; keeps color semantic meaning clean
+    No outlines on primary/destructive — fill communicates affordance
+    Secondary border: 1.5px solid border color (#2E2E29 dark / #D4DDD4 light)
+
+  STATES
+  -------
+    Default:    full color as specced above
+    Pressed:    10% brightness decrease (darken fill or border)
+    Disabled:   50% opacity, pointer-events: none, no hover/press effect
+    Loading:    not used for MVP — auto-save is silent; no async button states needed yet
+
+  GROUPING RULES
+  ---------------
+    Single action:     full-width, centered in its container
+    Two actions:       side-by-side, 50/50 split, 8px gap
+                       Primary always on LEFT, destructive/secondary on RIGHT
+                       Exception: modal confirm pairs — destructive LEFT when it is the primary action
+    Three+ actions:    stack vertically, full-width, 8px gap between each
+                       Primary on top, secondary below, destructive last
+    Never:             floating a secondary next to a primary without a container grouping them
+
+  PLACEMENT
+  ----------
+    Page-level CTAs:   fixed to bottom of screen above nav bar (e.g. Finish / Discard)
+    Form CTAs:         at the bottom of the form, full-width
+    Modal CTAs:        at the bottom of the modal card, full-width
+    In-card actions:   ghost/inline style, within the card padding
+
+---
+
+9. COMPONENT STANDARDS
+-----------------------
+
+  BUTTONS
+    Primary (accent fill):   main actions — "Start Workout", "Save", "Finish Workout"
+    Destructive (danger):    "Delete", "Discard" — always confirmed by Modal before firing
+    Ghost / secondary:       "Cancel", "Keep Editing", "Skip" — outline or text, no fill
+    Disabled state:          50% opacity, not interactive, no hover effect
+    All buttons:             44px min height (thumb target), full width on mobile preferred, 8px border-radius
+
+  INPUTS
+    Height:           44px (thumb target)
+    Border-radius:    8px
+    Background:       Surface
+    Border:           border color default, accent on focus, danger on error
+    Unit label:       shown inline right of value (e.g. "135 [lb]")
+    Error message:    12px danger color, appears below field, clears on valid input
+    Placeholder:      text secondary color
+
+  CARDS
+    Background:       Surface
+    Border-radius:    12px
+    Padding:          16px
+    Tap feedback:     Surface raised on press
+    No box-shadows    (flat design — cleaner on dark backgrounds)
+
+  MODALS
+    Overlay:          rgba(0,0,0,0.7) backdrop
+    Card:             Surface, 16px border-radius, 24px padding
+    Max width:        360px, centered
+    Always include:   explicit action button + cancel/dismiss option
+    Destructive modals: no tap-outside-to-close (too easy to mis-tap)
+    Non-destructive:  tap-outside closes (e.g. Edit Targets)
+
+  BOTTOM NAV BAR
+    Height:           56px + safe area inset (notch/home bar)
+    Background:       Surface with top border
+    Active tab:       accent color icon + label + 2px accent line above tab (top edge)
+    Inactive tab:     text secondary color
+    Icons:            Lucide (locked — see OD2), simple, single stroke weight
+    Labels:           14px below icon (bumped from 12px — all-ages readability)
+    Tab switches:     instant, no animation (native app convention)
+
+  WORKOUT FAB
+    Size:             56px circle
+    Background:       accent green
+    Icon:             white play/resume icon (Lucide)
+    Position:         bottom-right, 16px from edge, above nav bar
+    Shadow:           subtle drop shadow to lift above content
+    States:           "Start Workout" (Logs tab, no active workout)
+                      "Resume Workout" (all tabs, active workout)
+                      hidden (WorkoutDetailPage active mode, auth pages)
+
+  BADGES
+    "In Progress":    accent color background, white text
+    Border-radius:    6px
+    Padding:          2px 8px
+    Font:             12px, weight 500
+
+  ERROR BANNER (global)
+    Position:         top of page, full width
+    Color:            danger background, white text
+    Content:          "Something went wrong — your data may not have saved."
+    Dismissable:      yes — explicit close button
+    Trigger:          IndexedDB write failure only (storage quota, Safari private mode, corruption)
+    Not a toast:      no queue, no auto-dismiss timer — stays until user clears it
+
+  SECTION DIVIDERS / DATE HEADERS
+    Color:            text secondary
+    Font size:        12px, weight 500, uppercase
+    Margin:           16px top, 8px bottom
+
+  AUTH PAGES (login / signup)
+    Layout:           full-screen dark, centered form card (Surface color)
+    App name:         bold at top of card, no logo for MVP
+    No bottom nav, no FAB
+    Unit preference step (signup): two-button toggle — Imperial | Metric (not a dropdown)
+
+  EMPTY STATES
+    All list pages require a designed empty state — never a blank screen.
+    Structure: simple icon (Lucide) + primary message + hint text
+    Pending copy for: Logs list, Programs list, Program with no workouts, Workout with no exercises.
+
+  SAFE AREA HANDLING
+    App shell:        padding-top: env(safe-area-inset-top)
+    Bottom nav:       padding-bottom: env(safe-area-inset-bottom)
+    Full-screen modals: respect both insets
+
+---
+
+10. INTERACTION PATTERNS
+------------------------
+
+  Tap feedback:       all tappable surfaces respond immediately (background color shift)
+  No hover states:    mobile-first — hover is secondary; add in web iteration
+  Auto-save:          no spinner, no toast — silent; surface errors via global banner on failure
+  Navigation:         bottom nav switches tabs (instant); "← Back" goes up one level only
+  Page transitions:   slide-in from right on drill-down; slide-back on up-navigation
+                      instant switch on bottom nav tab changes
+  Scroll:             vertical only; no horizontal scroll; no carousels for MVP
+  Keyboard:           numeric keypad for weight/reps inputs; text keyboard for names
+  Focus management:   after modal opens, first input is auto-focused
+  Keyboard / scroll:  active workout screen — scrollIntoView on input focus to keep field visible
+                      all other pages — default browser behavior
+  Loading states:     no spinner, no skeleton for MVP — Dexie reads are near-instant;
+                      flash of loading state feels worse than rendering empty state directly
+
+---
+
+11. UI IDEAS BRAINSTORM
+-----------------------
+Tagged by implementation status:
+
+  [ALIGNED]   — fits current spec, no changes needed
+  [ADDITIVE]  — adds UI only, no schema or service changes needed
+  [REQUIRES]  — needs spec/schema changes before implementing
+
+  VISUAL FEEDBACK
+    [ALIGNED]   Unit label beside every weight input (lb/kg) — Decision #23
+    [ALIGNED]   Inline validation errors on inputs — Decision #11
+    [ALIGNED]   "In Progress" badge on workout cards
+    [ADDITIVE]  Subtle animation when a set is saved — set row briefly flashes gold (achievement color)
+    [ADDITIVE]  FAB pulse animation when workout is active — draws attention to Resume Workout
+    [ADDITIVE]  Progress indicator on active workout — "X of Y exercises logged" or simple bar
+    [REQUIRES]  Set completion checkmark — needs isCompleted on logSets
+
+  NAVIGATION AND LAYOUT
+    [ALIGNED]   Bottom nav with 4 tabs
+    [ALIGNED]   "← Back" button top-left on all sub-pages
+    [ADDITIVE]  Sticky section headers in Logs history (Today / Yesterday / etc.)
+    [ADDITIVE]  Pull-to-refresh on Logs and Programs list pages
+    [ADDITIVE]  Empty state illustrations — Lucide icon + hint text on all empty states
+    [REQUIRES]  Swipe-to-delete on log cards or exercise rows — needs gesture handling spec
+
+  ACTIVE WORKOUT SCREEN
+    [ALIGNED]   Previous data (weight × reps) shown read-only per set row
+    [ALIGNED]   Finish + Discard buttons fixed at bottom
+    [ADDITIVE]  Set row auto-scroll — page scrolls to newly added set after "+ Add Set"
+    [POST-MVP]  Workout timer in header — elapsed time since startedAt; cosmetic only (OD5)
+    [ADDITIVE]  Keyboard dismissal — tap outside input closes keyboard without triggering auto-save
+    [REQUIRES]  Rest timer between sets — needs timer state, sound/vibration; full spec needed (F5)
+    [REQUIRES]  Set completion indicator — needs isCompleted on logSets (F2)
+
+  PROGRAMS / TEMPLATE SCREENS
+    [ALIGNED]   Target line tappable → Edit Targets Modal — G2
+    [ALIGNED]   "bodyweight" shown when targetWeight = 0
+    [ADDITIVE]  Workout card shows muscle group chips based on exercises (e.g. "Chest · Shoulders")
+                — derivable from exercise.category at display time, no schema change
+    [ADDITIVE]  Program card color accent or icon — visual distinction (post-MVP branding)
+    [REQUIRES]  Drag-to-reorder exercises within workout — needs reorder UX (service already specced)
+    [REQUIRES]  Drag-to-reorder workouts within program — same pattern
+
+  FINISH FLOW
+    [ALIGNED]   "Save to program?" Modal — Decision #17
+    [ALIGNED]   "Update [Workout Name]?" Modal — Decision #19
+    [POST-MVP]  Workout summary screen before navigating to /logs (OD4)
+                — sets logged, duration, exercises; derivable from existing data; gold highlight moment
+    [ADDITIVE]  Celebration moment on workout finish — gold flash or brief animation; no spec change
+
+  PROFILE / SETTINGS
+    [ALIGNED]   Imperial / Metric toggle — Decisions #22, #23
+    [ADDITIVE]  Unit preference reminder on first workout if profile incomplete
+    [REQUIRES]  Light mode toggle — needs full light palette; post-MVP
+    [REQUIRES]  Body weight entry history — needs new table; post-MVP
+
+---
+
+12. OPEN DESIGN QUESTIONS
+--------------------------
+Resolve before building the affected component.
+
+  OD1 — Accent color
+        Status: direction locked (nature theme, forest green + gold), specific hex pending visual test
+        Candidates: B (#3BAF6A) or C (#2D9F58) — see section 4c for full pros/cons
+
+  OD2 — Icon set
+        Status: LOCKED — Lucide
+        Reason: MIT license, tree-shakeable, consistent 2px stroke weight, works at small sizes
+
+  OD3 — Border-radius hierarchy
+        Status: LOCKED — 8px inputs / 12px cards / 16px modals
+        Reason: different radii encode component type, establishes clear visual hierarchy
+
+  OD4 — Workout summary screen at finish
+        Status: LOCKED — post-MVP
+        Deferred: keep the finish flow clean for MVP; summary screen is an iteration feature
+
+  OD5 — Elapsed workout timer on active screen
+        Status: LOCKED — post-MVP
+        Deferred: cosmetic only, but adds scope; revisit in first iteration after MVP ships
+
+---
+
+13. DECISIONS LOCKED FROM THIS DOCUMENT
+-----------------------------------------
+
+  Nature theme       — subtle underlying theme confirmed; felt through color, not illustrated
+  Semantic colors    — Green=action, Gold=achievement, Red=danger, White=content
+  Red usage          — strictly delete / warning / alert / destructive; never decorative
+  Gold value         — #D4A853 (hover: #C09040); used sparingly for completion/achievement only
+  White              — #FFFFFF primary text
+  Icon set           — Lucide (MIT, tree-shakeable, consistent stroke)
+  Border-radius      — 8px inputs / 12px cards / 16px modals
+  Page transitions   — slide for drill-down, instant for tab switches
+  Error surface      — global top banner on DB failure, danger color, dismissable
+  Auth page layout   — full-screen dark, centered Surface card, unit pref as two-button toggle
+  Loading states     — no spinner/skeleton; render empty state directly
+  Safe area          — env(safe-area-inset-top/bottom) on app shell and bottom nav
+  Social features    — rankings/leaderboards are a known future feature, not MVP
