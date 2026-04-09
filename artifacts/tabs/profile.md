@@ -18,9 +18,12 @@
 - Header: "Profile" title
 - **User Info section:**
   - Name — editable text input, auto-saves on blur
-  - Height — editable number input, auto-saves on blur
-  - Weight — editable number input, auto-saves on blur
+  - Height — editable number input, auto-saves on blur; unit label shown beside field ("ft/in" or "cm" from UserSettingsContext)
+  - Weight — editable number input, auto-saves on blur; unit label shown beside field ("lb" or "kg" from UserSettingsContext)
   - No explicit save button — changes persist automatically
+  > **C6 RESOLVED:** Height — single number input, label "in" (imperial) or "cm" (metric) from UserSettingsContext. Same pattern as weight input.
+  > **C7 RESOLVED:** Height and weight default to 0/unset on first load — show blank placeholder, not "0". Blank is silently valid (no error); user fills in later. Note: height and weight will be required for future Statistics features (e.g. BMI, body composition tracking) — when those features are built, add a profile-completion prompt or warning if these fields are empty.
+  > **M7 RESOLVED:** Negative or non-numeric values show "Enter a valid number" inline, same as workout inputs. Blank is silently valid (Profile-specific rule — these are optional fields).
 - **Preferences section:**
   - Unit preference toggle: Imperial (lb, ft/in) | Metric (kg, cm)
   - Changing preference updates `UserSettingsContext` + persists to DB via `UserService.updateProfile()`

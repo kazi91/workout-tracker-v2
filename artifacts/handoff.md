@@ -1,5 +1,5 @@
 # HANDOFF — NEW INSTANCE START HERE
-Last updated: 2026-04-05 (session 4 — UI design standards complete)
+Last updated: 2026-04-09 (session 7 — all pre-build decisions resolved, ready to build)
 
 ---
 
@@ -15,15 +15,61 @@ Last updated: 2026-04-05 (session 4 — UI design standards complete)
 
 ---
 
+## Project Info
+- GitHub repo: https://github.com/kazi91/workout-tracker-v2 (private)
+- CLAUDE.draft.md at project root — rename to CLAUDE.md to activate auto-loading for new instances
+- .gitignore created at project root
+
+---
+
 ## Build State
-No code has been written. Blueprint + UI design standards complete.
+No code has been written. Blueprint + UI design standards complete. Pre-build audit complete.
 
 - All decisions locked (#1–23)
 - All must-fix issues specced (G2, G3, G7, R2)
+- G5 resolved — back navigation destinations locked (ProgramDetailPage → /programs, WorkoutTemplatePage → /programs/:id)
 - UIdesign.txt fully expanded — color system, alignment standards, button design standards, light mode palette
-- 1 open design question: OD1 — green hex B (#3BAF6A) vs C (#2D9F58). Lock before building first component.
-- color-preview.html at project root — open in browser to compare green candidates visually
+- All design questions locked (OD1–OD5). OD1: dark mode #3BAF6A / light mode #2D9F58.
+- Pre-build audit complete — all critical gaps resolved:
+  - C1: Quick-start log name = "Quick Workout [n+1]"; from-program = workout template name
+  - C2: Target hidden on quick-start exercise cards; shown only when workoutId set
+  - C3: SignupPage MVP spec locked — name/email/password + unit toggle; auto-login → /logs
+  - C4: LoginPage spec stub created at artifacts/tabs/login.md — L1–L4 open questions must be resolved before build step 2
+  - C5: ExerciseSearchModal spec locked — instant filter, category chips, custom exercise creation inline
+  - C6: Height = single number input, "in" or "cm" label
+  - C7: Height/weight blank on Profile = silently valid; note Statistics will require these fields
+  - C8: Seed trigger = App.tsx on mount, db.exercises.count() === 0 → seed()
+  - C9: No auto-add set after adding exercise — user taps "+ Add Set" manually
 - Refer to NEXT STEPS in recap.txt for build order
+
+Session 7 additions (2026-04-09):
+  - All pre-build decisions locked: D4 (BrowserRouter), D7 (sequential context init), N3 (UserSettingsContext reads from AuthContext.user), N4 (raw inches + label, ft+in post-MVP)
+  - D5 (ErrorContext) deferred for demo — console.error sufficient
+  - D8 (unit tests) deferred for demo — Vitest + RTL added post-demo
+  - N2 finish flow: full spec confirmed — 4-step state machine, no simplification for demo
+  - Model Selection Guide added to CLAUDE.md — Sonnet for most work, Opus for complex reasoning, ask before switching
+  - All pre-build gaps resolved. Ready to build.
+
+Session 6 additions (2026-04-09):
+  - Full cross-artifact gap audit — 4 new planning gaps (N1–N4) added to Issue Tracker in master-schematics.md
+  - D2 specced: previousWeight/previousReps lookup algorithm defined for LogSetService.add()
+  - D3 resolved: ExerciseSearchModal uses onSelect callback prop
+  - D4, D5, D7, D8: recommendations in recap.txt; need user confirmation before relevant build steps
+  - L1–L4 resolved in login.md; M1–M4 resolved in logs.md
+  - B1 updated: finish flow also fails with deleted template — treat as quick-start; handle at build step 5
+  - programs.md ProgramDetailPage corrected to use getCountsByProgramId (R1 spec fix applied)
+  - login.md Services Used corrected: AuthService.login() not UserService.findByEmail()
+  - CLAUDE.md session start updated: mandatory (recap + tab file) vs reference-only (master-schematics, UIdesign)
+
+Session 5 additions:
+  - CLAUDE.md updated: new instance now surveys src/ before acting if code exists
+  - artifacts/tabs/login.md created — stub with L1–L4 open questions; resolve before build step 2
+  - Developer gap review complete — D1–D8 added to recap.txt pre-build gaps
+  - D1 resolved: Dexie schema string locked (no compound indexes) — see master-schematics.md DB section
+  - D6 resolved: cascade delete order locked for all 3 paths — see service layer in master-schematics.md
+  - R1 resolved: getCountsByProgramId added to WorkoutExerciseService — replaces N+1 pattern
+  - B1 added to Issue Tracker: dangling workoutId on program delete — display layer must null-check
+  - D2, D3, D4, D5, D7, D8 remain open — tagged with build step in recap.txt
 
 Do not re-open planning decisions unless the user explicitly raises them.
 

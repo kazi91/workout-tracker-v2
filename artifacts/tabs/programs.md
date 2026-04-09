@@ -87,7 +87,7 @@
 ## ProgramDetailPage
 
 ### Layout
-- "← Back" button — top-left (Gap G5 — pending)
+- "← Back" button — top-left → `/programs` (G5 resolved — destination locked)
 - Program name — centered, tappable → inline rename (auto-saves on blur; blank shows "Name can't be blank")
 - Workout list — one card per workout within the program
   - Card: workout name + exercise count
@@ -102,11 +102,12 @@
 - `ProgramService.update(id, data)` — rename program
 - `ProgramService.delete(id)` — delete program (cascades workouts + workoutExercises)
 - `WorkoutService.getByProgramId(id)` — load workouts
-- `WorkoutExerciseService.getByWorkoutId(id)` — called per workout to derive exercise count for cards
+- `WorkoutExerciseService.getCountsByProgramId(id)` — batch query; returns `Record<workoutId, number>` of exercise counts for all workouts in one call (resolves R1)
 
 ### State
 - `program: Program | null`
 - `workouts: Workout[]`
+- `workoutCounts: Record<number, number>` — exercise count per workout, loaded via getCountsByProgramId
 - `loading: boolean`
 
 ---

@@ -1,0 +1,137 @@
+# CLAUDE.md — Workout Tracker v2
+
+Mobile-first workout tracking web app. React 18 + TypeScript, Vite 5, React Router v7, CSS Modules, Dexie.js (IndexedDB). No backend for MVP — service layer abstracts all data access for a future Node.js migration.
+
+GitHub: https://github.com/kazi91/workout-tracker-v2 (private)
+
+---
+
+## Model Selection Guide
+
+**Sonnet** — use for most work: scaffolding, boilerplate components, CSS styling, simple CRUD services, repetitive tab pages, clear bug fixes, artifact updates.
+
+**Opus** — save for moments that need deeper reasoning: Dexie schema + service layer design, complex state (ActiveWorkoutContext), building the first instance of a pattern (first tab), unit conversion logic, debugging subtle async/IndexedDB issues, architecture decisions (OD1–OD5).
+
+**Rule of thumb:** If you're typing *what* to build and Claude just needs to write it → Sonnet. If you're asking Claude to figure out *how* something should work → Opus.
+
+**Always ask before using Opus.** Do not switch to or recommend Opus without checking with the user first — token budget is limited.
+
+---
+
+## Session Start — Read Before Doing Anything
+
+**Mandatory every session:**
+- `artifacts/recap.txt` — current phase, build step, open decisions, next action. Single source of session state.
+- `artifacts/tabs/[tab].md` — read before building anything in that tab.
+
+**Read if recap.txt leaves something unclear** (decision rationale, mid-step context, ambiguous state):
+- `artifacts/handoff.md` — full session history, rejected options, reasoning behind recent choices.
+
+**Reference only — open when the current task requires it:**
+- `artifacts/master-schematics.md` — schema, service signatures, locked decisions, Issue Tracker. Read specific sections as needed, not the whole file.
+- `artifacts/UIdesign.txt` — color, spacing, typography, component rules. Read when building or styling a new component.
+
+`artifacts/coreprocess.txt` — skip unless user asks about process.
+
+**If code already exists in `src/`:** read the codebase before doing anything. Survey what's been built, match it against the build order in `recap.txt`, and tell the user where you think we are before starting work.
+
+---
+
+## How We Work
+
+This is a back-and-forth build. Before making any decision that affects architecture, data model, user flow, or component design:
+- Propose the change with options
+- Explain pros and cons of each
+- Get explicit agreement before building
+
+Trivial implementation details (variable names, minor styling) can proceed without discussion. Significant decisions cannot. Do not advance to the next build phase without explicit user agreement.
+
+---
+
+## Working Agreements
+
+- All 23 Phase 2 decisions are locked — do not reopen without explicit discussion
+- Update `artifacts/handoff.md` and `artifacts/recap.txt` whenever a decision is made, locked, reversed, or a new gap is found — inline during the session, not batched at the end
+- Before building any tab, read the relevant sub-schematic in `artifacts/tabs/`
+- Before building anything, check the Issue Tracker in `artifacts/master-schematics.md` for must-fix items in that area
+- Cross-reference user stories in `master-schematics.md` at every build step
+
+---
+
+## Build Rules — Token Management
+
+Each build step = one conversation. Do not combine steps. When the user starts a new session, follow these rules to stay lean:
+
+### Session discipline
+- **One major build step per session.** Complete it, verify, commit, end. Small steps (step 7, or a step that finishes early) can piggyback in the same session if context is still light.
+- **Read smart, not everything.** Read the primary tab spec fully for the current step. For `master-schematics.md`, read the sections relevant to the step (schema, services, decisions) — not the full changelog/history. If the tab spec references another tab (e.g. Logs references Programs for finish flow), read that specific section of the other spec.
+- **Read existing code before building.** From step 2 onward, survey what exists in `src/` before writing new code — check for existing patterns, utilities, and styles to reuse. Don't duplicate what's already there.
+- **Never re-read a file you already read in this session** unless the user changed it.
+- **Don't read code you just wrote** to verify — the Edit/Write tools confirm success.
+- **Verify before done.** Run `npm run dev` (or `npm run build` if dev server is impractical) before calling any step complete. Fix compile errors and TypeScript issues in the same session — don't leave them for the next one.
+
+### Output discipline
+- **Build, don't narrate.** Write the code. Skip the "I'm going to create..." preamble and the "Here's what I did..." recap. The user can see the diff.
+- **Brief explanations welcome.** The user is learning — after writing code, add a short (2-3 sentence) explanation of *why* it works this way, not *what* it does line-by-line. Deeper explanations on request.
+- **Group file writes.** When creating multiple related files (e.g. a component + its CSS module + its service), write them all before talking.
+- **Short status updates only.** After completing a chunk: "Done — [component] built. Moving to [next piece]." One line.
+
+### What to read per build step
+| Step | Read before building |
+|------|---------------------|
+| 1 — Scaffold | `recap.txt` (build order), `master-schematics.md` DB section only (schema string) |
+| 2 — Auth | `tabs/login.md`, `recap.txt` C3 (signup spec), `UIdesign.txt` auth layout section, `master-schematics.md` auth + service sections |
+| 3 — Shared components | `UIdesign.txt`, `master-schematics.md` Decision #14–15 (FAB), N1 (FAB hidden logic) |
+| 4 — Programs tab | `tabs/programs.md` |
+| 5a — Logs: list + active workout | `tabs/logs.md` (LogsPage + WorkoutDetailPage Active mode + ExerciseCard + SetRow) |
+| 5b — Logs: finish flows | `tabs/logs.md` (finish flow sections only — quick-start 4-step state machine + from-program sync) |
+| 5c — Logs: read-only + edit modes | `tabs/logs.md` (Read-only mode + Edit mode sections) |
+| 6 — Profile + Statistics | `tabs/profile.md` — Statistics is "Coming soon" placeholder, no spec needed |
+
+### If context gets long
+- If you've been working for a while and feel context pressure, tell the user: "Good stopping point — commit and continue in a new session." Don't wait until you freeze.
+- Prefer finishing the current file/component cleanly over starting a new one.
+
+---
+
+## Architecture Conventions
+
+- **No hardcoded credentials or secrets** — no test passwords, API keys, or tokens in source code; auth is plain-text in Dexie for MVP (R3 acknowledged) but never in `.ts`/`.tsx` files
+- **Service layer only touches Dexie** — components never import `db.ts` directly; always go through a service
+- **CSS Modules** — all component styles scoped via CSS Modules; no global class names except base reset in `index.css`
+- **No Redux** — page-level `useState` + `useEffect`; shared state via `AuthContext`, `UserSettingsContext`, `ActiveWorkoutContext` only
+- **Mobile-only layout** — 480px max-width enforced at root
+- **Units** — all weights stored in lb, heights in inches; convert at display time only via `UserSettingsContext`; `unitPreference: 'imperial' | 'metric'` controls all Layer 1 units
+- **Auto-save on blur** — all editable pages except `WorkoutDetailPage` edit mode (explicit Save Edits button)
+- **Modals for destructive actions** — delete program, delete workout, discard active session; all other navigation is always safe
+- **Seed trigger** — `App.tsx` on mount: `db.exercises.count() === 0` → `seed()`; fires once on first install only
+
+---
+
+## Never Do This
+
+Explicitly discussed and rejected. Do not re-propose unless the user raises it first.
+
+| What | Why rejected | Notes |
+|------|-------------|-------|
+| `window.confirm` / `window.prompt` | Replaced by Modal component (R2) | Use shared `Modal.tsx` for all confirm/discard/delete flows |
+| Import `db.ts` in components | Breaks service layer abstraction | Always go through a service file |
+| Redux / Zustand / Jotai | Per-page `useState` sufficient for MVP | Re-evaluate post-MVP if shared state grows painful |
+| Tailwind CSS | CSS Modules retained for MVP | Revisit before next major feature phase — not a permanent rejection |
+| `sessionStorage` for auth | Switched to `localStorage` — persists across tab closes | Auth key: `workout_tracker_user_id` |
+| Standalone workout templates | Every workout must belong to a program | Quick-start via FAB is the correct path for unplanned sessions |
+
+---
+
+## Build Commands
+
+> Fill in at build step 1 (Vite project scaffold). Placeholder until then.
+
+```bash
+npm run dev       # dev server
+npm run build     # production build
+npm run lint      # ESLint
+npm run typecheck # tsc --noEmit
+```
+
+VS Code extensions: ESLint, Prettier, GitLens, Live Server, Markdown, Mermaid. Configure ESLint + Prettier at build step 1.

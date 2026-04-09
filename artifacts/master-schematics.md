@@ -231,6 +231,24 @@ A workout tracking app with a React web frontend (mobile-only layout). Data stor
 | previousWeight | number | Stored in lb — snapshotted at set creation; matched by set number from last session, falls back to last set |
 | previousReps | number | Displayed as "90 × 8" (with converted weight), null shows "—" |
 
+### Dexie Schema String (locked — D1 resolved)
+
+```
+users:            '++id, email'
+exercises:        '++id, name, category'
+programs:         '++id, userId'
+workouts:         '++id, programId'
+workoutExercises: '++id, workoutId'
+workoutLogs:      '++id, userId'
+logExercises:     '++id, workoutLogId'
+logSets:          '++id, logExerciseId'
+```
+
+Notes:
+- No compound indexes — per-user and per-exercise result sets are small enough for JS filtering at MVP scale
+- `finishedAt === null` remains the canonical definition of "active" — do not introduce an `isActive` field
+- `name` on exercises supports Dexie prefix search (`.startsWithIgnoreCase()`)
+
 ---
 
 ## Service Layer
@@ -242,10 +260,10 @@ All services are plain modules exporting functions. Currently call Dexie directl
 | AuthService | signup (accepts unitPreference — set at account creation), login, logout, getCurrentUser, getCurrentUserId |
 | UserService | getProfile, updateProfile |
 | ExerciseService | getAll, search (query + category), create |
-| ProgramService | getAll, getById, create, update, delete (cascades workouts + workoutExercises) |
-| WorkoutService | getByProgramId, getById, create, update, delete (cascades workoutExercises), reorder, createFromLog(logId, programId, workoutName) — creates workout + workoutExercises from a log; targetSets = logSet count per exercise, targetReps/targetWeight = first set values (0 if none) |
-| WorkoutExerciseService | getByWorkoutId, add, update, remove, reorder, syncFromLog(workoutId, logId) — adds exercises in log but not in template, removes exercises in template but not in log; existing template exercises untouched; order of new exercises follows log order |
-| WorkoutLogService | getAll, getById, create (workoutId nullable — if provided, atomically copies workoutExercises → logExercises; if null, creates empty log), finish, update, delete (cascades logExercises + logSets), getActive (returns log with finishedAt === null for current user, or null) |
+| ProgramService | getAll, getById, create, update, delete (cascade order: workoutExercises → workouts → program; children deleted before parent to prevent orphaned rows) |
+| WorkoutService | getByProgramId, getById, create, update, delete (cascade order: workoutExercises → workout), reorder, createFromLog(logId, programId, workoutName) — creates workout + workoutExercises from a log; targetSets = logSet count per exercise, targetReps/targetWeight = first set values (0 if none) |
+| WorkoutExerciseService | getByWorkoutId, add, update, remove, reorder, syncFromLog(workoutId, logId) — adds exercises in log but not in template, removes exercises in template but not in log; existing template exercises untouched; order of new exercises follows log order; getCountsByProgramId(programId) — returns Record<workoutId, number> of exercise counts for all workouts in a program in a single batch query (replaces N+1 pattern in ProgramDetailPage) |
+| WorkoutLogService | getAll, getById, create (userId, workoutId nullable, name — quick-start: name = "Quick Workout [n+1]" where n = getAll(userId).length; from-program: name = workout template name; if workoutId provided, atomically copies workoutExercises → logExercises), finish, update, delete (cascade order: logSets → logExercises → workoutLog), getActive (returns log with finishedAt === null for current user, or null) |
 | LogExerciseService | getByWorkoutId, add, remove, reorder |
 | LogSetService | getByExerciseId, add, update, delete, getPreviousData (returns weight+reps by set number, fallback to last set) |
 
@@ -272,20 +290,42 @@ All services are plain modules exporting functions. Currently call Dexie directl
 - Search/filter by name + category
 - Surfaced via `ExerciseSearchModal` (bottom drawer overlay) — used by both Programs and Logs tabs
 
+### ExerciseSearchModal Spec (C5 resolved — MVP minimal)
+
+Bottom drawer overlay. Used from WorkoutDetailPage (active/edit) and WorkoutTemplatePage.
+
+**Layout:**
+- Category filter chips: All | Chest | Back | Legs | Shoulders | Arms | Core — "All" selected by default
+- Search input — instant name filter as user types; no debounce (29 items, Dexie reads near-instant)
+- Results list — exercises filtered by name + selected category chip
+- Empty state: "No exercises found" + "＋ Create custom exercise" option
+
+**Custom exercise creation (inline, no new page):**
+- Name input + category picker (required)
+- Blank name → "Name can't be blank"
+- Save → `ExerciseService.create()` → exercise added to list and immediately selected → modal closes
+
+**Selection:**
+- Tap exercise → modal closes → exercise added to workout (`LogExerciseService.add()` or `WorkoutExerciseService.add()` depending on context)
+
+**Dismissal:**
+- Tap outside overlay → modal closes, no exercise added
+
 ---
 
 ## Folder Structure
 
 ```
 src/
-├── App.tsx                        — Root component, routing, seed trigger
+├── App.tsx                        — Root component, routing, seed trigger; on mount: db.exercises.count() === 0 → seed() (C8 resolved)
+│                                    ⚠ AUDIT C8: Seed trigger mechanism unspecced — when/how seed.ts runs is not documented. Resolve before build step 1.
 ├── index.css                      — Global reset, mobile-first base styles (480px max-width)
 ├── main.tsx                       — Vite entry point
 ├── types/
 │   └── index.ts                   — All TypeScript interfaces
 ├── db/
 │   ├── db.ts                      — Dexie DB class, 8 tables, indexed fields
-│   └── seed.ts                    — 29 default exercises
+│   └── seed.ts                    — 29 default exercises; trigger: App.tsx on mount checks db.exercises.count() === 0 → runs seed(); fires once on first install, never again
 ├── services/                      — Data access layer (one file per service)
 ├── context/
 │   ├── AuthContext.tsx
@@ -295,7 +335,7 @@ src/
 │   ├── AuthGuard.tsx
 │   ├── BottomNav.tsx + .module.css
 │   ├── Modal.tsx + .module.css
-│   ├── ExerciseSearchModal.tsx + .module.css
+│   ├── ExerciseSearchModal.tsx + .module.css  — shared overlay; spec below (C5 resolved)
 │   └── WorkoutFAB.tsx + .module.css  — Global FAB: "Start Workout" or "Resume Workout"
 └── pages/
     ├── LoginPage/
@@ -321,6 +361,20 @@ src/
 - Password: plain text in Dexie (MVP only — will be replaced with hashed + backend auth)
 - `AuthGuard` component wraps all protected routes — redirects to `/login` if unauthenticated
 - BottomNav hidden on `/login` and `/signup`
+
+**SignupPage spec (C3 resolved — MVP minimal):**
+- Fields: name, email, password, unit preference toggle (Imperial | Metric — default Imperial)
+- Validation: blank fields → "Can't be blank" (Decision #11 pattern); no duplicate email check (local-only MVP)
+- Post-signup: auto-login → `/logs`
+- Layout: full-screen dark, centered card (UIdesign.txt auth layout)
+- AuthService.signup() accepts: name, email, password, unitPreference
+
+**LoginPage spec (C4 — deferred to login.md, resolve before build step 2):**
+- Fields: email, password
+- Error: "Invalid email or password"
+- Success: redirect to `/logs`
+
+> **AUDIT M8:** AuthContext loading state unspecced — while checking localStorage on mount, the app needs to avoid a flash of unauthenticated content or premature redirect. Decide handling at auth build step.
 - **localStorage security notes (MVP context):**
   - Only a userId (number) is stored — not a password or token; harmless without direct device access
   - XSS risk is the same as sessionStorage — negligible for a local-only app with no third-party scripts
@@ -407,7 +461,7 @@ Applied at every iteration. Each phase has a defined scope — don't skip phases
 | G2 | Gap | No edit UI for workout exercise targets (sets/reps/weight) — now applies to WorkoutTemplatePage, not ProgramDetailPage | Must fix | Programs | Specced — pending build |
 | G3 | Gap | No `.gitignore` | Must fix | Project | Build-time — create at project setup; no planning needed |
 | G4 | Gap | No "change exercise" on active workout | Nice to have | Logs | Pending |
-| G5 | Gap | Back navigation on ProgramDetailPage and WorkoutTemplatePage | Nice to have | Programs | Pending |
+| G5 | Gap | Back navigation destination not explicitly stated — ProgramDetailPage "← Back" destination should be /programs; WorkoutTemplatePage "← Back" destination should be /programs/:id. The button exists in both specs; the gap is that destinations were never locked. | Must fix | Programs | Pending |
 | R1 | Refactor | `ExerciseService.getAll()` called inside `.map()` — applies to WorkoutTemplatePage (replaces ProgramDetailPage) | Minor | Programs | Pending |
 | R2 | Refactor | `window.confirm` / `window.prompt` used in 3 places — finish workout flow (Logs), delete workout (Logs), delete program (Programs) — replace all with Modal component | Must fix before beta | Logs, Programs | Specced — all confirm/discard/delete actions updated to Modal throughout logs.md and programs.md; pending build |
 | R3 | Refactor | Password stored as plain text in Dexie — replace with hashed auth when backend is added | Must fix before real users | Auth | Pending |
@@ -427,7 +481,13 @@ Applied at every iteration. Each phase has a defined scope — don't skip phases
 | P6 | Planning | Workout detail (active/past workout screen) may warrant its own sub-schematic — currently lives under Logs tab. Decide scope and ownership before v2 build begins | Decide in v2 planning | Logs / Workouts | Resolved — stays in logs.md; mode-switching fully specced (Decision #21) |
 | P7 | Planning | Target derivation in createFromLog: targetReps and targetWeight default to first set values — confirm this is the desired behavior or choose alternative (e.g. last set, most common value) | Decide before building finish flow | Logs, Programs | Resolved — Option A: first set values. Rationale: template target represents a starting weight, not a peak; first set is what the user should begin with next session; heaviest set would require editing down every time |
 | P8 | Planning | From-program finish flow (workoutId set): two-branch logic (unmodified → "Update program?" / modified → save flow) not yet fully specced — modification detection logic undefined | Must fix before building from-program finish flow | Logs | Resolved — Decision #19 |
+| B1 | Bug | Dangling workoutId on program delete — workoutLogs retain stale workoutId when their linked program is deleted. Two failure points: (1) display: null-check before showing template name; (2) WorkoutDetailPage finish flow: if WorkoutService.getById(log.workoutId) returns null, treat entire session as quick-start — hide target column, skip from-program finish flow. Log history is never cascade-deleted; it belongs to the user. Handle at build step 5. | Minor | Logs, Programs | Pending |
 | P9 | Planning | Pre-fill behavior when starting from program is unspecced — WorkoutLogService.create only creates the workoutLog record; nothing copies workoutExercises → logExercises. Must define where and when this copy happens before building start-from-program flow | Must fix before building start-from-program flow | Logs, Programs | Resolved — Option A: create handles copy atomically |
+
+| N1 | Planning | WorkoutFAB hidden logic unspecced — on /logs/:id, FAB hidden state requires comparing route param :id against ActiveWorkoutContext.activeWorkoutId; currently undocumented; spec before building WorkoutFAB (build step 3) | Must fix | Shared | Pending |
+| N2 | Planning | Finish flow state machine — WorkoutDetailPage needs finishFlowStep: null \| 'save-prompt' \| 'program-picker' \| 'new-program-form' \| 'add-to-program-form' to manage multi-step modal; spec added to logs.md State section; implement at build step 5 | Must fix | Logs | Resolved — session 7: full spec confirmed, no simplification |
+| N3 | Planning | Context dependency chain — UserSettingsContext reads unitPreference from AuthContext.user on init, not independent Dexie query; resets on logout/login | Must fix | Architecture | Resolved — session 7 |
+| N4 | Planning | Height display — raw number + "in" or "cm" label from UserSettingsContext; ft+in conversion is post-MVP polish | Must fix | Profile | Resolved — session 7 |
 
 > Resolved: G1 (delete workout log UI), G7 (date grouping in logs), G8 (previous weight × reps display) — all fixed during MVP audit phase.
 
@@ -462,6 +522,7 @@ Detailed specs for each tab live here. Cross-reference these during every build 
 
 | Date | Change |
 |------|--------|
+| 2026-04-06 | D1 resolved: Dexie schema string locked — no compound indexes; D6 resolved: cascade delete order locked for all 3 delete paths; getCountsByProgramId added to WorkoutExerciseService (resolves R1 N+1 pattern); B1 added: dangling workoutId on program delete |
 | 2026-04-05 | Created UIdesign.txt — UI standards, color palette, spacing system, component specs, design brainstorm with ALIGNED/ADDITIVE/REQUIRES tags; added to handoff and recap |
 | 2026-04-05 | Final review pass: phase statuses corrected, user story statuses updated, stale references removed, service signatures fixed, duplicate future iteration removed |
 | 2026-04-05 | Planning complete — G3 marked build-time, R2 marked specced; all must-fix items resolved; build order documented in recap.txt |

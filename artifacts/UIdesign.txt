@@ -192,11 +192,13 @@ From master-schematics.md. Non-negotiable for MVP.
     Gold:           #D4A853  — achievement / completion moments
     Gold hover:     #C09040
 
-    NOTE: Green accent hex is pending final lock — candidates B and C in section 4c.
+    Green accent: dark mode #3BAF6A / light mode #2D9F58 — locked (OD1). See section 4c.
 
-  4c. COLORS UNDER CONSIDERATION (pending visual test)
-  ------------------------------------------------------
-  These are candidates. Do not lock until seen on screen.
+  4c. GREEN ACCENT — LOCKED (OD1)
+  ----------------------------------
+  Decision: dark mode #3BAF6A (Leafy Mid) / light mode #2D9F58 (Deeper Leafy).
+  Rationale: brighter green clears contrast on dark surfaces; darker green clears contrast on white.
+  Candidates and analysis preserved below for reference.
 
   GREEN ACCENT — CANDIDATE B: #3BAF6A  "Leafy Mid"
     Character: Natural leaf green, warm, organic, fresh leaf in daylight.
@@ -357,22 +359,26 @@ trace back to one of these rules.
 
   HIERARCHY — four types, each with one job
   ------------------------------------------
+    Text color rule: dark mode — white text on all filled buttons.
+                     Light mode — text color TBD per button type (white, gold, or other as deemed fit).
+
     PRIMARY     — the main action on a screen or in a modal
-                  Green fill, white text. One per screen/modal. Never two primaries together.
+                  Green fill. One per screen/modal. Never two primaries together.
                   Examples: "Start Workout", "Finish Workout", "Save", "Create Program"
 
     DESTRUCTIVE — irreversible or dangerous actions
-                  Red fill, white text. Always inside a confirmation modal — never fires directly.
+                  Red fill. Always inside a confirmation modal — never fires directly.
                   Examples: "Delete", "Discard Workout", "Remove Exercise"
 
     SECONDARY   — supporting actions, cancellation, low-stakes choices
-                  No fill. Border: 1.5px, border color. White text.
+                  No fill. Border: 1.5px, border color.
                   Examples: "Cancel", "Keep Editing", "Skip", "Go Back"
 
     GHOST / INLINE — contextual actions embedded in a list or card
                   No fill, no border. Green text (if action) or text-label color (if neutral).
                   Smaller than full buttons — used for in-context add actions.
-                  Examples: "+ Add Set", "+ Add Exercise"
+                  Examples: "+ Add Exercise"
+                  Note: "+ Add Set" is full-width within the exercise card — green fill (not ghost)
 
   SIZE
   -----
@@ -440,9 +446,17 @@ trace back to one of these rules.
     Border-radius:    8px
     Background:       Surface
     Border:           border color default, accent on focus, danger on error
+    Font size:        16px — non-negotiable; below 16px triggers iOS auto-zoom on focus
     Unit label:       shown inline right of value (e.g. "135 [lb]")
     Error message:    12px danger color, appears below field, clears on valid input
     Placeholder:      text secondary color
+
+  INPUTS — COMPACT VARIANT (set rows only)
+    Use only inside ExerciseCard set rows where inputs are tightly grouped.
+    Height:           36px
+    Padding:          8px vertical (reduced from 12px — keeps visual size down; font stays 16px)
+    Border-radius:    8px
+    All other rules identical to standard input
 
   CARDS
     Background:       Surface
@@ -506,7 +520,12 @@ trace back to one of these rules.
   EMPTY STATES
     All list pages require a designed empty state — never a blank screen.
     Structure: simple icon (Lucide) + primary message + hint text
-    Pending copy for: Logs list, Programs list, Program with no workouts, Workout with no exercises.
+    Copy defined in tab schematics:
+      - Logs list empty: "No workouts recorded" (logs.md)
+      - Programs list empty: defined in programs.md
+      - Program with no workouts: "Add a workout first, or start a quick workout and save it to this program when you're done." (programs.md)
+      - Workout with no exercises: "Add exercises to get started." (programs.md)
+    Logs list empty state copy still needs to be confirmed in logs.md.
 
   SAFE AREA HANDLING
     App shell:        padding-top: env(safe-area-inset-top)
@@ -560,7 +579,7 @@ Tagged by implementation status:
     [REQUIRES]  Swipe-to-delete on log cards or exercise rows — needs gesture handling spec
 
   ACTIVE WORKOUT SCREEN
-    [ALIGNED]   Previous data (weight × reps) shown read-only per set row
+    [ALIGNED]   Column header row above first set: "Best | lbs | reps" — static labels; Best shows previous weight × reps or "—"
     [ALIGNED]   Finish + Discard buttons fixed at bottom
     [ADDITIVE]  Set row auto-scroll — page scrolls to newly added set after "+ Add Set"
     [POST-MVP]  Workout timer in header — elapsed time since startedAt; cosmetic only (OD5)
@@ -597,8 +616,8 @@ Tagged by implementation status:
 Resolve before building the affected component.
 
   OD1 — Accent color
-        Status: direction locked (nature theme, forest green + gold), specific hex pending visual test
-        Candidates: B (#3BAF6A) or C (#2D9F58) — see section 4c for full pros/cons
+        Status: LOCKED — dark mode: #3BAF6A (Leafy Mid) / light mode: #2D9F58 (Deeper Leafy)
+        Rationale: brighter green has better contrast on dark surfaces; darker green has better contrast on white
 
   OD2 — Icon set
         Status: LOCKED — Lucide

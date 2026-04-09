@@ -81,9 +81,13 @@
   - Hidden on `/logs/:id` in active mode (Finish/Discard buttons already at bottom)
   - LogsPage has extra bottom padding so content never scrolls behind it
 
+> **M1 RESOLVED:** Within date groups: time only ("10:32 AM") — the group header already states the date. Within older month-year groups: full date + time ("Jan 14 · 10:32 AM").
+> **M2 RESOLVED:** Newest-first within each date group.
+
 ### Services Used
 - `WorkoutLogService.getAll(userId)` — load all logs
-- `WorkoutLogService.create(userId, null)` — quick-start; null workoutId creates empty log with no pre-filled exercises
+- `WorkoutLogService.create(userId, null, name)` — quick-start; null workoutId creates empty log with no pre-filled exercises; name = "Quick Workout [n+1]" where n = WorkoutLogService.getAll(userId).length at time of creation (C1 resolved)
+- `WorkoutLogService.create(userId, workoutId, name)` — from-program; name inherits workout template name (C1 resolved)
 - `ActiveWorkoutContext` — read on mount to determine FAB state; no direct service call needed
 
 ### State
@@ -108,6 +112,8 @@ Mode is derived from the log record alone — no URL params, no sessionStorage:
 
 Edit mode is never entered on load. It is always a local state transition triggered by the user tapping "Edit Workout" from Read-only.
 
+> **B1 edge case:** If `log.workoutId` is not null but `WorkoutService.getById(log.workoutId)` returns null (linked program was deleted), treat the entire session as quick-start: hide the target column, skip the from-program finish flow, run the quick-start finish flow instead. Never assume a non-null `workoutId` means the template still exists.
+
 ### Mode Transitions
 
 ```
@@ -124,14 +130,18 @@ Edit      → tap "← Back"         → Modal: "Discard changes?" → [Discard]
 - "← Back" button — top-left, navigates to previous page
 - Workout name — centered, tappable → inline rename
 - Exercise cards (one per logExercise):
-  - Exercise name + "Remove" button
+  - Card header row:
+    - From-program logs (`workoutId` set): exercise name (left-aligned) | Target: [X] lb × [Y] (right-aligned, same row)
+    - Quick-start logs (`workoutId: null`): exercise name only, full row width — target hidden entirely (C2 resolved)
+  - Column header row (static labels above first set): Best | lbs | reps
   - Set rows (one per logSet):
-    - Previous data (read-only): "90 × 8 lb" (or kg if metric) or "—" if null
-    - Weight input — numeric, 0–9999, 1 decimal place allowed (e.g. 137.5); unit label shown beside field ("lb" or "kg" from UserSettingsContext); user enters in their preferred unit — converted to lb on save if metric; invalid or blank shows "Enter a valid number" inline, field stays editable
-    - Reps input — whole numbers only, 1–999; invalid or blank shows "Enter a valid number" inline, field stays editable
+    - Set number
+    - Best (read-only): previous weight × reps (e.g. "90 × 8") or "—" if null; displayed in user's unit (UserSettingsContext); no "last time" label
+    - Weight input — compact variant (see UIdesign.txt); numeric, 0–9999, 1 decimal place allowed (e.g. 137.5); unit label beside field ("lb" or "kg" from UserSettingsContext); user enters in their preferred unit — converted to lb on save if metric; invalid or blank shows "Enter a valid number" inline, field stays editable
+    - Reps input — compact variant (see UIdesign.txt); whole numbers only, 1–999; invalid or blank shows "Enter a valid number" inline, field stays editable
     - Delete set button
-  - "+ Add Set" button below set rows
-- "+ Add Exercise" button — opens `ExerciseSearchModal`
+  - "+ Add Set" button — full-width below set rows, green fill, white text
+- "+ Add Exercise" button — opens `ExerciseSearchModal`; new exercise card appears with no sets — user taps "+ Add Set" manually (C9 resolved)
 - "Finish Workout" button — fixed at bottom, triggers finish flow
 - "Discard Workout" button — fixed at bottom alongside Finish; Modal confirm → Yes: deletes log + cascades logExercises + logSets → `/logs` | No: stays on page
 
@@ -197,6 +207,9 @@ Edit      → tap "← Back"         → Modal: "Discard changes?" → [Discard]
 
 ### Mode: Edit (re-editing a finished workout)
 
+> **M3 RESOLVED:** Intentional. Shows prior-session values as reference while correcting mistakes — showing current session values would be circular and useless.
+> **M4 RESOLVED:** Intentional. Prevents accidental delete during a correction. User returns to read-only to delete.
+
 #### Layout
 - Same as Active mode layout
 - Workout name tappable to rename
@@ -214,6 +227,7 @@ Edit      → tap "← Back"         → Modal: "Discard changes?" → [Discard]
 - `LogExerciseService.add(workoutLogId, exerciseId)` — add exercise
 - `LogExerciseService.remove(id)` — remove exercise
 - `LogSetService.getByExerciseId(id)` — load sets
+- `LogSetService.getPreviousData(logExerciseId, setNumber)` — returns previous weight+reps by set number (fallback to last set); used to populate Best column
 - `LogSetService.add(logExerciseId)` — add set
 - `LogSetService.update(id, data)` — update weight/reps
 - `LogSetService.delete(id)` — delete set
@@ -228,6 +242,7 @@ Edit      → tap "← Back"         → Modal: "Discard changes?" → [Discard]
 - `sets: Record<logExerciseId, LogSet[]>` — sets keyed by exercise
 - `mode: 'active' | 'readonly' | 'edit'` — derived from `log.finishedAt` on load; Edit entered via local transition only
 - `unsavedChanges: boolean` — set to true on any edit mode change; used to trigger "Discard changes?" Modal on back tap
+- `finishFlowStep: null | 'save-prompt' | 'program-picker' | 'new-program-form' | 'add-to-program-form'` — drives multi-step quick-start finish modal; null = flow not active
 - `loading: boolean`
 
 ---

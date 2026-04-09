@@ -1,6 +1,6 @@
 WORKOUT TRACKER V2 — RECAP
 ===========================
-Last updated: 2026-04-05
+Last updated: 2026-04-09
 
 ---
 
@@ -21,10 +21,9 @@ Stack:
 CURRENT STATE
 --------------
 Phase: Blueprint complete. UI design standards polished. No code written yet. Ready to build.
-All decisions locked (#1–23). All must-fix items specced.
+All decisions locked (#1–23). All design questions locked (OD1–OD5). All must-fix items specced.
 UIdesign.txt expanded with: color system, alignment standards, button design standards, light mode palette.
-1 open design question remains (OD1 — green hex B vs C). All others locked.
-color-preview.html exists at project root for visual reference — open in browser to compare greens.
+Green accent locked: dark mode #3BAF6A / light mode #2D9F58.
 
 Schema: V2 locked
   - users:            id, email, password, name, height (inches), weight (lb), unitPreference ('imperial'|'metric'), createdAt
@@ -50,10 +49,38 @@ User flows:
 
 REMAINING BEFORE BUILD
 -----------------------
-Planning is complete. One UI decision outstanding:
+Planning complete. Pre-build audit complete. New gaps identified in developer review — resolve before or during relevant build step.
 
-  OD1 — Accent green hex: B (#3BAF6A Leafy Mid) vs C (#2D9F58 Deeper Leafy)
-         View color-preview.html in browser to compare. Lock before building first component.
+Pre-build gaps (all resolved):
+  D1  Dexie indexes — RESOLVED: schema string locked in master-schematics.md DB section; no compound indexes
+  D2  previousWeight/previousReps lookup — SPECCED (pending build, step 5): lookup algorithm defined
+  D3  ExerciseSearchModal dispatch — RESOLVED: callback prop onSelect
+  D4  React Router v7 mode — LOCKED (session 7): BrowserRouter (legacy) — no loaders/actions
+  D5  Error handling surface — DEFERRED for demo: console.error sufficient; ErrorContext wired post-demo
+  D6  Cascade delete map — RESOLVED: cascade order locked in service layer
+  D7  AuthContext + ActiveWorkoutContext init order — LOCKED (session 7): sequential — AuthContext resolves first; UserSettingsContext + ActiveWorkoutContext mount only after AuthContext.user loaded; blank dark screen while loading
+  D8  Unit testing framework — DEFERRED for demo: no tests; Vitest + RTL added post-demo
+
+Session 6 gap audit (2026-04-09) — details in master-schematics.md Issue Tracker:
+  N1  WorkoutFAB hidden logic — on /logs/:id, hidden state requires comparing route param :id vs ActiveWorkoutContext.activeWorkoutId; spec before build step 3
+  N2  Finish flow state machine — LOCKED (session 7): full spec — 4-step state machine, program picker, template sync. No simplification.
+  N3  Context dependency chain — LOCKED (session 7): UserSettingsContext reads unitPreference from AuthContext.user, not independent Dexie query; resets on logout/login
+  N4  Height display — LOCKED (session 7): raw number + "in" or "cm" label; ft+in conversion is post-MVP polish
+  B1  Extended — finish flow also breaks with deleted template; see logs.md B1 edge case note; handle at build step 5
+  L1-L4  Login open questions — RESOLVED in login.md
+  M1-M4  LogsPage/WorkoutDetailPage audit markers — RESOLVED in logs.md
+
+Pre-build audit resolved:
+  C1  Quick-start log name = "Quick Workout [n+1]"; from-program = workout template name
+  C2  Target hidden on quick-start exercise cards; shown only when workoutId set
+  C3  SignupPage: name/email/password + unit toggle; blank → "Can't be blank"; auto-login → /logs
+  C4  LoginPage: deferred to login.md — resolve before build step 2
+  C5  ExerciseSearchModal: instant filter, category chips, inline custom exercise creation
+  C6  Height = single number input, "in" or "cm" label from UserSettingsContext
+  C7  Height/weight blank on Profile = silently valid; Statistics will require these fields later
+  C8  Seed trigger: App.tsx on mount, db.exercises.count() === 0 → seed()
+  C9  No auto-add set after adding exercise — user taps "+ Add Set" manually
+  G5  Back navigation destinations locked: ProgramDetailPage → /programs; WorkoutTemplatePage → /programs/:id
 
 The following are resolved in the spec and will be implemented at build time:
   G2  — Edit Targets Modal: specced in programs.md (WorkoutTemplatePage)
@@ -68,13 +95,14 @@ NEXT STEPS (in order)
 Planning is complete. All decisions locked. Ready to build.
 
 Recommended build order:
-1. Project setup — Vite + React + TypeScript, folder structure, .gitignore, Dexie schema
+1. Project setup — Vite + React + TypeScript, folder structure, .gitignore (done), Dexie schema, ESLint + Prettier config (extensions installed: eslint, prettier, gitlens, live server, markdown, mermaid)
 2. Auth — SignupPage (with unit preference step), LoginPage, AuthContext, localStorage session
 3. Core shared — BottomNav, Modal, ExerciseSearchModal, WorkoutFAB, UserSettingsContext, ActiveWorkoutContext
 4. Programs tab — ProgramsPage, ProgramDetailPage, WorkoutTemplatePage (inc. Edit Targets Modal)
-5. Logs tab — LogsPage, WorkoutDetailPage (active/read-only/edit modes, all finish flows)
-6. Profile tab — ProfilePage
-7. Statistics tab — placeholder ("Coming soon")
+5a. Logs: list + active workout — LogsPage, WorkoutDetailPage Active mode, ExerciseCard, SetRow
+5b. Logs: finish flows — quick-start 4-step state machine, from-program template sync
+5c. Logs: read-only + edit — WorkoutDetailPage Read-only mode, Edit mode, delete flow
+6. Profile + Statistics — ProfilePage (functional), Statistics placeholder ("Coming soon")
 
 ---
 
@@ -133,10 +161,64 @@ UI DESIGN DECISIONS LOCKED (UIdesign.txt session 4)
   Error surface      — global top banner on DB failure, danger color, dismissable
   Auth layout        — full-screen dark, centered card, unit pref as two-button toggle
   Light mode palette — values locked for future build (post-MVP); see UIdesign.txt section 4c
+  OD1 — Green accent: LOCKED — dark mode #3BAF6A / light mode #2D9F58
   OD2 — Lucide icons: LOCKED
   OD3 — Border-radius 8/12/16px: LOCKED
   OD4 — Workout summary screen: post-MVP
   OD5 — Elapsed timer: post-MVP
+
+---
+
+SESSION HISTORY
+----------------
+Most recent at top. Never delete entries.
+
+  Session 7 — 2026-04-09
+    - Pre-build decisions locked: D4 (BrowserRouter), D7 (sequential context init), N3 (UserSettingsContext reads from AuthContext), N4 (raw inches + label, ft+in post-MVP)
+    - D5 (ErrorContext) deferred for demo; D8 (unit tests) deferred for demo
+    - Finish flow: full spec confirmed — no simplification, 4-step state machine builds as designed
+    - Model Selection Guide added to CLAUDE.md — Sonnet default, Opus for complex reasoning, ask before switching
+
+  Session 6 — 2026-04-09
+    - Cross-artifact gap audit; 4 new planning gaps (N1–N4) added to Issue Tracker
+    - D2 specced (lookup algorithm defined); D3 resolved (callback prop)
+    - D4, D5, D7, D8: recommendations documented; confirm before relevant build steps
+    - L1–L4 resolved in login.md; M1–M4 resolved in logs.md
+    - B1 updated: finish flow also breaks with deleted template — treat as quick-start
+    - programs.md ProgramDetailPage corrected to use getCountsByProgramId (R1 spec fix)
+    - login.md Services Used corrected: AuthService.login() not UserService.findByEmail()
+    - CLAUDE.md session start protocol updated: explicit mandatory vs reference-only reading
+
+  Session 5 — 2026-04-06
+    - Discussed startup prompts and process holes; identified 5 gaps in the build process
+    - Fixed #1 (mid-step resumption): CLAUDE.md updated to survey src/ before acting if code exists
+    - Fixed #4 (login.md missing): artifacts/tabs/login.md created with L1–L4 open questions
+    - Full developer gap review of all artifacts — identified D1–D8 pre-build gaps
+    - D1 resolved: Dexie schema string locked (no compound indexes) — master-schematics.md
+    - D6 resolved: cascade delete order locked for all 3 paths — master-schematics.md
+    - R1 resolved: getCountsByProgramId added to WorkoutExerciseService (replaces N+1 pattern)
+    - B1 added to Issue Tracker: dangling workoutId on program delete
+    - D2, D3, D4, D5, D7, D8 remain open — tagged with build step in pre-build gaps above
+    - Stopped at D2 (previousWeight/previousReps lookup logic) — resume here next session
+
+  Session 4 — 2026-04-05
+    - VS Code extensions noted: Markdown, Mermaid, Live Server, GitLens, ESLint, Prettier
+    - GitHub repo created: https://github.com/kazi91/workout-tracker-v2 (private)
+    - CLAUDE.draft.md created and rewritten (7 improvements); renamed to CLAUDE.md
+    - .gitignore created at project root
+    - OD1 locked: dark mode #3BAF6A / light mode #2D9F58
+    - UI feedback processed from annotated screenshot — compact input variant specced, column headers added
+    - Pre-build audit complete — C1–C9 and G5 all resolved
+    - UIdesign.txt fully expanded: color system, alignment, button standards, light mode palette
+
+  Sessions 1–3 — 2026-04-02 to 2026-04-04
+    - Project scoped and problem defined
+    - Tech stack selected: React 18 + TypeScript + Vite 5 + React Router v7 + CSS Modules + Dexie.js v4
+    - DB schema v2 designed (8 tables)
+    - Service layer contracts defined
+    - All 23 design decisions locked
+    - User flows complete for Logs and Programs tabs
+    - Issue Tracker established
 
 ---
 
