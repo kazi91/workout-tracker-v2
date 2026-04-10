@@ -136,3 +136,145 @@
   font-size: 12px;
   color: var(--color-red);
 }
+
+/* ── Finish flow overlays (program-picker, new-program-form, add-to-program-form) ── */
+.flowBackdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 200;
+  padding: 16px;
+}
+
+.flowCard {
+  width: 100%;
+  max-width: 360px;
+  background: var(--color-surface-1);
+  border-radius: 16px;
+  padding: 24px;
+}
+
+.flowTitle {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--color-text-primary);
+  margin: 0 0 20px;
+  text-align: center;
+}
+
+/* Program picker list */
+.programList {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  max-height: 280px;
+  overflow-y: auto;
+}
+
+.programRow {
+  display: block;
+  width: 100%;
+  padding: 14px 16px;
+  text-align: left;
+  font-size: 15px;
+  color: var(--color-text-primary);
+  background: var(--color-surface-2);
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.programRow:active {
+  filter: brightness(0.85);
+}
+
+.newProgramLabel {
+  color: var(--color-green);
+  font-weight: 600;
+}
+
+/* Form fields */
+.flowField {
+  margin-bottom: 16px;
+}
+
+.flowLabel {
+  display: block;
+  font-size: 13px;
+  color: var(--color-text-label);
+  margin-bottom: 4px;
+}
+
+.flowInput {
+  width: 100%;
+  height: 44px;
+  padding: 0 12px;
+  font-size: 16px;
+  background: var(--color-surface-2);
+  border: 1.5px solid var(--color-border);
+  border-radius: 8px;
+  color: var(--color-text-primary);
+  box-sizing: border-box;
+}
+
+.flowInput:focus {
+  outline: none;
+  border-color: var(--color-green);
+}
+
+.flowInputError {
+  border-color: var(--color-red);
+}
+
+/* Flow action buttons */
+.flowActions {
+  display: flex;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.flowSaveBtn {
+  flex: 1;
+  height: 44px;
+  background: var(--color-green);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.flowSaveBtn:active {
+  filter: brightness(0.9);
+}
+
+.flowSecondaryBtn {
+  flex: 1;
+  height: 44px;
+  background: none;
+  border: 1.5px solid var(--color-border);
+  border-radius: 8px;
+  color: var(--color-text-primary);
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.flowCancelBtn {
+  width: 100%;
+  height: 44px;
+  background: none;
+  border: 1.5px solid var(--color-border);
+  border-radius: 8px;
+  color: var(--color-text-primary);
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+}

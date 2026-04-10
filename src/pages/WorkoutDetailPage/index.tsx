@@ -1,7 +1,7 @@
 /**
  * WorkoutDetailPage — renders active, read-only, or edit mode for a workout log.
  * Mode is determined by finishedAt on load: null = active, set = read-only (edit via button).
- * Step 5a: active mode only. Read-only and edit modes added in step 5c.
+ * Step 5b: full finish flows added. Read-only and edit modes added in step 5c.
  * Reads: AuthContext (userId), UserSettingsContext (unit display), ActiveWorkoutContext (setActiveWorkoutId)
  */
 
@@ -14,14 +14,23 @@ import { useActiveWorkout } from '../../context/ActiveWorkoutContext';
 import * as WorkoutLogService from '../../services/WorkoutLogService';
 import * as WorkoutExerciseService from '../../services/WorkoutExerciseService';
 import * as WorkoutService from '../../services/WorkoutService';
+import * as ProgramService from '../../services/ProgramService';
 import * as LogExerciseService from '../../services/LogExerciseService';
 import * as LogSetService from '../../services/LogSetService';
 import * as ExerciseService from '../../services/ExerciseService';
 import ExerciseCard from './components/ExerciseCard';
 import ExerciseSearchModal from '../../components/ExerciseSearchModal';
 import Modal from '../../components/Modal';
-import type { WorkoutLog, LogExercise, LogSet, Exercise, WorkoutExercise } from '../../types';
+import type { WorkoutLog, LogExercise, LogSet, Exercise, WorkoutExercise, Program } from '../../types';
 import styles from './WorkoutDetailPage.module.css';
+
+// Finish flow step type (N2 — state machine spec locked in session 7)
+type FinishFlowStep =
+  | null
+  | 'save-prompt'
+  | 'program-picker'
+  | 'new-program-form'
+  | 'add-to-program-form';
 
 export default function WorkoutDetailPage() {
   const { id } = useParams<{ id: string }>();
@@ -30,6 +39,7 @@ export default function WorkoutDetailPage() {
   const { setActiveWorkoutId } = useActiveWorkout();
   const navigate = useNavigate();
 
+  // ── Core log state ──
   const [log, setLog] = useState<WorkoutLog | null>(null);
   const [logExercises, setLogExercises] = useState<LogExercise[]>([]);
   const [sets, setSets] = useState<Record<number, LogSet[]>>({});
@@ -38,13 +48,27 @@ export default function WorkoutDetailPage() {
   const [workoutTargets, setWorkoutTargets] = useState<Record<number, WorkoutExercise> | null>(null);
   const [loading, setLoading] = useState(true);
 
-  // Inline workout rename
+  // ── Inline workout rename ──
   const [logName, setLogName] = useState('');
   const [nameError, setNameError] = useState('');
 
-  // Modals
+  // ── Modals ──
   const [showDiscardModal, setShowDiscardModal] = useState(false);
   const [showExerciseSearch, setShowExerciseSearch] = useState(false);
+
+  // ── Quick-start finish flow state machine ──
+  const [finishFlowStep, setFinishFlowStep] = useState<FinishFlowStep>(null);
+  const [programs, setPrograms] = useState<Program[]>([]);
+  const [selectedProgramId, setSelectedProgramId] = useState<number | null>(null);
+  const [newProgramName, setNewProgramName] = useState('');
+  const [workoutNameInput, setWorkoutNameInput] = useState('');
+  const [programNameError, setProgramNameError] = useState('');
+  const [workoutInputError, setWorkoutInputError] = useState('');
+
+  // ── From-program sync modal ──
+  const [showSyncModal, setShowSyncModal] = useState(false);
+  const [syncWorkoutName, setSyncWorkoutName] = useState('');
+  const [syncWorkoutId, setSyncWorkoutId] = useState<number | null>(null);
 
   useEffect(() => {
     if (!user?.id || !id) return;
@@ -59,11 +83,9 @@ export default function WorkoutDetailPage() {
 
     if (!workoutLog) { navigate('/logs', { replace: true }); return; }
 
-    // Build exercise name lookup map
     const exMap: Record<number, Exercise> = {};
     allExercises.forEach((ex) => { exMap[ex.id!] = ex; });
 
-    // Load logExercises + all their sets concurrently
     const les = await LogExerciseService.getByWorkoutLogId(logId);
     const setsArrays = await Promise.all(les.map((le) => LogSetService.getByExerciseId(le.id!)));
     const setsMap: Record<number, LogSet[]> = {};
@@ -78,7 +100,7 @@ export default function WorkoutDetailPage() {
         targets = {};
         wes.forEach((we) => { targets![we.exerciseId] = we; });
       }
-      // If template not found (deleted): B1 edge case — treat as quick-start (targets stays null)
+      // Template not found → B1 edge case: treat as quick-start (targets stays null)
     }
 
     setLog(workoutLog);
@@ -100,7 +122,7 @@ export default function WorkoutDetailPage() {
     setNameError('');
   }
 
-  // ── Add Exercise ──
+  // ── Add / Remove Exercise ──
   async function handleExerciseSelect(exercise: Exercise) {
     if (!log?.id) return;
     const le = await LogExerciseService.add(log.id, exercise.id!);
@@ -110,50 +132,29 @@ export default function WorkoutDetailPage() {
     setShowExerciseSearch(false);
   }
 
-  // ── Remove Exercise ──
   async function handleRemoveExercise(leId: number) {
     await LogExerciseService.remove(leId);
     setLogExercises((prev) => prev.filter((le) => le.id !== leId));
-    setSets((prev) => {
-      const next = { ...prev };
-      delete next[leId];
-      return next;
-    });
+    setSets((prev) => { const next = { ...prev }; delete next[leId]; return next; });
   }
 
-  // ── Add Set ──
+  // ── Add / Update / Delete Set ──
   async function handleAddSet(leId: number) {
     const newSet = await LogSetService.add(leId);
     setSets((prev) => ({ ...prev, [leId]: [...(prev[leId] ?? []), newSet] }));
   }
 
-  // ── Update Set ──
   async function handleSetUpdate(setId: number, leId: number, weightLb: number, reps: number) {
     await LogSetService.update(setId, { weight: weightLb, reps });
     setSets((prev) => ({
       ...prev,
-      [leId]: (prev[leId] ?? []).map((s) =>
-        s.id === setId ? { ...s, weight: weightLb, reps } : s,
-      ),
+      [leId]: (prev[leId] ?? []).map((s) => s.id === setId ? { ...s, weight: weightLb, reps } : s),
     }));
   }
 
-  // ── Delete Set ──
   async function handleSetDelete(setId: number, leId: number) {
     await LogSetService.deleteSet(setId);
-    setSets((prev) => ({
-      ...prev,
-      [leId]: (prev[leId] ?? []).filter((s) => s.id !== setId),
-    }));
-  }
-
-  // ── Finish Workout ──
-  // TODO (5b): replace with full finish flow — save-to-program picker (quick-start) / sync prompt (from-program)
-  async function handleFinish() {
-    if (!log?.id) return;
-    await WorkoutLogService.finish(log.id);
-    setActiveWorkoutId(null);
-    navigate('/logs');
+    setSets((prev) => ({ ...prev, [leId]: (prev[leId] ?? []).filter((s) => s.id !== setId) }));
   }
 
   // ── Discard Workout ──
@@ -164,14 +165,109 @@ export default function WorkoutDetailPage() {
     navigate('/logs');
   }
 
+  // ── Finish Workout — entry point ──
+  async function handleFinish() {
+    if (!log?.id || !user?.id) return;
+    await WorkoutLogService.finish(log.id);
+    setActiveWorkoutId(null);
+
+    if (log.workoutId === null || workoutTargets === null) {
+      // Quick-start (or B1: deleted template) — run save-to-program flow
+      const progs = await ProgramService.getAll(user.id);
+      setPrograms(progs);
+      if (progs.length === 0) {
+        // Skip picker — go straight to new-program form
+        setFinishFlowStep('new-program-form');
+      } else {
+        setFinishFlowStep('save-prompt');
+      }
+    } else {
+      // From-program — compare exercise sets (order ignored per Decision #19)
+      const logExIds = new Set(logExercises.map((le) => le.exerciseId));
+      const templateExIds = new Set(Object.keys(workoutTargets).map(Number));
+      const changed =
+        logExIds.size !== templateExIds.size ||
+        [...logExIds].some((exId) => !templateExIds.has(exId));
+
+      if (changed) {
+        const template = await WorkoutService.getById(log.workoutId);
+        setSyncWorkoutName(template?.name ?? 'Workout');
+        setSyncWorkoutId(log.workoutId);
+        setShowSyncModal(true);
+      } else {
+        // Exercises unchanged — silent finish
+        navigate('/logs');
+      }
+    }
+  }
+
+  // ── Quick-start finish flow handlers ──
+
+  function handleSaveToProgram() {
+    // User tapped [Save to Program] on save-prompt — open picker (programs already loaded)
+    setFinishFlowStep('program-picker');
+  }
+
+  function handleSelectExistingProgram(programId: number) {
+    setSelectedProgramId(programId);
+    setWorkoutNameInput('');
+    setWorkoutInputError('');
+    setFinishFlowStep('add-to-program-form');
+  }
+
+  function handlePickerNewProgram() {
+    setNewProgramName('');
+    setWorkoutNameInput('');
+    setProgramNameError('');
+    setWorkoutInputError('');
+    setFinishFlowStep('new-program-form');
+  }
+
+  async function handleSaveNewProgram() {
+    const progName = newProgramName.trim();
+    const woName = workoutNameInput.trim();
+    let hasError = false;
+    if (!progName) { setProgramNameError("Name can't be blank"); hasError = true; }
+    if (!woName) { setWorkoutInputError("Name can't be blank"); hasError = true; }
+    if (hasError || !log?.id || !user?.id) return;
+
+    const program = await ProgramService.create(user.id, progName);
+    const workout = await WorkoutService.createFromLog(log.id, program.id!, woName, user.id);
+    await WorkoutLogService.update(log.id, { workoutId: workout.id });
+    navigate('/logs');
+  }
+
+  async function handleSaveToExistingProgram() {
+    const woName = workoutNameInput.trim();
+    if (!woName) { setWorkoutInputError("Name can't be blank"); return; }
+    if (!log?.id || !selectedProgramId || !user?.id) return;
+
+    const workout = await WorkoutService.createFromLog(log.id, selectedProgramId, woName, user.id);
+    await WorkoutLogService.update(log.id, { workoutId: workout.id });
+    navigate('/logs');
+  }
+
+  // ── From-program sync handlers ──
+
+  async function handleUpdateTemplate() {
+    if (syncWorkoutId && log?.id) {
+      await WorkoutExerciseService.syncFromLog(syncWorkoutId, log.id);
+    }
+    navigate('/logs');
+  }
+
   if (loading) return null;
   if (!log) return null;
 
-  // Step 5a: active mode only — redirect finished logs until 5c builds read-only/edit modes
-  if (log.finishedAt !== null) {
+  // Step 5c: read-only and edit modes — redirect until built
+  if (log.finishedAt !== null && finishFlowStep === null && !showSyncModal) {
     navigate('/logs', { replace: true });
     return null;
   }
+
+  // Whether the new-program-form came from the picker (affects [Back] vs [Cancel])
+  const cameFromPicker = programs.length > 0;
+  const selectedProgram = programs.find((p) => p.id === selectedProgramId);
 
   return (
     <div className={styles.page}>
@@ -213,7 +309,6 @@ export default function WorkoutDetailPage() {
         ))}
       </div>
 
-      {/* Add exercise */}
       <button className={styles.addExerciseBtn} onClick={() => setShowExerciseSearch(true)}>
         + Add Exercise
       </button>
@@ -244,6 +339,145 @@ export default function WorkoutDetailPage() {
           actions={[
             { label: 'Discard', onClick: handleConfirmDiscard, variant: 'destructive' },
             { label: 'Keep Going', onClick: () => setShowDiscardModal(false), variant: 'secondary' },
+          ]}
+        />
+      )}
+
+      {/* ── Quick-start finish flow ── */}
+
+      {/* Step 1: save-prompt */}
+      {finishFlowStep === 'save-prompt' && (
+        <Modal
+          title="Save to a program?"
+          actions={[
+            { label: 'Save to Program', onClick: handleSaveToProgram, variant: 'primary' },
+            { label: 'Skip', onClick: () => navigate('/logs'), variant: 'secondary' },
+          ]}
+        />
+      )}
+
+      {/* Step 2: program-picker */}
+      {finishFlowStep === 'program-picker' && (
+        <div className={styles.flowBackdrop}>
+          <div className={styles.flowCard}>
+            <h2 className={styles.flowTitle}>Choose a Program</h2>
+
+            <ul className={styles.programList}>
+              <li>
+                <button className={styles.programRow} onClick={handlePickerNewProgram}>
+                  <span className={styles.newProgramLabel}>＋ New Program</span>
+                </button>
+              </li>
+              {programs.map((p) => (
+                <li key={p.id}>
+                  <button
+                    className={styles.programRow}
+                    onClick={() => handleSelectExistingProgram(p.id!)}
+                  >
+                    {p.name}
+                  </button>
+                </li>
+              ))}
+            </ul>
+
+            <button className={styles.flowCancelBtn} onClick={() => navigate('/logs')}>
+              Cancel
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Step 3a: new-program-form (from picker or zero-programs path) */}
+      {finishFlowStep === 'new-program-form' && (
+        <div className={styles.flowBackdrop}>
+          <div className={styles.flowCard}>
+            <h2 className={styles.flowTitle}>New Program</h2>
+
+            <div className={styles.flowField}>
+              <label className={styles.flowLabel}>Program name</label>
+              <input
+                className={`${styles.flowInput} ${programNameError ? styles.flowInputError : ''}`}
+                type="text"
+                value={newProgramName}
+                onChange={(e) => { setNewProgramName(e.target.value); setProgramNameError(''); }}
+                autoFocus
+              />
+              {programNameError && <span className={styles.fieldError}>{programNameError}</span>}
+            </div>
+
+            <div className={styles.flowField}>
+              <label className={styles.flowLabel}>Workout name</label>
+              <input
+                className={`${styles.flowInput} ${workoutInputError ? styles.flowInputError : ''}`}
+                type="text"
+                value={workoutNameInput}
+                onChange={(e) => { setWorkoutNameInput(e.target.value); setWorkoutInputError(''); }}
+              />
+              {workoutInputError && <span className={styles.fieldError}>{workoutInputError}</span>}
+            </div>
+
+            <div className={styles.flowActions}>
+              <button className={styles.flowSaveBtn} onClick={handleSaveNewProgram}>
+                Save
+              </button>
+              {cameFromPicker ? (
+                <button
+                  className={styles.flowSecondaryBtn}
+                  onClick={() => setFinishFlowStep('program-picker')}
+                >
+                  Back
+                </button>
+              ) : (
+                <button className={styles.flowSecondaryBtn} onClick={() => navigate('/logs')}>
+                  Cancel
+                </button>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Step 3b: add-to-program-form (existing program selected) */}
+      {finishFlowStep === 'add-to-program-form' && (
+        <div className={styles.flowBackdrop}>
+          <div className={styles.flowCard}>
+            <h2 className={styles.flowTitle}>{selectedProgram?.name ?? 'Program'}</h2>
+
+            <div className={styles.flowField}>
+              <label className={styles.flowLabel}>Workout name</label>
+              <input
+                className={`${styles.flowInput} ${workoutInputError ? styles.flowInputError : ''}`}
+                type="text"
+                value={workoutNameInput}
+                onChange={(e) => { setWorkoutNameInput(e.target.value); setWorkoutInputError(''); }}
+                autoFocus
+              />
+              {workoutInputError && <span className={styles.fieldError}>{workoutInputError}</span>}
+            </div>
+
+            <div className={styles.flowActions}>
+              <button className={styles.flowSaveBtn} onClick={handleSaveToExistingProgram}>
+                Save
+              </button>
+              <button
+                className={styles.flowSecondaryBtn}
+                onClick={() => setFinishFlowStep('program-picker')}
+              >
+                Back
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ── From-program sync modal ── */}
+      {showSyncModal && (
+        <Modal
+          title={`Update ${syncWorkoutName}?`}
+          body="You added or removed exercises. Update the template to match this session?"
+          actions={[
+            { label: 'Update Template', onClick: handleUpdateTemplate, variant: 'primary' },
+            { label: 'Keep Original', onClick: () => navigate('/logs'), variant: 'secondary' },
           ]}
         />
       )}

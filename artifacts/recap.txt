@@ -100,7 +100,7 @@ Recommended build order:
 3. Core shared — BottomNav, Modal, ExerciseSearchModal, WorkoutFAB, UserSettingsContext, ActiveWorkoutContext ✓ DONE
 4. Programs tab — ProgramsPage, ProgramDetailPage, WorkoutTemplatePage (inc. Edit Targets Modal) ✓ DONE
 5a. Logs: list + active workout — LogsPage, WorkoutDetailPage Active mode, ExerciseCard, SetRow ✓ DONE
-5b. Logs: finish flows — quick-start 4-step state machine, from-program template sync
+5b. Logs: finish flows — quick-start 4-step state machine, from-program template sync ✓ DONE
 5c. Logs: read-only + edit — WorkoutDetailPage Read-only mode, Edit mode, delete flow
 6. Profile + Statistics — ProfilePage (functional), Statistics placeholder ("Coming soon")
 
@@ -172,6 +172,9 @@ UI DESIGN DECISIONS LOCKED (UIdesign.txt session 4)
 SESSION HISTORY
 ----------------
 Most recent at top. Never delete entries.
+
+  Session 11 — 2026-04-09
+    - Step 5b complete: full finish flow added to WorkoutDetailPage — quick-start 4-step state machine (save-prompt → program-picker → new-program-form / add-to-program-form), from-program sync modal (Decision #19); B1 edge case handled; build passes clean
 
   Session 10 — 2026-04-09
     - Step 5a complete: LogExerciseService, LogSetService (incl. getPreviousData cross-session lookup); WorkoutLogService extended (getById, finish, update, deleteLog); LogsPage (date-grouped history, In Progress section); WorkoutDetailPage active mode; ExerciseCard; SetRow; --color-border CSS variable added to index.css
