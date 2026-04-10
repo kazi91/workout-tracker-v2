@@ -20,8 +20,8 @@ Stack:
 
 CURRENT STATE
 --------------
-Phase: Blueprint complete. UI design standards polished. No code written yet. Ready to build.
-All decisions locked (#1–23). All design questions locked (OD1–OD5). All must-fix items specced.
+Phase: Build in progress — Step 1 complete.
+Step 1 committed: Vite + React 18 + TypeScript scaffold, Dexie v4 schema (8 tables), 29 seed exercises, BrowserRouter routing stubs for all pages, index.css with dark theme CSS variables, Prettier config. Build passes clean.
 UIdesign.txt expanded with: color system, alignment standards, button design standards, light mode palette.
 Green accent locked: dark mode #3BAF6A / light mode #2D9F58.
 
@@ -95,10 +95,10 @@ NEXT STEPS (in order)
 Planning is complete. All decisions locked. Ready to build.
 
 Recommended build order:
-1. Project setup — Vite + React + TypeScript, folder structure, .gitignore (done), Dexie schema, ESLint + Prettier config (extensions installed: eslint, prettier, gitlens, live server, markdown, mermaid)
-2. Auth — SignupPage (with unit preference step), LoginPage, AuthContext, localStorage session
-3. Core shared — BottomNav, Modal, ExerciseSearchModal, WorkoutFAB, UserSettingsContext, ActiveWorkoutContext
-4. Programs tab — ProgramsPage, ProgramDetailPage, WorkoutTemplatePage (inc. Edit Targets Modal)
+1. Project setup — Vite + React + TypeScript, folder structure, .gitignore (done), Dexie schema, ESLint + Prettier config (extensions installed: eslint, prettier, gitlens, live server, markdown, mermaid) ✓ DONE
+2. Auth — SignupPage (with unit preference step), LoginPage, AuthContext, localStorage session ✓ DONE
+3. Core shared — BottomNav, Modal, ExerciseSearchModal, WorkoutFAB, UserSettingsContext, ActiveWorkoutContext ✓ DONE
+4. Programs tab — ProgramsPage, ProgramDetailPage, WorkoutTemplatePage (inc. Edit Targets Modal) ✓ DONE
 5a. Logs: list + active workout — LogsPage, WorkoutDetailPage Active mode, ExerciseCard, SetRow
 5b. Logs: finish flows — quick-start 4-step state machine, from-program template sync
 5c. Logs: read-only + edit — WorkoutDetailPage Read-only mode, Edit mode, delete flow
@@ -172,6 +172,16 @@ UI DESIGN DECISIONS LOCKED (UIdesign.txt session 4)
 SESSION HISTORY
 ----------------
 Most recent at top. Never delete entries.
+
+  Session 9 — 2026-04-09
+    - Step 4 complete: ProgramService, WorkoutService, WorkoutExerciseService; ProgramsPage, ProgramDetailPage, WorkoutTemplatePage (inc. Edit Targets Modal inline); build passes clean
+
+  Session 8 — 2026-04-09
+    - Step 1 complete: Vite scaffold, deps installed (dexie, react-router-dom, lucide-react, prettier), folder structure, types/index.ts, db/db.ts, db/seed.ts (29 exercises), index.css (dark theme), main.tsx, App.tsx (BrowserRouter + all routes), .prettierrc
+    - Coding standards added to CLAUDE.md; retroactive comments applied to Step 1 files
+    - Step 2 complete: AuthService, AuthContext (loading state — D7), AuthGuard, LoginPage, SignupPage (unit toggle), App.tsx wired with AuthProvider + AuthGuard
+    - Step 3 complete: UserSettingsContext (reads from AuthContext — N3), ActiveWorkoutContext, units.ts helpers, ExerciseService, WorkoutLogService (partial — getActive + create), BottomNav, Modal, ExerciseSearchModal, WorkoutFAB (full visibility logic — N1 resolved), App.tsx wired with all 3 contexts
+    - Build passes clean; committed
 
   Session 7 — 2026-04-09
     - Pre-build decisions locked: D4 (BrowserRouter), D7 (sequential context init), N3 (UserSettingsContext reads from AuthContext), N4 (raw inches + label, ft+in post-MVP)

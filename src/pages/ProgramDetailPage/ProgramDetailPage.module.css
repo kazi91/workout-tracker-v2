@@ -1,0 +1,184 @@
+/* ── Layout ── */
+.page {
+  padding: 16px 16px 48px;
+}
+
+/* ── Top bar ── */
+.topBar {
+  display: flex;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.backBtn {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background: none;
+  border: none;
+  color: var(--color-green);
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 0;
+}
+
+.backBtn:active {
+  opacity: 0.7;
+}
+
+/* ── Program name (inline rename) ── */
+.nameWrapper {
+  margin-bottom: 24px;
+  text-align: center;
+}
+
+.nameInput {
+  width: 100%;
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--color-text-primary);
+  background: transparent;
+  border: none;
+  border-bottom: 1.5px solid transparent;
+  text-align: center;
+  padding: 4px 0;
+  box-sizing: border-box;
+}
+
+.nameInput:focus {
+  outline: none;
+  border-bottom-color: var(--color-green);
+}
+
+.nameInputError {
+  border-bottom-color: var(--color-red);
+}
+
+/* ── Workout list ── */
+.list {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* ── Workout card ── */
+.card {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  width: 100%;
+  padding: 16px;
+  background: var(--color-surface-1);
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  text-align: left;
+  gap: 4px;
+}
+
+.card:active {
+  background: var(--color-surface-2);
+}
+
+.cardName {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--color-text-primary);
+}
+
+.cardMeta {
+  font-size: 13px;
+  color: var(--color-text-label);
+}
+
+/* ── Empty hint ── */
+.emptyHint {
+  font-size: 13px;
+  color: var(--color-text-secondary);
+  text-align: center;
+  padding: 24px 0;
+  margin: 0 0 16px;
+  line-height: 1.4;
+}
+
+/* ── Inline add workout form ── */
+.addWorkoutForm {
+  margin-bottom: 8px;
+}
+
+.input {
+  width: 100%;
+  height: 44px;
+  padding: 0 12px;
+  font-size: 16px;
+  background: var(--color-surface-1);
+  border: 1.5px solid var(--color-border);
+  border-radius: 8px;
+  color: var(--color-text-primary);
+  box-sizing: border-box;
+}
+
+.input:focus {
+  outline: none;
+  border-color: var(--color-green);
+}
+
+.inputError {
+  border-color: var(--color-red);
+}
+
+/* ── Actions ── */
+.actions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 16px;
+}
+
+.addWorkoutBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  height: 44px;
+  width: 100%;
+  background: var(--color-green);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.addWorkoutBtn:active {
+  filter: brightness(0.9);
+}
+
+.deleteBtn {
+  height: 44px;
+  width: 100%;
+  background: none;
+  border: 1.5px solid var(--color-border);
+  border-radius: 8px;
+  color: var(--color-red);
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.deleteBtn:active {
+  opacity: 0.7;
+}
+
+/* ── Shared field error ── */
+.fieldError {
+  display: block;
+  margin-top: 4px;
+  font-size: 12px;
+  color: var(--color-red);
+}
