@@ -49,13 +49,19 @@ Last updated: 2026-04-10 (session 15 — Phase 3 Build complete, UI polish pass 
 - P5: Charting library — decide before Statistics build in v2
 - D5: ErrorContext — console.error sufficient for demo; add post-demo
 - D8: Unit tests — Vitest + RTL post-demo
-- All F-series items (F1–F6) are future features — see Issue Tracker
+- F1–F6, F8–F10: future features — see Issue Tracker (F7 resolved this session)
+- OD6: CSS button token standards — brainstorm session pending before enforcing
+- **Post-demo:** delete demo-seed.js and PRESENTATION_AID.md before next commit (see CLAUDE.md Post-Demo Cleanup)
 
 Do not re-open planning decisions unless the user explicitly raises them.
 
 ---
 
 ## Recent Sessions (most recent first)
+
+**Session 18 — 2026-04-10:** Target display "@ x lbs" → "| top set: x lbs" (F7 resolved). WorkoutTemplatePage doneBtn + deleteBtn flex: 1 fix. Issue Tracker: F7 resolved, F8/F9/F10 logged. OD6 added to UIdesign.txt (CSS button token standards). demo-seed.js created (not committed).
+
+**Session 17 — 2026-04-10:** FAB moved from fixed floating to inline BottomNav center slot — eliminates all page overlap. BottomNav refactored LEFT_TABS + fabSlot + RIGHT_TABS. WorkoutFAB always renders (no empty center slot). App.tsx no longer owns FAB. ProfilePage + StatisticsPage top padding fixed. Post-Demo Cleanup section added to CLAUDE.md. Committed: abdc304.
 
 **Session 16 — 2026-04-10:** Pre-demo code review — all critical flows verified clean, no blockers. False positive documented in Issue Tracker: ExerciseSearchModal modal closure after custom exercise creation works correctly via parent's onSelect handler (do not re-flag).
 

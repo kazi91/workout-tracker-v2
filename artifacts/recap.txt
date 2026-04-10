@@ -173,6 +173,24 @@ SESSION HISTORY
 ----------------
 Most recent at top. Never delete entries.
 
+  Session 18 — 2026-04-10
+    - Target weight display: "@ x lbs" → "| top set: x lbs" in ExerciseCard and WorkoutTemplatePage (F7 resolved)
+    - WorkoutTemplatePage: doneBtn + deleteBtn set to flex: 1 — equal width button pair fix
+    - Issue Tracker: F7 resolved, F8 logged (bodyweight + added weight, schema change), F9 logged (rearrange exercises), F10 logged (redesign WorkoutTemplatePage action area)
+    - UIdesign.txt: OD6 added (CSS button token standards — brainstorm pending)
+    - demo-seed.js created at project root (not committed — in .gitignore); browser console script to seed IndexedDB for demo recording
+
+  Session 17 — 2026-04-10
+    - FAB moved from position:fixed floating element into BottomNav center flex slot — eliminates overlap on all pages
+    - BottomNav refactored: LEFT_TABS + RIGHT_TABS split around .fabSlot div; WorkoutFAB imported and rendered inside BottomNav
+    - WorkoutFAB always renders button (no null after auth checks) — keeps nav center slot filled; non-/logs tap navigates to /logs
+    - WorkoutFAB.module.css: removed fixed positioning; inline 52px circle
+    - App.tsx: WorkoutFAB removed from JSX (now owned by BottomNav)
+    - ProfilePage + StatisticsPage: top padding 16px → 32px (title alignment)
+    - CLAUDE.md: Post-Demo Cleanup section added (demo-seed.js + PRESENTATION_AID.md must be deleted before next commit)
+    - .gitignore: demo-seed.js added
+    - Committed: abdc304
+
   Session 16 — 2026-04-10
     - Pre-demo code review: full static analysis of all services, contexts, pages, and shared components
     - All critical flows verified clean: auth, quick-start, from-program start, finish flows (all 4 state machine paths + skip + from-program sync), read-only/edit modes, B1 edge case, Programs CRUD with cascades, Edit Targets Modal, Profile auto-save and unit toggle, seed deduplication, FAB hidden logic

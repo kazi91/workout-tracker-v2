@@ -44,8 +44,8 @@ export default function ExerciseCard({
   const targetLabel =
     target !== null
       ? target.targetWeight === 0
-        ? `${target.targetSets} × ${target.targetReps} @ bodyweight`
-        : `${target.targetSets} × ${target.targetReps} @ ${displayWeight(target.targetWeight)} ${weightUnit}`
+        ? `${target.targetSets} × ${target.targetReps} | top set: bodyweight`
+        : `${target.targetSets} × ${target.targetReps} | top set: ${displayWeight(target.targetWeight)} ${weightUnit}`
       : null;
 
   return (

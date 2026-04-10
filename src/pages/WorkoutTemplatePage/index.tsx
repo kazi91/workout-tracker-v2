@@ -191,7 +191,7 @@ export default function WorkoutTemplatePage() {
     const weight = displayWeight(we.targetWeight);
     const weightStr =
       we.targetWeight === 0 ? 'bodyweight' : `${weight} ${weightUnit}`;
-    return `${we.targetSets} sets × ${we.targetReps} reps @ ${weightStr}`;
+    return `${we.targetSets} sets × ${we.targetReps} reps | top set: ${weightStr}`;
   }
 
   const editingWE = editingTargetId !== null

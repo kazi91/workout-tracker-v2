@@ -168,6 +168,7 @@
 }
 
 .doneBtn {
+  flex: 1;
   background: var(--color-green);
   border: none;
   color: #fff;
@@ -188,6 +189,7 @@
 }
 
 .deleteBtn {
+  flex: 1;
   background: var(--color-red);
   border: none;
   color: #fff;

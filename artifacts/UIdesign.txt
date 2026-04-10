@@ -615,6 +615,15 @@ Tagged by implementation status:
 --------------------------
 Resolve before building the affected component.
 
+  OD6 — CSS button standards / design token system
+        Status: PENDING — needs brainstorm session
+        Task: Review section 8 (Button Design Standards) and decide how to encode these
+        rules in CSS — e.g. CSS custom properties in :root (--btn-height, --btn-font-size,
+        etc.), shared utility classes in index.css, or another approach. Goal: future
+        buttons reference variables instead of hardcoded values so consistency is
+        automatic, not manual.
+        Block: do not enforce until decision is locked here.
+
   OD1 — Accent color
         Status: LOCKED — dark mode: #3BAF6A (Leafy Mid) / light mode: #2D9F58 (Deeper Leafy)
         Rationale: brighter green has better contrast on dark surfaces; darker green has better contrast on white
