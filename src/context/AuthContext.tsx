@@ -22,6 +22,8 @@ interface AuthContextValue {
     unitPreference: 'imperial' | 'metric',
   ) => Promise<User>;
   logout: () => void;
+  /** Merges updates into the current user object in memory (call after UserService.updateProfile). */
+  updateUser: (updates: Partial<User>) => void;
 }
 
 const AuthContext = createContext<AuthContextValue | null>(null);
@@ -64,8 +66,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setUser(null);
   }
 
+  function updateUser(updates: Partial<User>): void {
+    setUser((prev) => (prev ? { ...prev, ...updates } : prev));
+  }
+
   return (
-    <AuthContext.Provider value={{ user, loading, login, signup, logout }}>
+    <AuthContext.Provider value={{ user, loading, login, signup, logout, updateUser }}>
       {children}
     </AuthContext.Provider>
   );

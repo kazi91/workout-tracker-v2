@@ -20,7 +20,7 @@ Stack:
 
 CURRENT STATE
 --------------
-Phase: Build in progress — Step 1 complete.
+Phase: Build complete — all MVP steps done.
 Step 1 committed: Vite + React 18 + TypeScript scaffold, Dexie v4 schema (8 tables), 29 seed exercises, BrowserRouter routing stubs for all pages, index.css with dark theme CSS variables, Prettier config. Build passes clean.
 UIdesign.txt expanded with: color system, alignment standards, button design standards, light mode palette.
 Green accent locked: dark mode #3BAF6A / light mode #2D9F58.
@@ -101,8 +101,8 @@ Recommended build order:
 4. Programs tab — ProgramsPage, ProgramDetailPage, WorkoutTemplatePage (inc. Edit Targets Modal) ✓ DONE
 5a. Logs: list + active workout — LogsPage, WorkoutDetailPage Active mode, ExerciseCard, SetRow ✓ DONE
 5b. Logs: finish flows — quick-start 4-step state machine, from-program template sync ✓ DONE
-5c. Logs: read-only + edit — WorkoutDetailPage Read-only mode, Edit mode, delete flow
-6. Profile + Statistics — ProfilePage (functional), Statistics placeholder ("Coming soon")
+5c. Logs: read-only + edit — WorkoutDetailPage Read-only mode, Edit mode, delete flow ✓ DONE
+6. Profile + Statistics — ProfilePage (functional), Statistics placeholder ("Coming soon") ✓ DONE
 
 ---
 
@@ -172,6 +172,12 @@ UI DESIGN DECISIONS LOCKED (UIdesign.txt session 4)
 SESSION HISTORY
 ----------------
 Most recent at top. Never delete entries.
+
+  Session 13 — 2026-04-09
+    - Step 6 complete: UserService (getProfile, updateProfile); AuthContext extended with updateUser(); ProfilePage (name/height/weight auto-save on blur, unit toggle saves immediately, logout); StatisticsPage "Coming soon" placeholder; build passes clean
+
+  Session 12 — 2026-04-09
+    - Step 5c complete: WorkoutDetailPage read-only and edit modes; mode derived from finishedAt on load; edit mode has "Save Edits" footer and "Discard changes?" modal on Back; "Delete Workout" button with confirm modal; ExerciseCard + SetRow extended with readOnly prop; build passes clean
 
   Session 11 — 2026-04-09
     - Step 5b complete: full finish flow added to WorkoutDetailPage — quick-start 4-step state machine (save-prompt → program-picker → new-program-form / add-to-program-form), from-program sync modal (Decision #19); B1 edge case handled; build passes clean

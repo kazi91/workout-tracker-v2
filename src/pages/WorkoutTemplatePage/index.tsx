@@ -251,20 +251,28 @@ export default function WorkoutTemplatePage() {
         ))}
       </ul>
 
-      {/* Add exercise ghost button */}
-      <button className={styles.addExerciseBtn} onClick={() => setShowExerciseSearch(true)}>
-        + Add Exercise
-      </button>
-
-      {/* Start Workout */}
-      {startError && <p className={styles.startError}>{startError}</p>}
-      <div className={styles.footerActions}>
-        <button className={styles.startBtn} onClick={handleStartWorkout}>
-          Start Workout
-        </button>
-        <button className={styles.deleteBtn} onClick={() => setShowDeleteModal(true)}>
-          Delete Workout
-        </button>
+      {/* Action buttons */}
+      <div className={styles.actionArea}>
+        <div className={styles.actionRow}>
+          <button className={styles.addBtn} onClick={() => setShowExerciseSearch(true)}>
+            + Add
+          </button>
+        </div>
+        <div className={styles.actionAreaDivider} />
+        <div className={styles.actionRow}>
+          <button className={styles.startBtn} onClick={handleStartWorkout}>
+            Start
+          </button>
+        </div>
+        {startError && <p className={styles.startError}>{startError}</p>}
+        <div className={styles.actionRow}>
+          <button className={styles.doneBtn} onClick={() => navigate('/programs')}>
+            Done
+          </button>
+          <button className={styles.deleteBtn} onClick={() => setShowDeleteModal(true)}>
+            Delete
+          </button>
+        </div>
       </div>
 
       {/* Exercise search modal */}
@@ -287,6 +295,7 @@ export default function WorkoutTemplatePage() {
                 className={`${styles.targetInput} ${targetErrors.sets ? styles.targetInputError : ''}`}
                 type="number"
                 inputMode="numeric"
+                min="1"
                 value={targetSets}
                 onChange={(e) => { setTargetSets(e.target.value); setTargetErrors((p) => ({ ...p, sets: undefined })); }}
               />
@@ -299,6 +308,7 @@ export default function WorkoutTemplatePage() {
                 className={`${styles.targetInput} ${targetErrors.reps ? styles.targetInputError : ''}`}
                 type="number"
                 inputMode="numeric"
+                min="1"
                 value={targetReps}
                 onChange={(e) => { setTargetReps(e.target.value); setTargetErrors((p) => ({ ...p, reps: undefined })); }}
               />
@@ -311,6 +321,7 @@ export default function WorkoutTemplatePage() {
                 className={`${styles.targetInput} ${targetErrors.weight ? styles.targetInputError : ''}`}
                 type="number"
                 inputMode="decimal"
+                min="0"
                 value={targetWeight}
                 onChange={(e) => { setTargetWeight(e.target.value); setTargetErrors((p) => ({ ...p, weight: undefined })); }}
               />

@@ -1,10 +1,11 @@
 /**
- * ExerciseCard — renders one exercise within an active workout.
+ * ExerciseCard — renders one exercise within an active or edit workout.
  * Header row: exercise name + optional target (shown only for from-program logs).
  * Column headers: Best | [unit] | reps (static labels above first set).
  * Set rows: one SetRow per logSet.
  * "+ Add Set" button: full-width green fill below set rows.
  * Remove button: removes this exercise from the log.
+ * readOnly prop: hides Remove/Add Set buttons and renders SetRow in read-only text mode.
  */
 
 import SetRow from './SetRow';
@@ -19,6 +20,8 @@ interface ExerciseCardProps {
   target: WorkoutExercise | null;
   weightUnit: string;
   displayWeight: (lb: number) => number;
+  /** When true: hides Remove/Add Set controls; SetRows render as static text. */
+  readOnly?: boolean;
   onAddSet: () => void;
   onRemoveExercise: () => void;
   onSetUpdate: (setId: number, weightLb: number, reps: number) => void;
@@ -31,6 +34,7 @@ export default function ExerciseCard({
   target,
   weightUnit,
   displayWeight,
+  readOnly = false,
   onAddSet,
   onRemoveExercise,
   onSetUpdate,
@@ -52,9 +56,11 @@ export default function ExerciseCard({
           {targetLabel && (
             <span className={styles.target}>Target: {targetLabel}</span>
           )}
-          <button className={styles.removeBtn} onClick={onRemoveExercise}>
-            Remove
-          </button>
+          {!readOnly && (
+            <button className={styles.removeBtn} onClick={onRemoveExercise}>
+              Remove
+            </button>
+          )}
         </div>
       </div>
 
@@ -77,15 +83,18 @@ export default function ExerciseCard({
           setIndex={i + 1}
           weightUnit={weightUnit}
           displayWeight={displayWeight}
+          readOnly={readOnly}
           onUpdate={(setId, weightLb, reps) => onSetUpdate(setId, weightLb, reps)}
           onDelete={(setId) => onSetDelete(setId)}
         />
       ))}
 
-      {/* Add Set */}
-      <button className={styles.addSetBtn} onClick={onAddSet}>
-        + Add Set
-      </button>
+      {/* Add Set — hidden in read-only mode */}
+      {!readOnly && (
+        <button className={styles.addSetBtn} onClick={onAddSet}>
+          + Add Set
+        </button>
+      )}
     </div>
   );
 }

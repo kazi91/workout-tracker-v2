@@ -125,22 +125,75 @@
   color: var(--color-green);
 }
 
-/* ── Add Exercise ghost button ── */
-.addExerciseBtn {
-  display: block;
-  width: 100%;
+/* ── Action buttons area ── */
+.actionArea {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.actionAreaDivider {
+  height: 16px;
+}
+
+.actionRow {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+}
+
+/* Shared button base — auto-width, consistent padding */
+.addBtn,
+.doneBtn,
+.startBtn,
+.deleteBtn {
   height: 44px;
-  background: none;
-  border: none;
-  color: var(--color-green);
+  padding: 0 24px;
+  border-radius: 8px;
   font-size: 15px;
   font-weight: 600;
   cursor: pointer;
-  text-align: center;
-  margin-bottom: 16px;
 }
 
-.addExerciseBtn:active {
+.addBtn {
+  background: none;
+  border: none;
+  color: var(--color-green);
+}
+
+.addBtn:active {
+  opacity: 0.7;
+}
+
+.doneBtn {
+  background: var(--color-green);
+  border: none;
+  color: #fff;
+}
+
+.doneBtn:active {
+  filter: brightness(0.9);
+}
+
+.startBtn {
+  background: var(--color-green);
+  color: #fff;
+  border: none;
+}
+
+.startBtn:active {
+  filter: brightness(0.9);
+}
+
+.deleteBtn {
+  background: var(--color-red);
+  border: none;
+  color: #fff;
+}
+
+.deleteBtn:active {
   opacity: 0.7;
 }
 
@@ -149,46 +202,7 @@
   font-size: 13px;
   color: var(--color-red);
   text-align: center;
-  margin: 0 0 8px;
-}
-
-/* ── Footer actions ── */
-.footerActions {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.startBtn {
-  height: 44px;
-  width: 100%;
-  background: var(--color-green);
-  color: #fff;
-  border: none;
-  border-radius: 8px;
-  font-size: 15px;
-  font-weight: 600;
-  cursor: pointer;
-}
-
-.startBtn:active {
-  filter: brightness(0.9);
-}
-
-.deleteBtn {
-  height: 44px;
-  width: 100%;
-  background: none;
-  border: 1.5px solid var(--color-border);
-  border-radius: 8px;
-  color: var(--color-red);
-  font-size: 15px;
-  font-weight: 600;
-  cursor: pointer;
-}
-
-.deleteBtn:active {
-  opacity: 0.7;
+  margin: 0;
 }
 
 /* ── Edit Targets Modal ── */

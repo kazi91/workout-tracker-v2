@@ -4,6 +4,7 @@
  * Auto-saves on blur: validates inputs, converts kg → lb if metric, calls onUpdate.
  * Best column shows previous session data in the user's preferred unit (converted from stored lb).
  * Invalid or blank inputs show inline "Enter a valid number" — field stays editable.
+ * readOnly prop: renders static text spans instead of inputs; used in WorkoutDetailPage read-only mode.
  */
 
 import { useState } from 'react';
@@ -17,6 +18,7 @@ interface SetRowProps {
   setIndex: number; // 1-based display number
   weightUnit: string;
   displayWeight: (lb: number) => number;
+  readOnly?: boolean;
   onUpdate: (setId: number, weightLb: number, reps: number) => void;
   onDelete: (setId: number) => void;
 }
@@ -26,6 +28,7 @@ export default function SetRow({
   setIndex,
   weightUnit,
   displayWeight,
+  readOnly = false,
   onUpdate,
   onDelete,
 }: SetRowProps) {
@@ -67,6 +70,20 @@ export default function SetRow({
     onUpdate(set.id!, weight, num);
   }
 
+  if (readOnly) {
+    return (
+      <div className={styles.row}>
+        <span className={styles.setNum}>{setIndex}</span>
+        <span className={styles.best}>{bestLabel}</span>
+        <span className={styles.readonlyVal}>
+          {set.weight === 0 ? '—' : `${Math.round(displayWeight(set.weight) * 10) / 10}`}
+        </span>
+        <span className={styles.readonlyVal}>{set.reps === 0 ? '—' : set.reps}</span>
+        <span /> {/* spacer for delete column */}
+      </div>
+    );
+  }
+
   return (
     <div className={styles.row}>
       <span className={styles.setNum}>{setIndex}</span>
@@ -78,6 +95,7 @@ export default function SetRow({
           className={`${styles.input} ${weightError ? styles.inputError : ''}`}
           type="number"
           inputMode="decimal"
+          min="0"
           value={weightStr}
           onChange={(e) => { setWeightStr(e.target.value); setWeightError(false); }}
           onBlur={handleWeightBlur}
@@ -91,6 +109,7 @@ export default function SetRow({
           className={`${styles.input} ${repsError ? styles.inputError : ''}`}
           type="number"
           inputMode="numeric"
+          min="1"
           value={repsStr}
           onChange={(e) => { setRepsStr(e.target.value); setRepsError(false); }}
           onBlur={handleRepsBlur}

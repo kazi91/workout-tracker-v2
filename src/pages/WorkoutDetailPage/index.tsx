@@ -1,7 +1,8 @@
 /**
  * WorkoutDetailPage — renders active, read-only, or edit mode for a workout log.
  * Mode is determined by finishedAt on load: null = active, set = read-only (edit via button).
- * Step 5b: full finish flows added. Read-only and edit modes added in step 5c.
+ * Edit mode is a local state transition — never entered on load.
+ * In edit mode, changes auto-save to Dexie on blur; "Discard changes?" modal prevents accidental exit.
  * Reads: AuthContext (userId), UserSettingsContext (unit display), ActiveWorkoutContext (setActiveWorkoutId)
  */
 
@@ -48,12 +49,20 @@ export default function WorkoutDetailPage() {
   const [workoutTargets, setWorkoutTargets] = useState<Record<number, WorkoutExercise> | null>(null);
   const [loading, setLoading] = useState(true);
 
+  // ── Mode (Decision #21) ──
+  // Derived from finishedAt on load; edit is a local transition only, never entered on load.
+  const [mode, setMode] = useState<'active' | 'readonly' | 'edit'>('active');
+  // True when any change occurs in edit mode — triggers "Discard changes?" modal on Back.
+  const [unsavedChanges, setUnsavedChanges] = useState(false);
+
   // ── Inline workout rename ──
   const [logName, setLogName] = useState('');
   const [nameError, setNameError] = useState('');
 
   // ── Modals ──
   const [showDiscardModal, setShowDiscardModal] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [showEditDiscardModal, setShowEditDiscardModal] = useState(false);
   const [showExerciseSearch, setShowExerciseSearch] = useState(false);
 
   // ── Quick-start finish flow state machine ──
@@ -109,6 +118,7 @@ export default function WorkoutDetailPage() {
     setSets(setsMap);
     setExerciseMap(exMap);
     setWorkoutTargets(targets);
+    setMode(workoutLog.finishedAt !== null ? 'readonly' : 'active');
     setLoading(false);
   }
 
@@ -125,6 +135,7 @@ export default function WorkoutDetailPage() {
   // ── Add / Remove Exercise ──
   async function handleExerciseSelect(exercise: Exercise) {
     if (!log?.id) return;
+    if (mode === 'edit') setUnsavedChanges(true);
     const le = await LogExerciseService.add(log.id, exercise.id!);
     setLogExercises((prev) => [...prev, le]);
     setSets((prev) => ({ ...prev, [le.id!]: [] }));
@@ -133,6 +144,7 @@ export default function WorkoutDetailPage() {
   }
 
   async function handleRemoveExercise(leId: number) {
+    if (mode === 'edit') setUnsavedChanges(true);
     await LogExerciseService.remove(leId);
     setLogExercises((prev) => prev.filter((le) => le.id !== leId));
     setSets((prev) => { const next = { ...prev }; delete next[leId]; return next; });
@@ -140,11 +152,13 @@ export default function WorkoutDetailPage() {
 
   // ── Add / Update / Delete Set ──
   async function handleAddSet(leId: number) {
+    if (mode === 'edit') setUnsavedChanges(true);
     const newSet = await LogSetService.add(leId);
     setSets((prev) => ({ ...prev, [leId]: [...(prev[leId] ?? []), newSet] }));
   }
 
   async function handleSetUpdate(setId: number, leId: number, weightLb: number, reps: number) {
+    if (mode === 'edit') setUnsavedChanges(true);
     await LogSetService.update(setId, { weight: weightLb, reps });
     setSets((prev) => ({
       ...prev,
@@ -153,11 +167,46 @@ export default function WorkoutDetailPage() {
   }
 
   async function handleSetDelete(setId: number, leId: number) {
+    if (mode === 'edit') setUnsavedChanges(true);
     await LogSetService.deleteSet(setId);
     setSets((prev) => ({ ...prev, [leId]: (prev[leId] ?? []).filter((s) => s.id !== setId) }));
   }
 
-  // ── Discard Workout ──
+  // ── Back button — mode-aware ──
+  function handleBack() {
+    if (mode === 'edit') {
+      if (unsavedChanges) {
+        setShowEditDiscardModal(true);
+      } else {
+        setMode('readonly');
+      }
+    } else {
+      navigate(-1);
+    }
+  }
+
+  // ── Edit mode: Save Edits / Discard changes ──
+  function handleSaveEdits() {
+    // Changes are already persisted (auto-saved on blur); just commit the mode transition.
+    setMode('readonly');
+    setUnsavedChanges(false);
+  }
+
+  function handleDiscardEditChanges() {
+    // Exit edit mode without applying any in-progress (unblurred) changes.
+    setShowEditDiscardModal(false);
+    setMode('readonly');
+    setUnsavedChanges(false);
+  }
+
+  // ── Delete Workout (read-only mode) ──
+  async function handleDeleteWorkout() {
+    if (!log?.id) return;
+    await WorkoutLogService.deleteLog(log.id);
+    navigate('/logs');
+  }
+
+  // ── Discard Workout (active mode) ──
   async function handleConfirmDiscard() {
     if (!log?.id) return;
     await WorkoutLogService.deleteLog(log.id);
@@ -259,12 +308,6 @@ export default function WorkoutDetailPage() {
   if (loading) return null;
   if (!log) return null;
 
-  // Step 5c: read-only and edit modes — redirect until built
-  if (log.finishedAt !== null && finishFlowStep === null && !showSyncModal) {
-    navigate('/logs', { replace: true });
-    return null;
-  }
-
   // Whether the new-program-form came from the picker (affects [Back] vs [Cancel])
   const cameFromPicker = programs.length > 0;
   const selectedProgram = programs.find((p) => p.id === selectedProgramId);
@@ -272,23 +315,27 @@ export default function WorkoutDetailPage() {
   return (
     <div className={styles.page}>
       <div className={styles.topBar}>
-        <button className={styles.backBtn} onClick={() => navigate(-1)}>
+        <button className={styles.backBtn} onClick={handleBack}>
           <ChevronLeft size={20} />
           Back
         </button>
       </div>
 
-      {/* Workout name — inline rename */}
-      <div className={styles.nameWrapper}>
-        <input
-          className={`${styles.nameInput} ${nameError ? styles.nameInputError : ''}`}
-          type="text"
-          value={logName}
-          onChange={(e) => { setLogName(e.target.value); setNameError(''); }}
-          onBlur={handleNameBlur}
-        />
-        {nameError && <span className={styles.fieldError}>{nameError}</span>}
-      </div>
+      {/* Workout name — editable in active/edit; static text in read-only */}
+      {mode === 'readonly' ? (
+        <h2 className={styles.nameText}>{log.name}</h2>
+      ) : (
+        <div className={styles.nameWrapper}>
+          <input
+            className={`${styles.nameInput} ${nameError ? styles.nameInputError : ''}`}
+            type="text"
+            value={logName}
+            onChange={(e) => { setLogName(e.target.value); setNameError(''); }}
+            onBlur={handleNameBlur}
+          />
+          {nameError && <span className={styles.fieldError}>{nameError}</span>}
+        </div>
+      )}
 
       {/* Exercise cards */}
       <div className={styles.exerciseList}>
@@ -301,6 +348,7 @@ export default function WorkoutDetailPage() {
             target={workoutTargets ? workoutTargets[le.exerciseId] ?? null : null}
             weightUnit={weightUnit}
             displayWeight={displayWeight}
+            readOnly={mode === 'readonly'}
             onAddSet={() => handleAddSet(le.id!)}
             onRemoveExercise={() => handleRemoveExercise(le.id!)}
             onSetUpdate={(setId, weightLb, reps) => handleSetUpdate(setId, le.id!, weightLb, reps)}
@@ -309,18 +357,40 @@ export default function WorkoutDetailPage() {
         ))}
       </div>
 
-      <button className={styles.addExerciseBtn} onClick={() => setShowExerciseSearch(true)}>
-        + Add Exercise
-      </button>
+      {/* Add Exercise — hidden in read-only */}
+      {mode !== 'readonly' && (
+        <button className={styles.addExerciseBtn} onClick={() => setShowExerciseSearch(true)}>
+          + Add Exercise
+        </button>
+      )}
 
-      {/* Fixed footer: Finish + Discard */}
+      {/* Fixed footer — buttons vary by mode */}
       <div className={styles.footer}>
-        <button className={styles.finishBtn} onClick={handleFinish}>
-          Finish Workout
-        </button>
-        <button className={styles.discardBtn} onClick={() => setShowDiscardModal(true)}>
-          Discard
-        </button>
+        {mode === 'active' && (
+          <>
+            <button className={styles.finishBtn} onClick={handleFinish}>
+              Finish Workout
+            </button>
+            <button className={styles.discardBtn} onClick={() => setShowDiscardModal(true)}>
+              Discard
+            </button>
+          </>
+        )}
+        {mode === 'readonly' && (
+          <>
+            <button className={styles.editWorkoutBtn} onClick={() => { setUnsavedChanges(false); setMode('edit'); }}>
+              Edit Workout
+            </button>
+            <button className={styles.deleteWorkoutBtn} onClick={() => setShowDeleteModal(true)}>
+              Delete Workout
+            </button>
+          </>
+        )}
+        {mode === 'edit' && (
+          <button className={styles.saveEditsBtn} onClick={handleSaveEdits}>
+            Save Edits
+          </button>
+        )}
       </div>
 
       {/* Exercise search modal */}
@@ -331,7 +401,7 @@ export default function WorkoutDetailPage() {
         />
       )}
 
-      {/* Discard confirm modal */}
+      {/* Active mode: Discard Workout confirm */}
       {showDiscardModal && (
         <Modal
           title="Discard Workout?"
@@ -339,6 +409,30 @@ export default function WorkoutDetailPage() {
           actions={[
             { label: 'Discard', onClick: handleConfirmDiscard, variant: 'destructive' },
             { label: 'Keep Going', onClick: () => setShowDiscardModal(false), variant: 'secondary' },
+          ]}
+        />
+      )}
+
+      {/* Read-only mode: Delete Workout confirm */}
+      {showDeleteModal && (
+        <Modal
+          title="Delete Workout?"
+          body="This workout will be permanently deleted."
+          actions={[
+            { label: 'Delete', onClick: handleDeleteWorkout, variant: 'destructive' },
+            { label: 'Cancel', onClick: () => setShowDeleteModal(false), variant: 'secondary' },
+          ]}
+        />
+      )}
+
+      {/* Edit mode: Discard changes confirm (triggered by Back with unsaved changes) */}
+      {showEditDiscardModal && (
+        <Modal
+          title="Discard changes?"
+          body="Any changes you made will not be saved."
+          actions={[
+            { label: 'Discard', onClick: handleDiscardEditChanges, variant: 'destructive' },
+            { label: 'Keep Editing', onClick: () => setShowEditDiscardModal(false), variant: 'secondary' },
           ]}
         />
       )}

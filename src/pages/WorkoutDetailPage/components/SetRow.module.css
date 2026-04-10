@@ -58,6 +58,14 @@
   text-align: center;
 }
 
+/* ── Read-only value cell ── */
+.readonlyVal {
+  font-size: 15px;
+  color: var(--color-text-primary);
+  text-align: center;
+  line-height: 36px;
+}
+
 /* ── Delete button ── */
 .deleteBtn {
   display: flex;

@@ -27,6 +27,16 @@
   opacity: 0.7;
 }
 
+/* ── Workout name (read-only static text) ── */
+.nameText {
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--color-text-primary);
+  text-align: center;
+  margin: 0 0 24px;
+  padding: 4px 0;
+}
+
 /* ── Workout name (inline rename) ── */
 .nameWrapper {
   margin-bottom: 24px;
@@ -127,6 +137,57 @@
 
 .discardBtn:active {
   opacity: 0.7;
+}
+
+/* ── Read-only footer: Edit Workout button ── */
+.editWorkoutBtn {
+  flex: 1;
+  height: 44px;
+  background: var(--color-green);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.editWorkoutBtn:active {
+  filter: brightness(0.9);
+}
+
+/* ── Read-only footer: Delete Workout button ── */
+.deleteWorkoutBtn {
+  height: 44px;
+  padding: 0 20px;
+  background: none;
+  border: 1.5px solid var(--color-red);
+  border-radius: 8px;
+  color: var(--color-red);
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.deleteWorkoutBtn:active {
+  opacity: 0.7;
+}
+
+/* ── Edit mode footer: Save Edits button ── */
+.saveEditsBtn {
+  flex: 1;
+  height: 44px;
+  background: var(--color-green);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.saveEditsBtn:active {
+  filter: brightness(0.9);
 }
 
 /* ── Shared field error ── */
