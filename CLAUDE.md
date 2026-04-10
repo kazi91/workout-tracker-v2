@@ -123,6 +123,53 @@ Explicitly discussed and rejected. Do not re-propose unless the user raises it f
 
 ---
 
+## Coding Standards
+
+Comments are written **as part of building** each step — not added retroactively at the end of a session.
+
+### Service functions — JSDoc above every exported function
+```ts
+/**
+ * Returns the active workout log for the current user, or null if none.
+ * Queries workoutLogs where finishedAt === null and userId matches.
+ * Called by: ActiveWorkoutContext on mount and after finish/discard.
+ * Returns: WorkoutLog | null
+ */
+export async function getActive(userId: number): Promise<WorkoutLog | null> {
+```
+
+### Context files — header block describing purpose, state, and consumers
+```ts
+/**
+ * AuthContext — manages the current user session.
+ * Reads userId from localStorage (key: workout_tracker_user_id) on mount.
+ * Exposes: user, loading, login(), signup(), logout()
+ * Consumed by: AuthGuard, UserSettingsContext, ActiveWorkoutContext
+ */
+```
+
+### Component files — short header describing what it renders and what it reads
+```ts
+/**
+ * WorkoutDetailPage — renders active, read-only, or edit mode for a workout log.
+ * Mode is determined by finishedAt: null = active, set = read-only (edit via button).
+ * Reads: ActiveWorkoutContext (finish state), UserSettingsContext (unit display)
+ */
+```
+
+### Complex logic — inline comments on non-obvious code
+```ts
+// Fall back to the last set if no matching setNumber exists —
+// handles cases where the user did fewer sets last session
+```
+
+### Skip commenting:
+- Stub/placeholder pages (until built out)
+- CSS Modules (section dividers only: `/* ── Layout ── */`)
+- Lines where TypeScript types already make intent obvious
+
+---
+
 ## Build Commands
 
 > Fill in at build step 1 (Vite project scaffold). Placeholder until then.

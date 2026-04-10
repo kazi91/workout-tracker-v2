@@ -1,3 +1,9 @@
+/**
+ * types/index.ts — TypeScript interfaces for all 8 database tables.
+ * These mirror the Dexie schema exactly. All weights stored in lb, heights in inches —
+ * conversion to kg/cm happens at display time via UserSettingsContext.
+ */
+
 export interface User {
   id?: number;
   email: string;

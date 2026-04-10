@@ -1,3 +1,9 @@
+/**
+ * App.tsx — root component. Sets up BrowserRouter with all application routes.
+ * On mount: checks if exercises table is empty and runs seedExercises() if so (fires once on first install).
+ * Auth redirect is handled by AuthGuard (added in Step 2) — unauthenticated users are sent to /login.
+ * Fallback route (*) redirects to /login.
+ */
 import { useEffect } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { db } from './db/db';

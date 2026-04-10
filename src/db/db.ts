@@ -1,3 +1,8 @@
+/**
+ * db.ts — Dexie database instance for WorkoutTracker.
+ * Defines all 8 tables with their indexed fields (schema string locked — D1).
+ * Import `db` from this file in service files only — never in components directly.
+ */
 import Dexie, { type EntityTable } from 'dexie';
 import type {
   User,

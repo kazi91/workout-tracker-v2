@@ -1,3 +1,8 @@
+/**
+ * seed.ts — populates the exercises table with 29 pre-built exercises across 6 categories.
+ * Triggered once on first install by App.tsx (when db.exercises.count() === 0).
+ * Never runs again after initial seed — count check in App.tsx is the guard.
+ */
 import { db } from './db';
 import type { Exercise } from '../types';
 
@@ -39,6 +44,10 @@ const SEED_EXERCISES: Omit<Exercise, 'id'>[] = [
   { name: 'Ab Wheel Rollout', category: 'core', isCustom: false },
 ];
 
+/**
+ * Inserts all 29 seed exercises into the exercises table in a single bulk operation.
+ * Called by: App.tsx on mount, only when exercises table is empty.
+ */
 export async function seedExercises(): Promise<void> {
   await db.exercises.bulkAdd(SEED_EXERCISES as Exercise[]);
 }
