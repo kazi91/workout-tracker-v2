@@ -1,0 +1,94 @@
+/* ── Backdrop ── */
+.backdrop {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px 16px;
+  z-index: 200;
+}
+
+/* ── Modal card ── */
+.modal {
+  width: 100%;
+  max-width: 360px;
+  background-color: var(--color-surface-1);
+  border-radius: var(--radius-modal);
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.title {
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--color-text-primary);
+}
+
+.body {
+  font-size: 15px;
+  color: var(--color-text-label);
+  line-height: 1.5;
+}
+
+/* ── Action buttons ── */
+.actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.actions > * {
+  flex: 1;
+}
+
+.btnPrimary {
+  height: 44px;
+  background-color: var(--color-green);
+  color: #fff;
+  border-radius: var(--radius-input);
+  font-size: 15px;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  transition: opacity 0.15s;
+}
+
+.btnPrimary:active {
+  opacity: 0.85;
+}
+
+.btnDestructive {
+  height: 44px;
+  background-color: var(--color-red);
+  color: #fff;
+  border-radius: var(--radius-input);
+  font-size: 15px;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  transition: opacity 0.15s;
+}
+
+.btnDestructive:active {
+  opacity: 0.85;
+}
+
+.btnSecondary {
+  height: 44px;
+  background-color: transparent;
+  color: var(--color-text-label);
+  border-radius: var(--radius-input);
+  font-size: 15px;
+  font-weight: 600;
+  border: 1.5px solid var(--color-surface-2);
+  cursor: pointer;
+  transition: opacity 0.15s;
+}
+
+.btnSecondary:active {
+  opacity: 0.75;
+}
