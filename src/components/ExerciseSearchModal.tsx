@@ -133,6 +133,7 @@ export default function ExerciseSearchModal({ onSelect, onClose }: ExerciseSearc
                 <input
                   className={`${styles.createInput} ${nameError ? styles.createInputError : ''}`}
                   type="text"
+                  autoCapitalize="words"
                   placeholder="Exercise name"
                   value={newName}
                   onChange={(e) => { setNewName(e.target.value); setNameError(''); }}

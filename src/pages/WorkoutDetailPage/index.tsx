@@ -8,7 +8,7 @@
 
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { ChevronLeft } from 'lucide-react';
+import { ChevronLeft, Trash2 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { useUserSettings } from '../../context/UserSettingsContext';
 import { useActiveWorkout } from '../../context/ActiveWorkoutContext';
@@ -186,10 +186,11 @@ export default function WorkoutDetailPage() {
   }
 
   // ── Edit mode: Save Edits / Discard changes ──
-  function handleSaveEdits() {
-    // Changes are already persisted (auto-saved on blur); just commit the mode transition.
-    setMode('readonly');
+  async function handleSaveEdits() {
+    // Reload from Dexie to ensure all auto-saved changes are reflected in read-only view.
+    // loadData also sets mode back to 'readonly' (finishedAt is set on finished logs).
     setUnsavedChanges(false);
+    if (log?.id) await loadData(log.id);
   }
 
   function handleDiscardEditChanges() {
@@ -329,6 +330,7 @@ export default function WorkoutDetailPage() {
           <input
             className={`${styles.nameInput} ${nameError ? styles.nameInputError : ''}`}
             type="text"
+            autoCapitalize="words"
             value={logName}
             onChange={(e) => { setLogName(e.target.value); setNameError(''); }}
             onBlur={handleNameBlur}
@@ -381,8 +383,8 @@ export default function WorkoutDetailPage() {
             <button className={styles.editWorkoutBtn} onClick={() => { setUnsavedChanges(false); setMode('edit'); }}>
               Edit Workout
             </button>
-            <button className={styles.deleteWorkoutBtn} onClick={() => setShowDeleteModal(true)}>
-              Delete Workout
+            <button className={styles.deleteWorkoutBtn} onClick={() => setShowDeleteModal(true)} aria-label="Delete workout">
+              <Trash2 size={20} />
             </button>
           </>
         )}
@@ -492,6 +494,7 @@ export default function WorkoutDetailPage() {
               <input
                 className={`${styles.flowInput} ${programNameError ? styles.flowInputError : ''}`}
                 type="text"
+                autoCapitalize="words"
                 value={newProgramName}
                 onChange={(e) => { setNewProgramName(e.target.value); setProgramNameError(''); }}
                 autoFocus
@@ -504,6 +507,7 @@ export default function WorkoutDetailPage() {
               <input
                 className={`${styles.flowInput} ${workoutInputError ? styles.flowInputError : ''}`}
                 type="text"
+                autoCapitalize="words"
                 value={workoutNameInput}
                 onChange={(e) => { setWorkoutNameInput(e.target.value); setWorkoutInputError(''); }}
               />
@@ -542,6 +546,7 @@ export default function WorkoutDetailPage() {
               <input
                 className={`${styles.flowInput} ${workoutInputError ? styles.flowInputError : ''}`}
                 type="text"
+                autoCapitalize="words"
                 value={workoutNameInput}
                 onChange={(e) => { setWorkoutNameInput(e.target.value); setWorkoutInputError(''); }}
                 autoFocus

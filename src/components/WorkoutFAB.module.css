@@ -1,10 +1,9 @@
-/* ── FAB — fixed bottom-right, above nav bar ── */
+/* ── FAB — fixed bottom-center, above nav bar ── */
 .fab {
   position: fixed;
   bottom: calc(var(--nav-height) + env(safe-area-inset-bottom) + 16px);
-  right: 16px;
-  /* Center within the 480px max-width container on wide screens */
-  max-right: calc((100vw - 480px) / 2 + 16px);
+  left: 50%;
+  transform: translateX(-50%);
   width: 56px;
   height: 56px;
   border-radius: 50%;
@@ -22,5 +21,5 @@
 
 .fab:active {
   opacity: 0.85;
-  transform: scale(0.95);
+  transform: translateX(-50%) scale(0.95);
 }

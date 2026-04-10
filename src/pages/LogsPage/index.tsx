@@ -112,7 +112,7 @@ export default function LogsPage() {
         <h2 className={styles.sectionLabel}>Workout History</h2>
 
         {finished.length === 0 ? (
-          <p className={styles.empty}>No workouts recorded</p>
+          <p className={styles.empty}>Press the green button to log your first workout!</p>
         ) : (
           groupOrder.map((group) => (
             <div key={group}>

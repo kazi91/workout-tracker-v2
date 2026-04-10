@@ -6,7 +6,7 @@
  */
 
 import { db } from '../db/db';
-import type { WorkoutLog } from '../types';
+import type { WorkoutLog, LogExercise } from '../types';
 
 /**
  * Returns the in-progress workout log for the given user, or null if none.
@@ -33,8 +33,8 @@ export async function getAll(userId: number): Promise<WorkoutLog[]> {
  * Creates a new workout log and returns it.
  * Quick-start (workoutId: null): name = "Quick Workout [n+1]" based on existing log count.
  * From-program (workoutId set): name = workout template name (caller must provide).
- * If workoutId is provided, atomically copies workoutExercises → logExercises (Step 5).
- * Called by: WorkoutFAB (quick-start), WorkoutDetailPage start-from-program flow (Step 5).
+ * If workoutId is provided, copies workoutExercises → logExercises in template order (Decision #18).
+ * Called by: WorkoutFAB (quick-start), WorkoutTemplatePage "Start" button (from-program).
  * Returns: the newly created WorkoutLog with id populated.
  */
 export async function create(
@@ -57,6 +57,23 @@ export async function create(
     startedAt: new Date(),
     finishedAt: null,
   } as WorkoutLog);
+
+  // From-program: copy workoutExercises → logExercises in template order (Decision #18)
+  if (workoutId) {
+    const workoutExercises = await db.workoutExercises
+      .where('workoutId')
+      .equals(workoutId)
+      .toArray();
+    workoutExercises.sort((a, b) => a.order - b.order);
+    for (const we of workoutExercises) {
+      await db.logExercises.add({
+        workoutLogId: id,
+        exerciseId: we.exerciseId,
+        notes: null,
+        order: we.order,
+      } as LogExercise);
+    }
+  }
 
   const log = await db.workoutLogs.get(id);
   if (!log) throw new Error('Failed to create workout log');

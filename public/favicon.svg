@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <!-- Bar -->
+  <rect x="0" y="44" width="100" height="12" rx="3" fill="#3BAF6A"/>
+  <!-- Left plate -->
+  <rect x="2" y="22" width="14" height="56" rx="4" fill="#3BAF6A"/>
+  <!-- Right plate -->
+  <rect x="84" y="22" width="14" height="56" rx="4" fill="#3BAF6A"/>
+</svg>

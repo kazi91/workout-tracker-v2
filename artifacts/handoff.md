@@ -1,5 +1,5 @@
 # HANDOFF — NEW INSTANCE START HERE
-Last updated: 2026-04-09 (session 7 — all pre-build decisions resolved, ready to build)
+Last updated: 2026-04-10 (session 15 — Phase 3 Build complete, UI polish pass complete, demo-ready)
 
 ---
 
@@ -23,55 +23,51 @@ Last updated: 2026-04-09 (session 7 — all pre-build decisions resolved, ready 
 ---
 
 ## Build State
-No code has been written. Blueprint + UI design standards complete. Pre-build audit complete.
+**Phase 3 Build is complete.** All 6 steps built, verified, and committed. UI polish pass complete. App is demo-ready.
 
-- All decisions locked (#1–23)
-- All must-fix issues specced (G2, G3, G7, R2)
-- G5 resolved — back navigation destinations locked (ProgramDetailPage → /programs, WorkoutTemplatePage → /programs/:id)
-- UIdesign.txt fully expanded — color system, alignment standards, button design standards, light mode palette
-- All design questions locked (OD1–OD5). OD1: dark mode #3BAF6A / light mode #2D9F58.
-- Pre-build audit complete — all critical gaps resolved:
-  - C1: Quick-start log name = "Quick Workout [n+1]"; from-program = workout template name
-  - C2: Target hidden on quick-start exercise cards; shown only when workoutId set
-  - C3: SignupPage MVP spec locked — name/email/password + unit toggle; auto-login → /logs
-  - C4: LoginPage spec stub created at artifacts/tabs/login.md — L1–L4 open questions must be resolved before build step 2
-  - C5: ExerciseSearchModal spec locked — instant filter, category chips, custom exercise creation inline
-  - C6: Height = single number input, "in" or "cm" label
-  - C7: Height/weight blank on Profile = silently valid; note Statistics will require these fields
-  - C8: Seed trigger = App.tsx on mount, db.exercises.count() === 0 → seed()
-  - C9: No auto-add set after adding exercise — user taps "+ Add Set" manually
-- Refer to NEXT STEPS in recap.txt for build order
+### What is built
+- **Step 1** — Vite scaffold, Dexie schema (8 tables), 29 seed exercises, routing stubs, dark theme CSS variables
+- **Step 2** — AuthService, AuthContext, AuthGuard, LoginPage, SignupPage (with unit preference toggle)
+- **Step 3** — UserSettingsContext, ActiveWorkoutContext, units.ts helpers, ExerciseService, WorkoutLogService (partial), BottomNav, Modal, ExerciseSearchModal, WorkoutFAB (full visibility/hidden logic)
+- **Step 4** — ProgramService, WorkoutService, WorkoutExerciseService; ProgramsPage, ProgramDetailPage, WorkoutTemplatePage (inc. Edit Targets Modal)
+- **Step 5a** — LogExerciseService, LogSetService; WorkoutDetailPage active mode, ExerciseCard, SetRow
+- **Step 5b** — WorkoutDetailPage finish flows: quick-start 4-step state machine, from-program sync modal
+- **Step 5c** — WorkoutDetailPage read-only and edit modes; Delete Workout flow
+- **Step 6** — UserService, ProfilePage (auto-save name/height/weight, unit toggle, logout), StatisticsPage placeholder
 
-Session 7 additions (2026-04-09):
-  - All pre-build decisions locked: D4 (BrowserRouter), D7 (sequential context init), N3 (UserSettingsContext reads from AuthContext.user), N4 (raw inches + label, ft+in post-MVP)
-  - D5 (ErrorContext) deferred for demo — console.error sufficient
-  - D8 (unit tests) deferred for demo — Vitest + RTL added post-demo
-  - N2 finish flow: full spec confirmed — 4-step state machine, no simplification for demo
-  - Model Selection Guide added to CLAUDE.md — Sonnet for most work, Opus for complex reasoning, ask before switching
-  - All pre-build gaps resolved. Ready to build.
+### UI polish pass (2026-04-10)
+- Trash icons replace text Remove/Delete buttons throughout; set-delete changed to red X
+- WorkoutTemplatePage button layout: shorter labels, auto-width centered, Start/Done/Delete row layout
+- FAB centered (left: 50% / translateX); all 4 tab page titles standardized to 24px/700
+- ProgramsPage "New Program" button moved below list; LogsPage empty state updated
+- ProfilePage unit labels moved into label text ("Height (in)", "Weight (lb)")
+- autocapitalize="words" on all name inputs across the app
+- Bug fixes: from-program exercises now copy correctly on workout start; Save Edits reloads from Dexie; seed deduplication fix for React Strict Mode
 
-Session 6 additions (2026-04-09):
-  - Full cross-artifact gap audit — 4 new planning gaps (N1–N4) added to Issue Tracker in master-schematics.md
-  - D2 specced: previousWeight/previousReps lookup algorithm defined for LogSetService.add()
-  - D3 resolved: ExerciseSearchModal uses onSelect callback prop
-  - D4, D5, D7, D8: recommendations in recap.txt; need user confirmation before relevant build steps
-  - L1–L4 resolved in login.md; M1–M4 resolved in logs.md
-  - B1 updated: finish flow also fails with deleted template — treat as quick-start; handle at build step 5
-  - programs.md ProgramDetailPage corrected to use getCountsByProgramId (R1 spec fix applied)
-  - login.md Services Used corrected: AuthService.login() not UserService.findByEmail()
-  - CLAUDE.md session start updated: mandatory (recap + tab file) vs reference-only (master-schematics, UIdesign)
-
-Session 5 additions:
-  - CLAUDE.md updated: new instance now surveys src/ before acting if code exists
-  - artifacts/tabs/login.md created — stub with L1–L4 open questions; resolve before build step 2
-  - Developer gap review complete — D1–D8 added to recap.txt pre-build gaps
-  - D1 resolved: Dexie schema string locked (no compound indexes) — see master-schematics.md DB section
-  - D6 resolved: cascade delete order locked for all 3 paths — see service layer in master-schematics.md
-  - R1 resolved: getCountsByProgramId added to WorkoutExerciseService — replaces N+1 pattern
-  - B1 added to Issue Tracker: dangling workoutId on program delete — display layer must null-check
-  - D2, D3, D4, D5, D7, D8 remain open — tagged with build step in recap.txt
+### Open items (not MVP blockers)
+- R3: Plain-text password — replace when backend is added
+- P5: Charting library — decide before Statistics build in v2
+- D5: ErrorContext — console.error sufficient for demo; add post-demo
+- D8: Unit tests — Vitest + RTL post-demo
+- All F-series items (F1–F6) are future features — see Issue Tracker
 
 Do not re-open planning decisions unless the user explicitly raises them.
+
+---
+
+## Recent Sessions (most recent first)
+
+**Session 16 — 2026-04-10:** Pre-demo code review — all critical flows verified clean, no blockers. False positive documented in Issue Tracker: ExerciseSearchModal modal closure after custom exercise creation works correctly via parent's onSelect handler (do not re-flag).
+
+**Session 15 — 2026-04-10:** ProfilePage unit labels in label text; tab titles 24px/700 across all 4; autocapitalize="words" on all name inputs app-wide.
+
+**Session 14 — 2026-04-10:** UI polish pass — trash icons, button redesign, FAB centered, page title centering, empty states, LogsPage text, bug fixes (from-program exercises, Save Edits reload, seed deduplication).
+
+**Session 13 — 2026-04-09:** Step 6 — UserService, ProfilePage, StatisticsPage placeholder.
+
+**Session 12 — 2026-04-09:** Step 5c — WorkoutDetailPage read-only and edit modes.
+
+**Sessions 8–11 — 2026-04-09:** Steps 1–5b built in a single day.
 
 ---
 

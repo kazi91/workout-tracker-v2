@@ -71,3 +71,4 @@
 - Notification preferences (when backend + push notifications added)
 - Connected devices (Apple Health, Google Fit — post-mobile-app)
 - Measurement tracking (waist, chest, arms, etc.) as a separate section
+- Auto-load bodyweight into exercise weight field — when a `workoutExercise` has `targetWeight === 0` (bodyweight), pre-fill the weight input in `SetRow` with the user's current body weight from their profile (`user.weight`, converted to display unit via `UserSettingsContext`). User can still override the value. Requires passing `user.weight` down through `WorkoutDetailPage` → `ExerciseCard` → `SetRow`, or reading it directly from `UserSettingsContext` in `SetRow`.

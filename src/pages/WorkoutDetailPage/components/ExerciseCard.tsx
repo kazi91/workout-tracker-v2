@@ -8,6 +8,7 @@
  * readOnly prop: hides Remove/Add Set buttons and renders SetRow in read-only text mode.
  */
 
+import { Trash2 } from 'lucide-react';
 import SetRow from './SetRow';
 import type { LogExercise, LogSet, Exercise, WorkoutExercise } from '../../../types';
 import styles from './ExerciseCard.module.css';
@@ -49,20 +50,20 @@ export default function ExerciseCard({
 
   return (
     <div className={styles.card}>
-      {/* Header row */}
+      {/* Header row: exercise name left, trash right */}
       <div className={styles.header}>
         <span className={styles.exerciseName}>{exercise?.name ?? '—'}</span>
-        <div className={styles.headerRight}>
-          {targetLabel && (
-            <span className={styles.target}>Target: {targetLabel}</span>
-          )}
-          {!readOnly && (
-            <button className={styles.removeBtn} onClick={onRemoveExercise}>
-              Remove
-            </button>
-          )}
-        </div>
+        {!readOnly && (
+          <button className={styles.removeBtn} onClick={onRemoveExercise} aria-label="Remove exercise">
+            <Trash2 size={16} />
+          </button>
+        )}
       </div>
+
+      {/* Target line below name — from-program logs only */}
+      {targetLabel && (
+        <p className={styles.target}>Target: {targetLabel}</p>
+      )}
 
       {/* Column labels — only shown when there's at least one set */}
       {sets.length > 0 && (

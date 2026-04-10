@@ -119,6 +119,7 @@ export default function ProfilePage() {
             id="profile-name"
             className={styles.input}
             type="text"
+            autoCapitalize="words"
             value={nameVal}
             onChange={(e) => setNameVal(e.target.value)}
             onBlur={handleNameBlur}
@@ -126,40 +127,34 @@ export default function ProfilePage() {
         </div>
 
         <div className={styles.field}>
-          <label className={styles.label} htmlFor="profile-height">Height</label>
-          <div className={styles.inputRow}>
-            <input
-              id="profile-height"
-              className={`${styles.input} ${heightError ? styles.inputError : ''}`}
-              type="number"
-              inputMode="decimal"
-              min="0"
-              value={heightVal}
-              placeholder="—"
-              onChange={(e) => { setHeightVal(e.target.value); setHeightError(''); }}
-              onBlur={handleHeightBlur}
-            />
-            <span className={styles.unitLabel}>{heightUnit}</span>
-          </div>
+          <label className={styles.label} htmlFor="profile-height">Height ({heightUnit})</label>
+          <input
+            id="profile-height"
+            className={`${styles.input} ${heightError ? styles.inputError : ''}`}
+            type="number"
+            inputMode="decimal"
+            min="0"
+            value={heightVal}
+            placeholder="—"
+            onChange={(e) => { setHeightVal(e.target.value); setHeightError(''); }}
+            onBlur={handleHeightBlur}
+          />
           {heightError && <span className={styles.fieldError}>{heightError}</span>}
         </div>
 
         <div className={styles.field}>
-          <label className={styles.label} htmlFor="profile-weight">Weight</label>
-          <div className={styles.inputRow}>
-            <input
-              id="profile-weight"
-              className={`${styles.input} ${weightError ? styles.inputError : ''}`}
-              type="number"
-              inputMode="decimal"
-              min="0"
-              value={weightVal}
-              placeholder="—"
-              onChange={(e) => { setWeightVal(e.target.value); setWeightError(''); }}
-              onBlur={handleWeightBlur}
-            />
-            <span className={styles.unitLabel}>{weightUnit}</span>
-          </div>
+          <label className={styles.label} htmlFor="profile-weight">Weight ({weightUnit})</label>
+          <input
+            id="profile-weight"
+            className={`${styles.input} ${weightError ? styles.inputError : ''}`}
+            type="number"
+            inputMode="decimal"
+            min="0"
+            value={weightVal}
+            placeholder="—"
+            onChange={(e) => { setWeightVal(e.target.value); setWeightError(''); }}
+            onBlur={handleWeightBlur}
+          />
           {weightError && <span className={styles.fieldError}>{weightError}</span>}
         </div>
       </section>

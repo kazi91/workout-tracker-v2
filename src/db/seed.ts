@@ -44,10 +44,20 @@ const SEED_EXERCISES: Omit<Exercise, 'id'>[] = [
   { name: 'Ab Wheel Rollout', category: 'core', isCustom: false },
 ];
 
+// Guards against React Strict Mode double-invoking effects in development.
+// The module-level flag is checked synchronously before any async work, so
+// the second call from Strict Mode bails before it can race the first seed.
+let seedStarted = false;
+
 /**
  * Inserts all 29 seed exercises into the exercises table in a single bulk operation.
  * Called by: App.tsx on mount, only when exercises table is empty.
+ * Idempotent: the module-level flag and count check together prevent double-seeding.
  */
 export async function seedExercises(): Promise<void> {
+  if (seedStarted) return;
+  seedStarted = true;
+  const count = await db.exercises.count();
+  if (count > 0) return;
   await db.exercises.bulkAdd(SEED_EXERCISES as Exercise[]);
 }

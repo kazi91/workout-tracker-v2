@@ -75,11 +75,11 @@
   height: 36px;
   background: none;
   border: none;
-  color: var(--color-text-secondary);
+  color: var(--color-red);
   cursor: pointer;
   padding: 0;
 }
 
 .deleteBtn:active {
-  color: var(--color-red);
+  opacity: 0.7;
 }

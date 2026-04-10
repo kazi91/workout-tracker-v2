@@ -8,7 +8,7 @@
  */
 
 import { useState } from 'react';
-import { Trash2 } from 'lucide-react';
+import { X } from 'lucide-react';
 import { kgToLb } from '../../../utils/units';
 import type { LogSet } from '../../../types';
 import styles from './SetRow.module.css';
@@ -119,7 +119,7 @@ export default function SetRow({
       </div>
 
       <button className={styles.deleteBtn} onClick={() => onDelete(set.id!)} aria-label="Delete set">
-        <Trash2 size={16} />
+        <X size={16} />
       </button>
     </div>
   );

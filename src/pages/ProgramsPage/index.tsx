@@ -102,14 +102,7 @@ export default function ProgramsPage() {
 
   return (
     <div className={styles.page}>
-      <div className={styles.header}>
-        <h1 className={styles.title}>Programs</h1>
-        {!creating && (
-          <button className={styles.addBtn} onClick={handleOpenCreate} aria-label="New program">
-            <Plus size={22} />
-          </button>
-        )}
-      </div>
+      <h1 className={styles.title}>Programs</h1>
 
       {programs.length === 0 && !creating && (
         <div className={styles.empty}>
@@ -134,12 +127,19 @@ export default function ProgramsPage() {
         ))}
       </ul>
 
+      {!creating && (
+        <button className={styles.addBtn} onClick={handleOpenCreate} aria-label="New program">
+          <Plus size={22} />
+        </button>
+      )}
+
       {creating && (
         <div className={styles.createForm}>
           <input
             ref={inputRef}
             className={`${styles.input} ${nameError ? styles.inputError : ''}`}
             type="text"
+            autoCapitalize="words"
             placeholder="Program name"
             value={newName}
             onChange={(e) => { setNewName(e.target.value); setNameError(''); }}

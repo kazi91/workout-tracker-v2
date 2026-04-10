@@ -55,6 +55,7 @@ export default function SignupPage() {
               className={`${styles.input} ${nameError ? styles.inputError : ''}`}
               type="text"
               autoComplete="name"
+              autoCapitalize="words"
               value={name}
               onChange={(e) => { setName(e.target.value); setNameError(''); }}
             />

@@ -10,7 +10,6 @@
  */
 
 import { useNavigate, useLocation, useMatch } from 'react-router-dom';
-import { Play } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useActiveWorkout } from '../context/ActiveWorkoutContext';
 import * as WorkoutLogService from '../services/WorkoutLogService';
@@ -41,7 +40,7 @@ export default function WorkoutFAB() {
         aria-label="Resume Workout"
         onClick={() => navigate(`/logs/${activeWorkoutId}`)}
       >
-        <Play size={24} fill="#fff" strokeWidth={0} />
+        <span style={{ fontSize: '22px', lineHeight: 1 }}>💪</span>
       </button>
     );
   }
@@ -61,7 +60,7 @@ export default function WorkoutFAB() {
         aria-label="Start Workout"
         onClick={handleStartWorkout}
       >
-        <Play size={24} fill="#fff" strokeWidth={0} />
+        <span style={{ fontSize: '22px', lineHeight: 1 }}>💪</span>
       </button>
     );
   }

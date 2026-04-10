@@ -9,7 +9,7 @@
 
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { ChevronLeft } from 'lucide-react';
+import { ChevronLeft, Trash2 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { useUserSettings } from '../../context/UserSettingsContext';
 import { useActiveWorkout } from '../../context/ActiveWorkoutContext';
@@ -216,6 +216,7 @@ export default function WorkoutTemplatePage() {
         <input
           className={`${styles.nameInput} ${nameError ? styles.nameInputError : ''}`}
           type="text"
+          autoCapitalize="words"
           value={workoutName}
           onChange={(e) => { setWorkoutName(e.target.value); setNameError(''); }}
           onBlur={handleNameBlur}
@@ -240,7 +241,7 @@ export default function WorkoutTemplatePage() {
                 onClick={() => handleRemoveExercise(we.id!)}
                 aria-label="Remove exercise"
               >
-                Remove
+                <Trash2 size={16} />
               </button>
             </div>
             {/* Target line — tap to open Edit Targets Modal */}
@@ -269,8 +270,8 @@ export default function WorkoutTemplatePage() {
           <button className={styles.doneBtn} onClick={() => navigate('/programs')}>
             Done
           </button>
-          <button className={styles.deleteBtn} onClick={() => setShowDeleteModal(true)}>
-            Delete
+          <button className={styles.deleteBtn} onClick={() => setShowDeleteModal(true)} aria-label="Delete workout">
+            <Trash2 size={20} />
           </button>
         </div>
       </div>

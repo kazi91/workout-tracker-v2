@@ -9,7 +9,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { ChevronLeft, Plus } from 'lucide-react';
+import { ChevronLeft, Plus, Trash2 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import * as ProgramService from '../../services/ProgramService';
 import * as WorkoutService from '../../services/WorkoutService';
@@ -146,6 +146,7 @@ export default function ProgramDetailPage() {
         <input
           className={`${styles.nameInput} ${nameError ? styles.nameInputError : ''}`}
           type="text"
+          autoCapitalize="words"
           value={programName}
           onChange={(e) => { setProgramName(e.target.value); setNameError(''); }}
           onBlur={handleNameBlur}
@@ -183,6 +184,7 @@ export default function ProgramDetailPage() {
             ref={workoutInputRef}
             className={`${styles.input} ${workoutNameError ? styles.inputError : ''}`}
             type="text"
+            autoCapitalize="words"
             placeholder="Workout name"
             value={newWorkoutName}
             onChange={(e) => { setNewWorkoutName(e.target.value); setWorkoutNameError(''); }}
@@ -201,8 +203,8 @@ export default function ProgramDetailPage() {
             Add Workout
           </button>
         )}
-        <button className={styles.deleteBtn} onClick={() => setShowDeleteModal(true)}>
-          Delete Program
+        <button className={styles.deleteBtn} onClick={() => setShowDeleteModal(true)} aria-label="Delete program">
+          <Trash2 size={20} />
         </button>
       </div>
 
