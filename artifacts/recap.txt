@@ -99,7 +99,7 @@ Recommended build order:
 2. Auth — SignupPage (with unit preference step), LoginPage, AuthContext, localStorage session ✓ DONE
 3. Core shared — BottomNav, Modal, ExerciseSearchModal, WorkoutFAB, UserSettingsContext, ActiveWorkoutContext ✓ DONE
 4. Programs tab — ProgramsPage, ProgramDetailPage, WorkoutTemplatePage (inc. Edit Targets Modal) ✓ DONE
-5a. Logs: list + active workout — LogsPage, WorkoutDetailPage Active mode, ExerciseCard, SetRow
+5a. Logs: list + active workout — LogsPage, WorkoutDetailPage Active mode, ExerciseCard, SetRow ✓ DONE
 5b. Logs: finish flows — quick-start 4-step state machine, from-program template sync
 5c. Logs: read-only + edit — WorkoutDetailPage Read-only mode, Edit mode, delete flow
 6. Profile + Statistics — ProfilePage (functional), Statistics placeholder ("Coming soon")
@@ -172,6 +172,12 @@ UI DESIGN DECISIONS LOCKED (UIdesign.txt session 4)
 SESSION HISTORY
 ----------------
 Most recent at top. Never delete entries.
+
+  Session 10 — 2026-04-09
+    - Step 5a complete: LogExerciseService, LogSetService (incl. getPreviousData cross-session lookup); WorkoutLogService extended (getById, finish, update, deleteLog); LogsPage (date-grouped history, In Progress section); WorkoutDetailPage active mode; ExerciseCard; SetRow; --color-border CSS variable added to index.css
+    - Finish Workout stubbed (5b TODO): calls finish() + navigate /logs; full flow built in 5b
+    - Read-only/edit mode redirect to /logs (5c TODO)
+    - Build passes clean
 
   Session 9 — 2026-04-09
     - Step 4 complete: ProgramService, WorkoutService, WorkoutExerciseService; ProgramsPage, ProgramDetailPage, WorkoutTemplatePage (inc. Edit Targets Modal inline); build passes clean

@@ -1,0 +1,100 @@
+/* ── Layout ── */
+.page {
+  padding: 32px 16px 96px; /* extra bottom padding clears WorkoutFAB + nav */
+}
+
+.title {
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--color-text-primary);
+  margin-bottom: 24px;
+}
+
+/* ── Sections ── */
+.section {
+  margin-bottom: 24px;
+}
+
+.sectionLabel {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--color-text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 8px;
+}
+
+/* ── Date group divider ── */
+.dateLabel {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--color-text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin: 16px 0 8px;
+}
+
+/* ── Log list ── */
+.list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* ── Log card ── */
+.card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 16px;
+  background: var(--color-surface-1);
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  text-align: left;
+  gap: 8px;
+}
+
+.card:active {
+  background: var(--color-surface-2);
+}
+
+.cardName {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--color-text-primary);
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.cardTime {
+  font-size: 13px;
+  color: var(--color-text-label);
+  flex-shrink: 0;
+}
+
+/* ── In Progress badge ── */
+.badge {
+  flex-shrink: 0;
+  font-size: 12px;
+  font-weight: 500;
+  color: #fff;
+  background: var(--color-green);
+  border-radius: 6px;
+  padding: 2px 8px;
+}
+
+/* ── Empty state ── */
+.empty {
+  font-size: 15px;
+  color: var(--color-text-secondary);
+  text-align: center;
+  padding: 32px 0;
+}
