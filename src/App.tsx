@@ -3,7 +3,7 @@
  * Context initialization order (D7): AuthProvider → UserSettingsProvider → ActiveWorkoutProvider.
  * Each provider depends on the one above it being resolved first.
  * On mount: seeds exercise library if empty (fires once on first install).
- * BottomNav and WorkoutFAB render outside <Routes> so they persist across page navigations.
+ * BottomNav renders outside <Routes> so it persists across navigations. WorkoutFAB is rendered inside BottomNav's center slot.
  */
 
 import { useEffect } from 'react';
@@ -15,7 +15,6 @@ import { UserSettingsProvider } from './context/UserSettingsContext';
 import { ActiveWorkoutProvider } from './context/ActiveWorkoutContext';
 import AuthGuard from './components/AuthGuard';
 import BottomNav from './components/BottomNav';
-import WorkoutFAB from './components/WorkoutFAB';
 import LoginPage from './pages/LoginPage';
 import SignupPage from './pages/SignupPage';
 import LogsPage from './pages/LogsPage';
@@ -62,7 +61,6 @@ export default function App() {
 
             {/* Persistent UI — rendered outside Routes, visible across all navigations */}
             <BottomNav />
-            <WorkoutFAB />
           </ActiveWorkoutProvider>
         </UserSettingsProvider>
       </AuthProvider>

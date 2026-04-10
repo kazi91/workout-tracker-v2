@@ -1,11 +1,15 @@
 /**
  * WorkoutFAB — floating action button for starting or resuming a workout.
+ * Rendered inside BottomNav's center fabSlot div (not floated/fixed).
+ *
  * Visibility rules (Decision #15, N1):
- *   - Hidden on /login and /signup
- *   - Hidden on /logs/:id when that :id matches the active workout (already in active mode)
- *   - "Resume Workout" on all other tabs when a workout is in progress
- *   - "Start Workout" on /logs only when no workout is in progress
- *   - Hidden everywhere else when no active workout
+ *   - Hidden on /login and /signup (BottomNav itself returns null there — moot)
+ *   - Hidden on /logs/:id when viewing the active workout (already in active mode)
+ *   - "Resume Workout" everywhere when a workout is in progress
+ *   - "Start Workout" on /logs — quick-starts a new workout immediately
+ *   - On all other tabs with no active workout — navigates to /logs to start from there
+ *     (always visible so the nav center slot is never empty)
+ *
  * Reads: ActiveWorkoutContext (activeWorkoutId), AuthContext (userId for quick-start)
  */
 
@@ -45,25 +49,22 @@ export default function WorkoutFAB() {
     );
   }
 
-  // No active workout — show "Start Workout" on /logs tab only
-  if (pathname === '/logs') {
-    async function handleStartWorkout() {
-      if (!user?.id) return;
-      const log = await WorkoutLogService.create(user.id, null);
-      setActiveWorkoutId(log.id!);
-      navigate(`/logs/${log.id}`);
-    }
-
-    return (
-      <button
-        className={styles.fab}
-        aria-label="Start Workout"
-        onClick={handleStartWorkout}
-      >
-        <span style={{ fontSize: '22px', lineHeight: 1 }}>💪</span>
-      </button>
-    );
+  // No active workout — quick-start on /logs, navigate to /logs on all other tabs
+  async function handleStartWorkout() {
+    if (!user?.id) return;
+    if (pathname !== '/logs') { navigate('/logs'); return; }
+    const log = await WorkoutLogService.create(user.id, null);
+    setActiveWorkoutId(log.id!);
+    navigate(`/logs/${log.id}`);
   }
 
-  return null;
+  return (
+    <button
+      className={styles.fab}
+      aria-label="Start Workout"
+      onClick={handleStartWorkout}
+    >
+      <span style={{ fontSize: '22px', lineHeight: 1 }}>💪</span>
+    </button>
+  );
 }

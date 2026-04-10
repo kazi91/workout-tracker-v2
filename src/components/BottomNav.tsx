@@ -8,13 +8,17 @@
 
 import { NavLink, useLocation } from 'react-router-dom';
 import { ClipboardList, Dumbbell, BarChart2, User } from 'lucide-react';
+import WorkoutFAB from './WorkoutFAB';
 import styles from './BottomNav.module.css';
 
-const TABS = [
-  { to: '/logs',       label: 'Logs',       Icon: ClipboardList },
-  { to: '/programs',   label: 'Programs',   Icon: Dumbbell      },
-  { to: '/statistics', label: 'Statistics', Icon: BarChart2     },
-  { to: '/profile',    label: 'Profile',    Icon: User          },
+// Split 2 + 2 around center FAB slot
+const LEFT_TABS = [
+  { to: '/logs',     label: 'Logs',     Icon: ClipboardList },
+  { to: '/programs', label: 'Programs', Icon: Dumbbell      },
+];
+const RIGHT_TABS = [
+  { to: '/statistics', label: 'Statistics', Icon: BarChart2 },
+  { to: '/profile',    label: 'Profile',    Icon: User      },
 ];
 
 const HIDDEN_ROUTES = ['/login', '/signup'];
@@ -24,20 +28,24 @@ export default function BottomNav() {
 
   if (HIDDEN_ROUTES.includes(pathname)) return null;
 
+  const renderTab = ({ to, label, Icon }: { to: string; label: string; Icon: React.ElementType }) => (
+    <NavLink
+      key={to}
+      to={to}
+      className={({ isActive }) =>
+        `${styles.tab} ${isActive ? styles.tabActive : ''}`
+      }
+    >
+      <Icon size={22} strokeWidth={1.75} />
+      <span className={styles.label}>{label}</span>
+    </NavLink>
+  );
+
   return (
     <nav className={styles.nav}>
-      {TABS.map(({ to, label, Icon }) => (
-        <NavLink
-          key={to}
-          to={to}
-          className={({ isActive }) =>
-            `${styles.tab} ${isActive ? styles.tabActive : ''}`
-          }
-        >
-          <Icon size={22} strokeWidth={1.75} />
-          <span className={styles.label}>{label}</span>
-        </NavLink>
-      ))}
+      {LEFT_TABS.map(renderTab)}
+      <div className={styles.fabSlot}><WorkoutFAB /></div>
+      {RIGHT_TABS.map(renderTab)}
     </nav>
   );
 }

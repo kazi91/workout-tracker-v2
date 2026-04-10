@@ -1,11 +1,7 @@
-/* ── FAB — fixed bottom-center, above nav bar ── */
+/* ── FAB — inline within nav center slot ── */
 .fab {
-  position: fixed;
-  bottom: calc(var(--nav-height) + env(safe-area-inset-bottom) + 16px);
-  left: 50%;
-  transform: translateX(-50%);
-  width: 56px;
-  height: 56px;
+  width: 52px;
+  height: 52px;
   border-radius: 50%;
   background-color: var(--color-green);
   color: #fff;
@@ -14,12 +10,12 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
-  z-index: 100;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+  flex-shrink: 0;
   transition: opacity 0.15s, transform 0.15s;
 }
 
 .fab:active {
   opacity: 0.85;
-  transform: translateX(-50%) scale(0.95);
+  transform: scale(0.95);
 }

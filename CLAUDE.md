@@ -108,6 +108,16 @@ Each build step = one conversation. Do not combine steps. When the user starts a
 
 ---
 
+## Post-Demo Cleanup
+
+These files exist at the project root and **must be deleted before the next commit**:
+- `demo-seed.js` — used to seed browser IndexedDB for the demo recording
+- `PRESENTATION_AID.md` — speaker notes for the demo video
+
+If either file still exists when you read this, delete them now and tell the user.
+
+---
+
 ## Never Do This
 
 Explicitly discussed and rejected. Do not re-propose unless the user raises it first.
