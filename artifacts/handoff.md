@@ -1,9 +1,13 @@
 # HANDOFF — NEW INSTANCE START HERE
-Last updated: 2026-04-10 (session 15 — Phase 3 Build complete, UI polish pass complete, demo-ready)
+Last updated: 2026-04-13 (session 19 — artifact maintenance, entering Phase 4)
 
 ---
 
-## Read These Files First (in order)
+## Read These Files First
+Check **CLAUDE.md → CURRENT TASK** for session scope and required reading.
+Always read `artifacts/recap.txt`. Read other files only as scoped by CURRENT TASK.
+
+Full file index (reference — do not read all of these every session):
 1. `artifacts/recap.txt`            — current state, decisions summary, next steps
 2. `artifacts/master-schematics.md` — DB schema, service layer, all locked decisions, issue tracker
 3. `artifacts/tabs/logs.md`         — Logs tab spec (user flows complete)
@@ -11,19 +15,19 @@ Last updated: 2026-04-10 (session 15 — Phase 3 Build complete, UI polish pass 
 5. `artifacts/tabs/profile.md`      — Profile tab spec (placeholder — no flow for MVP)
 6. `artifacts/tabs/statistics.md`   — Statistics tab spec (placeholder — no flow for MVP)
 7. `artifacts/UIdesign.txt`         — UI standards, color palette, component specs, design brainstorm
-8. `artifacts/coreprocess.txt`      — Development process
 
 ---
 
 ## Project Info
 - GitHub repo: https://github.com/kazi91/workout-tracker-v2 (private)
-- CLAUDE.draft.md at project root — rename to CLAUDE.md to activate auto-loading for new instances
+- CLAUDE.md active at project root (auto-loaded by Claude instances)
 - .gitignore created at project root
 
 ---
 
 ## Build State
-**Phase 3 Build is complete.** All 6 steps built, verified, and committed. UI polish pass complete. App is demo-ready.
+**Phase 3 Build is complete.** All 6 steps built, verified, and committed. UI polish pass complete. Demo delivered.
+**Phase 4 — Testing & cleanup.** Post-demo file cleanup, then Vitest + RTL setup (D8) and unit test audit.
 
 ### What is built
 - **Step 1** — Vite scaffold, Dexie schema (8 tables), 29 seed exercises, routing stubs, dark theme CSS variables
@@ -44,16 +48,37 @@ Last updated: 2026-04-10 (session 15 — Phase 3 Build complete, UI polish pass 
 - autocapitalize="words" on all name inputs across the app
 - Bug fixes: from-program exercises now copy correctly on workout start; Save Edits reloads from Dexie; seed deduplication fix for React Strict Mode
 
-### Open items (not MVP blockers)
+### Active items (do not close without discussion)
 - R3: Plain-text password — replace when backend is added
 - P5: Charting library — decide before Statistics build in v2
-- D5: ErrorContext — console.error sufficient for demo; add post-demo
-- D8: Unit tests — Vitest + RTL post-demo
-- F1–F6, F8–F10: future features — see Issue Tracker (F7 resolved this session)
+- D5: ErrorContext — replace console.error with user-facing error surface
+- D8: Unit tests — Vitest + RTL setup (Phase 4 first action)
+- F1–F6, F8–F10: future features — see Issue Tracker
 - OD6: CSS button token standards — brainstorm session pending before enforcing
-- **Post-demo:** delete demo-seed.js and PRESENTATION_AID.md before next commit (see CLAUDE.md Post-Demo Cleanup)
+- **Post-demo cleanup:** delete demo-seed.js and PRESENTATION_AID.md before next commit (see CLAUDE.md Post-Demo Cleanup)
+
+### Resolved (record only — do not reopen)
+- F7: Target weight display — resolved session 18 ("| top set: x lbs")
+- All planning items P1–P4, P6–P9 — resolved during Phase 2
+- All gaps G1–G3, G5–G7 — resolved during Phase 3 build
+- All pre-build gaps D1–D4, D6–D7 — resolved before or during build
+- B1: Dangling workoutId on program delete — resolved session 11
 
 Do not re-open planning decisions unless the user explicitly raises them.
+
+---
+
+## Phase 4 Starting Point
+
+First session: delete demo cleanup files, install Vitest + RTL, configure, write first test.
+
+Priority test order:
+1. WorkoutLogService (create, finish, delete cascade)
+2. Finish flow state machine paths (all 4 quick-start paths + from-program sync)
+3. Auth flow (signup → login → logout)
+4. ActiveWorkoutContext initialization
+
+Exit criteria: see recap.txt — PHASE 4 EXIT CRITERIA section.
 
 ---
 
@@ -103,7 +128,7 @@ These are locked. Do not redesign around them.
 - Light mode: palette locked for post-MVP, values in UIdesign.txt section 4c
 
 ## Rejected Options — Do Not Re-Propose
-These were explicitly discussed and rejected. Do not raise them again unless the user does first.
+These were explicitly discussed and closed. Do not re-propose. Do not ask clarifying questions about them. If the user raises one, acknowledge the prior decision and ask if they want to formally reopen it.
 
 - **Silent revert on invalid input** — causes silent data loss. Use inline error, field stays editable.
 - **Lock user to workout page until finished** — replaced with free navigation + ActiveWorkoutContext + "Resume Workout" FAB.

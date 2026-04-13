@@ -6,11 +6,18 @@ GitHub: https://github.com/kazi91/workout-tracker-v2 (private)
 
 ---
 
+## CURRENT TASK
+Phase: 4 — Testing & post-demo cleanup
+Last session ended: Session 18 — target display fix, button sizing, issue tracker updates (2026-04-10)
+Next action: Delete demo-seed.js + PRESENTATION_AID.md, set up Vitest + RTL (D8), begin unit test audit
+Session scope: Project root cleanup, then test infrastructure
+Required reading this session: recap.txt, handoff.md (open items section)
+
 ## Model Selection Guide
 
 **Sonnet** — use for most work: scaffolding, boilerplate components, CSS styling, simple CRUD services, repetitive tab pages, clear bug fixes, artifact updates.
 
-**Opus** — save for moments that need deeper reasoning: Dexie schema + service layer design, complex state (ActiveWorkoutContext), building the first instance of a pattern (first tab), unit conversion logic, debugging subtle async/IndexedDB issues, architecture decisions (OD1–OD5).
+**Opus** — save for moments that need deeper reasoning: debugging subtle async/IndexedDB race conditions, test strategy design for complex state machines (ActiveWorkoutContext, finish flows), backend migration architecture, React Native porting decisions.
 
 **Rule of thumb:** If you're typing *what* to build and Claude just needs to write it → Sonnet. If you're asking Claude to figure out *how* something should work → Opus.
 
@@ -69,6 +76,12 @@ Each build step = one conversation. Do not combine steps. When the user starts a
 - **Never re-read a file you already read in this session** unless the user changed it.
 - **Don't read code you just wrote** to verify — the Edit/Write tools confirm success.
 - **Verify before done.** Run `npm run dev` (or `npm run build` if dev server is impractical) before calling any step complete. Fix compile errors and TypeScript issues in the same session — don't leave them for the next one.
+- **Pre-completion checklist.** Before calling any step complete, verify:
+  - [ ] JSDoc on every exported service function
+  - [ ] No `db.ts` imports in components (service layer only)
+  - [ ] `npm run build` passes clean
+  - [ ] `artifacts/recap.txt` and `artifacts/handoff.md` updated
+  - [ ] CLAUDE.md → CURRENT TASK updated for next session
 
 ### Output discipline
 - **Build, don't narrate.** Write the code. Skip the "I'm going to create..." preamble and the "Here's what I did..." recap. The user can see the diff.
@@ -105,6 +118,7 @@ Each build step = one conversation. Do not combine steps. When the user starts a
 - **Auto-save on blur** — all editable pages except `WorkoutDetailPage` edit mode (explicit Save Edits button)
 - **Modals for destructive actions** — delete program, delete workout, discard active session; all other navigation is always safe
 - **Seed trigger** — `App.tsx` on mount: `db.exercises.count() === 0` → `seed()`; fires once on first install only
+- **Error handling** — all async service calls in components use try/catch; log via `console.error` for MVP. `ErrorContext` is the post-demo replacement (D5 — Issue Tracker)
 
 ---
 
@@ -120,16 +134,7 @@ If either file still exists when you read this, delete them now and tell the use
 
 ## Never Do This
 
-Explicitly discussed and rejected. Do not re-propose unless the user raises it first.
-
-| What | Why rejected | Notes |
-|------|-------------|-------|
-| `window.confirm` / `window.prompt` | Replaced by Modal component (R2) | Use shared `Modal.tsx` for all confirm/discard/delete flows |
-| Import `db.ts` in components | Breaks service layer abstraction | Always go through a service file |
-| Redux / Zustand / Jotai | Per-page `useState` sufficient for MVP | Re-evaluate post-MVP if shared state grows painful |
-| Tailwind CSS | CSS Modules retained for MVP | Revisit before next major feature phase — not a permanent rejection |
-| `sessionStorage` for auth | Switched to `localStorage` — persists across tab closes | Auth key: `workout_tracker_user_id` |
-| Standalone workout templates | Every workout must belong to a program | Quick-start via FAB is the correct path for unplanned sessions |
+The full list of rejected options lives in `artifacts/handoff.md` — **Rejected Options** section. Read it every session. Do not re-propose any item listed there unless the user raises it first.
 
 ---
 

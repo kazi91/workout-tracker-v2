@@ -1,6 +1,14 @@
 WORKOUT TRACKER V2 — RECAP
 ===========================
-Last updated: 2026-04-10
+Last updated: 2026-04-13
+
+CURRENT TASK (mirrors CLAUDE.md — if they diverge, recap.txt wins)
+-------------------------------------------------------------------
+Phase: 4 — Testing & post-demo cleanup
+Last session ended: Session 18 — target display fix, button sizing, issue tracker updates (2026-04-10)
+Next action: Delete demo-seed.js + PRESENTATION_AID.md, set up Vitest + RTL (D8), begin unit test audit
+Session scope: Project root cleanup, then test infrastructure
+Required reading this session: recap.txt, handoff.md (open items section)
 
 ---
 
@@ -20,7 +28,7 @@ Stack:
 
 CURRENT STATE
 --------------
-Phase: Build complete — all MVP steps done. UI polish pass complete. App is demo-ready.
+Phase: Phase 4 — Testing & post-demo cleanup. Build complete, demo delivered. Entering test infrastructure and cleanup.
 Step 1 committed: Vite + React 18 + TypeScript scaffold, Dexie v4 schema (8 tables), 29 seed exercises, BrowserRouter routing stubs for all pages, index.css with dark theme CSS variables, Prettier config. Build passes clean.
 UIdesign.txt expanded with: color system, alignment standards, button design standards, light mode palette.
 Green accent locked: dark mode #3BAF6A / light mode #2D9F58.
@@ -90,19 +98,27 @@ The following are resolved in the spec and will be implemented at build time:
 
 ---
 
-NEXT STEPS (in order)
-----------------------
-Planning is complete. All decisions locked. Ready to build.
+BUILD ORDER (Phase 3 — complete)
+----------------------------------
+All steps built, verified, and committed:
+1. Project setup ✓  2. Auth ✓  3. Core shared ✓  4. Programs tab ✓
+5a. Logs: list + active ✓  5b. Finish flows ✓  5c. Read-only + edit ✓  6. Profile + Statistics ✓
 
-Recommended build order:
-1. Project setup — Vite + React + TypeScript, folder structure, .gitignore (done), Dexie schema, ESLint + Prettier config (extensions installed: eslint, prettier, gitlens, live server, markdown, mermaid) ✓ DONE
-2. Auth — SignupPage (with unit preference step), LoginPage, AuthContext, localStorage session ✓ DONE
-3. Core shared — BottomNav, Modal, ExerciseSearchModal, WorkoutFAB, UserSettingsContext, ActiveWorkoutContext ✓ DONE
-4. Programs tab — ProgramsPage, ProgramDetailPage, WorkoutTemplatePage (inc. Edit Targets Modal) ✓ DONE
-5a. Logs: list + active workout — LogsPage, WorkoutDetailPage Active mode, ExerciseCard, SetRow ✓ DONE
-5b. Logs: finish flows — quick-start 4-step state machine, from-program template sync ✓ DONE
-5c. Logs: read-only + edit — WorkoutDetailPage Read-only mode, Edit mode, delete flow ✓ DONE
-6. Profile + Statistics — ProfilePage (functional), Statistics placeholder ("Coming soon") ✓ DONE
+NEXT STEPS — Phase 4
+----------------------
+1. Post-demo cleanup — delete demo-seed.js + PRESENTATION_AID.md
+2. Test infrastructure — Vitest + RTL setup (D8)
+3. Unit test audit — service layer first, then contexts, then critical UI flows
+4. ErrorContext (D5) — replace console.error with user-facing error surface
+5. Future features (F1–F6, F8–F10) — prioritize after testing baseline established
+
+PHASE 4 EXIT CRITERIA
+-----------------------
+- Vitest + RTL installed and configured
+- Critical flows covered: auth, quick-start, from-program, finish flow (all 4 state machine paths), delete cascades
+- Issue Tracker: zero open Must Fix items
+- npm run build passes clean
+- recap.txt updated with test coverage summary
 
 ---
 
@@ -171,7 +187,7 @@ UI DESIGN DECISIONS LOCKED (UIdesign.txt session 4)
 
 SESSION HISTORY
 ----------------
-Most recent at top. Never delete entries.
+Most recent at top. Full history in handoff.md.
 
   Session 18 — 2026-04-10
     - Target weight display: "@ x lbs" → "| top set: x lbs" in ExerciseCard and WorkoutTemplatePage (F7 resolved)
@@ -198,85 +214,20 @@ Most recent at top. Never delete entries.
     - False positive documented: ExerciseSearchModal modal closure after custom exercise creation — works correctly via parent's onSelect handler; see Issue Tracker note in master-schematics.md
 
   Session 15 — 2026-04-10
-    - UI polish: ProfilePage unit labels moved into label text ("Height (in)" / "Weight (lb)"); all 4 tab page titles standardized to 24px/700; autocapitalize="words" added to all name/program/workout inputs across app (ProfilePage, SignupPage, ProgramsPage, ProgramDetailPage, WorkoutTemplatePage, WorkoutDetailPage, ExerciseSearchModal custom exercise input)
+    - UI polish: ProfilePage unit labels moved into label text ("Height (in)" / "Weight (lb)"); all 4 tab page titles standardized to 24px/700; autocapitalize="words" added to all name/program/workout inputs across app
 
   Session 14 — 2026-04-10
-    - UI polish pass: trash icons (Trash2) replace text "Remove"/"Delete" buttons on ExerciseCard, WorkoutTemplatePage, ProgramDetailPage, WorkoutDetailPage; set-delete icon changed from Trash2 to red X; WorkoutTemplatePage button layout redesigned — shorter labels (Start, + Add, Done, Delete), auto-width centered, Start alone in middle row, Done + Delete in bottom row with spacer
-    - WorkoutFAB centered with left:50%/translateX(-50%); LogsPage and ProgramsPage page titles centered; ProgramsPage "New Program" button moved below list centered; LogsPage empty state text updated; Logs and Programs section labels centered
-    - Bug fixes: WorkoutLogService.create now copies workoutExercises → logExercises when workoutId provided (from-program workouts were showing no exercises); Save Edits now reloads from Dexie after saving (saved changes were not displaying); seed.ts module-level seedStarted flag prevents React Strict Mode double-seeding (duplicate exercises in ExerciseSearchModal)
-    - Future feature documented in profile.md: auto-load bodyweight from profile into bodyweight exercise weight field
+    - UI polish pass: trash icons replace text buttons throughout; WorkoutTemplatePage button layout redesigned; FAB centered; page titles centered; empty states updated
+    - Bug fixes: from-program exercises copy on start; Save Edits reloads from Dexie; seed deduplication for Strict Mode
 
   Session 13 — 2026-04-09
-    - Step 6 complete: UserService (getProfile, updateProfile); AuthContext extended with updateUser(); ProfilePage (name/height/weight auto-save on blur, unit toggle saves immediately, logout); StatisticsPage "Coming soon" placeholder; build passes clean
+    - Step 6 complete: UserService, ProfilePage (auto-save, unit toggle, logout), StatisticsPage placeholder
 
-  Session 12 — 2026-04-09
-    - Step 5c complete: WorkoutDetailPage read-only and edit modes; mode derived from finishedAt on load; edit mode has "Save Edits" footer and "Discard changes?" modal on Back; "Delete Workout" button with confirm modal; ExerciseCard + SetRow extended with readOnly prop; build passes clean
-
-  Session 11 — 2026-04-09
-    - Step 5b complete: full finish flow added to WorkoutDetailPage — quick-start 4-step state machine (save-prompt → program-picker → new-program-form / add-to-program-form), from-program sync modal (Decision #19); B1 edge case handled; build passes clean
-
-  Session 10 — 2026-04-09
-    - Step 5a complete: LogExerciseService, LogSetService (incl. getPreviousData cross-session lookup); WorkoutLogService extended (getById, finish, update, deleteLog); LogsPage (date-grouped history, In Progress section); WorkoutDetailPage active mode; ExerciseCard; SetRow; --color-border CSS variable added to index.css
-    - Finish Workout stubbed (5b TODO): calls finish() + navigate /logs; full flow built in 5b
-    - Read-only/edit mode redirect to /logs (5c TODO)
-    - Build passes clean
-
-  Session 9 — 2026-04-09
-    - Step 4 complete: ProgramService, WorkoutService, WorkoutExerciseService; ProgramsPage, ProgramDetailPage, WorkoutTemplatePage (inc. Edit Targets Modal inline); build passes clean
-
-  Session 8 — 2026-04-09
-    - Step 1 complete: Vite scaffold, deps installed (dexie, react-router-dom, lucide-react, prettier), folder structure, types/index.ts, db/db.ts, db/seed.ts (29 exercises), index.css (dark theme), main.tsx, App.tsx (BrowserRouter + all routes), .prettierrc
-    - Coding standards added to CLAUDE.md; retroactive comments applied to Step 1 files
-    - Step 2 complete: AuthService, AuthContext (loading state — D7), AuthGuard, LoginPage, SignupPage (unit toggle), App.tsx wired with AuthProvider + AuthGuard
-    - Step 3 complete: UserSettingsContext (reads from AuthContext — N3), ActiveWorkoutContext, units.ts helpers, ExerciseService, WorkoutLogService (partial — getActive + create), BottomNav, Modal, ExerciseSearchModal, WorkoutFAB (full visibility logic — N1 resolved), App.tsx wired with all 3 contexts
-    - Build passes clean; committed
-
-  Session 7 — 2026-04-09
-    - Pre-build decisions locked: D4 (BrowserRouter), D7 (sequential context init), N3 (UserSettingsContext reads from AuthContext), N4 (raw inches + label, ft+in post-MVP)
-    - D5 (ErrorContext) deferred for demo; D8 (unit tests) deferred for demo
-    - Finish flow: full spec confirmed — no simplification, 4-step state machine builds as designed
-    - Model Selection Guide added to CLAUDE.md — Sonnet default, Opus for complex reasoning, ask before switching
-
-  Session 6 — 2026-04-09
-    - Cross-artifact gap audit; 4 new planning gaps (N1–N4) added to Issue Tracker
-    - D2 specced (lookup algorithm defined); D3 resolved (callback prop)
-    - D4, D5, D7, D8: recommendations documented; confirm before relevant build steps
-    - L1–L4 resolved in login.md; M1–M4 resolved in logs.md
-    - B1 updated: finish flow also breaks with deleted template — treat as quick-start
-    - programs.md ProgramDetailPage corrected to use getCountsByProgramId (R1 spec fix)
-    - login.md Services Used corrected: AuthService.login() not UserService.findByEmail()
-    - CLAUDE.md session start protocol updated: explicit mandatory vs reference-only reading
-
-  Session 5 — 2026-04-06
-    - Discussed startup prompts and process holes; identified 5 gaps in the build process
-    - Fixed #1 (mid-step resumption): CLAUDE.md updated to survey src/ before acting if code exists
-    - Fixed #4 (login.md missing): artifacts/tabs/login.md created with L1–L4 open questions
-    - Full developer gap review of all artifacts — identified D1–D8 pre-build gaps
-    - D1 resolved: Dexie schema string locked (no compound indexes) — master-schematics.md
-    - D6 resolved: cascade delete order locked for all 3 paths — master-schematics.md
-    - R1 resolved: getCountsByProgramId added to WorkoutExerciseService (replaces N+1 pattern)
-    - B1 added to Issue Tracker: dangling workoutId on program delete
-    - D2, D3, D4, D5, D7, D8 remain open — tagged with build step in pre-build gaps above
-    - Stopped at D2 (previousWeight/previousReps lookup logic) — resume here next session
-
-  Session 4 — 2026-04-05
-    - VS Code extensions noted: Markdown, Mermaid, Live Server, GitLens, ESLint, Prettier
-    - GitHub repo created: https://github.com/kazi91/workout-tracker-v2 (private)
-    - CLAUDE.draft.md created and rewritten (7 improvements); renamed to CLAUDE.md
-    - .gitignore created at project root
-    - OD1 locked: dark mode #3BAF6A / light mode #2D9F58
-    - UI feedback processed from annotated screenshot — compact input variant specced, column headers added
-    - Pre-build audit complete — C1–C9 and G5 all resolved
-    - UIdesign.txt fully expanded: color system, alignment, button standards, light mode palette
-
-  Sessions 1–3 — 2026-04-02 to 2026-04-04
-    - Project scoped and problem defined
-    - Tech stack selected: React 18 + TypeScript + Vite 5 + React Router v7 + CSS Modules + Dexie.js v4
-    - DB schema v2 designed (8 tables)
-    - Service layer contracts defined
-    - All 23 design decisions locked
-    - User flows complete for Logs and Programs tabs
-    - Issue Tracker established
+  Sessions 1–12 — 2026-04-02 to 2026-04-09 (compressed — full detail in handoff.md)
+    - Sessions 1–3: project scoped, tech stack selected, DB schema v2 designed, 23 decisions locked, user flows complete
+    - Sessions 4–6: CLAUDE.md created, GitHub repo set up, UIdesign.txt expanded, pre-build gap audit (D1–D8), Issue Tracker established
+    - Sessions 7–8: pre-build decisions locked (D4/D7/N3/N4), Steps 1–3 built (scaffold, auth, shared components)
+    - Sessions 9–12: Steps 4–5c built (Programs tab, Logs list, active workout, finish flows, read-only/edit modes)
 
 ---
 

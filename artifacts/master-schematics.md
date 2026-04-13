@@ -3,6 +3,12 @@
 > **Purpose:** Source of truth for the entire application. Covers architecture, tech stack, DB schema, service layer, routing, state, and cross-cutting concerns. Update this file whenever a decision changes at the app level. Sub-schematics (per tab) live in `artifacts/tabs/` and are the source of truth for individual tab features.
 >
 > **Working agreements:** Every phase is a back-and-forth. Do not advance to the next phase without explicit agreement. Before moving on, update this doc and the relevant sub-schematics with what was decided. User stories should be referenced and cross-checked at every stage of development.
+>
+> **Reading guide:**
+> - Building a feature → Service Layer + relevant DB tables only
+> - Debugging a flow → Issue Tracker + relevant Decision(s)
+> - Architecture question → Key Design Decisions section
+> - Full read only needed when: starting a new phase
 
 ---
 
@@ -81,6 +87,7 @@ Most workout tracking apps in the market are cluttered, unintuitive, and designe
 - **Lean MVP** — build the minimum that proves the core value, then iterate
 - **Backend-ready** — service layer abstraction means no frontend rewrites when backend is added
 - **Refactoring** — before each build phase, review open Refactor and Planning items in the Issue Tracker; must-fix items are resolved before proceeding, minor items deferred with an explicit note; future integration phases (backend, mobile, devices) will treat refactoring as a formal pre-build step
+- **Coding standards** (JSDoc, comment rules, CSS conventions) — see CLAUDE.md → Coding Standards section
 
 ---
 
@@ -456,21 +463,12 @@ Applied at every iteration. Each phase has a defined scope — don't skip phases
 > - **Refactor** — correct behavior, suboptimal implementation
 > - **Planning** — architectural or design decision that must be resolved before building continues
 
+### Active Issues
+
 | # | Type | Item | Severity | Area | Status |
 |---|------|------|----------|------|--------|
-| G2 | Gap | No edit UI for workout exercise targets (sets/reps/weight) — now applies to WorkoutTemplatePage, not ProgramDetailPage | Must fix | Programs | Resolved — built (Edit Targets Modal on WorkoutTemplatePage) |
-| G3 | Gap | No `.gitignore` | Must fix | Project | Resolved — built (created at project setup) |
 | G4 | Gap | No "change exercise" on active workout | Nice to have | Logs | Pending |
-| G5 | Gap | Back navigation destination not explicitly stated — ProgramDetailPage "← Back" destination should be /programs; WorkoutTemplatePage "← Back" destination should be /programs/:id. The button exists in both specs; the gap is that destinations were never locked. | Must fix | Programs | Resolved — built |
-| R1 | Refactor | `ExerciseService.getAll()` called inside `.map()` — applies to WorkoutTemplatePage (replaces ProgramDetailPage) | Minor | Programs | Resolved — built (exercises hoisted as lookup map in WorkoutTemplatePage; getCountsByProgramId batch query used in ProgramDetailPage) |
-| R2 | Refactor | `window.confirm` / `window.prompt` used in 3 places — finish workout flow (Logs), delete workout (Logs), delete program (Programs) — replace all with Modal component | Must fix before beta | Logs, Programs | Resolved — built (Modal component used throughout all confirm/discard/delete flows) |
 | R3 | Refactor | Password stored as plain text in Dexie — replace with hashed auth when backend is added | Must fix before real users | Auth | Pending |
-| P1 | Planning | Evaluate CSS Modules vs Tailwind CSS — Tailwind faster to iterate on mobile-first UI as complexity grows | Decide in v2 planning | Styling | Resolved — CSS Modules retained for MVP; revisit Tailwind before next major feature phase |
-| P2 | Planning | Evaluate per-page useState/useEffect vs shared state solution — current approach gets painful when multiple pages share the same data | Decide in v2 planning | Architecture | Resolved — per-page useState/useEffect retained for MVP; Context API covers shared cases; evaluate Zustand before iteration phase |
-| P3 | Planning | Add `duration` to `workoutLogs` and `notes` to `logExercises` or `logSets` — cheap now, painful after users have data | Decide in v2 planning | DB Schema | Resolved — `duration` skipped (derivable from finishedAt - startedAt, no stored field needed); `notes` (nullable string) added to `logExercises` now; notes UI deferred post-MVP |
-| P4 | Planning | Auth session stored in `sessionStorage` — user logged out on tab close; `localStorage` more appropriate for a gym app | Decide in v2 planning | Auth | Resolved — switched to `localStorage` for MVP; user stays logged in across tab closes and browser restarts; replaced by proper token-based auth when backend is added |
-| G6 | Gap | Statistics tab is a placeholder — entire feature set unbuilt | Blocked until v2 planning | Statistics | Resolved — built (StatisticsPage "Coming soon" placeholder; full feature deferred to v2) |
-| G7 | Gap | No "Discard Workout" option on active workout screen — user has no way to cancel a session; needs confirm prompt → delete log + cascade → /logs | Must fix | Logs | Resolved — built (Discard Workout button in active mode footer with Modal confirm) |
 | P5 | Planning | Charting library not selected — must decide before building Statistics | Decide before Statistics build | Statistics | Pending |
 | F1 | Future | Auto-suggest exercise names from library in text input fields | Post-MVP | Logs, Programs | Future |
 | F2 | Future | Set completion indicator — visual feedback (checkmark or color change) on set row after auto-save | Post-MVP | Logs | Future |
@@ -478,22 +476,38 @@ Applied at every iteration. Each phase has a defined scope — don't skip phases
 | F4 | Future | Workout duration — display finishedAt - startedAt on finished log cards and read-only view | Post-MVP | Logs | Future |
 | F5 | Future | Basic rest timer — auto-starts on set log, sound/vibration at zero, non-customizable | Post-MVP | Logs | Future |
 | F6 | Future | "Create a program from this workout" — from a finished log, create a new program using that workout's exercises as the template; targets set from logged sets | Post-MVP | Logs, Programs | Future |
-| F7 | Future | Target weight display — change "@ x lbs" label to "top set: x lbs" on ExerciseCard target row (active and read-only modes); keep target sets and reps unchanged. Better reflects that target weight is a peak/top-set goal, not a per-set average. | Post-MVP | Logs | Resolved — built |
-| F8 | Future | Bodyweight + added weight display — add `isBodyweight` bool to exercises table; when true and targetWeight > 0, display as "top set: BW +X lbs" instead of "top set: X lbs". Requires schema migration. Decision: Option A (treat 0 as bodyweight, >0 as plain weight) retained for MVP. | Post-MVP schema change | Logs, Programs, DB | Future |
-| F9 | Future | Rearrange exercises — drag-to-reorder exercise list on active workout (WorkoutDetailPage) and workout template (WorkoutTemplatePage). Requires adding `sortOrder` int to `logExercises` and `workoutExercises` tables; currently ordered by insertion. | Post-MVP schema change | Logs, Programs, DB | Future |
-| F10 | Future | Redesign WorkoutTemplatePage bottom action area — current button layout (Start / Done + Delete) is an eyesore. Revisit after OD6 (CSS button token standards) is resolved. | Post-MVP polish | Programs | Future |
-| P6 | Planning | Workout detail (active/past workout screen) may warrant its own sub-schematic — currently lives under Logs tab. Decide scope and ownership before v2 build begins | Decide in v2 planning | Logs / Workouts | Resolved — stays in logs.md; mode-switching fully specced (Decision #21) |
-| P7 | Planning | Target derivation in createFromLog: targetReps and targetWeight default to first set values — confirm this is the desired behavior or choose alternative (e.g. last set, most common value) | Decide before building finish flow | Logs, Programs | Resolved — Option A: first set values. Rationale: template target represents a starting weight, not a peak; first set is what the user should begin with next session; heaviest set would require editing down every time |
-| P8 | Planning | From-program finish flow (workoutId set): two-branch logic (unmodified → "Update program?" / modified → save flow) not yet fully specced — modification detection logic undefined | Must fix before building from-program finish flow | Logs | Resolved — Decision #19 |
-| B1 | Bug | Dangling workoutId on program delete — workoutLogs retain stale workoutId when their linked program is deleted. Two failure points: (1) display: null-check before showing template name; (2) WorkoutDetailPage finish flow: if WorkoutService.getById(log.workoutId) returns null, treat entire session as quick-start — hide target column, skip from-program finish flow. Log history is never cascade-deleted; it belongs to the user. Handle at build step 5. | Minor | Logs, Programs | Resolved — built (WorkoutDetailPage null-checks workoutId; falls back to quick-start flow if template no longer exists) |
-| P9 | Planning | Pre-fill behavior when starting from program is unspecced — WorkoutLogService.create only creates the workoutLog record; nothing copies workoutExercises → logExercises. Must define where and when this copy happens before building start-from-program flow | Must fix before building start-from-program flow | Logs, Programs | Resolved — Option A: create handles copy atomically |
+| F8 | Future | Bodyweight + added weight display — add `isBodyweight` bool to exercises table; when true and targetWeight > 0, display as "top set: BW +X lbs" instead of "top set: X lbs". Requires schema migration. | Post-MVP schema change | Logs, Programs, DB | Future |
+| F9 | Future | Rearrange exercises — drag-to-reorder exercise list on active workout and workout template. Requires `sortOrder` int on `logExercises` and `workoutExercises`. | Post-MVP schema change | Logs, Programs, DB | Future |
+| F10 | Future | Redesign WorkoutTemplatePage bottom action area — revisit after OD6 (CSS button token standards) is resolved. | Post-MVP polish | Programs | Future |
 
-| N1 | Planning | WorkoutFAB hidden logic unspecced — on /logs/:id, FAB hidden state requires comparing route param :id against ActiveWorkoutContext.activeWorkoutId; currently undocumented; spec before building WorkoutFAB (build step 3) | Must fix | Shared | Resolved — built (FAB compares route :id against activeWorkoutId; hidden when on the active workout's own page) |
-| N2 | Planning | Finish flow state machine — WorkoutDetailPage needs finishFlowStep: null \| 'save-prompt' \| 'program-picker' \| 'new-program-form' \| 'add-to-program-form' to manage multi-step modal; spec added to logs.md State section; implement at build step 5 | Must fix | Logs | Resolved — session 7: full spec confirmed, no simplification |
-| N3 | Planning | Context dependency chain — UserSettingsContext reads unitPreference from AuthContext.user on init, not independent Dexie query; resets on logout/login | Must fix | Architecture | Resolved — session 7 |
-| N4 | Planning | Height display — raw number + "in" or "cm" label from UserSettingsContext; ft+in conversion is post-MVP polish | Must fix | Profile | Resolved — session 7 |
+### Resolved Issues (record only — do not reopen)
 
-> Resolved: G1 (delete workout log UI), G7 (date grouping in logs), G8 (previous weight × reps display) — all fixed during MVP audit phase.
+| # | Type | Item | Resolution |
+|---|------|------|------------|
+| G2 | Gap | No edit UI for workout exercise targets | Built — Edit Targets Modal on WorkoutTemplatePage |
+| G3 | Gap | No `.gitignore` | Built — created at project setup |
+| G5 | Gap | Back navigation destinations unlocked | Built — ProgramDetailPage → /programs, WorkoutTemplatePage → /programs/:id |
+| G6 | Gap | Statistics tab placeholder | Built — "Coming soon" placeholder; full feature deferred to v2 |
+| G7 | Gap | No "Discard Workout" option | Built — Discard button in active mode footer with Modal confirm |
+| R1 | Refactor | ExerciseService.getAll() called inside .map() | Built — exercises hoisted as lookup map; getCountsByProgramId batch query |
+| R2 | Refactor | window.confirm / window.prompt in 3 places | Built — Modal component used throughout |
+| P1 | Planning | CSS Modules vs Tailwind | CSS Modules retained for MVP; revisit Tailwind before next major phase |
+| P2 | Planning | useState vs shared state | Per-page useState retained; Context API covers shared cases |
+| P3 | Planning | Add duration/notes fields | Duration skipped (derivable); notes added to logExercises; notes UI post-MVP |
+| P4 | Planning | sessionStorage vs localStorage | Switched to localStorage; persists across tab closes |
+| P6 | Planning | Workout detail sub-schematic | Stays in logs.md; mode-switching fully specced (Decision #21) |
+| P7 | Planning | Target derivation in createFromLog | First set values — target = starting weight, not peak |
+| P8 | Planning | From-program finish flow logic | Resolved — Decision #19 |
+| P9 | Planning | Pre-fill on start from program | create handles copy atomically |
+| B1 | Bug | Dangling workoutId on program delete | Built — null-check workoutId; falls back to quick-start flow |
+| N1 | Planning | WorkoutFAB hidden logic | Built — FAB compares route :id against activeWorkoutId |
+| N2 | Planning | Finish flow state machine | Confirmed session 7 — no simplification |
+| N3 | Planning | Context dependency chain | Resolved session 7 — UserSettingsContext reads from AuthContext |
+| N4 | Planning | Height display format | Resolved session 7 — raw number + label; ft+in post-MVP |
+| F7 | Future | Target weight display label | Built session 18 — "| top set: x lbs" |
+| G1 | Gap | Delete workout log UI | Resolved during MVP audit |
+| G8 | Gap | Previous weight × reps display | Resolved during MVP audit |
+
 > **Pre-demo code review (2026-04-10):** All critical flows verified clean — auth, quick-start workout, from-program workout, finish flows (all 4 state machine paths), read-only/edit modes, B1 edge case, Programs CRUD, Profile, seed guard, FAB hidden logic. No blockers found.
 > **False positive on record:** ExerciseSearchModal appears to not close after custom exercise creation (handleCreate calls onSelect but not onClose directly). This is intentional — the parent's onSelect handler (handleExerciseSelect in WorkoutDetailPage L143 / WorkoutTemplatePage L106) calls setShowExerciseSearch(false), which unmounts the modal. Do not flag this as a bug.
 
