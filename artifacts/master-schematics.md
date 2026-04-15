@@ -479,6 +479,7 @@ Applied at every iteration. Each phase has a defined scope — don't skip phases
 | F8 | Future | Bodyweight + added weight display — add `isBodyweight` bool to exercises table; when true and targetWeight > 0, display as "top set: BW +X lbs" instead of "top set: X lbs". Requires schema migration. | Post-MVP schema change | Logs, Programs, DB | Future |
 | F9 | Future | Rearrange exercises — drag-to-reorder exercise list on active workout and workout template. Requires `sortOrder` int on `logExercises` and `workoutExercises`. | Post-MVP schema change | Logs, Programs, DB | Future |
 | F10 | Future | Redesign WorkoutTemplatePage bottom action area — revisit after OD6 (CSS button token standards) is resolved. | Post-MVP polish | Programs | Future |
+| F12 | Future | Log history date context + calendar view — two parts: (1) weekday headers get date suffix within last 7 days ("Monday (5th)"); (2) beyond 7 days, replace grouped list with a calendar view showing workout vs rest days; tapping a workout day drills into that day's log. Open questions: month vs week-strip layout, multiple workouts in one day, rest day marking, entry point on LogsPage. | Post-MVP | Logs | Future |
 
 ### Resolved Issues (record only — do not reopen)
 
@@ -500,6 +501,8 @@ Applied at every iteration. Each phase has a defined scope — don't skip phases
 | P8 | Planning | From-program finish flow logic | Resolved — Decision #19 |
 | P9 | Planning | Pre-fill on start from program | create handles copy atomically |
 | B1 | Bug | Dangling workoutId on program delete | Built — null-check workoutId; falls back to quick-start flow |
+| B2 | Bug | Spinner arrows on set input fields (weight/reps) do not save the new value | High | Logs | Resolved — saveSet() helper + onChange inputType check (session 23) |
+| B3 | Bug | Active Issues table B1 row missing Severity and Area columns — normalize all Bug rows to match header | Low | Artifacts | Pending |
 | N1 | Planning | WorkoutFAB hidden logic | Built — FAB compares route :id against activeWorkoutId; F11 (2026-04-14): changed from hidden → disabled/inert on active workout page |
 | N2 | Planning | Finish flow state machine | Confirmed session 7 — no simplification |
 | N3 | Planning | Context dependency chain | Resolved session 7 — UserSettingsContext reads from AuthContext |

@@ -6,11 +6,19 @@ GitHub: https://github.com/kazi91/workout-tracker-v2 (private)
 
 ---
 
+## Tech Stack
+
+- **Languages:** TypeScript, HTML, CSS
+- **Framework:** React 18, Vite 5, React Router v7, CSS Modules, Dexie.js (IndexedDB)
+- **Artifacts & documentation:** Markdown (.md) — use .md format for all reference files so links are clickable. Never create reference files as .txt.
+
+---
+
 ## CURRENT TASK
 Phase: 4 — Testing & post-demo cleanup
-Last session ended: Session 21 — F11 FAB inert on active workout page (2026-04-14)
-Next action: Delete demo-seed.js + PRESENTATION_AID.md (when presentation done), set up Vitest + RTL (D8), begin unit test audit
-Session scope: Project root cleanup, then test infrastructure
+Last session ended: Session 23 — B2 fixed, CLAUDE.md working style rules added, TS hook added (2026-04-15)
+Next action: Delete demo-seed.js + PRESENTATION_AID.md + PRESENTATION_AID.html (when presentation done), set up Vitest + RTL (D8), begin unit test audit
+Session scope: Test infrastructure
 Required reading this session: recap.txt, handoff.md (open items section)
 
 ## Model Selection Guide
@@ -52,6 +60,21 @@ This is a back-and-forth build. Before making any decision that affects architec
 - Get explicit agreement before building
 
 Trivial implementation details (variable names, minor styling) can proceed without discussion. Significant decisions cannot. Do not advance to the next build phase without explicit user agreement.
+
+---
+
+## Working Style
+
+- **Always ask before making edits.** Never make changes in one pass — work step-by-step, confirming each change before proceeding.
+- **Review before acting.** When asked to review or assess something, show findings first. Do not start making changes or generating content until explicitly asked.
+- **TypeScript hook:** When the user asks to check for bugs, review logic, or debug code — ask "Want to enable the TypeScript hook?" before starting. When that task is done, immediately tell the user: "Disable the hook now via `/hooks`." Do not move on to the next task without giving this reminder.
+
+---
+
+## Document Editing
+
+- Use concise bullet-point cues — not lengthy paragraphs or vague advice.
+- Keep language direct and simple unless told otherwise.
 
 ---
 

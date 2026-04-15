@@ -1,13 +1,13 @@
 WORKOUT TRACKER V2 — RECAP
 ===========================
-Last updated: 2026-04-14
+Last updated: 2026-04-15
 
 CURRENT TASK (mirrors CLAUDE.md — if they diverge, recap.txt wins)
 -------------------------------------------------------------------
 Phase: 4 — Testing & post-demo cleanup
-Last session ended: Session 21 — F11 FAB inert on active workout page (2026-04-14)
-Next action: Delete demo-seed.js + PRESENTATION_AID.md (when presentation done), set up Vitest + RTL (D8), begin unit test audit
-Session scope: Bug fixes, then test infrastructure
+Last session ended: Session 23 — B2 fixed, CLAUDE.md working style rules added, TS hook added (2026-04-15)
+Next action: Delete demo-seed.js + PRESENTATION_AID.md + PRESENTATION_AID.html (when presentation done), set up Vitest + RTL (D8), begin unit test audit
+Session scope: Test infrastructure
 Required reading this session: recap.txt, handoff.md (open items section)
 
 ---
@@ -188,6 +188,15 @@ UI DESIGN DECISIONS LOCKED (UIdesign.txt session 4)
 SESSION HISTORY
 ----------------
 Most recent at top. Full history in handoff.md.
+
+  Session 23 — 2026-04-15
+    - B2 fixed: spinner arrows on weight/reps inputs now save — handleWeightBlur/handleRepsBlur replaced with shared saveSet() helper; onChange fires saveSet on inputType 'insertReplacementText' (spinner only); onBlur fires saveSet for keyboard input
+    - Blue bubble fix: min="0" and min="1" removed from weight/reps inputs — validation handled by saveSet, HTML min attr was causing browser popover
+    - 0 reps now valid — represents missed attempt at weight; repsValid bound changed from >= 1 to >= 0 with inline comment
+    - CLAUDE.md: ## Tech Stack, ## Working Style, ## Document Editing sections added; TypeScript hook operational rule added
+    - .claude/settings.json created — postToolUse hook runs tsc --noEmit on Edit/Write; toggle via /hooks
+    - F12 logged: log history date context + calendar view (post-MVP)
+    - B2 resolved in Issue Tracker
 
   Session 21 — 2026-04-14
     - F11: FAB no longer hidden on active workout page (/logs/:id) — now renders disabled/inert (opacity 0.35, pointer-events none, no onClick)

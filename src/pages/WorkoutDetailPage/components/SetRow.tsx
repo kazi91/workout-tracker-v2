@@ -45,29 +45,17 @@ export default function SetRow({
       ? `${Math.round(displayWeight(set.previousWeight) * 10) / 10} × ${set.previousReps}`
       : '—';
 
-  function handleWeightBlur() {
-    const num = parseFloat(weightStr);
-    if (weightStr === '' || isNaN(num) || num < 0 || num > 9999) {
-      setWeightError(true);
-      return;
-    }
-    setWeightError(false);
-    const weightInLb = weightUnit === 'kg' ? kgToLb(num) : num;
-    const repsNum = parseInt(repsStr, 10);
-    const reps = isNaN(repsNum) ? 0 : repsNum;
-    onUpdate(set.id!, weightInLb, reps);
-  }
-
-  function handleRepsBlur() {
-    const num = parseInt(repsStr, 10);
-    if (repsStr === '' || !Number.isInteger(num) || num < 1 || num > 999) {
-      setRepsError(true);
-      return;
-    }
-    setRepsError(false);
-    const weightNum = parseFloat(weightStr);
-    const weight = isNaN(weightNum) ? 0 : weightUnit === 'kg' ? kgToLb(weightNum) : weightNum;
-    onUpdate(set.id!, weight, num);
+  function saveSet(weight: string, reps: string) {
+    const weightNum = parseFloat(weight);
+    const repsNum = parseInt(reps, 10);
+    const weightValid = weight !== '' && !isNaN(weightNum) && weightNum >= 0 && weightNum <= 9999;
+    // 0 reps is valid — represents a missed attempt at that weight
+    const repsValid = reps !== '' && Number.isInteger(repsNum) && repsNum >= 0 && repsNum <= 999;
+    setWeightError(!weightValid);
+    setRepsError(!repsValid);
+    if (!weightValid || !repsValid) return;
+    const weightInLb = weightUnit === 'kg' ? kgToLb(weightNum) : weightNum;
+    onUpdate(set.id!, weightInLb, repsNum);
   }
 
   if (readOnly) {
@@ -95,10 +83,16 @@ export default function SetRow({
           className={`${styles.input} ${weightError ? styles.inputError : ''}`}
           type="number"
           inputMode="decimal"
-          min="0"
           value={weightStr}
-          onChange={(e) => { setWeightStr(e.target.value); setWeightError(false); }}
-          onBlur={handleWeightBlur}
+          onChange={(e) => {
+            setWeightStr(e.target.value);
+            setWeightError(false);
+            // Spinner clicks fire 'insertReplacementText'; keyboard input does not — save immediately for spinner only
+            if ((e.nativeEvent as InputEvent).inputType === 'insertReplacementText') {
+              saveSet(e.target.value, repsStr);
+            }
+          }}
+          onBlur={() => saveSet(weightStr, repsStr)}
           placeholder="0"
         />
         {weightError && <span className={styles.fieldError}>Enter a valid number</span>}
@@ -109,10 +103,16 @@ export default function SetRow({
           className={`${styles.input} ${repsError ? styles.inputError : ''}`}
           type="number"
           inputMode="numeric"
-          min="1"
           value={repsStr}
-          onChange={(e) => { setRepsStr(e.target.value); setRepsError(false); }}
-          onBlur={handleRepsBlur}
+          onChange={(e) => {
+            setRepsStr(e.target.value);
+            setRepsError(false);
+            // Spinner clicks fire 'insertReplacementText'; keyboard input does not — save immediately for spinner only
+            if ((e.nativeEvent as InputEvent).inputType === 'insertReplacementText') {
+              saveSet(weightStr, e.target.value);
+            }
+          }}
+          onBlur={() => saveSet(weightStr, repsStr)}
           placeholder="0"
         />
         {repsError && <span className={styles.fieldError}>Enter a valid number</span>}
