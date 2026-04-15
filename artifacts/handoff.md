@@ -1,5 +1,5 @@
 # HANDOFF — NEW INSTANCE START HERE
-Last updated: 2026-04-14 (session 20 — ExerciseSearchModal chip visibility bug fix)
+Last updated: 2026-04-14 (session 21 — F11 FAB inert on active workout page)
 
 ---
 
@@ -83,6 +83,8 @@ Exit criteria: see recap.txt — PHASE 4 EXIT CRITERIA section.
 ---
 
 ## Recent Sessions (most recent first)
+
+**Session 21 — 2026-04-14:** F11: FAB no longer hidden on /logs/:id active workout page. Changed `return null` to a disabled/inert button render (styles.fabDisabled: opacity 0.35, pointer-events none, no onClick). Keeps nav center slot filled; future hook for intra-workout tool hub (see UIdesign.txt brainstorm). Updated Decision #15 + N1 in master-schematics.md.
 
 **Session 20 — 2026-04-14:** Bug fix: ExerciseSearchModal category filter chips (Arms, Legs, Chest, etc.) were hidden behind the exercise results list on smaller viewports. Added `flex-shrink: 0` to `.chips` in ExerciseSearchModal.module.css so the chip row never collapses.
 

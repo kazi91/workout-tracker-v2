@@ -19,3 +19,20 @@
   opacity: 0.85;
   transform: scale(0.95);
 }
+
+.fabDisabled {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background-color: var(--color-green);
+  color: #fff;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  opacity: 0.35;
+  cursor: default;
+  pointer-events: none;
+  box-shadow: none;
+}

@@ -33,8 +33,20 @@ export default function WorkoutFAB() {
   // Hidden on auth pages or if not logged in
   if (HIDDEN_ROUTES.includes(pathname) || !user) return null;
 
-  // Hidden on /logs/:id when viewing the active workout (N1 resolution)
-  if (logMatch && Number(logMatch.params.id) === activeWorkoutId) return null;
+  // Disabled (visible, inert) on /logs/:id when viewing the active workout (N1 / F11)
+  // Keeps center nav slot filled; future hook for intra-workout tool hub (see UIdesign.txt)
+  if (logMatch && Number(logMatch.params.id) === activeWorkoutId) {
+    return (
+      <button
+        className={styles.fabDisabled}
+        aria-label="Workout in progress"
+        aria-disabled="true"
+        disabled
+      >
+        <span style={{ fontSize: '22px', lineHeight: 1 }}>💪</span>
+      </button>
+    );
+  }
 
   // Active workout in progress — show "Resume Workout" everywhere else
   if (activeWorkoutId !== null) {

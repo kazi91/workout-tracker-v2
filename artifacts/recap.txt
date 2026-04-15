@@ -5,7 +5,7 @@ Last updated: 2026-04-14
 CURRENT TASK (mirrors CLAUDE.md — if they diverge, recap.txt wins)
 -------------------------------------------------------------------
 Phase: 4 — Testing & post-demo cleanup
-Last session ended: Session 20 — ExerciseSearchModal chip visibility bug fix (2026-04-14)
+Last session ended: Session 21 — F11 FAB inert on active workout page (2026-04-14)
 Next action: Delete demo-seed.js + PRESENTATION_AID.md (when presentation done), set up Vitest + RTL (D8), begin unit test audit
 Session scope: Bug fixes, then test infrastructure
 Required reading this session: recap.txt, handoff.md (open items section)
@@ -148,7 +148,7 @@ Summary of the most important ones:
   #12 Confirm only on destructive actions — delete and discard only
   #13 Free navigation during active workout — workout persists in Dexie until finished or discarded
   #14 ActiveWorkoutContext — initializes on app mount (not just login); drives FAB state app-wide
-  #15 WorkoutFAB — "Start Workout" on Logs tab only; "Resume Workout" all tabs when active; hidden on /logs/:id active mode
+  #15 WorkoutFAB — "Start Workout" on Logs tab only; "Resume Workout" all tabs when active; disabled/inert (visible, no action) on /logs/:id active mode
   #17 Quick-start finish flow — "Save to program?" Modal; picker with existing programs + New Program; blank workout name; skip = unassigned log
   #18 WorkoutLogService.create — atomically copies workoutExercises → logExercises when workoutId provided
   #19 From-program finish flow — silent finish if exercises unchanged; Modal sync prompt if modified; order changes ignored
@@ -188,6 +188,11 @@ UI DESIGN DECISIONS LOCKED (UIdesign.txt session 4)
 SESSION HISTORY
 ----------------
 Most recent at top. Full history in handoff.md.
+
+  Session 21 — 2026-04-14
+    - F11: FAB no longer hidden on active workout page (/logs/:id) — now renders disabled/inert (opacity 0.35, pointer-events none, no onClick)
+    - Keeps nav center slot filled; future hook for intra-workout tool hub (UIdesign.txt brainstorm)
+    - Changed: WorkoutFAB.tsx (return null → disabled button), WorkoutFAB.module.css (.fabDisabled class), master-schematics.md (Decision #15 + N1 updated)
 
   Session 20 — 2026-04-14
     - Bug fix: ExerciseSearchModal category filter chips hidden behind exercise list on smaller viewports

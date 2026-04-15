@@ -567,6 +567,7 @@ Tagged by implementation status:
     [ALIGNED]   "In Progress" badge on workout cards
     [ADDITIVE]  Subtle animation when a set is saved — set row briefly flashes gold (achievement color)
     [ADDITIVE]  FAB pulse animation when workout is active — draws attention to Resume Workout
+    [REQUIRES]  FAB as intra-workout tool hub — during active workout, FAB stays visible and opens a radial/popover menu with quick-access tools (rest timer, notes, swap exercise, workout timer). Replaces current hidden state with a contextual action launcher. Needs: F5 (rest timer), tool menu component, FAB state machine (idle/open/disabled)
     [ADDITIVE]  Progress indicator on active workout — "X of Y exercises logged" or simple bar
     [REQUIRES]  Set completion checkmark — needs isCompleted on logSets
 

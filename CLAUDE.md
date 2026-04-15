@@ -8,7 +8,7 @@ GitHub: https://github.com/kazi91/workout-tracker-v2 (private)
 
 ## CURRENT TASK
 Phase: 4 — Testing & post-demo cleanup
-Last session ended: Session 20 — ExerciseSearchModal chip visibility bug fix (2026-04-14)
+Last session ended: Session 21 — F11 FAB inert on active workout page (2026-04-14)
 Next action: Delete demo-seed.js + PRESENTATION_AID.md (when presentation done), set up Vitest + RTL (D8), begin unit test audit
 Session scope: Project root cleanup, then test infrastructure
 Required reading this session: recap.txt, handoff.md (open items section)
