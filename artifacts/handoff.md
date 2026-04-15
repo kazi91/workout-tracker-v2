@@ -1,5 +1,5 @@
 # HANDOFF — NEW INSTANCE START HERE
-Last updated: 2026-04-13 (session 19 — artifact maintenance, entering Phase 4)
+Last updated: 2026-04-14 (session 20 — ExerciseSearchModal chip visibility bug fix)
 
 ---
 
@@ -83,6 +83,8 @@ Exit criteria: see recap.txt — PHASE 4 EXIT CRITERIA section.
 ---
 
 ## Recent Sessions (most recent first)
+
+**Session 20 — 2026-04-14:** Bug fix: ExerciseSearchModal category filter chips (Arms, Legs, Chest, etc.) were hidden behind the exercise results list on smaller viewports. Added `flex-shrink: 0` to `.chips` in ExerciseSearchModal.module.css so the chip row never collapses.
 
 **Session 18 — 2026-04-10:** Target display "@ x lbs" → "| top set: x lbs" (F7 resolved). WorkoutTemplatePage doneBtn + deleteBtn flex: 1 fix. Issue Tracker: F7 resolved, F8/F9/F10 logged. OD6 added to UIdesign.txt (CSS button token standards). demo-seed.js created (not committed).
 

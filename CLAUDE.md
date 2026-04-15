@@ -8,8 +8,8 @@ GitHub: https://github.com/kazi91/workout-tracker-v2 (private)
 
 ## CURRENT TASK
 Phase: 4 — Testing & post-demo cleanup
-Last session ended: Session 18 — target display fix, button sizing, issue tracker updates (2026-04-10)
-Next action: Delete demo-seed.js + PRESENTATION_AID.md, set up Vitest + RTL (D8), begin unit test audit
+Last session ended: Session 20 — ExerciseSearchModal chip visibility bug fix (2026-04-14)
+Next action: Delete demo-seed.js + PRESENTATION_AID.md (when presentation done), set up Vitest + RTL (D8), begin unit test audit
 Session scope: Project root cleanup, then test infrastructure
 Required reading this session: recap.txt, handoff.md (open items section)
 
@@ -19,7 +19,7 @@ Required reading this session: recap.txt, handoff.md (open items section)
 
 **Opus** — save for moments that need deeper reasoning: debugging subtle async/IndexedDB race conditions, test strategy design for complex state machines (ActiveWorkoutContext, finish flows), backend migration architecture, React Native porting decisions.
 
-**Rule of thumb:** If you're typing *what* to build and Claude just needs to write it → Sonnet. If you're asking Claude to figure out *how* something should work → Opus.
+**Rule of thumb:** If you're typing  *what* to build and Claude just needs to write it → Sonnet. If you're asking Claude to figure out *how* something should work → Opus.
 
 **Always ask before using Opus.** Do not switch to or recommend Opus without checking with the user first — token budget is limited.
 

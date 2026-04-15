@@ -1,13 +1,13 @@
 WORKOUT TRACKER V2 — RECAP
 ===========================
-Last updated: 2026-04-13
+Last updated: 2026-04-14
 
 CURRENT TASK (mirrors CLAUDE.md — if they diverge, recap.txt wins)
 -------------------------------------------------------------------
 Phase: 4 — Testing & post-demo cleanup
-Last session ended: Session 18 — target display fix, button sizing, issue tracker updates (2026-04-10)
-Next action: Delete demo-seed.js + PRESENTATION_AID.md, set up Vitest + RTL (D8), begin unit test audit
-Session scope: Project root cleanup, then test infrastructure
+Last session ended: Session 20 — ExerciseSearchModal chip visibility bug fix (2026-04-14)
+Next action: Delete demo-seed.js + PRESENTATION_AID.md (when presentation done), set up Vitest + RTL (D8), begin unit test audit
+Session scope: Bug fixes, then test infrastructure
 Required reading this session: recap.txt, handoff.md (open items section)
 
 ---
@@ -188,6 +188,10 @@ UI DESIGN DECISIONS LOCKED (UIdesign.txt session 4)
 SESSION HISTORY
 ----------------
 Most recent at top. Full history in handoff.md.
+
+  Session 20 — 2026-04-14
+    - Bug fix: ExerciseSearchModal category filter chips hidden behind exercise list on smaller viewports
+    - Fix: added flex-shrink: 0 to .chips in ExerciseSearchModal.module.css — prevents chips row from collapsing when results list grows
 
   Session 18 — 2026-04-10
     - Target weight display: "@ x lbs" → "| top set: x lbs" in ExerciseCard and WorkoutTemplatePage (F7 resolved)
