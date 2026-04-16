@@ -40,4 +40,5 @@ Thumbs.db
 
 # Presentation aids — delete after use, never commit
 PRESENTATION_AID.md
+PRESENTATION_AID.html
 demo-seed.js

@@ -16,7 +16,7 @@ GitHub: https://github.com/kazi91/workout-tracker-v2 (private)
 
 ## CURRENT TASK
 Phase: 4 — Testing & post-demo cleanup
-Last session ended: Session 23 — B2 fixed, CLAUDE.md working style rules added, TS hook added (2026-04-15)
+Last session ended: Session 24 — CLAUDE.md Karpathy-inspired guardrails added (2026-04-16)
 Next action: Delete demo-seed.js + PRESENTATION_AID.md + PRESENTATION_AID.html (when presentation done), set up Vitest + RTL (D8), begin unit test audit
 Session scope: Test infrastructure
 Required reading this session: recap.txt, handoff.md (open items section)
@@ -68,6 +68,8 @@ Trivial implementation details (variable names, minor styling) can proceed witho
 - **Always ask before making edits.** Never make changes in one pass — work step-by-step, confirming each change before proceeding.
 - **Review before acting.** When asked to review or assess something, show findings first. Do not start making changes or generating content until explicitly asked.
 - **TypeScript hook:** When the user asks to check for bugs, review logic, or debug code — ask "Want to enable the TypeScript hook?" before starting. When that task is done, immediately tell the user: "Disable the hook now via `/hooks`." Do not move on to the next task without giving this reminder.
+- **Surface confusion.** If a request is ambiguous or you're unsure about intent, state your assumptions explicitly and ask — don't pick an interpretation silently and run with it.
+- **Surgical changes only.** Touch only what the task requires. Don't "improve" adjacent code, comments, or formatting. Don't refactor things that aren't broken. If your changes orphan an import or variable, clean that up — but don't remove pre-existing dead code unless asked. Every changed line should trace directly to the request.
 
 ---
 
@@ -99,12 +101,14 @@ Each build step = one conversation. Do not combine steps. When the user starts a
 - **Never re-read a file you already read in this session** unless the user changed it.
 - **Don't read code you just wrote** to verify — the Edit/Write tools confirm success.
 - **Verify before done.** Run `npm run dev` (or `npm run build` if dev server is impractical) before calling any step complete. Fix compile errors and TypeScript issues in the same session — don't leave them for the next one.
+- **Simplicity check.** Before finishing a file, re-read it with fresh eyes: could this be half the lines without losing clarity? No speculative abstractions, no error handling for scenarios that can't happen, no "flexibility" that wasn't requested. If 200 lines could be 80, rewrite it.
 - **Pre-completion checklist.** Before calling any step complete, verify:
   - [ ] JSDoc on every exported service function
   - [ ] No `db.ts` imports in components (service layer only)
   - [ ] `npm run build` passes clean
   - [ ] `artifacts/recap.txt` and `artifacts/handoff.md` updated
   - [ ] CLAUDE.md → CURRENT TASK updated for next session
+  - [ ] For bug fixes: reproducing test written before the fix
 
 ### Output discipline
 - **Build, don't narrate.** Write the code. Skip the "I'm going to create..." preamble and the "Here's what I did..." recap. The user can see the diff.

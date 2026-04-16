@@ -1,5 +1,5 @@
 # HANDOFF — NEW INSTANCE START HERE
-Last updated: 2026-04-14 (session 21 — F11 FAB inert on active workout page)
+Last updated: 2026-04-16 (session 24 — CLAUDE.md Karpathy-inspired guardrails)
 
 ---
 
