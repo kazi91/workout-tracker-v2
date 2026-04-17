@@ -2,7 +2,7 @@
 
 Mobile-first workout tracking web app. React 18 + TypeScript, Vite 5, React Router v7, CSS Modules, Dexie.js (IndexedDB). No backend for MVP — service layer abstracts all data access for a future Node.js migration.
 
-GitHub: https://github.com/kazi91/workout-tracker-v2 (private)
+GitHub: https://github.com/kazi91/workout-tracker-v2 (public)
 
 ---
 
@@ -16,8 +16,8 @@ GitHub: https://github.com/kazi91/workout-tracker-v2 (private)
 
 ## CURRENT TASK
 Phase: 4 — Testing & post-demo cleanup
-Last session ended: Session 24 — CLAUDE.md Karpathy-inspired guardrails added (2026-04-16)
-Next action: Delete demo-seed.js + PRESENTATION_AID.md + PRESENTATION_AID.html (when presentation done), set up Vitest + RTL (D8), begin unit test audit
+Last session ended: Session 25 — Demo done; repo prepped for public (2026-04-17)
+Next action: Set up Vitest + RTL (D8), begin unit test audit
 Session scope: Test infrastructure
 Required reading this session: recap.txt, handoff.md (open items section)
 

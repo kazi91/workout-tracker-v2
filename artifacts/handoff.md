@@ -1,5 +1,5 @@
 # HANDOFF — NEW INSTANCE START HERE
-Last updated: 2026-04-16 (session 24 — CLAUDE.md Karpathy-inspired guardrails)
+Last updated: 2026-04-17 (session 25 — demo done, repo prepped for public)
 
 ---
 
@@ -55,7 +55,7 @@ Full file index (reference — do not read all of these every session):
 - D8: Unit tests — Vitest + RTL setup (Phase 4 first action)
 - F1–F6, F8–F10: future features — see Issue Tracker
 - OD6: CSS button token standards — brainstorm session pending before enforcing
-- **Post-demo cleanup:** delete demo-seed.js and PRESENTATION_AID.md before next commit (see CLAUDE.md Post-Demo Cleanup)
+- **Post-demo cleanup:** DONE (session 25) — demo-seed.js, PRESENTATION_AID.md, PRESENTATION_AID.html deleted; README.md created; repo public
 
 ### Resolved (record only — do not reopen)
 - F7: Target weight display — resolved session 18 ("| top set: x lbs")
@@ -84,6 +84,8 @@ Exit criteria: see recap.txt — PHASE 4 EXIT CRITERIA section.
 
 ## Recent Sessions (most recent first)
 
+**Session 25 — 2026-04-17:** Demo complete. Repo prepped for public GitHub. Deleted demo-seed.js, PRESENTATION_AID.md, PRESENTATION_AID.html. Created README.md (demo link, tech stack, local setup, auth disclaimer, copyright). Added "Portfolio Legibility" principle to UIdesign.txt section 1 and handoff.md. Post-demo cleanup item closed.
+
 **Session 21 — 2026-04-14:** F11: FAB no longer hidden on /logs/:id active workout page. Changed `return null` to a disabled/inert button render (styles.fabDisabled: opacity 0.35, pointer-events none, no onClick). Keeps nav center slot filled; future hook for intra-workout tool hub (see UIdesign.txt brainstorm). Updated Decision #15 + N1 in master-schematics.md.
 
 **Session 20 — 2026-04-14:** Bug fix: ExerciseSearchModal category filter chips (Arms, Legs, Chest, etc.) were hidden behind the exercise results list on smaller viewports. Added `flex-shrink: 0` to `.chips` in ExerciseSearchModal.module.css so the chip row never collapses.
@@ -103,6 +105,14 @@ Exit criteria: see recap.txt — PHASE 4 EXIT CRITERIA section.
 **Session 12 — 2026-04-09:** Step 5c — WorkoutDetailPage read-only and edit modes.
 
 **Sessions 8–11 — 2026-04-09:** Steps 1–5b built in a single day.
+
+---
+
+## Portfolio Legibility Standard (locked)
+- Distinctive, descriptive file/folder names — no generic names (utils.js, helpers.ts, App.js)
+- Folder organization must communicate purpose at a glance
+- Comments explain non-obvious decisions (why, not what)
+- Rationale: repo is public; recruiters read source code
 
 ---
 

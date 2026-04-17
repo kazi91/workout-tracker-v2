@@ -1,12 +1,12 @@
 WORKOUT TRACKER V2 — RECAP
 ===========================
-Last updated: 2026-04-16
+Last updated: 2026-04-17
 
 CURRENT TASK (mirrors CLAUDE.md — if they diverge, recap.txt wins)
 -------------------------------------------------------------------
 Phase: 4 — Testing & post-demo cleanup
-Last session ended: Session 24 — CLAUDE.md Karpathy-inspired guardrails added (2026-04-16)
-Next action: Delete demo-seed.js + PRESENTATION_AID.md + PRESENTATION_AID.html (when presentation done), set up Vitest + RTL (D8), begin unit test audit
+Last session ended: Session 25 — Demo done; repo prepped for public (2026-04-17)
+Next action: Set up Vitest + RTL (D8), begin unit test audit
 Session scope: Test infrastructure
 Required reading this session: recap.txt, handoff.md (open items section)
 
@@ -106,7 +106,7 @@ All steps built, verified, and committed:
 
 NEXT STEPS — Phase 4
 ----------------------
-1. Post-demo cleanup — delete demo-seed.js + PRESENTATION_AID.md
+1. ~~Post-demo cleanup~~ — DONE (session 25)
 2. Test infrastructure — Vitest + RTL setup (D8)
 3. Unit test audit — service layer first, then contexts, then critical UI flows
 4. ErrorContext (D5) — replace console.error with user-facing error surface
@@ -188,6 +188,14 @@ UI DESIGN DECISIONS LOCKED (UIdesign.txt session 4)
 SESSION HISTORY
 ----------------
 Most recent at top. Full history in handoff.md.
+
+  Session 25 — 2026-04-17
+    - Demo complete; repo prepped for public GitHub
+    - Deleted: demo-seed.js, PRESENTATION_AID.md, PRESENTATION_AID.html
+    - Created: README.md (name, demo link, tech stack, local setup, auth disclaimer, copyright, status)
+    - UIdesign.txt: "Portfolio Legibility" principle added to section 1 (distinctive names, clear folders, decision comments)
+    - handoff.md: "Portfolio Legibility Standard" section added above "What Is Fully Locked"
+    - .gitignore: already covered all three deleted files — no changes needed
 
   Session 24 — 2026-04-16
     - CLAUDE.md: three Karpathy-inspired guardrails added (additive only, no existing rules changed)

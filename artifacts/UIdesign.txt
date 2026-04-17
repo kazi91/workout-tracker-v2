@@ -74,6 +74,12 @@ checked against this list before being accepted.
     Future: rankings/leaderboards for exercises are a known future feature (not MVP).
     The experience is about the user's own performance, not comparison.
 
+  PORTFOLIO LEGIBILITY
+    This codebase is public and read by recruiters. Code structure must be self-explanatory.
+    - Use distinctive, descriptive file and folder names — not generic (App.js, utils.js, helpers.ts)
+    - Clear folder organization that communicates purpose at a glance
+    - Comments explaining non-obvious decisions (why, not what)
+
   MVP DISCIPLINE
     If it requires a schema change, it is post-MVP by default.
     Exceptions can be made for changes that are important enough — evaluate explicitly.
