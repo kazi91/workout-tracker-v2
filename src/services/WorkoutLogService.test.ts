@@ -145,6 +145,31 @@ describe('finish', () => {
   });
 });
 
+// ── create — guard: active workout exists ──────────────────────────────────
+
+describe('create — guard: active workout exists', () => {
+  it('throws if the user already has an active workout', async () => {
+    const userId = await seedUser();
+    await create(userId, null);
+    await expect(create(userId, null)).rejects.toThrow('You have a workout in progress');
+  });
+});
+
+// ── finish — guards ────────────────────────────────────────────────────────
+
+describe('finish — guards', () => {
+  it('throws if the log does not exist', async () => {
+    await expect(finish(9999)).rejects.toThrow('Workout not found');
+  });
+
+  it('throws if the log is already finished', async () => {
+    const userId = await seedUser();
+    const log = await create(userId, null);
+    await finish(log.id!);
+    await expect(finish(log.id!)).rejects.toThrow('This workout is already finished');
+  });
+});
+
 // ── deleteLog — cascade ────────────────────────────────────────────────────
 
 describe('deleteLog', () => {
