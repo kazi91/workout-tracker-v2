@@ -25,7 +25,7 @@ LoginPage allows a returning user to authenticate with email + password and resu
 
 ## Layout
 
-- Full-screen dark layout, centered card — matches SignupPage auth layout (UIdesign.txt section auth layout)
+- Full-screen dark layout, centered card — matches SignupPage auth layout (UIdesign.md section auth layout)
 - Email input
 - Password input
 - "Log In" button — Primary (green)

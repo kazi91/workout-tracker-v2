@@ -41,6 +41,7 @@ export async function add(workoutId: number, exerciseId: number): Promise<Workou
 
 /**
  * Updates a workoutExercise's target values or order position.
+ * Guards: targetSets/targetReps must be whole numbers >= 1; targetWeight must be >= 0 and finite.
  * Called by: WorkoutTemplatePage Edit Targets Modal on save.
  * Returns: void
  */
@@ -48,6 +49,20 @@ export async function update(
   id: number,
   data: Partial<Pick<WorkoutExercise, 'targetSets' | 'targetReps' | 'targetWeight' | 'order'>>,
 ): Promise<void> {
+  if (data.targetSets !== undefined) {
+    // isFinite is redundant with isInteger (which rejects NaN/Infinity) — kept for explicit intent
+    if (!Number.isFinite(data.targetSets) || !Number.isInteger(data.targetSets) || data.targetSets < 1)
+      throw new Error('Sets must be at least 1');
+  }
+  if (data.targetReps !== undefined) {
+    // isFinite is redundant with isInteger (which rejects NaN/Infinity) — kept for explicit intent
+    if (!Number.isFinite(data.targetReps) || !Number.isInteger(data.targetReps) || data.targetReps < 1)
+      throw new Error('Reps must be at least 1');
+  }
+  if (data.targetWeight !== undefined) {
+    if (!Number.isFinite(data.targetWeight)) throw new Error('Enter a valid weight');
+    if (data.targetWeight < 0) throw new Error('Weight must be 0 or greater');
+  }
   await db.workoutExercises.update(id, data);
 }
 

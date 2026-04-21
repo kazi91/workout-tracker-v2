@@ -5,7 +5,7 @@ Last updated: 2026-04-05
 Purpose: Establish UI standards before build begins. Brainstorm visual features and ideas,
 note what aligns with current plans and what changes each idea would require.
 This is a living document — update as decisions are made or ideas surface.
-Refer to coreprocess.txt and follow the fundamental philosophy behind the current task and project as a whole,
+Refer to coreprocess.md and follow the fundamental philosophy behind the current task and project as a whole,
 across all stages of development.
 
 Cross-reference: master-schematics.md (layout contracts), all tab schematics (component specs)
@@ -36,7 +36,7 @@ TABLE OF CONTENTS
 
 1. CORE UI PRINCIPLES
 ----------------------
-These are derived from coreprocess.txt and user goals. Every design decision should be
+These are derived from coreprocess.md and user goals. Every design decision should be
 checked against this list before being accepted.
 
   CLARITY FIRST
@@ -296,7 +296,7 @@ From master-schematics.md. Non-negotiable for MVP.
 --------------------
 Keep it tight — mobile screen, every pixel counts.
 
-  Page title:     20px, weight 600
+  Page title:     24px, weight 700
   Section header: 16px, weight 600
   Body / labels:  15px, weight 400
   Secondary text: 13px, weight 400
@@ -496,7 +496,8 @@ trace back to one of these rules.
     Shadow:           subtle drop shadow to lift above content
     States:           "Start Workout" (Logs tab, no active workout)
                       "Resume Workout" (all tabs, active workout)
-                      hidden (WorkoutDetailPage active mode, auth pages)
+                      disabled/inert (WorkoutDetailPage active mode — opacity 0.35, no onClick)
+                      hidden (/login, /signup)
 
   BADGES
     "In Progress":    accent color background, white text

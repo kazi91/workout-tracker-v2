@@ -12,10 +12,10 @@ It is the philosophical backbone. Specific decisions, schemas, and specs live el
 Document hierarchy (authority order):
   1. master-schematics.md  — source of truth for architecture, schema, decisions, issue tracker
   2. CLAUDE.md             — operational entry point for every Claude instance (session rules, reading order, build rules)
-  3. recap.txt             — current state, next action, session history
+  3. recap.md             — current state, next action, session history
   4. handoff.md            — full session context, rejected options, reasoning
-  5. UIdesign.txt          — visual standards, color system, component specs
-  6. coreprocess.txt       — this file (process philosophy + phase definitions)
+  5. UIdesign.md          — visual standards, color system, component specs
+  6. coreprocess.md       — this file (process philosophy + phase definitions)
   7. tabs/*.md             — per-tab feature specs
 
 If two docs conflict, the higher-numbered doc yields to the lower-numbered one.
@@ -25,7 +25,7 @@ If two docs conflict, the higher-numbered doc yields to the lower-numbered one.
 ## Current Focus
 
 Target: MVP — working demo of a mobile-first workout tracker
-Phase: 4 — Testing & post-demo cleanup (see recap.txt for exact next action)
+Phase: 4 — Testing & post-demo cleanup (see recap.md for exact next action)
 
 ---
 

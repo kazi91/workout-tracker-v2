@@ -1,14 +1,14 @@
 WORKOUT TRACKER V2 — RECAP
 ===========================
-Last updated: 2026-04-17
+Last updated: 2026-04-21
 
-CURRENT TASK (mirrors CLAUDE.md — if they diverge, recap.txt wins)
+CURRENT TASK (mirrors CLAUDE.md — if they diverge, recap.md wins)
 -------------------------------------------------------------------
 Phase: 4 — Testing & post-demo cleanup
-Last session ended: Session 25 — Demo done; repo prepped for public (2026-04-17)
-Next action: Set up Vitest + RTL (D8), begin unit test audit
-Session scope: Test infrastructure
-Required reading this session: recap.txt, handoff.md (open items section)
+Last session ended: Session 30 — service layer guards added to 7 services; build clean; 17 tests passing (2026-04-21)
+Next action: Service layer test audit — write tests for all new guards + AuthService, ProgramService, WorkoutService, LogSetService
+Session scope: Service layer tests (guards + remaining services)
+Required reading this session: recap.md, handoff.md (open items section)
 
 ---
 
@@ -30,7 +30,7 @@ CURRENT STATE
 --------------
 Phase: Phase 4 — Testing & post-demo cleanup. Build complete, demo delivered. Entering test infrastructure and cleanup.
 Step 1 committed: Vite + React 18 + TypeScript scaffold, Dexie v4 schema (8 tables), 29 seed exercises, BrowserRouter routing stubs for all pages, index.css with dark theme CSS variables, Prettier config. Build passes clean.
-UIdesign.txt expanded with: color system, alignment standards, button design standards, light mode palette.
+UIdesign.md expanded with: color system, alignment standards, button design standards, light mode palette.
 Green accent locked: dark mode #3BAF6A / light mode #2D9F58.
 
 Schema: V2 locked
@@ -107,18 +107,27 @@ All steps built, verified, and committed:
 NEXT STEPS — Phase 4
 ----------------------
 1. ~~Post-demo cleanup~~ — DONE (session 25)
-2. Test infrastructure — Vitest + RTL setup (D8)
-3. Unit test audit — service layer first, then contexts, then critical UI flows
-4. ErrorContext (D5) — replace console.error with user-facing error surface
-5. Future features (F1–F6, F8–F10) — prioritize after testing baseline established
+2. ~~Statistics planning~~ — DONE (session 26); build deferred until after testing
+3. ~~Future feature planning~~ — DONE (session 27); F13–F19 logged in Issue Tracker
+4. ~~Test infrastructure~~ — DONE (session 29): Vitest + RTL + fake-indexeddb + jsdom; 17 tests passing
+5. Unit test audit — write tests for service guards + AuthService, ProgramService, WorkoutService, LogSetService, then contexts, then critical UI flows ← NEXT SESSION
+6. ErrorContext (D5) — replace console.error with user-facing error surface
+7. Statistics build — after D8 + D5 complete; resolve P5/S1/S2/S4/OD6 first
+
+TEST COVERAGE (session 30)
+---------------------------
+- units.test.ts:             8 tests — lbToKg, kgToLb, inToCm, cmToIn (all paths)
+- WorkoutLogService.test.ts: 9 tests — create quick-start (3), create from-program (2), finish (2), deleteLog cascade (2)
+- Total: 17 tests, 2 files, all passing
+- Guards added (not yet tested): LogSetService.update, WorkoutExerciseService.update, WorkoutLogService.create + finish, AuthService.signup, ProgramService.create, WorkoutService.create
 
 PHASE 4 EXIT CRITERIA
 -----------------------
-- Vitest + RTL installed and configured
+- Vitest + RTL installed and configured ✓ (session 29)
 - Critical flows covered: auth, quick-start, from-program, finish flow (all 4 state machine paths), delete cascades
 - Issue Tracker: zero open Must Fix items
 - npm run build passes clean
-- recap.txt updated with test coverage summary
+- recap.md updated with test coverage summary
 
 ---
 
@@ -130,9 +139,9 @@ artifacts/tabs/programs.md       — Programs tab spec (user flow complete)
 artifacts/tabs/profile.md        — Profile tab spec (placeholder — no flow for MVP)
 artifacts/tabs/statistics.md     — Statistics tab spec (placeholder — no flow for MVP)
 artifacts/tabs/workouts.md       — Resolved (P6): WorkoutDetailPage stays in logs.md
-artifacts/UIdesign.txt           — UI standards, color palette, component specs, design brainstorm
-artifacts/coreprocess.txt        — Development process
-artifacts/recap.txt              — This file
+artifacts/UIdesign.md            — UI standards, color palette, component specs, design brainstorm
+artifacts/coreprocess.md         — Development process
+artifacts/recap.md               — This file
 
 ---
 
@@ -158,7 +167,7 @@ Summary of the most important ones:
   #23 Unit visibility — unit label on all weight inputs; preference selected at signup; profile toggle note; powerlifting per-entry override is known future need
   P7  Target derivation (createFromLog) — first set values; target = starting weight, not peak
 
-UI DESIGN DECISIONS LOCKED (UIdesign.txt session 4)
+UI DESIGN DECISIONS LOCKED (UIdesign.md session 4)
   Nature theme       — subtle underlying theme; felt through color, not illustrated
   Semantic colors    — Green=action, Gold=achievement, Red=danger, White=content
   Surface palette    — warm tint locked: #1A1A17 / #242420 / #2E2E29
@@ -176,7 +185,7 @@ UI DESIGN DECISIONS LOCKED (UIdesign.txt session 4)
   Button grouping    — primary LEFT, destructive/secondary RIGHT; stack 3+ vertically
   Error surface      — global top banner on DB failure, danger color, dismissable
   Auth layout        — full-screen dark, centered card, unit pref as two-button toggle
-  Light mode palette — values locked for future build (post-MVP); see UIdesign.txt section 4c
+  Light mode palette — values locked for future build (post-MVP); see UIdesign.md section 4c
   OD1 — Green accent: LOCKED — dark mode #3BAF6A / light mode #2D9F58
   OD2 — Lucide icons: LOCKED
   OD3 — Border-radius 8/12/16px: LOCKED
@@ -188,6 +197,51 @@ UI DESIGN DECISIONS LOCKED (UIdesign.txt session 4)
 SESSION HISTORY
 ----------------
 Most recent at top. Full history in handoff.md.
+
+  Session 30 — 2026-04-21
+    - Artifact/doc cleanup only — no code written
+    - S1: F13 false schema claim corrected — "already defined" → "specced in Statistics phase (session 26); not yet built"
+    - A1: UIdesign.md page title corrected: 20px/600 → 24px/700 (matches actual implementation from session 14 UI polish pass)
+    - A2: UIdesign.md FAB states split: disabled/inert (active workout page) + hidden (auth pages); Decision #15 in master-schematics.md updated to match
+    - A3: master-schematics.md Phase 4 status: "not started" → "in progress"
+    - A4: handoff.md repo visibility: "(private)" → "(public)" (made public session 25)
+    - A5: memory/project_state.md rewritten — stale "next is 5c" replaced with Phase 4 current state
+    - M1: B1 row normalized (Severity + Area columns added); B3 closed as Resolved
+
+  Session 30 — 2026-04-21
+    - Research: full artifact audit — 22 gaps identified (schema, UX, service naming, stale docs)
+    - Service layer guards added to 7 services: LogSetService.update (NaN/negative/decimal), WorkoutExerciseService.update (targetSets/targetReps >= 1, targetWeight >= 0), WorkoutLogService.create (throw if active exists), WorkoutLogService.finish (throw if not found or already finished), AuthService.signup (name/email/password), ProgramService.create (name), WorkoutService.create (name)
+    - All guards throw user-facing Error messages for future UI surfacing
+    - WorkoutLogService.test.ts: TypeScript fixes (Dexie add() cast to number); counter test updated to finish first log before creating second (required by new active workout guard)
+    - master-schematics.md: LogExerciseService service table corrected (getByWorkoutId → getByWorkoutLogId)
+    - Decisions locked this session: duplicate exercises allowed; U4 block finish with 0 exercises (UI-level, not yet built); U5 block Save Edits on validation failure (not yet built)
+    - Build clean; 17/17 tests passing
+
+  Session 29 — 2026-04-21
+    - D8 complete: Vitest 4.1.5 + RTL 16 + @testing-library/jest-dom + fake-indexeddb + jsdom installed
+    - vitest.config.ts created (jsdom environment, src/test/setup.ts as setupFile, globals: true)
+    - src/test/setup.ts: imports fake-indexeddb/auto (global IndexedDB patch) + jest-dom matchers
+    - src/utils/units.test.ts: 8 tests covering all 4 conversion functions (lbToKg, kgToLb, inToCm, cmToIn)
+    - src/services/WorkoutLogService.test.ts: 9 tests — create quick-start (name auto-gen, counter, no logExercises), create from-program (fields, logExercise copy), finish (finishedAt set, removed from getActive), deleteLog cascade (log deleted, logExercises + logSets deleted)
+    - DB isolation: beforeEach calls db.delete() + db.open() on the singleton — gives fresh fake IndexedDB per test
+    - jsdom added as explicit devDependency (vitest peer dep, not bundled)
+    - 17/17 tests pass (npx vitest run)
+
+  Session 28 — 2026-04-20
+    - CLAUDE.md overhaul: added Session Start — Opening Message Protocol; removed Model Selection Guide; removed "Always ask before making edits"; strengthened "Surface confusion" to unconditional; deleted Post-Demo Cleanup section; deleted build step reading table
+    - Artifact migration: recap.txt → recap.md, UIdesign.txt → UIdesign.md, coreprocess.txt → coreprocess.md (git mv); active references updated across 9 files
+    - No code written — housekeeping only
+
+  Session 26 — 2026-04-18
+    - Statistics tab spec expanded: full body recomposition tracking system scoped (Tier 1 + Tier 2; Tier 3 out of scope)
+    - New DB tables specced: bodyMetrics (time-series body composition), dailyCheckins (daily recovery/behavioral signals)
+    - New users fields: goalWeight, proteinTarget, stepTarget, sleepTarget (all nullable, additive)
+    - New services specced: BodyMetricsService, DailyCheckinService, StatisticsService (7 methods)
+    - New user story U9 added to master-schematics.md
+    - New open issues S1–S4 added to Issue Tracker
+    - Goals card field location (S2) deferred: re-evaluate after Statistics is built
+    - profile.md unchanged — goal fields location TBD post-Statistics build
+    - No code written this session — planning only
 
   Session 25 — 2026-04-17
     - Demo complete; repo prepped for public GitHub

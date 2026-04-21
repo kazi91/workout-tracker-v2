@@ -34,7 +34,7 @@ export default function WorkoutFAB() {
   if (HIDDEN_ROUTES.includes(pathname) || !user) return null;
 
   // Disabled (visible, inert) on /logs/:id when viewing the active workout (N1 / F11)
-  // Keeps center nav slot filled; future hook for intra-workout tool hub (see UIdesign.txt)
+  // Keeps center nav slot filled; future hook for intra-workout tool hub (see UIdesign.md)
   if (logMatch && Number(logMatch.params.id) === activeWorkoutId) {
     return (
       <button

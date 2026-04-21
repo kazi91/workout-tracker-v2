@@ -12,6 +12,7 @@ const SESSION_KEY = 'workout_tracker_user_id';
 
 /**
  * Creates a new user account and stores the session in localStorage.
+ * Guards: name must not be blank; email must contain @; password must be >= 6 characters.
  * Does not check for duplicate emails (local-only MVP — no email uniqueness enforcement).
  * Called by: SignupPage on form submit.
  * Returns: the newly created User with id populated.
@@ -22,9 +23,15 @@ export async function signup(
   password: string,
   unitPreference: 'imperial' | 'metric',
 ): Promise<User> {
+  const trimmedName = name.trim();
+  const trimmedEmail = email.trim();
+  if (!trimmedName) throw new Error("Name can't be blank");
+  if (!trimmedEmail || !trimmedEmail.includes('@')) throw new Error('Enter a valid email address');
+  if (password.length < 6) throw new Error('Password must be at least 6 characters');
+
   const id = await db.users.add({
-    name,
-    email,
+    name: trimmedName,
+    email: trimmedEmail,
     password,
     unitPreference,
     height: 0,

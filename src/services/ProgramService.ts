@@ -29,10 +29,12 @@ export async function getById(id: number): Promise<Program | undefined> {
 
 /**
  * Creates a new program for the given user and returns it with id populated.
+ * Guard: throws if name is blank or whitespace-only.
  * Called by: ProgramsPage inline create form.
  * Returns: Program
  */
 export async function create(userId: number, name: string): Promise<Program> {
+  if (!name.trim()) throw new Error("Name can't be blank");
   const id = await db.programs.add({ userId, name, createdAt: new Date() } as Program);
   const program = await db.programs.get(id);
   if (!program) throw new Error('Failed to create program');

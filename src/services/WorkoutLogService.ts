@@ -34,6 +34,7 @@ export async function getAll(userId: number): Promise<WorkoutLog[]> {
  * Quick-start (workoutId: null): name = "Quick Workout [n+1]" based on existing log count.
  * From-program (workoutId set): name = workout template name (caller must provide).
  * If workoutId is provided, copies workoutExercises → logExercises in template order (Decision #18).
+ * Guard: throws if the user already has an active (unfinished) workout log.
  * Called by: WorkoutFAB (quick-start), WorkoutTemplatePage "Start" button (from-program).
  * Returns: the newly created WorkoutLog with id populated.
  */
@@ -42,6 +43,10 @@ export async function create(
   workoutId: number | null,
   name?: string,
 ): Promise<WorkoutLog> {
+  const active = await getActive(userId);
+  // Hard guard: ActiveWorkoutContext assumes at most one active log per user —
+  // duplicates would corrupt the in-progress state machine
+  if (active) throw new Error('You have a workout in progress');
   let logName = name ?? '';
 
   if (!workoutId && !name) {
@@ -91,10 +96,15 @@ export async function getById(id: number): Promise<WorkoutLog | undefined> {
 
 /**
  * Marks a workout log as finished by setting finishedAt to the current time.
+ * Guards: throws if the log does not exist or is already finished.
  * Called by: WorkoutDetailPage "Finish Workout" button before running the finish flow.
  * Returns: void
  */
 export async function finish(id: number): Promise<void> {
+  const log = await db.workoutLogs.get(id);
+  if (!log) throw new Error('Workout not found');
+  // finishedAt is always null (not undefined) on active logs — set explicitly in create()
+  if (log.finishedAt !== null) throw new Error('This workout is already finished');
   await db.workoutLogs.update(id, { finishedAt: new Date() });
 }
 

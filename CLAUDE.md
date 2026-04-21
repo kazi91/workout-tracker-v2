@@ -16,39 +16,62 @@ GitHub: https://github.com/kazi91/workout-tracker-v2 (public)
 
 ## CURRENT TASK
 Phase: 4 — Testing & post-demo cleanup
-Last session ended: Session 25 — Demo done; repo prepped for public (2026-04-17)
-Next action: Set up Vitest + RTL (D8), begin unit test audit
-Session scope: Test infrastructure
-Required reading this session: recap.txt, handoff.md (open items section)
+Last session ended: Session 30 — service layer guards added to 7 services; build clean; 17 tests passing (2026-04-21)
+Next action: Service layer test audit — write tests for all new guards + AuthService, ProgramService, WorkoutService, LogSetService
+Session scope: Service layer tests (guards + remaining services)
+Required reading this session: recap.md, handoff.md (open items section)
 
-## Model Selection Guide
+## Session Start — Opening Message Protocol
 
-**Sonnet** — use for most work: scaffolding, boilerplate components, CSS styling, simple CRUD services, repetitive tab pages, clear bug fixes, artifact updates.
+Every session opens with an explicit mode declaration from the user. If the first message does not specify mode, ask before doing anything: "Research session or build session?"
 
-**Opus** — save for moments that need deeper reasoning: debugging subtle async/IndexedDB race conditions, test strategy design for complex state machines (ActiveWorkoutContext, finish flows), backend migration architecture, React Native porting decisions.
+### Research sessions
+User signals: "research," "thinking about," "how should," "what are the options," "no code yet," or explicit "research session."
 
-**Rule of thumb:** If you're typing  *what* to build and Claude just needs to write it → Sonnet. If you're asking Claude to figure out *how* something should work → Opus.
+Behavior:
+- Investigate, explain tradeoffs, surface options, cite sources when relevant.
+- Do not edit files in `src/`. Scratch code to illustrate a concept is fine if short, isolated, and labeled "example only."
+- Do not transition to implementation in the same response. End with: "Want me to build this, or are you still deciding?"
+- Research mode ends only when the user explicitly says "build it," "implement this," "let's do [option]," or equivalent.
 
-**Always ask before using Opus.** Do not switch to or recommend Opus without checking with the user first — token budget is limited.
+### Build sessions
+User signals: "build," "implement," "execute [step ID]," or explicit "build session."
+
+Before writing any code:
+1. Read CLAUDE.md CURRENT TASK and `artifacts/recap.md`.
+2. Restate where we are and what you're about to do, separated into:
+   - **Direct requirements** — what the user said
+   - **Inferences** — what you're assuming to fill gaps
+   - **Unclear** — what needs answering before you start
+3. If inferences or unclear items exist, stop and ask. Do not pick a plausible interpretation and run with it.
+4. Wait for explicit confirmation before any file edits.
+
+Once the plan is confirmed, execute without further check-ins. If the plan needs to change mid-execution (new files to edit, assumption turned out false, approach isn't working), stop and raise it before continuing.
+
+### Ambiguous openings
+If the first message could be either mode, default to research and ask at the end: "Want me to build this, or are you still deciding?" Never silently transition research → build in a single response.
+
+### Stop condition
+Do not start the next build step in the same session. When the current step is done and artifacts are updated, end the session.
 
 ---
 
 ## Session Start — Read Before Doing Anything
 
 **Mandatory every session:**
-- `artifacts/recap.txt` — current phase, build step, open decisions, next action. Single source of session state.
+- `artifacts/recap.md` — current phase, build step, open decisions, next action. Single source of session state.
 - `artifacts/tabs/[tab].md` — read before building anything in that tab.
 
-**Read if recap.txt leaves something unclear** (decision rationale, mid-step context, ambiguous state):
+**Read if recap.md leaves something unclear** (decision rationale, mid-step context, ambiguous state):
 - `artifacts/handoff.md` — full session history, rejected options, reasoning behind recent choices.
 
 **Reference only — open when the current task requires it:**
 - `artifacts/master-schematics.md` — schema, service signatures, locked decisions, Issue Tracker. Read specific sections as needed, not the whole file.
-- `artifacts/UIdesign.txt` — color, spacing, typography, component rules. Read when building or styling a new component.
+- `artifacts/UIdesign.md` — color, spacing, typography, component rules. Read when building or styling a new component.
 
-`artifacts/coreprocess.txt` — skip unless user asks about process.
+`artifacts/coreprocess.md` — skip unless user asks about process.
 
-**If code already exists in `src/`:** read the codebase before doing anything. Survey what's been built, match it against the build order in `recap.txt`, and tell the user where you think we are before starting work.
+**If code already exists in `src/`:** read the codebase before doing anything. Survey what's been built, match it against the build order in `recap.md`, and tell the user where you think we are before starting work.
 
 ---
 
@@ -65,10 +88,11 @@ Trivial implementation details (variable names, minor styling) can proceed witho
 
 ## Working Style
 
-- **Always ask before making edits.** Never make changes in one pass — work step-by-step, confirming each change before proceeding.
 - **Review before acting.** When asked to review or assess something, show findings first. Do not start making changes or generating content until explicitly asked.
 - **TypeScript hook:** When the user asks to check for bugs, review logic, or debug code — ask "Want to enable the TypeScript hook?" before starting. When that task is done, immediately tell the user: "Disable the hook now via `/hooks`." Do not move on to the next task without giving this reminder.
-- **Surface confusion.** If a request is ambiguous or you're unsure about intent, state your assumptions explicitly and ask — don't pick an interpretation silently and run with it.
+- **Always ask before recommending Opus** — token budget is limited.
+- **Surface confusion proactively.** Ambiguity is often invisible — a request can feel obviously clear while actually supporting multiple valid interpretations. Before building, explicitly separate what the user said from what you're inferring. If anything is being inferred, ask. A wrong build is more expensive than a 30-second clarifying question.
+- **State "done" before starting.** For any non-trivial task, declare success criteria before writing code: "Done when X passes / Y behavior is confirmed." For multi-step tasks, use: `1. [step] → verify: [check]`. Weak criteria ("make it work") produce mid-build clarification loops.
 - **Surgical changes only.** Touch only what the task requires. Don't "improve" adjacent code, comments, or formatting. Don't refactor things that aren't broken. If your changes orphan an import or variable, clean that up — but don't remove pre-existing dead code unless asked. Every changed line should trace directly to the request.
 
 ---
@@ -83,7 +107,7 @@ Trivial implementation details (variable names, minor styling) can proceed witho
 ## Working Agreements
 
 - All 23 Phase 2 decisions are locked — do not reopen without explicit discussion
-- Update `artifacts/handoff.md` and `artifacts/recap.txt` whenever a decision is made, locked, reversed, or a new gap is found — inline during the session, not batched at the end
+- Update `artifacts/handoff.md` and `artifacts/recap.md` whenever a decision is made, locked, reversed, or a new gap is found — inline during the session, not batched at the end
 - Before building any tab, read the relevant sub-schematic in `artifacts/tabs/`
 - Before building anything, check the Issue Tracker in `artifacts/master-schematics.md` for must-fix items in that area
 - Cross-reference user stories in `master-schematics.md` at every build step
@@ -101,12 +125,12 @@ Each build step = one conversation. Do not combine steps. When the user starts a
 - **Never re-read a file you already read in this session** unless the user changed it.
 - **Don't read code you just wrote** to verify — the Edit/Write tools confirm success.
 - **Verify before done.** Run `npm run dev` (or `npm run build` if dev server is impractical) before calling any step complete. Fix compile errors and TypeScript issues in the same session — don't leave them for the next one.
-- **Simplicity check.** Before finishing a file, re-read it with fresh eyes: could this be half the lines without losing clarity? No speculative abstractions, no error handling for scenarios that can't happen, no "flexibility" that wasn't requested. If 200 lines could be 80, rewrite it.
+- **Simplicity check.** Before finishing a file, re-read it with fresh eyes: could this be half the lines without losing clarity? Ask: "Would a senior engineer say this is overcomplicated?" If yes, rewrite it. No speculative abstractions, no error handling for scenarios that can't happen, no "flexibility" that wasn't requested. If 200 lines could be 80, rewrite it.
 - **Pre-completion checklist.** Before calling any step complete, verify:
   - [ ] JSDoc on every exported service function
   - [ ] No `db.ts` imports in components (service layer only)
   - [ ] `npm run build` passes clean
-  - [ ] `artifacts/recap.txt` and `artifacts/handoff.md` updated
+  - [ ] `artifacts/recap.md` and `artifacts/handoff.md` updated
   - [ ] CLAUDE.md → CURRENT TASK updated for next session
   - [ ] For bug fixes: reproducing test written before the fix
 
@@ -115,18 +139,6 @@ Each build step = one conversation. Do not combine steps. When the user starts a
 - **Brief explanations welcome.** The user is learning — after writing code, add a short (2-3 sentence) explanation of *why* it works this way, not *what* it does line-by-line. Deeper explanations on request.
 - **Group file writes.** When creating multiple related files (e.g. a component + its CSS module + its service), write them all before talking.
 - **Short status updates only.** After completing a chunk: "Done — [component] built. Moving to [next piece]." One line.
-
-### What to read per build step
-| Step | Read before building |
-|------|---------------------|
-| 1 — Scaffold | `recap.txt` (build order), `master-schematics.md` DB section only (schema string) |
-| 2 — Auth | `tabs/login.md`, `recap.txt` C3 (signup spec), `UIdesign.txt` auth layout section, `master-schematics.md` auth + service sections |
-| 3 — Shared components | `UIdesign.txt`, `master-schematics.md` Decision #14–15 (FAB), N1 (FAB hidden logic) |
-| 4 — Programs tab | `tabs/programs.md` |
-| 5a — Logs: list + active workout | `tabs/logs.md` (LogsPage + WorkoutDetailPage Active mode + ExerciseCard + SetRow) |
-| 5b — Logs: finish flows | `tabs/logs.md` (finish flow sections only — quick-start 4-step state machine + from-program sync) |
-| 5c — Logs: read-only + edit modes | `tabs/logs.md` (Read-only mode + Edit mode sections) |
-| 6 — Profile + Statistics | `tabs/profile.md` — Statistics is "Coming soon" placeholder, no spec needed |
 
 ### If context gets long
 - If you've been working for a while and feel context pressure, tell the user: "Good stopping point — commit and continue in a new session." Don't wait until you freeze.
@@ -146,16 +158,6 @@ Each build step = one conversation. Do not combine steps. When the user starts a
 - **Modals for destructive actions** — delete program, delete workout, discard active session; all other navigation is always safe
 - **Seed trigger** — `App.tsx` on mount: `db.exercises.count() === 0` → `seed()`; fires once on first install only
 - **Error handling** — all async service calls in components use try/catch; log via `console.error` for MVP. `ErrorContext` is the post-demo replacement (D5 — Issue Tracker)
-
----
-
-## Post-Demo Cleanup
-
-These files exist at the project root and **must be deleted before the next commit**:
-- `demo-seed.js` — used to seed browser IndexedDB for the demo recording
-- `PRESENTATION_AID.md` — speaker notes for the demo video
-
-If either file still exists when you read this, delete them now and tell the user.
 
 ---
 

@@ -19,7 +19,7 @@
 | 1. Research | Requirements, market, problem definition, tech stack, costs | Done |
 | 2. Blueprint | Architecture, DB schema, component plan, contracts | Complete — all decisions locked (#1–23) |
 | 3. Build | Implement step by step — frontend first, backend later | Complete — all 6 steps built |
-| 4. Test | Unit → integration → e2e, bug tracking | Not started |
+| 4. Test | Unit → integration → e2e, bug tracking | In progress — 17 tests passing; service layer guards complete |
 | 5. Iteration | Repeat phases 1–4 for each new feature set | Not started |
 
 ---
@@ -62,9 +62,9 @@
 
 **Phase 3 — Build MVP (complete — 2026-04-10)**
 - Build order: project setup → auth → shared components → Programs tab → Logs tab → Profile tab → Statistics placeholder
-- All 6 steps built and verified. UI polish pass complete. See recap.txt for full session history.
+- All 6 steps built and verified. UI polish pass complete. See recap.md for full session history.
 
-**Phase 4 — Test MVP (not started)**
+**Phase 4 — Test MVP (in progress)**
 
 **Phase 5 — Iteration (not started)**
 - Repeat phases 1–4 for each new feature set after MVP is complete and tested
@@ -169,6 +169,10 @@ A workout tracking app with a React web frontend (mobile-only layout). Data stor
 | height | number | Stored in inches — converted to ft+in or cm at display time |
 | weight | number | Stored in lb — converted to kg at display time |
 | unitPreference | string | 'imperial' (default) or 'metric' — controls all Layer 1 unit displays: lb/kg, ft+in/cm, in/cm |
+| goalWeight | number | Nullable — stored in lb; display in user's unit preference |
+| proteinTarget | number | Nullable — g/day |
+| stepTarget | number | Nullable — steps/day |
+| sleepTarget | number | Nullable — hours/night |
 | createdAt | Date | |
 
 ### exercises
@@ -238,6 +242,35 @@ A workout tracking app with a React web frontend (mobile-only layout). Data stor
 | previousWeight | number | Stored in lb — snapshotted at set creation; matched by set number from last session, falls back to last set |
 | previousReps | number | Displayed as "90 × 8" (with converted weight), null shows "—" |
 
+### bodyMetrics
+| Field | Type | Notes |
+|-------|------|-------|
+| id | auto | Primary key |
+| userId | number | FK → users |
+| date | Date | Entry date — multiple entries per day allowed |
+| weight | number | Nullable — stored in lb |
+| bodyFatPct | number | Nullable — percentage (e.g. 18.5) |
+| waistIn | number | Nullable — stored in inches |
+| hipIn | number | Nullable — stored in inches |
+| armIn | number | Nullable — stored in inches |
+| thighIn | number | Nullable — stored in inches |
+
+> All measurements stored in canonical units (lb/inches) — convert to kg/cm at display time. Weight expected daily; other fields monthly.
+
+### dailyCheckins
+| Field | Type | Notes |
+|-------|------|-------|
+| id | auto | Primary key |
+| userId | number | FK → users |
+| date | Date | Entry date — one logical entry per day (upsert pattern) |
+| sleepHours | number | Nullable — decimal allowed |
+| energyRating | number | Nullable — integer 1–10 |
+| hungerRating | number | Nullable — integer 1–10 |
+| hrv | number | Nullable — ms; manual entry from wearable |
+| steps | number | Nullable — integer; manual entry or future device sync |
+
+---
+
 ### Dexie Schema String (locked — D1 resolved)
 
 ```
@@ -249,7 +282,11 @@ workoutExercises: '++id, workoutId'
 workoutLogs:      '++id, userId'
 logExercises:     '++id, workoutLogId'
 logSets:          '++id, logExerciseId'
+bodyMetrics:      '++id, userId'
+dailyCheckins:    '++id, userId'
 ```
+
+> **Schema version:** bump Dexie version number when `bodyMetrics` and `dailyCheckins` are added. New `users` goal fields (`goalWeight`, `proteinTarget`, `stepTarget`, `sleepTarget`) are additive — existing records unaffected.
 
 Notes:
 - No compound indexes — per-user and per-exercise result sets are small enough for JS filtering at MVP scale
@@ -271,8 +308,11 @@ All services are plain modules exporting functions. Currently call Dexie directl
 | WorkoutService | getByProgramId, getById, create, update, delete (cascade order: workoutExercises → workout), reorder, createFromLog(logId, programId, workoutName) — creates workout + workoutExercises from a log; targetSets = logSet count per exercise, targetReps/targetWeight = first set values (0 if none) |
 | WorkoutExerciseService | getByWorkoutId, add, update, remove, reorder, syncFromLog(workoutId, logId) — adds exercises in log but not in template, removes exercises in template but not in log; existing template exercises untouched; order of new exercises follows log order; getCountsByProgramId(programId) — returns Record<workoutId, number> of exercise counts for all workouts in a program in a single batch query (replaces N+1 pattern in ProgramDetailPage) |
 | WorkoutLogService | getAll, getById, create (userId, workoutId nullable, name — quick-start: name = "Quick Workout [n+1]" where n = getAll(userId).length; from-program: name = workout template name; if workoutId provided, atomically copies workoutExercises → logExercises), finish, update, delete (cascade order: logSets → logExercises → workoutLog), getActive (returns log with finishedAt === null for current user, or null) |
-| LogExerciseService | getByWorkoutId, add, remove, reorder |
+| LogExerciseService | getByWorkoutLogId, add, remove, reorder |
 | LogSetService | getByExerciseId, add, update, delete, getPreviousData (returns weight+reps by set number, fallback to last set) |
+| BodyMetricsService | getAll(userId), getRecent(userId, days), log(userId, entry), update(id, entry), delete(id) |
+| DailyCheckinService | getAll(userId), getRecent(userId, days), logToday(userId, entry) — upsert, replaces today's entry if exists, delete(id) |
+| StatisticsService | getSummary(userId), getExerciseHistory(userId, exerciseId, range), getVolumeByPeriod(userId, period), getPRs(userId), getRollingWeightAverage(userId, days), getRecompositionSignal(userId), getAdherenceRate(userId, weeks) |
 
 ---
 
@@ -373,7 +413,7 @@ src/
 - Fields: name, email, password, unit preference toggle (Imperial | Metric — default Imperial)
 - Validation: blank fields → "Can't be blank" (Decision #11 pattern); no duplicate email check (local-only MVP)
 - Post-signup: auto-login → `/logs`
-- Layout: full-screen dark, centered card (UIdesign.txt auth layout)
+- Layout: full-screen dark, centered card (UIdesign.md auth layout)
 - AuthService.signup() accepts: name, email, password, unitPreference
 
 **LoginPage spec (C4 — deferred to login.md, resolve before build step 2):**
@@ -410,7 +450,7 @@ src/
 | 12 | Confirm prompt only on destructive actions | Delete workout, delete program, discard active workout session — all other navigation is always safe |
 | 13 | Free navigation during active workout | User can navigate all tabs while a workout is in progress — workout persists until explicitly finished or deleted |
 | 14 | ActiveWorkoutContext | Global context tracks whether a workout is in progress — drives FAB state app-wide; checks Dexie on login/app open for any log with finishedAt === null |
-| 15 | WorkoutFAB behavior | No active workout: "Start Workout" on Logs tab only — hidden on all other tabs; Active workout: "Resume Workout" on all tabs → /logs/:id; Hidden on /logs/:id in active mode (redundant with Finish/Discard buttons); Hidden on /login and /signup |
+| 15 | WorkoutFAB behavior | No active workout: "Start Workout" on Logs tab only — hidden on all other tabs; Active workout: "Resume Workout" on all tabs → /logs/:id; Disabled/inert on /logs/:id in active mode (opacity 0.35, no onClick — keeps nav center slot filled); Hidden on /login and /signup |
 | 16 | Device keyboard handles text correction | Mobile keyboards provide native auto-correct on all text inputs — no custom implementation needed |
 | 17 | Quick-start finish flow — save to program | Modal: "Save to program?" → Skip: log stays unassigned (/logs); Save: picker shows existing programs + "＋ New Program" at top; if zero programs, skip picker and show blank inputs directly. Workout name input is always blank (no pre-fill). Cancel at any point after finishing navigates to /logs. |
 | 18 | WorkoutLogService.create pre-fill behavior | When workoutId is provided, create atomically copies workoutExercises → logExercises in the same call. When workoutId is null (quick-start), creates an empty log with no exercises. Caller never manages the copy step. |
@@ -436,6 +476,7 @@ src/
 | U6 | gym-goer | edit a finished workout log | I can correct mistakes I made during logging | Done (MVP) |
 | U7 | gym-goer | see my progress on a specific exercise over time | I know if I'm getting stronger | Deferred — Statistics tab post-MVP |
 | U8 | gym-goer | use the app on my phone without it feeling like a desktop site | it fits naturally into my gym routine | Done (MVP) |
+| U9 | gym-goer | track my body measurements and daily recovery signals alongside workout performance | I can see whether I'm genuinely recomping, not just relying on scale weight | Deferred — Statistics tab post-MVP |
 
 > Add new stories here before building new features. A story should be agreed on before any blueprint or build work begins for that feature.
 
@@ -470,6 +511,10 @@ Applied at every iteration. Each phase has a defined scope — don't skip phases
 | G4 | Gap | No "change exercise" on active workout | Nice to have | Logs | Pending |
 | R3 | Refactor | Password stored as plain text in Dexie — replace with hashed auth when backend is added | Must fix before real users | Auth | Pending |
 | P5 | Planning | Charting library not selected — must decide before building Statistics | Decide before Statistics build | Statistics | Pending |
+| S1 | Planning | Energy/hunger 1–10 selector UX — tap chips vs stepper; decide at Statistics build step 7 | Decide before build | Statistics | Pending |
+| S2 | Planning | Goals card field location — currently on Statistics tab; re-evaluate after Statistics is built whether any belong on Profile | Post-Statistics build | Statistics, Profile | Pending |
+| S3 | Planning | Wearable API integration (HRV, steps auto-sync) — post-MVP; manual entry only for now | Post-MVP | Statistics | Future |
+| S4 | Planning | Weekly adherence calculation — edge cases: no active program, multiple programs; clarify at Statistics build step 9 | Decide before build | Statistics | Pending |
 | F1 | Future | Auto-suggest exercise names from library in text input fields | Post-MVP | Logs, Programs | Future |
 | F2 | Future | Set completion indicator — visual feedback (checkmark or color change) on set row after auto-save | Post-MVP | Logs | Future |
 | F3 | Future | Smart defaults — pre-fill weight/reps inputs with previousWeight/previousReps when new set added | Post-MVP | Logs | Future |
@@ -480,6 +525,13 @@ Applied at every iteration. Each phase has a defined scope — don't skip phases
 | F9 | Future | Rearrange exercises — drag-to-reorder exercise list on active workout and workout template. Requires `sortOrder` int on `logExercises` and `workoutExercises`. | Post-MVP schema change | Logs, Programs, DB | Future |
 | F10 | Future | Redesign WorkoutTemplatePage bottom action area — revisit after OD6 (CSS button token standards) is resolved. | Post-MVP polish | Programs | Future |
 | F12 | Future | Log history date context + calendar view — two parts: (1) weekday headers get date suffix within last 7 days ("Monday (5th)"); (2) beyond 7 days, replace grouped list with a calendar view showing workout vs rest days; tapping a workout day drills into that day's log. Open questions: month vs week-strip layout, multiple workouts in one day, rest day marking, entry point on LogsPage. | Post-MVP | Logs | Future |
+| F13 | Future | Daily protein tracker — progress bar showing protein intake vs daily target (from `proteinTarget` on users table). Flow: Stats or Logs tab → Protein Log → tap + → enter grams → tap Log → bar updates with grams remaining or positive reinforcement if full. Reset time controlled by user setting (see F14). Open questions: (1) entry point — Stats tab vs Logs tab; (2) lock screen widget (iOS Live Activity / Android widget) showing live bar under clock — requires native shell (React Native or Capacitor); not achievable in PWA alone. Schema: requires `dailyCheckins.proteinGrams` and `users.proteinTarget` — both specced in Statistics phase (session 26); not yet built. | Post-MVP | Stats/Logs, DB | Future |
+| F14 | Future | Protein tracker reset time setting — user-configurable in Profile tab. Options: midnight (default) vs 2am (for midnight snackers). Stored on `users` table (new field: `proteinResetHour: number`, default 0). Displayed in Profile tab under a "Nutrition" settings section. | Post-MVP | Profile, DB | Future |
+| F15 | Future | Lock screen protein bar widget — native shell required (React Native or Capacitor). iOS: Live Activity under clock; Android: home/lock screen widget. Shows live protein bar synced to F13 data. Not achievable in PWA alone — flag when deciding mobile strategy. | Post-MVP (native only) | Native, Stats | Future |
+| F16 | Future | Bio-metric equation engine — calculate health/fitness metrics from user inputs (weight, height, body measurements), stored history, and integrated data (steps). Accuracy vs accessibility tradeoff is a core design constraint: DEXA is gold standard but inaccessible; navy tape method + circumference inputs are accessible and reasonably accurate. Brainstorm needed before building. See F17–F19 for specific metrics. | Post-MVP (brainstorm first) | Stats, Profile, DB | Future |
+| F17 | Future | Body fat predictor — estimate BF% from accessible inputs. Candidate equations: US Navy method (neck + waist [+ hip for women] + height), BMI-based Jackson-Pollock approximation, or skinfold-entry simulation. Must decide: (1) which equation(s) to use; (2) which measurements to collect (store on `bodyMetrics` table — fields may need to expand); (3) whether to show a range rather than a point estimate to communicate uncertainty. No integration required — pure calculation from user input. | Post-MVP | Stats, DB | Future |
+| F18 | Future | Sleep analysis — beyond raw hours logged, derive quality signals: consistency score (variance in bedtime/wake time across 7 days), debt tracker (cumulative shortfall vs `sleepTarget`), trend line. Inputs from `dailyCheckins.sleepHours`. Open question: whether to prompt for sleep/wake times separately (richer data) vs just total hours (current schema). | Post-MVP | Stats, DB | Future |
+| F19 | Future | Step quality — go beyond raw step count to measure activity distribution: active minutes, step cadence buckets (strolling vs brisk vs running pace), streak tracking. Requires steps data source decision (S3: wearable API vs manual entry). Manual entry can only give daily totals — richer cadence data needs a wearable or phone sensor integration. | Post-MVP | Stats, Native/API | Future |
 
 ### Resolved Issues (record only — do not reopen)
 
@@ -500,9 +552,9 @@ Applied at every iteration. Each phase has a defined scope — don't skip phases
 | P7 | Planning | Target derivation in createFromLog | First set values — target = starting weight, not peak |
 | P8 | Planning | From-program finish flow logic | Resolved — Decision #19 |
 | P9 | Planning | Pre-fill on start from program | create handles copy atomically |
-| B1 | Bug | Dangling workoutId on program delete | Built — null-check workoutId; falls back to quick-start flow |
+| B1 | Bug | Dangling workoutId on program delete | Medium | Logs | Resolved — null-check workoutId; falls back to quick-start flow |
 | B2 | Bug | Spinner arrows on set input fields (weight/reps) do not save the new value | High | Logs | Resolved — saveSet() helper + onChange inputType check (session 23) |
-| B3 | Bug | Active Issues table B1 row missing Severity and Area columns — normalize all Bug rows to match header | Low | Artifacts | Pending |
+| B3 | Bug | Active Issues table B1 row missing Severity and Area columns — normalize all Bug rows to match header | Low | Artifacts | Resolved — normalized (session 30) |
 | N1 | Planning | WorkoutFAB hidden logic | Built — FAB compares route :id against activeWorkoutId; F11 (2026-04-14): changed from hidden → disabled/inert on active workout page |
 | N2 | Planning | Finish flow state machine | Confirmed session 7 — no simplification |
 | N3 | Planning | Context dependency chain | Resolved session 7 — UserSettingsContext reads from AuthContext |
@@ -545,6 +597,7 @@ Detailed specs for each tab live here. Cross-reference these during every build 
 
 | Date | Change |
 |------|--------|
+| 2026-04-21 | Artifact cleanup (session 30): F13 false schema claim corrected ("already defined" → "specced in Statistics phase; not yet built"); UIdesign.md page title 20px/600 → 24px/700; FAB states split into disabled/inert (active workout page) vs hidden (auth pages); Decision #15 updated to match; Phase 4 status "not started" → "in progress"; B1 row normalized (Severity + Area added); B3 closed |
 | 2026-04-10 | Phase 3 Build marked complete; all user stories U2–U6, U8 marked Done (MVP); issue tracker items G2, G3, G5, G6, G7, R1, R2, B1, N1 marked Resolved — built |
 | 2026-04-10 | UI polish pass complete: trash icons replace text Remove/Delete buttons throughout; set-delete icon changed to red X; WorkoutTemplatePage button layout redesigned (shorter labels, auto-width, Start/Done/Delete rows); FAB centered (left: 50%); tab titles standardized to 24px/700; ProgramsPage "New Program" button moved below list; LogsPage empty state text updated; ProfilePage unit labels moved into label text; autocapitalize="words" added to all name inputs app-wide |
 | 2026-04-10 | Bug fixes: WorkoutLogService.create now correctly copies workoutExercises → logExercises (from-program exercises were missing); Save Edits reloads from Dexie after saving (display was stale); seed.ts module-level flag prevents React Strict Mode double-seeding (duplicate exercises in search modal) |

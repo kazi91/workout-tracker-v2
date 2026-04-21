@@ -137,8 +137,8 @@ Edit      → tap "← Back"         → Modal: "Discard changes?" → [Discard]
   - Set rows (one per logSet):
     - Set number
     - Best (read-only): previous weight × reps (e.g. "90 × 8") or "—" if null; displayed in user's unit (UserSettingsContext); no "last time" label
-    - Weight input — compact variant (see UIdesign.txt); numeric, 0–9999, 1 decimal place allowed (e.g. 137.5); unit label beside field ("lb" or "kg" from UserSettingsContext); user enters in their preferred unit — converted to lb on save if metric; invalid or blank shows "Enter a valid number" inline, field stays editable
-    - Reps input — compact variant (see UIdesign.txt); whole numbers only, 1–999; invalid or blank shows "Enter a valid number" inline, field stays editable
+    - Weight input — compact variant (see UIdesign.md); numeric, 0–9999, 1 decimal place allowed (e.g. 137.5); unit label beside field ("lb" or "kg" from UserSettingsContext); user enters in their preferred unit — converted to lb on save if metric; invalid or blank shows "Enter a valid number" inline, field stays editable
+    - Reps input — compact variant (see UIdesign.md); whole numbers only, 1–999; invalid or blank shows "Enter a valid number" inline, field stays editable
     - Delete set button
   - "+ Add Set" button — full-width below set rows, green fill, white text
 - "+ Add Exercise" button — opens `ExerciseSearchModal`; new exercise card appears with no sets — user taps "+ Add Set" manually (C9 resolved)

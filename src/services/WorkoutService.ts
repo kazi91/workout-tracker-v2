@@ -29,10 +29,12 @@ export async function getById(id: number): Promise<Workout | undefined> {
 
 /**
  * Creates a new workout in a program with the next available order index.
+ * Guard: throws if name is blank or whitespace-only.
  * Called by: ProgramDetailPage "+ Add Workout" flow before navigating to WorkoutTemplatePage.
  * Returns: the newly created Workout with id populated.
  */
 export async function create(userId: number, programId: number, name: string): Promise<Workout> {
+  if (!name.trim()) throw new Error("Name can't be blank");
   const existing = await db.workouts.where('programId').equals(programId).toArray();
   const id = await db.workouts.add({
     userId,
@@ -71,7 +73,7 @@ export async function deleteWorkout(id: number): Promise<void> {
 
 /**
  * Creates a workout template from a completed log, copying logExercises → workoutExercises.
- * Target derivation (P7): targetSets = number of sets logged; targetReps/targetWeight = first set values.
+ * Target derivation: targetSets = number of sets logged; targetReps/targetWeight = values from the first logged set.
  * First set = starting weight, not peak — caller provides the workout name and programId.
  * Called by: finish flow (Step 5) when user saves a quick-start log to a program.
  * Returns: the newly created Workout with id populated.

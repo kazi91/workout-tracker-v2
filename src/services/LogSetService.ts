@@ -93,6 +93,7 @@ export async function add(logExerciseId: number): Promise<LogSet> {
 /**
  * Updates weight and/or reps on a set. Auto-saves on input blur.
  * Weight is always stored in lb — caller must convert from kg before calling if user is metric.
+ * Guards: weight must be >= 0; reps must be >= 0 and a whole number; both must be finite numbers.
  * Called by: SetRow onBlur handler after input validation passes.
  * Returns: void
  */
@@ -100,6 +101,15 @@ export async function update(
   id: number,
   data: Partial<Pick<LogSet, 'weight' | 'reps'>>,
 ): Promise<void> {
+  if (data.weight !== undefined) {
+    if (!Number.isFinite(data.weight)) throw new Error('Enter a valid weight');
+    if (data.weight < 0) throw new Error('Weight must be 0 or greater');
+  }
+  if (data.reps !== undefined) {
+    if (!Number.isFinite(data.reps)) throw new Error('Enter a valid rep count');
+    if (data.reps < 0) throw new Error('Reps must be 0 or greater');
+    if (!Number.isInteger(data.reps)) throw new Error('Reps must be a whole number');
+  }
   await db.logSets.update(id, data);
 }
 

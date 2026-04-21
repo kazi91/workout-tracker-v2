@@ -1,25 +1,25 @@
 # HANDOFF — NEW INSTANCE START HERE
-Last updated: 2026-04-17 (session 25 — demo done, repo prepped for public)
+Last updated: 2026-04-21 (session 30 — service layer guards complete)
 
 ---
 
 ## Read These Files First
 Check **CLAUDE.md → CURRENT TASK** for session scope and required reading.
-Always read `artifacts/recap.txt`. Read other files only as scoped by CURRENT TASK.
+Always read `artifacts/recap.md`. Read other files only as scoped by CURRENT TASK.
 
 Full file index (reference — do not read all of these every session):
-1. `artifacts/recap.txt`            — current state, decisions summary, next steps
+1. `artifacts/recap.md`             — current state, decisions summary, next steps
 2. `artifacts/master-schematics.md` — DB schema, service layer, all locked decisions, issue tracker
 3. `artifacts/tabs/logs.md`         — Logs tab spec (user flows complete)
 4. `artifacts/tabs/programs.md`     — Programs tab spec (user flow complete)
 5. `artifacts/tabs/profile.md`      — Profile tab spec (placeholder — no flow for MVP)
-6. `artifacts/tabs/statistics.md`   — Statistics tab spec (placeholder — no flow for MVP)
-7. `artifacts/UIdesign.txt`         — UI standards, color palette, component specs, design brainstorm
+6. `artifacts/tabs/statistics.md`   — Statistics tab spec (full body recomposition spec — build deferred to post-testing phase)
+7. `artifacts/UIdesign.md`          — UI standards, color palette, component specs, design brainstorm
 
 ---
 
 ## Project Info
-- GitHub repo: https://github.com/kazi91/workout-tracker-v2 (private)
+- GitHub repo: https://github.com/kazi91/workout-tracker-v2 (public)
 - CLAUDE.md active at project root (auto-loaded by Claude instances)
 - .gitignore created at project root
 
@@ -27,7 +27,7 @@ Full file index (reference — do not read all of these every session):
 
 ## Build State
 **Phase 3 Build is complete.** All 6 steps built, verified, and committed. UI polish pass complete. Demo delivered.
-**Phase 4 — Testing & cleanup.** Post-demo file cleanup, then Vitest + RTL setup (D8) and unit test audit.
+**Phase 4 — Testing & cleanup.** Test infrastructure complete (D8). Next: service layer test audit, then D5 (ErrorContext), then Statistics build.
 
 ### What is built
 - **Step 1** — Vite scaffold, Dexie schema (8 tables), 29 seed exercises, routing stubs, dark theme CSS variables
@@ -50,12 +50,17 @@ Full file index (reference — do not read all of these every session):
 
 ### Active items (do not close without discussion)
 - R3: Plain-text password — replace when backend is added
-- P5: Charting library — decide before Statistics build in v2
+- P5: Charting library — decide before Statistics build (Recharts recommended)
+- S1: Energy/hunger selector UX — chips vs stepper; decide at Statistics build step 7
+- S2: Goals card field location — re-evaluate after Statistics is built; profile.md untouched for now
+- S3: Wearable API integration — post-MVP; manual entry only
+- S4: Weekly adherence edge cases — no active program, multiple programs; decide at Statistics build step 9
 - D5: ErrorContext — replace console.error with user-facing error surface
-- D8: Unit tests — Vitest + RTL setup (Phase 4 first action)
+- **D8: Test infrastructure** — DONE (session 29): Vitest + RTL + fake-indexeddb + jsdom installed; 17 tests passing across units.test.ts and WorkoutLogService.test.ts; see recap.md TEST COVERAGE
 - F1–F6, F8–F10: future features — see Issue Tracker
 - OD6: CSS button token standards — brainstorm session pending before enforcing
 - **Post-demo cleanup:** DONE (session 25) — demo-seed.js, PRESENTATION_AID.md, PRESENTATION_AID.html deleted; README.md created; repo public
+- **Statistics spec:** DONE (session 26) — full body recomposition feature set specced; 2 new tables, 4 new user fields, 3 new services; build deferred until after testing phase
 
 ### Resolved (record only — do not reopen)
 - F7: Target weight display — resolved session 18 ("| top set: x lbs")
@@ -68,21 +73,39 @@ Do not re-open planning decisions unless the user explicitly raises them.
 
 ---
 
-## Phase 4 Starting Point
+## Phase 4 State
 
-First session: delete demo cleanup files, install Vitest + RTL, configure, write first test.
+D8 complete. Infrastructure in place: Vitest + RTL + fake-indexeddb + jsdom. DB isolation pattern: `beforeEach(() => db.delete() + db.open())` on the singleton.
 
-Priority test order:
-1. WorkoutLogService (create, finish, delete cascade)
-2. Finish flow state machine paths (all 4 quick-start paths + from-program sync)
-3. Auth flow (signup → login → logout)
-4. ActiveWorkoutContext initialization
+Remaining test priority order:
+1. ~~WorkoutLogService (create, finish, delete cascade)~~ — DONE (session 29)
+2. Service layer audit — AuthService, ProgramService, WorkoutService, LogSetService ← NEXT
+3. Finish flow state machine paths (all 4 quick-start paths + from-program sync)
+4. Auth flow (signup → login → logout)
+5. ActiveWorkoutContext initialization
 
-Exit criteria: see recap.txt — PHASE 4 EXIT CRITERIA section.
+Exit criteria: see recap.md — PHASE 4 EXIT CRITERIA section.
 
 ---
 
 ## Recent Sessions (most recent first)
+
+**Session 30 — 2026-04-21:** Artifact/doc cleanup only — no code written. S1: F13 false schema claim corrected ("already defined" → "specced in Statistics phase (session 26); not yet built"). A1: UIdesign.md page title 20px/600 → 24px/700 (matches actual implementation). A2: UIdesign.md FAB states split — disabled/inert (WorkoutDetailPage active mode) vs hidden (/login, /signup); Decision #15 in master-schematics.md updated to match. A3: Phase 4 status "not started" → "in progress". A4: repo visibility "(private)" → "(public)". A5: project_state.md memory rewritten to reflect Phase 4 current state. M1: B1 row normalized (Severity + Area columns added); B3 closed as Resolved.
+
+**Session 30 — 2026-04-21:** Research: full artifact audit (22 gaps identified). Build: service layer guards added to 7 services — LogSetService.update (NaN/negative/decimal reps), WorkoutExerciseService.update (targetSets/targetReps >= 1, targetWeight >= 0), WorkoutLogService.create (throw if active exists), WorkoutLogService.finish (throw if not found or already finished), AuthService.signup (name/email/password), ProgramService.create (name blank), WorkoutService.create (name blank). All guards throw user-facing Error messages. WorkoutLogService.test.ts: TypeScript fixes + counter test updated for new active workout guard. master-schematics.md service table corrected (getByWorkoutId → getByWorkoutLogId). Decisions: duplicate exercises allowed; U4 block finish with 0 exercises (UI-level, not yet built); U5 block Save Edits on validation failure (not yet built). Build clean; 17/17 passing.
+
+**Session 29 — 2026-04-21:** D8 complete — Vitest test infrastructure installed and verified. Packages: vitest 4.1.5, @vitest/coverage-v8, @testing-library/react 16, @testing-library/jest-dom, @testing-library/user-event, fake-indexeddb, jsdom. Config: vitest.config.ts (jsdom, globals, setupFiles). Setup: src/test/setup.ts (fake-indexeddb/auto + jest-dom). Tests: units.test.ts (8 tests, all converters), WorkoutLogService.test.ts (9 tests: create quick-start, create from-program, finish, deleteLog cascade). DB isolation via db.delete() + db.open() in beforeEach. 17/17 pass.
+
+**Session 28 — 2026-04-20:** CLAUDE.md overhaul + artifact housekeeping. No code written.
+- Added Session Start — Opening Message Protocol (research vs. build mode distinction, pre-build confirmation checklist, stop condition)
+- Removed Model Selection Guide section; preserved "always ask before recommending Opus" as a Working Style bullet
+- Removed "Always ask before making edits" bullet (replaced by new protocol)
+- Strengthened "Surface confusion" to unconditional version (mandatory inference/assumption separation before building)
+- Deleted Post-Demo Cleanup section (files already gone)
+- Renamed recap.txt → recap.md, UIdesign.txt → UIdesign.md, coreprocess.txt → coreprocess.md via git mv; updated active references across 9 files (CLAUDE.md, recap.md, UIdesign.md, coreprocess.md, handoff.md, master-schematics.md, tabs/login.md, tabs/logs.md, WorkoutFAB.tsx); session history/changelog entries preserved as-is
+- Deleted build step reading table from CLAUDE.md (steps 1–6 complete; git history is the archive)
+
+**Session 27 — 2026-04-19:** Future feature planning. Logged F13 (daily protein tracker), F14 (protein reset time setting — Profile tab, `proteinResetHour` field on users), F15 (lock screen widget — native only), F16 (bio-metric equation engine — brainstorm needed), F17 (body fat predictor — US Navy method candidate), F18 (sleep analysis — quality signals from dailyCheckins), F19 (step quality — cadence data needs native integration). Phase 4 task list compiled: D8 → D5 → Statistics build. Next session starts D8.
 
 **Session 25 — 2026-04-17:** Demo complete. Repo prepped for public GitHub. Deleted demo-seed.js, PRESENTATION_AID.md, PRESENTATION_AID.html. Created README.md (demo link, tech stack, local setup, auth disclaimer, copyright). Added "Portfolio Legibility" principle to UIdesign.txt section 1 and handoff.md. Post-demo cleanup item closed.
 
@@ -129,7 +152,7 @@ Exit criteria: see recap.txt — PHASE 4 EXIT CRITERIA section.
 
 ---
 
-## UI Standards Summary (UIdesign.txt — session 4)
+## UI Standards Summary (UIdesign.md — session 4)
 These are locked. Do not redesign around them.
 
 - Nature theme: color evokes natural world — felt, not illustrated (no leaf icons etc.)
@@ -138,8 +161,8 @@ These are locked. Do not redesign around them.
 - Text tiers: #FFFFFF primary / #C0C0C0 label (card descriptors) / #8A8A8A secondary / #4A4A4A disabled
 - Nav: 14px labels, 2px accent line above active tab
 - Alignment: page titles + focal-point content centered; multi-element lists/rows left-aligned
-- Buttons: 44px min height, flat, no gradients, title case, 15px/600 — see section 8 in UIdesign.txt
-- Light mode: palette locked for post-MVP, values in UIdesign.txt section 4c
+- Buttons: 44px min height, flat, no gradients, title case, 15px/600 — see section 8 in UIdesign.md
+- Light mode: palette locked for post-MVP, values in UIdesign.md section 4c
 
 ## Rejected Options — Do Not Re-Propose
 These were explicitly discussed and closed. Do not re-propose. Do not ask clarifying questions about them. If the user raises one, acknowledge the prior decision and ask if they want to formally reopen it.
@@ -172,4 +195,4 @@ These were explicitly discussed and closed. Do not re-propose. Do not ask clarif
 ---
 
 ## Keeping This File Current
-Update `handoff.md` and `recap.txt` whenever a decision is made, locked, or reversed — without waiting to be asked.
+Update `handoff.md` and `recap.md` whenever a decision is made, locked, or reversed — without waiting to be asked.
