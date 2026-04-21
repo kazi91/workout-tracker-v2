@@ -5,10 +5,10 @@ Last updated: 2026-04-21
 CURRENT TASK (mirrors CLAUDE.md — if they diverge, recap.md wins)
 -------------------------------------------------------------------
 Phase: 4 — Testing & post-demo cleanup
-Last session ended: Session 30 — service layer guards added to 7 services; build clean; 17 tests passing (2026-04-21)
-Next action: Service layer test audit — write tests for all new guards + AuthService, ProgramService, WorkoutService, LogSetService
-Session scope: Service layer tests (guards + remaining services)
-Required reading this session: recap.md, handoff.md (open items section)
+Last session ended: Session 37 — Statistics research continued; F26–F28 logged (Workout Stats Card: most skipped, volume by muscle group, balance); time filters locked 30/90/365/all; custom exercise deep dive flagged (2026-04-21)
+Next action: Custom exercise deep dive — arms ambiguity, compound multi-muscle tagging, edit-after-creation, category picker UX; must resolve before F27/F28 spec is final
+Session scope: Research — custom exercise UX and muscle group accuracy
+Required reading this session: recap.md, master-schematics.md (Issue Tracker F26–F28), artifacts/tabs/statistics.md
 
 ---
 
@@ -110,16 +110,23 @@ NEXT STEPS — Phase 4
 2. ~~Statistics planning~~ — DONE (session 26); build deferred until after testing
 3. ~~Future feature planning~~ — DONE (session 27); F13–F19 logged in Issue Tracker
 4. ~~Test infrastructure~~ — DONE (session 29): Vitest + RTL + fake-indexeddb + jsdom; 17 tests passing
-5. Unit test audit — write tests for service guards + AuthService, ProgramService, WorkoutService, LogSetService, then contexts, then critical UI flows ← NEXT SESSION
-6. ErrorContext (D5) — replace console.error with user-facing error surface
-7. Statistics build — after D8 + D5 complete; resolve P5/S1/S2/S4/OD6 first
+5. ~~U4 + U5 UI guards~~ — DONE (session 31): finish + save-edits blocked with 0 exercises or blank name; IntersectionObserver scroll arrow; 3 RTL tests
+6. ~~Unit test audit~~ — DONE (session 32): 72 tests passing across 8 files; all service guards covered
+7. ~~Statistics spec revision~~ — DONE (session 33): removed HRV, hunger, arm/thigh, orphaned goal targets; added post-workout feel rating, PR celebration (set-save + finish), Logs consistency indicator; schema trimmed; S1 closed
+8. ~~ErrorContext (D5)~~ — DONE (session 34): all 12 files wired; ErrorBanner live; 72/72 tests passing
+9. Statistics build — NEXT; resolve P5 + OD6 before starting (S1 closed; S4 resolved session 36; S2 deferred)
 
-TEST COVERAGE (session 30)
+TEST COVERAGE (session 32)
 ---------------------------
-- units.test.ts:             8 tests — lbToKg, kgToLb, inToCm, cmToIn (all paths)
-- WorkoutLogService.test.ts: 9 tests — create quick-start (3), create from-program (2), finish (2), deleteLog cascade (2)
-- Total: 17 tests, 2 files, all passing
-- Guards added (not yet tested): LogSetService.update, WorkoutExerciseService.update, WorkoutLogService.create + finish, AuthService.signup, ProgramService.create, WorkoutService.create
+- units.test.ts:                    8 tests — lbToKg, kgToLb, inToCm, cmToIn (all paths)
+- WorkoutLogService.test.ts:       12 tests — create quick-start (3), create from-program (2), create guard (1), finish (2), finish guards (2), deleteLog cascade (2)
+- WorkoutDetailPage.test.tsx:       3 tests — U4 finish blocked (1), U5a blank name blocked (1), U5b 0-exercise edit blocked (1)
+- AuthService.test.ts:             16 tests — signup happy + guards (7), login (4), logout (1), getCurrentUser (2), getCurrentUserId (2)
+- ProgramService.test.ts:           8 tests — create happy + guards (3), getAll ordering (1), getById (2), update (1), deleteProgram cascade (1)
+- WorkoutService.test.ts:           7 tests — create happy + guards (3), getByProgramId ordering (1), getById (1), deleteWorkout cascade (1), createFromLog (1)
+- LogSetService.test.ts:           11 tests — add (2), getByExerciseId (1), update happy (2), update guards (5), deleteSet (1)
+- WorkoutExerciseService.test.ts:   7 tests — update happy (1), update guards (6)
+- Total: 72 tests, 8 files, all passing
 
 PHASE 4 EXIT CRITERIA
 -----------------------
@@ -197,6 +204,54 @@ UI DESIGN DECISIONS LOCKED (UIdesign.md session 4)
 SESSION HISTORY
 ----------------
 Most recent at top. Full history in handoff.md.
+
+  Session 36 — 2026-04-21
+    - S4 research and resolution — no code written
+    - Weekly adherence metric dropped: no honest denominator without active program tracking
+    - Replaced by Program Intelligence feature set (Section 7 in statistics.md): current split detection, favorite exercises per category, program efficacy (PR density + volume growth), neglected category callout, de facto program inference
+    - "Stint" renamed to "current split" throughout
+    - All features logged as Future: F20 (favorite exercises), F21 (program usage), F22 (current split detection), F23 (program efficacy), F24 (neglected categories), F25 (de facto program inference)
+    - All derivable from existing schema — no new tables required
+    - OD6 (button tokens) not started — deferred to next research session
+
+  Session 37 — 2026-04-21
+    - Statistics research continued — no code written
+    - F26–F28 logged: Workout Stats Card (most skipped workout, volume by muscle group, muscle group balance)
+    - Time filters locked: 30 / 90 / 365 / all time (7-day dropped)
+    - Volume tracking without RPE: use tonnage (weight × reps) + set count per muscle group per week
+    - Custom exercise UX gaps identified: arms ambiguity (biceps vs triceps), compound multi-muscle tagging, edit-after-creation, category picker UX — deep dive next session
+    - F28 display approach TBD: raw % split vs. push/pull/legs ratio vs. imbalance flag
+
+  Session 35 — 2026-04-21
+    - Statistics research session — no code written
+    - P5 (charting library), S4 (adherence edge cases), OD6 (button tokens) deferred — decide inline at their respective build steps
+    - Body fat % entry: manual entry + "Estimate for me" Navy formula button — LOCKED
+    - Neck circumference (`neckIn`): stored in `bodyMetrics` table alongside waist/hip — LOCKED
+    - Body metrics pre-fill: form pre-populates from most recent saved entry; user updates only changed fields — LOCKED
+    - statistics.md updated: bodyMetrics table + entry UX revised
+
+  Session 34 — 2026-04-21
+    - D5 complete: ProgramDetailPage + WorkoutTemplatePage + WorkoutDetailPage all wired
+    - WorkoutDetailPage.test.tsx: added ErrorContext mock (useError returns stub) so tests pass without ErrorProvider wrapper
+    - Build clean; 72/72 tests passing
+
+  Session 33 — 2026-04-21
+    - Statistics spec research + revision: cross-referenced spec against project values and real gym motivators
+    - Removed: HRV (wearable-only), hunger rating (nutrition app feature), arm/thigh circumference (low fill rate), protein/step/sleep targets from Goals card (targets without tracking loops)
+    - Added: post-workout feel rating (workoutLogs.rating nullable 1–3, at finish flow); PR celebration at set-save (StatisticsService.checkForPR, non-blocking) + finish summary; Logs tab consistency indicator (getSummary on LogsPage)
+    - Schema trimmed: users → goalWeight only; dailyCheckins → sleepHours + steps; bodyMetrics → weight/bodyFatPct/waistIn/hipIn; workoutLogs.rating added
+    - S1 closed; device integration (Capacitor) deferred as architectural session
+    - D5 partial build: ErrorContext + ErrorBanner created; App.tsx + 7 pages wired; 3 pages remain
+
+  Session 32 — 2026-04-21
+    - Service layer test audit complete: 5 new test files + 3 guards added to WorkoutLogService.test.ts
+    - AuthService.test.ts: 16 tests (signup happy + 5 guards, login 4 paths, logout, getCurrentUser, getCurrentUserId)
+    - ProgramService.test.ts: 8 tests (create + guards, getAll ordering, getById, update, deleteProgram cascade)
+    - WorkoutService.test.ts: 7 tests (create + guards, getByProgramId ordering, getById, deleteWorkout cascade, createFromLog)
+    - LogSetService.test.ts: 11 tests (add, getByExerciseId, update happy + 5 guards, deleteSet)
+    - WorkoutExerciseService.test.ts: 7 tests (update happy + 6 guards)
+    - All service guards now covered: LogSetService.update, WorkoutExerciseService.update, WorkoutLogService.create + finish, AuthService.signup, ProgramService.create, WorkoutService.create
+    - 72/72 tests passing across 8 files
 
   Session 30 — 2026-04-21
     - Artifact/doc cleanup only — no code written

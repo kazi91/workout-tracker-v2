@@ -1,5 +1,5 @@
 # HANDOFF — NEW INSTANCE START HERE
-Last updated: 2026-04-21 (session 30 — service layer guards complete)
+Last updated: 2026-04-21 (session 36 — S4 resolved; Program Intelligence features logged F20–F25)
 
 ---
 
@@ -13,7 +13,7 @@ Full file index (reference — do not read all of these every session):
 3. `artifacts/tabs/logs.md`         — Logs tab spec (user flows complete)
 4. `artifacts/tabs/programs.md`     — Programs tab spec (user flow complete)
 5. `artifacts/tabs/profile.md`      — Profile tab spec (placeholder — no flow for MVP)
-6. `artifacts/tabs/statistics.md`   — Statistics tab spec (full body recomposition spec — build deferred to post-testing phase)
+6. `artifacts/tabs/statistics.md`   — Statistics tab spec (revised session 33 — fluff removed, PR celebration + feel rating + Logs indicator added; build deferred to post-D5)
 7. `artifacts/UIdesign.md`          — UI standards, color palette, component specs, design brainstorm
 
 ---
@@ -27,7 +27,7 @@ Full file index (reference — do not read all of these every session):
 
 ## Build State
 **Phase 3 Build is complete.** All 6 steps built, verified, and committed. UI polish pass complete. Demo delivered.
-**Phase 4 — Testing & cleanup.** Test infrastructure complete (D8). Next: service layer test audit, then D5 (ErrorContext), then Statistics build.
+**Phase 4 — Testing & cleanup.** D8 + service layer test audit + D5 (ErrorContext) all complete. 72/72 tests passing. Statistics research done (session 35) — spec updated, key UX decisions locked. Statistics build is next.
 
 ### What is built
 - **Step 1** — Vite scaffold, Dexie schema (8 tables), 29 seed exercises, routing stubs, dark theme CSS variables
@@ -53,10 +53,10 @@ Full file index (reference — do not read all of these every session):
 - P5: Charting library — decide before Statistics build (Recharts recommended)
 - S1: Energy/hunger selector UX — chips vs stepper; decide at Statistics build step 7
 - S2: Goals card field location — re-evaluate after Statistics is built; profile.md untouched for now
-- S3: Wearable API integration — post-MVP; manual entry only
+- S3: Wearable API integration — post-MVP; manual entry only. Body fat % uses manual entry + Navy formula "Estimate for me" button (session 35). Neck circumference (`neckIn`) stored in `bodyMetrics` table alongside waist/hip (session 35).
 - S4: Weekly adherence edge cases — no active program, multiple programs; decide at Statistics build step 9
 - D5: ErrorContext — replace console.error with user-facing error surface
-- **D8: Test infrastructure** — DONE (session 29): Vitest + RTL + fake-indexeddb + jsdom installed; 17 tests passing across units.test.ts and WorkoutLogService.test.ts; see recap.md TEST COVERAGE
+- **D8: Test infrastructure** — DONE (session 29): Vitest + RTL + fake-indexeddb + jsdom installed; 20 tests passing across units.test.ts, WorkoutLogService.test.ts, WorkoutDetailPage.test.tsx; see recap.md TEST COVERAGE
 - F1–F6, F8–F10: future features — see Issue Tracker
 - OD6: CSS button token standards — brainstorm session pending before enforcing
 - **Post-demo cleanup:** DONE (session 25) — demo-seed.js, PRESENTATION_AID.md, PRESENTATION_AID.html deleted; README.md created; repo public
@@ -76,19 +76,74 @@ Do not re-open planning decisions unless the user explicitly raises them.
 ## Phase 4 State
 
 D8 complete. Infrastructure in place: Vitest + RTL + fake-indexeddb + jsdom. DB isolation pattern: `beforeEach(() => db.delete() + db.open())` on the singleton.
+U4 + U5 UI guards complete (session 31): finish blocked with 0 exercises; Save Edits blocked on blank name or 0 exercises; useScrollToError hook with IntersectionObserver bounce arrow; 3 RTL tests added.
+
+D5 complete (session 34): all 12 files wired with ErrorContext try/catch. WorkoutDetailPage.test.tsx updated with ErrorContext mock. 72/72 tests passing.
 
 Remaining test priority order:
 1. ~~WorkoutLogService (create, finish, delete cascade)~~ — DONE (session 29)
-2. Service layer audit — AuthService, ProgramService, WorkoutService, LogSetService ← NEXT
-3. Finish flow state machine paths (all 4 quick-start paths + from-program sync)
-4. Auth flow (signup → login → logout)
-5. ActiveWorkoutContext initialization
+2. ~~U4 + U5 WorkoutDetailPage guards~~ — DONE (session 31)
+3. ~~Service layer audit~~ — DONE (session 32)
+4. Finish flow state machine paths (all 4 quick-start paths + from-program sync)
+5. Auth flow (signup → login → logout)
+6. ActiveWorkoutContext initialization
 
 Exit criteria: see recap.md — PHASE 4 EXIT CRITERIA section.
 
 ---
 
 ## Recent Sessions (most recent first)
+
+**Session 36 — 2026-04-21:** S4 research and resolution — no code written. Weekly adherence metric dropped: lacks honest denominator without active program tracking. Replaced by Program Intelligence feature set (F20–F25): favorite exercises per muscle group, program usage frequency, current split detection (retroactive from log history — ≥60% of week's workouts from one program), program efficacy (PR density + volume growth per split), neglected category callout, de facto program inference. All derivable from existing schema; no new tables. "Stint" renamed to "current split". All features logged as Future in Issue Tracker; Section 7 added to statistics.md. OD6 (button tokens) deferred — research not started.
+
+**Session 37 — 2026-04-21:** Statistics research continued — no code written. F26–F28 logged (Workout Stats Card: most skipped, volume by muscle group, balance). Time filters locked: 30/90/365/all (7-day dropped). Volume tracking without RPE: tonnage + weekly set count per muscle group. Custom exercise UX gaps identified — CE1 logged in Issue Tracker. F28 display approach TBD. Next: CE1 deep dive research session.
+
+**Session 35 — 2026-04-21:** Statistics research session — no code written. P5/S4/OD6 deferred to their respective build steps. Locked: body fat % = manual entry + Navy formula "Estimate for me" button; neck circumference (`neckIn`) in `bodyMetrics` table; body metrics form pre-fills from most recent entry. statistics.md updated.
+
+**Session 34 — 2026-04-21:** D5 complete. Finished wiring ErrorContext try/catch into the 3 remaining page files. Fixed WorkoutDetailPage.test.tsx to mock ErrorContext (useError must be used inside ErrorProvider — test render wrappers don't include it). Build clean; 72/72 passing. Next: Statistics build — resolve P5/S4/OD6 first; read artifacts/tabs/statistics.md.
+
+- `src/pages/ProgramDetailPage/index.tsx` — loadData, handleNameBlur, submitAddWorkout, handleConfirmDelete wrapped
+- `src/pages/WorkoutTemplatePage/index.tsx` — import + useError added; loadData, handleNameBlur, handleExerciseSelect, handleRemoveExercise, handleSaveTargets, handleStartWorkout, handleConfirmDelete wrapped
+- `src/pages/WorkoutDetailPage/index.tsx` — import + useError added; loadData, handleNameBlur, handleExerciseSelect, handleRemoveExercise, handleAddSet, handleSetUpdate, handleSetDelete, handleSaveEdits, handleDeleteWorkout, handleConfirmDiscard, handleFinish, handleSaveNewProgram, handleSaveToExistingProgram, handleUpdateTemplate wrapped
+- `src/pages/WorkoutDetailPage/WorkoutDetailPage.test.tsx` — added `vi.mock('../../context/ErrorContext', ...)` stub
+
+**Session 33 — 2026-04-21:** Two parts. (1) Statistics spec research + revision: removed HRV, hunger rating, arm/thigh circumference, orphaned goal targets (protein/step/sleep); added post-workout feel rating (`workoutLogs.rating` nullable 1–3), PR celebration at set-save (`StatisticsService.checkForPR()`, non-blocking) + finish summary, Logs tab consistency indicator. Schema trimmed across users/bodyMetrics/dailyCheckins; S1 closed; device sync deferred (Capacitor). (2) D5 partial build: ErrorContext + ErrorBanner infrastructure created; App.tsx + 9 files wired; ProgramDetailPage import/useError added but handlers not wrapped.
+
+Files DONE (no further edits needed):
+- `src/context/ErrorContext.tsx` — NEW: ErrorProvider, useError(), toUserMessage()
+- `src/components/ErrorBanner/index.tsx` + `ErrorBanner.module.css` — NEW: fixed top banner, red, X dismiss, z-index 300
+- `src/App.tsx` — ErrorProvider wraps everything; ErrorBanner renders inside it; seed .catch(console.error) intentionally left (App can't call useError — it's the provider's parent)
+- `src/context/ActiveWorkoutContext.tsx` — .catch(console.error) → .catch((e) => showError(toUserMessage(e)))
+- `src/components/ExerciseSearchModal.tsx` — getAll .catch replaced; handleCreate wrapped
+- `src/pages/LoginPage/index.tsx` — handleSubmit wrapped
+- `src/pages/SignupPage/index.tsx` — handleSubmit wrapped
+- `src/pages/ProfilePage/index.tsx` — all 4 handlers wrapped
+- `src/pages/ProgramsPage/index.tsx` — loadData + submitCreate wrapped
+
+Files PARTIALLY done (import + useError added, handlers NOT yet wrapped):
+- `src/pages/ProgramDetailPage/index.tsx` — import and `const { showError } = useError()` added; still need try/catch on: loadData, handleNameBlur, submitAddWorkout, handleConfirmDelete
+
+File NOT started:
+- `src/pages/WorkoutTemplatePage/index.tsx` — needs import + useError + try/catch on: loadData, handleNameBlur, handleExerciseSelect, handleRemoveExercise, handleSaveTargets, handleStartWorkout, handleConfirmDelete
+- `src/pages/WorkoutDetailPage/index.tsx` — needs import + useError + try/catch on: loadData, handleNameBlur, handleExerciseSelect, handleRemoveExercise, handleAddSet, handleSetUpdate, handleSetDelete, handleSaveEdits, handleDeleteWorkout, handleConfirmDiscard, handleFinish, handleSaveNewProgram, handleSaveToExistingProgram, handleUpdateTemplate
+
+Pattern for every handler (uniform — no variation):
+```tsx
+async function handleFoo() {
+  try {
+    await SomeService.method(args);
+    setState(...);
+  } catch (e) {
+    showError(toUserMessage(e));
+  }
+}
+```
+
+After all edits: run `npm run build` to verify clean compile, then `npx vitest run` to confirm 72 tests still pass. Then update artifacts.
+
+**Session 32 — 2026-04-21:** Service layer test audit. 5 new test files created: AuthService.test.ts (16), ProgramService.test.ts (8), WorkoutService.test.ts (7), LogSetService.test.ts (11), WorkoutExerciseService.test.ts (7). 3 guard tests added to WorkoutLogService.test.ts (create guard, finish × 2). All service guards now covered. 72/72 passing. Test pattern: nested `beforeEach` inside guard describe blocks seeds a shared record (weId/setId) to avoid repeating seeding in every guard test. localStorage.clear() required in AuthService beforeEach to prevent session bleed between tests. D5 (ErrorContext) is next.
+
+**Session 31 — 2026-04-21:** U4 + U5 guards built in WorkoutDetailPage. New hook: `src/hooks/useScrollToError.ts` — IntersectionObserver-based, returns `arrowDir: 'up' | 'down' | null`; arrow points toward error element, clears when element scrolls into view. U4: Finish blocked with 0 exercises → exerciseError state → red outline on Add Exercise button + bounce arrow in footer. U5: Save Edits blocked for (a) blank name → nameError inline error, (b) 0 exercises → same arrow pattern. exerciseError clears when exercise is added via handleExerciseSelect. RTL test pattern: IntersectionObserver stubbed as a class in beforeEach (arrow functions can't be constructors in jsdom); vi.clearAllMocks() required to reset call counts between tests. 3 new tests in WorkoutDetailPage.test.tsx. Build clean; 20/20 passing.
 
 **Session 30 — 2026-04-21:** Artifact/doc cleanup only — no code written. S1: F13 false schema claim corrected ("already defined" → "specced in Statistics phase (session 26); not yet built"). A1: UIdesign.md page title 20px/600 → 24px/700 (matches actual implementation). A2: UIdesign.md FAB states split — disabled/inert (WorkoutDetailPage active mode) vs hidden (/login, /signup); Decision #15 in master-schematics.md updated to match. A3: Phase 4 status "not started" → "in progress". A4: repo visibility "(private)" → "(public)". A5: project_state.md memory rewritten to reflect Phase 4 current state. M1: B1 row normalized (Severity + Area columns added); B3 closed as Resolved.
 

@@ -16,10 +16,10 @@ GitHub: https://github.com/kazi91/workout-tracker-v2 (public)
 
 ## CURRENT TASK
 Phase: 4 — Testing & post-demo cleanup
-Last session ended: Session 30 — service layer guards added to 7 services; build clean; 17 tests passing (2026-04-21)
-Next action: Service layer test audit — write tests for all new guards + AuthService, ProgramService, WorkoutService, LogSetService
-Session scope: Service layer tests (guards + remaining services)
-Required reading this session: recap.md, handoff.md (open items section)
+Last session ended: Session 37 — Statistics research continued; F26–F28 logged; time filters locked (30/90/365/all); custom exercise deep dive identified as next research task (2026-04-21)
+Next action: Custom exercise deep dive — resolve arms ambiguity, compound multi-muscle tagging, edit-after-creation UX, category picker UX before F27/F28 can be built
+Session scope: Research — custom exercise UX and muscle group accuracy
+Required reading this session: recap.md, master-schematics.md (Issue Tracker F26–F28), artifacts/tabs/statistics.md (Section 4b, F28)
 
 ## Session Start — Opening Message Protocol
 
@@ -94,6 +94,9 @@ Trivial implementation details (variable names, minor styling) can proceed witho
 - **Surface confusion proactively.** Ambiguity is often invisible — a request can feel obviously clear while actually supporting multiple valid interpretations. Before building, explicitly separate what the user said from what you're inferring. If anything is being inferred, ask. A wrong build is more expensive than a 30-second clarifying question.
 - **State "done" before starting.** For any non-trivial task, declare success criteria before writing code: "Done when X passes / Y behavior is confirmed." For multi-step tasks, use: `1. [step] → verify: [check]`. Weak criteria ("make it work") produce mid-build clarification loops.
 - **Surgical changes only.** Touch only what the task requires. Don't "improve" adjacent code, comments, or formatting. Don't refactor things that aren't broken. If your changes orphan an import or variable, clean that up — but don't remove pre-existing dead code unless asked. Every changed line should trace directly to the request.
+- **Plain English follow-up.** After any explanation involving technical terms, jargon, or industry concepts, immediately follow with a labeled plain-English version:
+  > **Plain English:** [same idea, no jargon, as if explaining to someone new to the industry]
+  Keep both versions. The original stays for precision; the plain-English version helps map jargon to meaning.
 
 ---
 

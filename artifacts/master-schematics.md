@@ -170,9 +170,6 @@ A workout tracking app with a React web frontend (mobile-only layout). Data stor
 | weight | number | Stored in lb — converted to kg at display time |
 | unitPreference | string | 'imperial' (default) or 'metric' — controls all Layer 1 unit displays: lb/kg, ft+in/cm, in/cm |
 | goalWeight | number | Nullable — stored in lb; display in user's unit preference |
-| proteinTarget | number | Nullable — g/day |
-| stepTarget | number | Nullable — steps/day |
-| sleepTarget | number | Nullable — hours/night |
 | createdAt | Date | |
 
 ### exercises
@@ -221,6 +218,7 @@ A workout tracking app with a React web frontend (mobile-only layout). Data stor
 | name | string | |
 | startedAt | Date | |
 | finishedAt | Date | Nullable — null = in progress |
+| rating | number | Nullable — 1 Struggled / 2 Solid / 3 Crushed it; captured at workout finish |
 
 ### logExercises
 | Field | Type | Notes |
@@ -252,8 +250,6 @@ A workout tracking app with a React web frontend (mobile-only layout). Data stor
 | bodyFatPct | number | Nullable — percentage (e.g. 18.5) |
 | waistIn | number | Nullable — stored in inches |
 | hipIn | number | Nullable — stored in inches |
-| armIn | number | Nullable — stored in inches |
-| thighIn | number | Nullable — stored in inches |
 
 > All measurements stored in canonical units (lb/inches) — convert to kg/cm at display time. Weight expected daily; other fields monthly.
 
@@ -264,10 +260,7 @@ A workout tracking app with a React web frontend (mobile-only layout). Data stor
 | userId | number | FK → users |
 | date | Date | Entry date — one logical entry per day (upsert pattern) |
 | sleepHours | number | Nullable — decimal allowed |
-| energyRating | number | Nullable — integer 1–10 |
-| hungerRating | number | Nullable — integer 1–10 |
-| hrv | number | Nullable — ms; manual entry from wearable |
-| steps | number | Nullable — integer; manual entry or future device sync |
+| steps | number | Nullable — integer; manual entry; no derived charts until device sync resolved |
 
 ---
 
@@ -286,7 +279,7 @@ bodyMetrics:      '++id, userId'
 dailyCheckins:    '++id, userId'
 ```
 
-> **Schema version:** bump Dexie version number when `bodyMetrics` and `dailyCheckins` are added. New `users` goal fields (`goalWeight`, `proteinTarget`, `stepTarget`, `sleepTarget`) are additive — existing records unaffected.
+> **Schema version:** bump Dexie version number when `bodyMetrics` and `dailyCheckins` are added, and when `workoutLogs.rating` and `users.goalWeight` are added. All new fields are nullable — existing records unaffected.
 
 Notes:
 - No compound indexes — per-user and per-exercise result sets are small enough for JS filtering at MVP scale
@@ -312,7 +305,8 @@ All services are plain modules exporting functions. Currently call Dexie directl
 | LogSetService | getByExerciseId, add, update, delete, getPreviousData (returns weight+reps by set number, fallback to last set) |
 | BodyMetricsService | getAll(userId), getRecent(userId, days), log(userId, entry), update(id, entry), delete(id) |
 | DailyCheckinService | getAll(userId), getRecent(userId, days), logToday(userId, entry) — upsert, replaces today's entry if exists, delete(id) |
-| StatisticsService | getSummary(userId), getExerciseHistory(userId, exerciseId, range), getVolumeByPeriod(userId, period), getPRs(userId), getRollingWeightAverage(userId, days), getRecompositionSignal(userId), getAdherenceRate(userId, weeks) |
+| StatisticsService | getSummary(userId), getExerciseHistory(userId, exerciseId, range), getVolumeByPeriod(userId, period), getPRs(userId), checkForPR(userId, exerciseId, weight, reps) — real-time set-save check, getRollingWeightAverage(userId, days), getRecompositionSignal(userId), getAdherenceRate(userId, weeks) |
+| WorkoutLogService | (existing methods) + updateRating(id, rating) — save post-workout feel rating |
 
 ---
 
@@ -511,10 +505,10 @@ Applied at every iteration. Each phase has a defined scope — don't skip phases
 | G4 | Gap | No "change exercise" on active workout | Nice to have | Logs | Pending |
 | R3 | Refactor | Password stored as plain text in Dexie — replace with hashed auth when backend is added | Must fix before real users | Auth | Pending |
 | P5 | Planning | Charting library not selected — must decide before building Statistics | Decide before Statistics build | Statistics | Pending |
-| S1 | Planning | Energy/hunger 1–10 selector UX — tap chips vs stepper; decide at Statistics build step 7 | Decide before build | Statistics | Pending |
+| S1 | Planning | Energy/hunger 1–10 selector UX — closed; both fields removed from spec (session 32 research). Replaced by per-workout feel rating (3-level, captured at finish flow). | Closed | Statistics | Resolved |
 | S2 | Planning | Goals card field location — currently on Statistics tab; re-evaluate after Statistics is built whether any belong on Profile | Post-Statistics build | Statistics, Profile | Pending |
 | S3 | Planning | Wearable API integration (HRV, steps auto-sync) — post-MVP; manual entry only for now | Post-MVP | Statistics | Future |
-| S4 | Planning | Weekly adherence calculation — edge cases: no active program, multiple programs; clarify at Statistics build step 9 | Decide before build | Statistics | Pending |
+| S4 | Planning | Weekly adherence removed — lacks honest denominator without active program tracking. Replaced by Program Intelligence feature set (F20–F25): current split detection, favorite exercises, efficacy signals. All derivable from existing schema; deferred post-MVP. | Resolved | Statistics | Resolved |
 | F1 | Future | Auto-suggest exercise names from library in text input fields | Post-MVP | Logs, Programs | Future |
 | F2 | Future | Set completion indicator — visual feedback (checkmark or color change) on set row after auto-save | Post-MVP | Logs | Future |
 | F3 | Future | Smart defaults — pre-fill weight/reps inputs with previousWeight/previousReps when new set added | Post-MVP | Logs | Future |
@@ -532,6 +526,18 @@ Applied at every iteration. Each phase has a defined scope — don't skip phases
 | F17 | Future | Body fat predictor — estimate BF% from accessible inputs. Candidate equations: US Navy method (neck + waist [+ hip for women] + height), BMI-based Jackson-Pollock approximation, or skinfold-entry simulation. Must decide: (1) which equation(s) to use; (2) which measurements to collect (store on `bodyMetrics` table — fields may need to expand); (3) whether to show a range rather than a point estimate to communicate uncertainty. No integration required — pure calculation from user input. | Post-MVP | Stats, DB | Future |
 | F18 | Future | Sleep analysis — beyond raw hours logged, derive quality signals: consistency score (variance in bedtime/wake time across 7 days), debt tracker (cumulative shortfall vs `sleepTarget`), trend line. Inputs from `dailyCheckins.sleepHours`. Open question: whether to prompt for sleep/wake times separately (richer data) vs just total hours (current schema). | Post-MVP | Stats, DB | Future |
 | F19 | Future | Step quality — go beyond raw step count to measure activity distribution: active minutes, step cadence buckets (strolling vs brisk vs running pace), streak tracking. Requires steps data source decision (S3: wearable API vs manual entry). Manual entry can only give daily totals — richer cadence data needs a wearable or phone sensor integration. | Post-MVP | Stats, Native/API | Future |
+| F20 | Future | Favorite exercises per muscle group — for each `exercises.category`, rank by frequency in `logExercises`; surface top exercise per category. "Your go-to chest exercise: Bench Press (18 sessions)." No schema changes. Service: `StatisticsService.getFavoriteExercises(userId)`. | Post-MVP | Stats | Future |
+| F21 | Future | Program usage frequency — count sessions logged per program (via `workoutId → workout.programId`); rank by session count and avg sessions/week. Surface most-used program and most-logged workout template. No schema changes. Service: `StatisticsService.getProgramUsage(userId)`. | Post-MVP | Stats | Future |
+| F22 | Future | Current split detection — retroactively derive contiguous program usage periods ("current split") from log history. Algorithm: group logs by week; a split begins when ≥60% of a week's workouts belong to one program; ends when that drops below 60% for 2+ consecutive weeks. Returns `{ programId, startDate, endDate, sessionCount }[]`. No schema changes. Service: `StatisticsService.getCurrentSplits(userId)`. Replaces adherence rate (S4). | Post-MVP | Stats | Future |
+| F23 | Future | Program efficacy — per current split (F22), compute: PR density (PRs ÷ sessions), volume growth rate (last 4 weeks vs first 4 weeks), consistency rate (sessions/week), recomposition correlation (requires bodyMetrics Section 2). Only shown when split ≥8 sessions. Display as correlation, not causation. No schema changes. Service: `StatisticsService.getProgramEfficacy(userId, programId)`. | Post-MVP | Stats | Future |
+| F24 | Future | Neglected muscle group callout — cross-reference `exercises.category` against most recent log date per category; alert when a category has no logged exercise in last N days (threshold TBD). "You haven't logged a leg exercise in 18 days." No schema changes. Service: `StatisticsService.getNeglectedCategories(userId, thresholdDays)`. | Post-MVP | Stats | Future |
+| F25 | Future | De facto program inference — reconstruct user's actual typical week from log frequency (most common exercise per day-of-week across last 30 sessions). Surface as "Based on your logs, your typical week looks like…" Useful for users who only quick-start and have never built a formal program. No schema changes. Most complex query in Section 7 — build last. | Post-MVP | Stats | Future |
+| F26 | Future | Workout Stats Card — "Most Skipped Workout": per-program breakdown of session completion counts; workout with fewest logs surfaces as most skipped. Time filter: 30 / 90 / 365 / all time. No schema changes. Service: `StatisticsService.getWorkoutCompletionCounts(userId, programId)`. Only meaningful when user has from-program sessions. | Post-MVP | Stats | Future |
+| F27 | Future | Workout Stats Card — "Volume by Muscle Group": sum of `weight × reps` per `exercises.category` across finished logs. Time filter: 30 / 90 / 365 / all time. Bodyweight sets (weight = 0) excluded from tonnage. No schema changes. Service: `StatisticsService.getVolumeByMuscleGroup(userId, range)`. Display: bar chart or number cards per category. | Post-MVP | Stats | Future |
+| F28 | Future | Workout Stats Card — "Muscle Group Balance": push/pull/legs ratio from F27 volume data — chest + shoulders = push; back = pull; legs = legs; arms split evenly; core standalone. Reuses `getVolumeByMuscleGroup()` — no extra service method. Secondary metric: set count per category per week. Display approach TBD (raw % split vs. push/pull/legs ratio vs. imbalance flag). | Post-MVP | Stats | Future |
+| F30 | Future | Introductory onboarding tutorial — post-MVP, after all features complete. Two purposes: (1) collect essential user data at first run: age, weight, height, gym experience level (beginner / intermediate / advanced — maps directly to training age used by Statistics features), unit preference, and any other fields needed by built features at that point; (2) guided walkthrough teaching users how to use the app and each feature correctly. Schema: `users.age: number | null`, `users.trainingAge: 'beginner' \| 'intermediate' \| 'advanced' \| null` (or similar). Gym experience field solves the training age gap identified in coach analysis (F29 and Statistics features need this context). Tutorial flow design TBD — decide when feature set is finalized. | Post-MVP (all features done) | Auth, Profile, Stats, All | Future |
+| F29 | Future | Muscle Fatigue Avatar — visual body silhouette (SVG model) showing per-muscle-group fatigue/recovery state via color discoloration. Warm/red = recently trained (needs recovery); cool/green = recovered (ready to train); grey = untrained. Color derived from time elapsed since last training per `exercises.category` + reference recovery windows per muscle group (large muscles: 48–72h; small muscles: 24–48h). No schema changes — derives from `logExercises → exercises.category → workoutLogs.finishedAt`. **Placement TBD**: Statistics tab or Profile tab — decide when SVG model is complete. **Prerequisite**: CE1 resolution (arms split, compound multi-muscle tagging) directly determines avatar accuracy. Recovery windows can be informed by coach reference data (Poliquin/Israetel). | Post-MVP | Stats, Profile | Future |
+| CE1 | Planning | Custom exercise deep dive — resolve before F27/F28 spec is final. Open questions: (1) arms ambiguity — biceps vs triceps affects push/pull balance in F28; split "arms" category or add push/pull tag; (2) compound multi-muscle tagging — bench press hits chest + shoulders + triceps; single category loses accuracy; (3) edit after creation — no current flow to fix wrong name or category; (4) category picker UX — dropdown is awkward on mobile; chips/buttons preferred. Needs dedicated research session before F27/F28 build. | Pre-F27/F28 | Exercises, Stats | Pending |
 
 ### Resolved Issues (record only — do not reopen)
 
