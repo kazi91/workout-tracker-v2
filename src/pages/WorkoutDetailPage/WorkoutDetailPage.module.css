@@ -92,6 +92,12 @@
   opacity: 0.7;
 }
 
+.addExerciseBtnError {
+  border: 1.5px solid var(--color-red);
+  border-radius: 8px;
+  color: var(--color-red);
+}
+
 /* ── Fixed footer ── */
 .footer {
   position: fixed;
@@ -101,10 +107,46 @@
   max-width: 480px;
   margin: 0 auto;
   display: flex;
-  gap: 8px;
-  padding: 12px 16px calc(var(--nav-height) + 12px);
+  flex-direction: column;
+  padding: 8px 16px calc(var(--nav-height) + 12px);
   background: var(--color-bg);
   border-top: 1px solid var(--color-border);
+}
+
+.footerButtons {
+  display: flex;
+  gap: 8px;
+}
+
+/* ── Scroll-to-error arrow ── */
+@keyframes scrollBounceUp {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-5px); }
+}
+
+@keyframes scrollBounceDown {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(5px); }
+}
+
+.scrollArrowRow {
+  display: flex;
+  justify-content: center;
+  padding-bottom: 6px;
+}
+
+.scrollArrow {
+  display: flex;
+  align-items: center;
+  color: var(--color-red);
+}
+
+.scrollArrowUp {
+  animation: scrollBounceUp 0.8s ease-in-out infinite;
+}
+
+.scrollArrowDown {
+  animation: scrollBounceDown 0.8s ease-in-out infinite;
 }
 
 .finishBtn {

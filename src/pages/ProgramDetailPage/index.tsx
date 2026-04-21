@@ -11,6 +11,7 @@ import { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { ChevronLeft, Plus, Trash2 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
+import { useError, toUserMessage } from '../../context/ErrorContext';
 import * as ProgramService from '../../services/ProgramService';
 import * as WorkoutService from '../../services/WorkoutService';
 import * as WorkoutExerciseService from '../../services/WorkoutExerciseService';
@@ -21,6 +22,7 @@ import styles from './ProgramDetailPage.module.css';
 export default function ProgramDetailPage() {
   const { id } = useParams<{ id: string }>();
   const { user } = useAuth();
+  const { showError } = useError();
   const navigate = useNavigate();
 
   const [program, setProgram] = useState<Program | null>(null);
@@ -60,17 +62,22 @@ export default function ProgramDetailPage() {
   }, [addingWorkout]);
 
   async function loadData(programId: number) {
-    const [prog, wks, counts] = await Promise.all([
-      ProgramService.getById(programId),
-      WorkoutService.getByProgramId(programId),
-      WorkoutExerciseService.getCountsByProgramId(programId),
-    ]);
-    if (!prog) { navigate('/programs', { replace: true }); return; }
-    setProgram(prog);
-    setProgramName(prog.name);
-    setWorkouts(wks);
-    setWorkoutCounts(counts);
-    setLoading(false);
+    try {
+      const [prog, wks, counts] = await Promise.all([
+        ProgramService.getById(programId),
+        WorkoutService.getByProgramId(programId),
+        WorkoutExerciseService.getCountsByProgramId(programId),
+      ]);
+      if (!prog) { navigate('/programs', { replace: true }); return; }
+      setProgram(prog);
+      setProgramName(prog.name);
+      setWorkouts(wks);
+      setWorkoutCounts(counts);
+      setLoading(false);
+    } catch (e) {
+      showError(toUserMessage(e));
+      setLoading(false);
+    }
   }
 
   // ── Program rename ──
@@ -78,9 +85,13 @@ export default function ProgramDetailPage() {
     const trimmed = programName.trim();
     if (!trimmed) { setNameError("Name can't be blank"); setProgramName(program!.name); return; }
     if (trimmed === program?.name) return;
-    await ProgramService.update(program!.id!, { name: trimmed });
-    setProgram((p) => p ? { ...p, name: trimmed } : p);
-    setNameError('');
+    try {
+      await ProgramService.update(program!.id!, { name: trimmed });
+      setProgram((p) => p ? { ...p, name: trimmed } : p);
+      setNameError('');
+    } catch (e) {
+      showError(toUserMessage(e));
+    }
   }
 
   // ── Add Workout ──
@@ -114,16 +125,24 @@ export default function ProgramDetailPage() {
 
   async function submitAddWorkout(name: string) {
     if (!user?.id || !program?.id) return;
-    const workout = await WorkoutService.create(user.id, program.id, name);
-    setAddingWorkout(false);
-    navigate(`/programs/${program.id}/workouts/${workout.id}`);
+    try {
+      const workout = await WorkoutService.create(user.id, program.id, name);
+      setAddingWorkout(false);
+      navigate(`/programs/${program.id}/workouts/${workout.id}`);
+    } catch (e) {
+      showError(toUserMessage(e));
+    }
   }
 
   // ── Delete Program ──
   async function handleConfirmDelete() {
     if (!program?.id) return;
-    await ProgramService.deleteProgram(program.id);
-    navigate('/programs', { replace: true });
+    try {
+      await ProgramService.deleteProgram(program.id);
+      navigate('/programs', { replace: true });
+    } catch (e) {
+      showError(toUserMessage(e));
+    }
   }
 
   const exerciseLabel = (count: number) =>

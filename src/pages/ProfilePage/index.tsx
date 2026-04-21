@@ -10,12 +10,14 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { useUserSettings } from '../../context/UserSettingsContext';
+import { useError, toUserMessage } from '../../context/ErrorContext';
 import * as UserService from '../../services/UserService';
 import styles from './ProfilePage.module.css';
 
 export default function ProfilePage() {
   const { user, logout, updateUser } = useAuth();
   const { weightUnit, heightUnit, displayWeight, displayHeight } = useUserSettings();
+  const { showError } = useError();
   const navigate = useNavigate();
 
   // Convert stored lb/inches to display unit for initial input values.
@@ -40,8 +42,12 @@ export default function ProfilePage() {
     const trimmed = nameVal.trim();
     if (!trimmed || !user?.id) return;
     if (trimmed === user.name) return;
-    await UserService.updateProfile(user.id, { name: trimmed });
-    updateUser({ name: trimmed });
+    try {
+      await UserService.updateProfile(user.id, { name: trimmed });
+      updateUser({ name: trimmed });
+    } catch (e) {
+      showError(toUserMessage(e));
+    }
   }
 
   async function handleHeightBlur() {
@@ -59,8 +65,12 @@ export default function ProfilePage() {
     setHeightError('');
     // Convert display unit back to stored inches
     const inches = heightUnit === 'cm' ? num / 2.54 : num;
-    await UserService.updateProfile(user.id, { height: inches });
-    updateUser({ height: inches });
+    try {
+      await UserService.updateProfile(user.id, { height: inches });
+      updateUser({ height: inches });
+    } catch (e) {
+      showError(toUserMessage(e));
+    }
   }
 
   async function handleWeightBlur() {
@@ -78,23 +88,31 @@ export default function ProfilePage() {
     setWeightError('');
     // Convert display unit back to stored lb
     const lb = weightUnit === 'kg' ? num * 2.20462 : num;
-    await UserService.updateProfile(user.id, { weight: lb });
-    updateUser({ weight: lb });
+    try {
+      await UserService.updateProfile(user.id, { weight: lb });
+      updateUser({ weight: lb });
+    } catch (e) {
+      showError(toUserMessage(e));
+    }
   }
 
   // ── Unit preference toggle — saves immediately ──
   async function handleUnitToggle(pref: 'imperial' | 'metric') {
     if (!user?.id || pref === user.unitPreference) return;
-    await UserService.updateProfile(user.id, { unitPreference: pref });
-    updateUser({ unitPreference: pref });
-    // Reset height/weight display strings to match the new unit
-    // (stored value unchanged — only the display conversion changes)
-    const updatedUser = { ...user, unitPreference: pref };
-    const isMetric = pref === 'metric';
-    const newDisplayWeight = (lb: number) => (isMetric ? Math.round(lb * 0.453592 * 10) / 10 : lb);
-    const newDisplayHeight = (inches: number) => (isMetric ? Math.round(inches * 2.54 * 10) / 10 : inches);
-    setWeightVal(updatedUser.weight ? String(newDisplayWeight(updatedUser.weight)) : '');
-    setHeightVal(updatedUser.height ? String(newDisplayHeight(updatedUser.height)) : '');
+    try {
+      await UserService.updateProfile(user.id, { unitPreference: pref });
+      updateUser({ unitPreference: pref });
+      // Reset height/weight display strings to match the new unit
+      // (stored value unchanged — only the display conversion changes)
+      const updatedUser = { ...user, unitPreference: pref };
+      const isMetric = pref === 'metric';
+      const newDisplayWeight = (lb: number) => (isMetric ? Math.round(lb * 0.453592 * 10) / 10 : lb);
+      const newDisplayHeight = (inches: number) => (isMetric ? Math.round(inches * 2.54 * 10) / 10 : inches);
+      setWeightVal(updatedUser.weight ? String(newDisplayWeight(updatedUser.weight)) : '');
+      setHeightVal(updatedUser.height ? String(newDisplayHeight(updatedUser.height)) : '');
+    } catch (e) {
+      showError(toUserMessage(e));
+    }
   }
 
   // ── Logout ──

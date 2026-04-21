@@ -9,10 +9,12 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
+import { useError, toUserMessage } from '../../context/ErrorContext';
 import styles from './LoginPage.module.css';
 
 export default function LoginPage() {
   const { login } = useAuth();
+  const { showError } = useError();
   const navigate = useNavigate();
 
   const [email, setEmail] = useState('');
@@ -35,14 +37,17 @@ export default function LoginPage() {
     if (!password.trim()) { setPasswordError("Can't be blank"); hasError = true; }
     if (hasError) return;
 
-    const user = await login(email.trim(), password);
-    if (!user) {
-      // Generic error — no field-specific feedback to prevent email registration leak (L1)
-      setFormError('Incorrect email or password');
-      return;
+    try {
+      const user = await login(email.trim(), password);
+      if (!user) {
+        // Generic error — no field-specific feedback to prevent email registration leak (L1)
+        setFormError('Incorrect email or password');
+        return;
+      }
+      navigate('/logs', { replace: true });
+    } catch (e) {
+      showError(toUserMessage(e));
     }
-
-    navigate('/logs', { replace: true });
   }
 
   return (

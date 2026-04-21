@@ -9,10 +9,12 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
+import { useError, toUserMessage } from '../../context/ErrorContext';
 import styles from './SignupPage.module.css';
 
 export default function SignupPage() {
   const { signup } = useAuth();
+  const { showError } = useError();
   const navigate = useNavigate();
 
   const [name, setName] = useState('');
@@ -38,8 +40,12 @@ export default function SignupPage() {
     if (!password.trim()) { setPasswordError("Can't be blank"); hasError = true; }
     if (hasError) return;
 
-    await signup(name.trim(), email.trim(), password, unitPreference);
-    navigate('/logs', { replace: true });
+    try {
+      await signup(name.trim(), email.trim(), password, unitPreference);
+      navigate('/logs', { replace: true });
+    } catch (e) {
+      showError(toUserMessage(e));
+    }
   }
 
   return (

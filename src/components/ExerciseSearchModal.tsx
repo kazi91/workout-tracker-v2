@@ -10,6 +10,7 @@
 
 import { useEffect, useState } from 'react';
 import * as ExerciseService from '../services/ExerciseService';
+import { useError, toUserMessage } from '../context/ErrorContext';
 import type { Exercise } from '../types';
 import styles from './ExerciseSearchModal.module.css';
 
@@ -21,6 +22,7 @@ interface ExerciseSearchModalProps {
 }
 
 export default function ExerciseSearchModal({ onSelect, onClose }: ExerciseSearchModalProps) {
+  const { showError } = useError();
   const [allExercises, setAllExercises] = useState<Exercise[]>([]);
   const [query, setQuery] = useState('');
   const [activeCategory, setActiveCategory] = useState<Exercise['category'] | null>(null);
@@ -33,7 +35,7 @@ export default function ExerciseSearchModal({ onSelect, onClose }: ExerciseSearc
 
   // Load all exercises once on open
   useEffect(() => {
-    ExerciseService.getAll().then(setAllExercises).catch(console.error);
+    ExerciseService.getAll().then(setAllExercises).catch((e) => showError(toUserMessage(e)));
   }, []);
 
   // Client-side filter — fast enough for 29 items, no debounce needed
@@ -48,8 +50,12 @@ export default function ExerciseSearchModal({ onSelect, onClose }: ExerciseSearc
       setNameError("Name can't be blank");
       return;
     }
-    const exercise = await ExerciseService.create(newName.trim(), newCategory);
-    onSelect(exercise);
+    try {
+      const exercise = await ExerciseService.create(newName.trim(), newCategory);
+      onSelect(exercise);
+    } catch (e) {
+      showError(toUserMessage(e));
+    }
   }
 
   function handleBackdropClick(e: React.MouseEvent<HTMLDivElement>) {

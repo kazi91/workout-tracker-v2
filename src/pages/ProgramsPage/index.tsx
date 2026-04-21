@@ -9,6 +9,7 @@ import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Plus } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
+import { useError, toUserMessage } from '../../context/ErrorContext';
 import * as ProgramService from '../../services/ProgramService';
 import * as WorkoutService from '../../services/WorkoutService';
 import type { Program } from '../../types';
@@ -16,6 +17,7 @@ import styles from './ProgramsPage.module.css';
 
 export default function ProgramsPage() {
   const { user } = useAuth();
+  const { showError } = useError();
   const navigate = useNavigate();
 
   const [programs, setPrograms] = useState<Program[]>([]);
@@ -38,19 +40,24 @@ export default function ProgramsPage() {
 
   async function loadData() {
     if (!user?.id) return;
-    const progs = await ProgramService.getAll(user.id);
-    setPrograms(progs);
+    try {
+      const progs = await ProgramService.getAll(user.id);
+      setPrograms(progs);
 
-    // Load workout count for each program
-    const counts: Record<number, number> = {};
-    await Promise.all(
-      progs.map(async (p) => {
-        const workouts = await WorkoutService.getByProgramId(p.id!);
-        counts[p.id!] = workouts.length;
-      }),
-    );
-    setWorkoutCounts(counts);
-    setLoading(false);
+      // Load workout count for each program
+      const counts: Record<number, number> = {};
+      await Promise.all(
+        progs.map(async (p) => {
+          const workouts = await WorkoutService.getByProgramId(p.id!);
+          counts[p.id!] = workouts.length;
+        }),
+      );
+      setWorkoutCounts(counts);
+      setLoading(false);
+    } catch (e) {
+      showError(toUserMessage(e));
+      setLoading(false);
+    }
   }
 
   function handleOpenCreate() {
@@ -90,9 +97,13 @@ export default function ProgramsPage() {
 
   async function submitCreate(name: string) {
     if (!user?.id) return;
-    const program = await ProgramService.create(user.id, name);
-    setCreating(false);
-    navigate(`/programs/${program.id}`);
+    try {
+      const program = await ProgramService.create(user.id, name);
+      setCreating(false);
+      navigate(`/programs/${program.id}`);
+    } catch (e) {
+      showError(toUserMessage(e));
+    }
   }
 
   const workoutLabel = (count: number) =>

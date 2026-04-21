@@ -6,12 +6,14 @@
  * Reads: AuthContext (userId), UserSettingsContext (unit display), ActiveWorkoutContext (setActiveWorkoutId)
  */
 
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { ChevronLeft, Trash2 } from 'lucide-react';
+import { ChevronLeft, Trash2, ArrowUp, ArrowDown } from 'lucide-react';
+import { useScrollToError } from '../../hooks/useScrollToError';
 import { useAuth } from '../../context/AuthContext';
 import { useUserSettings } from '../../context/UserSettingsContext';
 import { useActiveWorkout } from '../../context/ActiveWorkoutContext';
+import { useError, toUserMessage } from '../../context/ErrorContext';
 import * as WorkoutLogService from '../../services/WorkoutLogService';
 import * as WorkoutExerciseService from '../../services/WorkoutExerciseService';
 import * as WorkoutService from '../../services/WorkoutService';
@@ -39,6 +41,7 @@ export default function WorkoutDetailPage() {
   const { weightUnit, displayWeight } = useUserSettings();
   const { setActiveWorkoutId } = useActiveWorkout();
   const navigate = useNavigate();
+  const { showError } = useError();
 
   // ── Core log state ──
   const [log, setLog] = useState<WorkoutLog | null>(null);
@@ -58,6 +61,10 @@ export default function WorkoutDetailPage() {
   // ── Inline workout rename ──
   const [logName, setLogName] = useState('');
   const [nameError, setNameError] = useState('');
+
+  // ── Exercise guard (U4 / U5) ──
+  const [exerciseError, setExerciseError] = useState(false);
+  const { ref: addExerciseBtnRef, arrowDir } = useScrollToError(exerciseError);
 
   // ── Modals ──
   const [showDiscardModal, setShowDiscardModal] = useState(false);
@@ -85,41 +92,46 @@ export default function WorkoutDetailPage() {
   }, [id, user?.id]);
 
   async function loadData(logId: number) {
-    const [workoutLog, allExercises] = await Promise.all([
-      WorkoutLogService.getById(logId),
-      ExerciseService.getAll(),
-    ]);
+    try {
+      const [workoutLog, allExercises] = await Promise.all([
+        WorkoutLogService.getById(logId),
+        ExerciseService.getAll(),
+      ]);
 
-    if (!workoutLog) { navigate('/logs', { replace: true }); return; }
+      if (!workoutLog) { navigate('/logs', { replace: true }); return; }
 
-    const exMap: Record<number, Exercise> = {};
-    allExercises.forEach((ex) => { exMap[ex.id!] = ex; });
+      const exMap: Record<number, Exercise> = {};
+      allExercises.forEach((ex) => { exMap[ex.id!] = ex; });
 
-    const les = await LogExerciseService.getByWorkoutLogId(logId);
-    const setsArrays = await Promise.all(les.map((le) => LogSetService.getByExerciseId(le.id!)));
-    const setsMap: Record<number, LogSet[]> = {};
-    les.forEach((le, i) => { setsMap[le.id!] = setsArrays[i]; });
+      const les = await LogExerciseService.getByWorkoutLogId(logId);
+      const setsArrays = await Promise.all(les.map((le) => LogSetService.getByExerciseId(le.id!)));
+      const setsMap: Record<number, LogSet[]> = {};
+      les.forEach((le, i) => { setsMap[le.id!] = setsArrays[i]; });
 
-    // If from-program: load workout template targets (B1: guard against deleted template)
-    let targets: Record<number, WorkoutExercise> | null = null;
-    if (workoutLog.workoutId !== null) {
-      const template = await WorkoutService.getById(workoutLog.workoutId);
-      if (template) {
-        const wes = await WorkoutExerciseService.getByWorkoutId(workoutLog.workoutId);
-        targets = {};
-        wes.forEach((we) => { targets![we.exerciseId] = we; });
+      // If from-program: load workout template targets (B1: guard against deleted template)
+      let targets: Record<number, WorkoutExercise> | null = null;
+      if (workoutLog.workoutId !== null) {
+        const template = await WorkoutService.getById(workoutLog.workoutId);
+        if (template) {
+          const wes = await WorkoutExerciseService.getByWorkoutId(workoutLog.workoutId);
+          targets = {};
+          wes.forEach((we) => { targets![we.exerciseId] = we; });
+        }
+        // Template not found → B1 edge case: treat as quick-start (targets stays null)
       }
-      // Template not found → B1 edge case: treat as quick-start (targets stays null)
-    }
 
-    setLog(workoutLog);
-    setLogName(workoutLog.name);
-    setLogExercises(les);
-    setSets(setsMap);
-    setExerciseMap(exMap);
-    setWorkoutTargets(targets);
-    setMode(workoutLog.finishedAt !== null ? 'readonly' : 'active');
-    setLoading(false);
+      setLog(workoutLog);
+      setLogName(workoutLog.name);
+      setLogExercises(les);
+      setSets(setsMap);
+      setExerciseMap(exMap);
+      setWorkoutTargets(targets);
+      setMode(workoutLog.finishedAt !== null ? 'readonly' : 'active');
+      setLoading(false);
+    } catch (e) {
+      showError(toUserMessage(e));
+      setLoading(false);
+    }
   }
 
   // ── Workout rename ──
@@ -127,49 +139,74 @@ export default function WorkoutDetailPage() {
     const trimmed = logName.trim();
     if (!trimmed) { setNameError("Name can't be blank"); setLogName(log!.name); return; }
     if (trimmed === log?.name) return;
-    await WorkoutLogService.update(log!.id!, { name: trimmed });
-    setLog((l) => l ? { ...l, name: trimmed } : l);
-    setNameError('');
+    try {
+      await WorkoutLogService.update(log!.id!, { name: trimmed });
+      setLog((l) => l ? { ...l, name: trimmed } : l);
+      setNameError('');
+    } catch (e) {
+      showError(toUserMessage(e));
+    }
   }
 
   // ── Add / Remove Exercise ──
   async function handleExerciseSelect(exercise: Exercise) {
     if (!log?.id) return;
     if (mode === 'edit') setUnsavedChanges(true);
-    const le = await LogExerciseService.add(log.id, exercise.id!);
-    setLogExercises((prev) => [...prev, le]);
-    setSets((prev) => ({ ...prev, [le.id!]: [] }));
-    setExerciseMap((prev) => ({ ...prev, [exercise.id!]: exercise }));
-    setShowExerciseSearch(false);
+    setExerciseError(false);
+    try {
+      const le = await LogExerciseService.add(log.id, exercise.id!);
+      setLogExercises((prev) => [...prev, le]);
+      setSets((prev) => ({ ...prev, [le.id!]: [] }));
+      setExerciseMap((prev) => ({ ...prev, [exercise.id!]: exercise }));
+      setShowExerciseSearch(false);
+    } catch (e) {
+      showError(toUserMessage(e));
+    }
   }
 
   async function handleRemoveExercise(leId: number) {
     if (mode === 'edit') setUnsavedChanges(true);
-    await LogExerciseService.remove(leId);
-    setLogExercises((prev) => prev.filter((le) => le.id !== leId));
-    setSets((prev) => { const next = { ...prev }; delete next[leId]; return next; });
+    try {
+      await LogExerciseService.remove(leId);
+      setLogExercises((prev) => prev.filter((le) => le.id !== leId));
+      setSets((prev) => { const next = { ...prev }; delete next[leId]; return next; });
+    } catch (e) {
+      showError(toUserMessage(e));
+    }
   }
 
   // ── Add / Update / Delete Set ──
   async function handleAddSet(leId: number) {
     if (mode === 'edit') setUnsavedChanges(true);
-    const newSet = await LogSetService.add(leId);
-    setSets((prev) => ({ ...prev, [leId]: [...(prev[leId] ?? []), newSet] }));
+    try {
+      const newSet = await LogSetService.add(leId);
+      setSets((prev) => ({ ...prev, [leId]: [...(prev[leId] ?? []), newSet] }));
+    } catch (e) {
+      showError(toUserMessage(e));
+    }
   }
 
   async function handleSetUpdate(setId: number, leId: number, weightLb: number, reps: number) {
     if (mode === 'edit') setUnsavedChanges(true);
-    await LogSetService.update(setId, { weight: weightLb, reps });
-    setSets((prev) => ({
-      ...prev,
-      [leId]: (prev[leId] ?? []).map((s) => s.id === setId ? { ...s, weight: weightLb, reps } : s),
-    }));
+    try {
+      await LogSetService.update(setId, { weight: weightLb, reps });
+      setSets((prev) => ({
+        ...prev,
+        [leId]: (prev[leId] ?? []).map((s) => s.id === setId ? { ...s, weight: weightLb, reps } : s),
+      }));
+    } catch (e) {
+      showError(toUserMessage(e));
+    }
   }
 
   async function handleSetDelete(setId: number, leId: number) {
     if (mode === 'edit') setUnsavedChanges(true);
-    await LogSetService.deleteSet(setId);
-    setSets((prev) => ({ ...prev, [leId]: (prev[leId] ?? []).filter((s) => s.id !== setId) }));
+    try {
+      await LogSetService.deleteSet(setId);
+      setSets((prev) => ({ ...prev, [leId]: (prev[leId] ?? []).filter((s) => s.id !== setId) }));
+    } catch (e) {
+      showError(toUserMessage(e));
+    }
   }
 
   // ── Back button — mode-aware ──
@@ -187,10 +224,16 @@ export default function WorkoutDetailPage() {
 
   // ── Edit mode: Save Edits / Discard changes ──
   async function handleSaveEdits() {
+    if (logName.trim() === '') { setNameError("Name can't be blank"); return; }
+    if (logExercises.length === 0) { setExerciseError(true); return; }
     // Reload from Dexie to ensure all auto-saved changes are reflected in read-only view.
     // loadData also sets mode back to 'readonly' (finishedAt is set on finished logs).
-    setUnsavedChanges(false);
-    if (log?.id) await loadData(log.id);
+    try {
+      setUnsavedChanges(false);
+      if (log?.id) await loadData(log.id);
+    } catch (e) {
+      showError(toUserMessage(e));
+    }
   }
 
   function handleDiscardEditChanges() {
@@ -203,51 +246,64 @@ export default function WorkoutDetailPage() {
   // ── Delete Workout (read-only mode) ──
   async function handleDeleteWorkout() {
     if (!log?.id) return;
-    await WorkoutLogService.deleteLog(log.id);
-    navigate('/logs');
+    try {
+      await WorkoutLogService.deleteLog(log.id);
+      navigate('/logs');
+    } catch (e) {
+      showError(toUserMessage(e));
+    }
   }
 
   // ── Discard Workout (active mode) ──
   async function handleConfirmDiscard() {
     if (!log?.id) return;
-    await WorkoutLogService.deleteLog(log.id);
-    setActiveWorkoutId(null);
-    navigate('/logs');
+    try {
+      await WorkoutLogService.deleteLog(log.id);
+      setActiveWorkoutId(null);
+      navigate('/logs');
+    } catch (e) {
+      showError(toUserMessage(e));
+    }
   }
 
   // ── Finish Workout — entry point ──
   async function handleFinish() {
     if (!log?.id || !user?.id) return;
-    await WorkoutLogService.finish(log.id);
-    setActiveWorkoutId(null);
+    if (logExercises.length === 0) { setExerciseError(true); return; }
+    try {
+      await WorkoutLogService.finish(log.id);
+      setActiveWorkoutId(null);
 
-    if (log.workoutId === null || workoutTargets === null) {
-      // Quick-start (or B1: deleted template) — run save-to-program flow
-      const progs = await ProgramService.getAll(user.id);
-      setPrograms(progs);
-      if (progs.length === 0) {
-        // Skip picker — go straight to new-program form
-        setFinishFlowStep('new-program-form');
+      if (log.workoutId === null || workoutTargets === null) {
+        // Quick-start (or B1: deleted template) — run save-to-program flow
+        const progs = await ProgramService.getAll(user.id);
+        setPrograms(progs);
+        if (progs.length === 0) {
+          // Skip picker — go straight to new-program form
+          setFinishFlowStep('new-program-form');
+        } else {
+          setFinishFlowStep('save-prompt');
+        }
       } else {
-        setFinishFlowStep('save-prompt');
-      }
-    } else {
-      // From-program — compare exercise sets (order ignored per Decision #19)
-      const logExIds = new Set(logExercises.map((le) => le.exerciseId));
-      const templateExIds = new Set(Object.keys(workoutTargets).map(Number));
-      const changed =
-        logExIds.size !== templateExIds.size ||
-        [...logExIds].some((exId) => !templateExIds.has(exId));
+        // From-program — compare exercise sets (order ignored per Decision #19)
+        const logExIds = new Set(logExercises.map((le) => le.exerciseId));
+        const templateExIds = new Set(Object.keys(workoutTargets).map(Number));
+        const changed =
+          logExIds.size !== templateExIds.size ||
+          [...logExIds].some((exId) => !templateExIds.has(exId));
 
-      if (changed) {
-        const template = await WorkoutService.getById(log.workoutId);
-        setSyncWorkoutName(template?.name ?? 'Workout');
-        setSyncWorkoutId(log.workoutId);
-        setShowSyncModal(true);
-      } else {
-        // Exercises unchanged — silent finish
-        navigate('/logs');
+        if (changed) {
+          const template = await WorkoutService.getById(log.workoutId);
+          setSyncWorkoutName(template?.name ?? 'Workout');
+          setSyncWorkoutId(log.workoutId);
+          setShowSyncModal(true);
+        } else {
+          // Exercises unchanged — silent finish
+          navigate('/logs');
+        }
       }
+    } catch (e) {
+      showError(toUserMessage(e));
     }
   }
 
@@ -281,10 +337,14 @@ export default function WorkoutDetailPage() {
     if (!woName) { setWorkoutInputError("Name can't be blank"); hasError = true; }
     if (hasError || !log?.id || !user?.id) return;
 
-    const program = await ProgramService.create(user.id, progName);
-    const workout = await WorkoutService.createFromLog(log.id, program.id!, woName, user.id);
-    await WorkoutLogService.update(log.id, { workoutId: workout.id });
-    navigate('/logs');
+    try {
+      const program = await ProgramService.create(user.id, progName);
+      const workout = await WorkoutService.createFromLog(log.id, program.id!, woName, user.id);
+      await WorkoutLogService.update(log.id, { workoutId: workout.id });
+      navigate('/logs');
+    } catch (e) {
+      showError(toUserMessage(e));
+    }
   }
 
   async function handleSaveToExistingProgram() {
@@ -292,18 +352,26 @@ export default function WorkoutDetailPage() {
     if (!woName) { setWorkoutInputError("Name can't be blank"); return; }
     if (!log?.id || !selectedProgramId || !user?.id) return;
 
-    const workout = await WorkoutService.createFromLog(log.id, selectedProgramId, woName, user.id);
-    await WorkoutLogService.update(log.id, { workoutId: workout.id });
-    navigate('/logs');
+    try {
+      const workout = await WorkoutService.createFromLog(log.id, selectedProgramId, woName, user.id);
+      await WorkoutLogService.update(log.id, { workoutId: workout.id });
+      navigate('/logs');
+    } catch (e) {
+      showError(toUserMessage(e));
+    }
   }
 
   // ── From-program sync handlers ──
 
   async function handleUpdateTemplate() {
-    if (syncWorkoutId && log?.id) {
-      await WorkoutExerciseService.syncFromLog(syncWorkoutId, log.id);
+    try {
+      if (syncWorkoutId && log?.id) {
+        await WorkoutExerciseService.syncFromLog(syncWorkoutId, log.id);
+      }
+      navigate('/logs');
+    } catch (e) {
+      showError(toUserMessage(e));
     }
-    navigate('/logs');
   }
 
   if (loading) return null;
@@ -361,38 +429,51 @@ export default function WorkoutDetailPage() {
 
       {/* Add Exercise — hidden in read-only */}
       {mode !== 'readonly' && (
-        <button className={styles.addExerciseBtn} onClick={() => setShowExerciseSearch(true)}>
+        <button
+          ref={addExerciseBtnRef as React.RefObject<HTMLButtonElement>}
+          className={`${styles.addExerciseBtn} ${exerciseError ? styles.addExerciseBtnError : ''}`}
+          onClick={() => setShowExerciseSearch(true)}
+        >
           + Add Exercise
         </button>
       )}
 
       {/* Fixed footer — buttons vary by mode */}
       <div className={styles.footer}>
-        {mode === 'active' && (
-          <>
-            <button className={styles.finishBtn} onClick={handleFinish}>
-              Finish Workout
-            </button>
-            <button className={styles.discardBtn} onClick={() => setShowDiscardModal(true)}>
-              Discard
-            </button>
-          </>
+        {arrowDir && (
+          <div className={styles.scrollArrowRow}>
+            <span className={`${styles.scrollArrow} ${arrowDir === 'up' ? styles.scrollArrowUp : styles.scrollArrowDown}`}>
+              {arrowDir === 'up' ? <ArrowUp size={20} /> : <ArrowDown size={20} />}
+            </span>
+          </div>
         )}
-        {mode === 'readonly' && (
-          <>
-            <button className={styles.editWorkoutBtn} onClick={() => { setUnsavedChanges(false); setMode('edit'); }}>
-              Edit Workout
+        <div className={styles.footerButtons}>
+          {mode === 'active' && (
+            <>
+              <button className={styles.finishBtn} onClick={handleFinish}>
+                Finish Workout
+              </button>
+              <button className={styles.discardBtn} onClick={() => setShowDiscardModal(true)}>
+                Discard
+              </button>
+            </>
+          )}
+          {mode === 'readonly' && (
+            <>
+              <button className={styles.editWorkoutBtn} onClick={() => { setUnsavedChanges(false); setMode('edit'); }}>
+                Edit Workout
+              </button>
+              <button className={styles.deleteWorkoutBtn} onClick={() => setShowDeleteModal(true)} aria-label="Delete workout">
+                <Trash2 size={20} />
+              </button>
+            </>
+          )}
+          {mode === 'edit' && (
+            <button className={styles.saveEditsBtn} onClick={handleSaveEdits}>
+              Save Edits
             </button>
-            <button className={styles.deleteWorkoutBtn} onClick={() => setShowDeleteModal(true)} aria-label="Delete workout">
-              <Trash2 size={20} />
-            </button>
-          </>
-        )}
-        {mode === 'edit' && (
-          <button className={styles.saveEditsBtn} onClick={handleSaveEdits}>
-            Save Edits
-          </button>
-        )}
+          )}
+        </div>
       </div>
 
       {/* Exercise search modal */}

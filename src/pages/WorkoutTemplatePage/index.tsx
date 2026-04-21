@@ -13,6 +13,7 @@ import { ChevronLeft, Trash2 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { useUserSettings } from '../../context/UserSettingsContext';
 import { useActiveWorkout } from '../../context/ActiveWorkoutContext';
+import { useError, toUserMessage } from '../../context/ErrorContext';
 import * as WorkoutService from '../../services/WorkoutService';
 import * as WorkoutExerciseService from '../../services/WorkoutExerciseService';
 import * as ExerciseService from '../../services/ExerciseService';
@@ -29,6 +30,7 @@ export default function WorkoutTemplatePage() {
   const { weightUnit, displayWeight } = useUserSettings();
   const { activeWorkoutId, setActiveWorkoutId } = useActiveWorkout();
   const navigate = useNavigate();
+  const { showError } = useError();
 
   const [workout, setWorkout] = useState<Workout | null>(null);
   const [workoutExercises, setWorkoutExercises] = useState<WorkoutExercise[]>([]);
@@ -70,20 +72,25 @@ export default function WorkoutTemplatePage() {
   }, [workoutId, user?.id]);
 
   async function loadData(wId: number) {
-    const [wo, wes, allExercises] = await Promise.all([
-      WorkoutService.getById(wId),
-      WorkoutExerciseService.getByWorkoutId(wId),
-      ExerciseService.getAll(),
-    ]);
-    if (!wo) { navigate(`/programs/${programId}`, { replace: true }); return; }
-    setWorkout(wo);
-    setWorkoutName(wo.name);
-    setWorkoutExercises(wes);
-    // Build lookup map for exercise names
-    const map: Record<number, Exercise> = {};
-    allExercises.forEach((ex) => { map[ex.id!] = ex; });
-    setExerciseMap(map);
-    setLoading(false);
+    try {
+      const [wo, wes, allExercises] = await Promise.all([
+        WorkoutService.getById(wId),
+        WorkoutExerciseService.getByWorkoutId(wId),
+        ExerciseService.getAll(),
+      ]);
+      if (!wo) { navigate(`/programs/${programId}`, { replace: true }); return; }
+      setWorkout(wo);
+      setWorkoutName(wo.name);
+      setWorkoutExercises(wes);
+      // Build lookup map for exercise names
+      const map: Record<number, Exercise> = {};
+      allExercises.forEach((ex) => { map[ex.id!] = ex; });
+      setExerciseMap(map);
+      setLoading(false);
+    } catch (e) {
+      showError(toUserMessage(e));
+      setLoading(false);
+    }
   }
 
   // ── Workout rename ──
@@ -91,25 +98,37 @@ export default function WorkoutTemplatePage() {
     const trimmed = workoutName.trim();
     if (!trimmed) { setNameError("Name can't be blank"); setWorkoutName(workout!.name); return; }
     if (trimmed === workout?.name) return;
-    await WorkoutService.update(workout!.id!, { name: trimmed });
-    setWorkout((w) => w ? { ...w, name: trimmed } : w);
-    setNameError('');
+    try {
+      await WorkoutService.update(workout!.id!, { name: trimmed });
+      setWorkout((w) => w ? { ...w, name: trimmed } : w);
+      setNameError('');
+    } catch (e) {
+      showError(toUserMessage(e));
+    }
   }
 
   // ── Add Exercise ──
   async function handleExerciseSelect(exercise: Exercise) {
     if (!workout?.id) return;
-    const we = await WorkoutExerciseService.add(workout.id, exercise.id!);
-    setWorkoutExercises((prev) => [...prev, we]);
-    // Ensure the new exercise is in the lookup map (handles custom exercises)
-    setExerciseMap((prev) => ({ ...prev, [exercise.id!]: exercise }));
-    setShowExerciseSearch(false);
+    try {
+      const we = await WorkoutExerciseService.add(workout.id, exercise.id!);
+      setWorkoutExercises((prev) => [...prev, we]);
+      // Ensure the new exercise is in the lookup map (handles custom exercises)
+      setExerciseMap((prev) => ({ ...prev, [exercise.id!]: exercise }));
+      setShowExerciseSearch(false);
+    } catch (e) {
+      showError(toUserMessage(e));
+    }
   }
 
   // ── Remove Exercise ──
   async function handleRemoveExercise(weId: number) {
-    await WorkoutExerciseService.remove(weId);
-    setWorkoutExercises((prev) => prev.filter((we) => we.id !== weId));
+    try {
+      await WorkoutExerciseService.remove(weId);
+      setWorkoutExercises((prev) => prev.filter((we) => we.id !== weId));
+    } catch (e) {
+      showError(toUserMessage(e));
+    }
   }
 
   // ── Edit Targets Modal ──
@@ -146,20 +165,24 @@ export default function WorkoutTemplatePage() {
     // Convert kg → lb before storing (all weights stored in lb)
     const weightInLb = weightUnit === 'kg' ? kgToLb(weightNum) : weightNum;
 
-    await WorkoutExerciseService.update(editingTargetId!, {
-      targetSets: setsNum,
-      targetReps: repsNum,
-      targetWeight: weightInLb,
-    });
+    try {
+      await WorkoutExerciseService.update(editingTargetId!, {
+        targetSets: setsNum,
+        targetReps: repsNum,
+        targetWeight: weightInLb,
+      });
 
-    setWorkoutExercises((prev) =>
-      prev.map((we) =>
-        we.id === editingTargetId
-          ? { ...we, targetSets: setsNum, targetReps: repsNum, targetWeight: weightInLb }
-          : we,
-      ),
-    );
-    closeEditTargets();
+      setWorkoutExercises((prev) =>
+        prev.map((we) =>
+          we.id === editingTargetId
+            ? { ...we, targetSets: setsNum, targetReps: repsNum, targetWeight: weightInLb }
+            : we,
+        ),
+      );
+      closeEditTargets();
+    } catch (e) {
+      showError(toUserMessage(e));
+    }
   }
 
   // ── Start Workout ──
@@ -174,16 +197,24 @@ export default function WorkoutTemplatePage() {
       return;
     }
     if (!user?.id || !workout?.id) return;
-    const log = await WorkoutLogService.create(user.id, workout.id, workout.name);
-    setActiveWorkoutId(log.id!);
-    navigate(`/logs/${log.id}`);
+    try {
+      const log = await WorkoutLogService.create(user.id, workout.id, workout.name);
+      setActiveWorkoutId(log.id!);
+      navigate(`/logs/${log.id}`);
+    } catch (e) {
+      showError(toUserMessage(e));
+    }
   }
 
   // ── Delete Workout ──
   async function handleConfirmDelete() {
     if (!workout?.id) return;
-    await WorkoutService.deleteWorkout(workout.id);
-    navigate(`/programs/${programId}`, { replace: true });
+    try {
+      await WorkoutService.deleteWorkout(workout.id);
+      navigate(`/programs/${programId}`, { replace: true });
+    } catch (e) {
+      showError(toUserMessage(e));
+    }
   }
 
   // ── Target line display ──

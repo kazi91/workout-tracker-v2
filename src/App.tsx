@@ -10,10 +10,12 @@ import { useEffect } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { db } from './db/db';
 import { seedExercises } from './db/seed';
+import { ErrorProvider } from './context/ErrorContext';
 import { AuthProvider } from './context/AuthContext';
 import { UserSettingsProvider } from './context/UserSettingsContext';
 import { ActiveWorkoutProvider } from './context/ActiveWorkoutContext';
 import AuthGuard from './components/AuthGuard';
+import ErrorBanner from './components/ErrorBanner';
 import BottomNav from './components/BottomNav';
 import LoginPage from './pages/LoginPage';
 import SignupPage from './pages/SignupPage';
@@ -36,34 +38,37 @@ export default function App() {
   }, []);
 
   return (
-    <BrowserRouter>
-      <AuthProvider>
-        <UserSettingsProvider>
-          <ActiveWorkoutProvider>
-            <Routes>
-              {/* Unauthenticated routes */}
-              <Route path="/login" element={<LoginPage />} />
-              <Route path="/signup" element={<SignupPage />} />
+    <ErrorProvider>
+      <ErrorBanner />
+      <BrowserRouter>
+        <AuthProvider>
+          <UserSettingsProvider>
+            <ActiveWorkoutProvider>
+              <Routes>
+                {/* Unauthenticated routes */}
+                <Route path="/login" element={<LoginPage />} />
+                <Route path="/signup" element={<SignupPage />} />
 
-              {/* Protected routes — redirect to /login if no session */}
-              <Route path="/logs" element={<AuthGuard><LogsPage /></AuthGuard>} />
-              <Route path="/logs/:id" element={<AuthGuard><WorkoutDetailPage /></AuthGuard>} />
-              <Route path="/programs" element={<AuthGuard><ProgramsPage /></AuthGuard>} />
-              <Route path="/programs/new" element={<AuthGuard><ProgramDetailPage /></AuthGuard>} />
-              <Route path="/programs/:id" element={<AuthGuard><ProgramDetailPage /></AuthGuard>} />
-              <Route path="/programs/:programId/workouts/new" element={<AuthGuard><WorkoutTemplatePage /></AuthGuard>} />
-              <Route path="/programs/:programId/workouts/:workoutId" element={<AuthGuard><WorkoutTemplatePage /></AuthGuard>} />
-              <Route path="/statistics" element={<AuthGuard><StatisticsPage /></AuthGuard>} />
-              <Route path="/profile" element={<AuthGuard><ProfilePage /></AuthGuard>} />
+                {/* Protected routes — redirect to /login if no session */}
+                <Route path="/logs" element={<AuthGuard><LogsPage /></AuthGuard>} />
+                <Route path="/logs/:id" element={<AuthGuard><WorkoutDetailPage /></AuthGuard>} />
+                <Route path="/programs" element={<AuthGuard><ProgramsPage /></AuthGuard>} />
+                <Route path="/programs/new" element={<AuthGuard><ProgramDetailPage /></AuthGuard>} />
+                <Route path="/programs/:id" element={<AuthGuard><ProgramDetailPage /></AuthGuard>} />
+                <Route path="/programs/:programId/workouts/new" element={<AuthGuard><WorkoutTemplatePage /></AuthGuard>} />
+                <Route path="/programs/:programId/workouts/:workoutId" element={<AuthGuard><WorkoutTemplatePage /></AuthGuard>} />
+                <Route path="/statistics" element={<AuthGuard><StatisticsPage /></AuthGuard>} />
+                <Route path="/profile" element={<AuthGuard><ProfilePage /></AuthGuard>} />
 
-              <Route path="*" element={<Navigate to="/login" replace />} />
-            </Routes>
+                <Route path="*" element={<Navigate to="/login" replace />} />
+              </Routes>
 
-            {/* Persistent UI — rendered outside Routes, visible across all navigations */}
-            <BottomNav />
-          </ActiveWorkoutProvider>
-        </UserSettingsProvider>
-      </AuthProvider>
-    </BrowserRouter>
+              {/* Persistent UI — rendered outside Routes, visible across all navigations */}
+              <BottomNav />
+            </ActiveWorkoutProvider>
+          </UserSettingsProvider>
+        </AuthProvider>
+      </BrowserRouter>
+    </ErrorProvider>
   );
 }

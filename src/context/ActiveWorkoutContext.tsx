@@ -9,6 +9,7 @@
 import { createContext, useContext, useEffect, useState } from 'react';
 import type { ReactNode } from 'react';
 import { useAuth } from './AuthContext';
+import { useError, toUserMessage } from './ErrorContext';
 import { getActive } from '../services/WorkoutLogService';
 
 interface ActiveWorkoutContextValue {
@@ -24,6 +25,7 @@ const ActiveWorkoutContext = createContext<ActiveWorkoutContextValue | null>(nul
  */
 export function ActiveWorkoutProvider({ children }: { children: ReactNode }) {
   const { user } = useAuth();
+  const { showError } = useError();
   const [activeWorkoutId, setActiveWorkoutId] = useState<number | null>(null);
 
   useEffect(() => {
@@ -36,7 +38,7 @@ export function ActiveWorkoutProvider({ children }: { children: ReactNode }) {
     // Check Dexie for any in-progress log on mount or user change
     getActive(user.id)
       .then((log) => setActiveWorkoutId(log?.id ?? null))
-      .catch(console.error);
+      .catch((e) => showError(toUserMessage(e)));
   }, [user?.id]);
 
   return (
