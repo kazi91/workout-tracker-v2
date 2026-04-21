@@ -1,5 +1,5 @@
 # HANDOFF — NEW INSTANCE START HERE
-Last updated: 2026-04-21 (session 36 — S4 resolved; Program Intelligence features logged F20–F25)
+Last updated: 2026-04-21 (session 38 — commit cleanup; sessions 31–37 landed as 3 commits on main)
 
 ---
 
@@ -93,6 +93,8 @@ Exit criteria: see recap.md — PHASE 4 EXIT CRITERIA section.
 ---
 
 ## Recent Sessions (most recent first)
+
+**Session 38 — 2026-04-21:** Housekeeping — commit cleanup. Sessions 31–37 landed on main in 3 logical commits: `69ab01c` (U4/U5 guards + D5 ErrorContext), `3f48f05` (service test audit + U4/U5 RTL tests — 72/72 green), `e0e8917` (Statistics spec revision: F20–F30, CE1, S1/S4 resolved). Pre-commit verification: build clean + 72/72 tests passing. Working tree clean; 3 commits ahead of origin/main (not pushed). No code changes. Next: Session 39 — CE1 deep dive (research mode) per cycle plan (A→B→C: commit → CE1 research → finish-flow/ActiveWorkoutContext tests → Phase 4 close → Statistics build).
 
 **Session 36 — 2026-04-21:** S4 research and resolution — no code written. Weekly adherence metric dropped: lacks honest denominator without active program tracking. Replaced by Program Intelligence feature set (F20–F25): favorite exercises per muscle group, program usage frequency, current split detection (retroactive from log history — ≥60% of week's workouts from one program), program efficacy (PR density + volume growth per split), neglected category callout, de facto program inference. All derivable from existing schema; no new tables. "Stint" renamed to "current split". All features logged as Future in Issue Tracker; Section 7 added to statistics.md. OD6 (button tokens) deferred — research not started.
 

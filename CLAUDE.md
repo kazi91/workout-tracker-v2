@@ -16,10 +16,10 @@ GitHub: https://github.com/kazi91/workout-tracker-v2 (public)
 
 ## CURRENT TASK
 Phase: 4 — Testing & post-demo cleanup
-Last session ended: Session 37 — Statistics research continued; F26–F28 logged; time filters locked (30/90/365/all); custom exercise deep dive identified as next research task (2026-04-21)
-Next action: Custom exercise deep dive — resolve arms ambiguity, compound multi-muscle tagging, edit-after-creation UX, category picker UX before F27/F28 can be built
+Last session ended: Session 38 — Committed sessions 31–37 in 3 logical commits (U4/U5+D5, tests, spec revisions); build + 72/72 tests verified green before commits (2026-04-21)
+Next action: Session 39 — CE1 deep dive. Resolve arms ambiguity, compound multi-muscle tagging, edit-after-creation UX, category picker UX before F27/F28 spec is final.
 Session scope: Research — custom exercise UX and muscle group accuracy
-Required reading this session: recap.md, master-schematics.md (Issue Tracker F26–F28), artifacts/tabs/statistics.md (Section 4b, F28)
+Required reading this session: recap.md, master-schematics.md (Issue Tracker CE1, F27, F28, F29), artifacts/tabs/statistics.md (Section 4b, Section 7, §Open Issues)
 
 ## Session Start — Opening Message Protocol
 

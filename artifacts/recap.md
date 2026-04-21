@@ -1,14 +1,14 @@
 WORKOUT TRACKER V2 — RECAP
 ===========================
-Last updated: 2026-04-21
+Last updated: 2026-04-21 (session 38 — commit cleanup, sessions 31–37 landed as 3 commits; next: CE1 deep dive)
 
 CURRENT TASK (mirrors CLAUDE.md — if they diverge, recap.md wins)
 -------------------------------------------------------------------
 Phase: 4 — Testing & post-demo cleanup
-Last session ended: Session 37 — Statistics research continued; F26–F28 logged (Workout Stats Card: most skipped, volume by muscle group, balance); time filters locked 30/90/365/all; custom exercise deep dive flagged (2026-04-21)
-Next action: Custom exercise deep dive — arms ambiguity, compound multi-muscle tagging, edit-after-creation, category picker UX; must resolve before F27/F28 spec is final
+Last session ended: Session 38 — Committed sessions 31–37 in 3 logical commits (U4/U5+D5, tests, spec revisions); build + 72/72 tests verified green before commits (2026-04-21)
+Next action: Session 39 — CE1 deep dive. Resolve arms ambiguity, compound multi-muscle tagging, edit-after-creation UX, category picker UX before F27/F28 spec is final.
 Session scope: Research — custom exercise UX and muscle group accuracy
-Required reading this session: recap.md, master-schematics.md (Issue Tracker F26–F28), artifacts/tabs/statistics.md
+Required reading this session: recap.md, master-schematics.md (Issue Tracker CE1, F27, F28, F29), artifacts/tabs/statistics.md (Section 4b, Section 7, §Open Issues)
 
 ---
 
@@ -204,6 +204,17 @@ UI DESIGN DECISIONS LOCKED (UIdesign.md session 4)
 SESSION HISTORY
 ----------------
 Most recent at top. Full history in handoff.md.
+
+  Session 38 — 2026-04-21
+    - Housekeeping — commit cleanup; no code changes
+    - Sessions 31–37 landed in 3 logical commits on main:
+        69ab01c  Sessions 31 + 34: U4/U5 UI guards + ErrorContext (D5)
+        3f48f05  Sessions 31-32: service layer test audit + U4/U5 RTL tests
+        e0e8917  Sessions 33, 35-37: Statistics spec revision + research
+    - Pre-commit verification: npm run build clean; 72/72 tests passing across 8 files
+    - Working tree clean; 3 commits ahead of origin/main (not pushed)
+    - Process correction: re-aligned with CLAUDE.md "complete it, verify, commit, end" rule
+    - Next: Session 39 — CE1 deep dive (research mode)
 
   Session 36 — 2026-04-21
     - S4 research and resolution — no code written
