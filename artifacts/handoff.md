@@ -1,5 +1,5 @@
 # HANDOFF — NEW INSTANCE START HERE
-Last updated: 2026-04-23 (session 44 CLOSED — all 5 items + bonus seed-tagging-principles.md. Session 45a is next: lock 11 parent muscle maps. No code written.)
+Last updated: 2026-04-23 (session 44 CLOSED + gap-audit follow-up — 51 gaps logged across all artifacts + memory; 2 Pre-45a fixes applied; Session 45a still next.)
 
 ## Session 44 summary (2026-04-23)
 
@@ -32,6 +32,59 @@ Both remaining items are mechanical (no fresh architecture decisions required).
 - `artifacts/handoff.md`: this entry
 
 **No code written.** No `src/` edits. Research + planning only.
+
+---
+
+## Session 44 3rd follow-up (2026-04-23) — Comprehensive gap audit
+
+**Scope:** Full gap audit across all 22 artifacts + CLAUDE.md + 18 memory files (~41 files total, ~5,900+ lines). Research mode with explicit permission to edit a single new artifact (`gap-audit.md`) and execute the smallest possible fix batch before next session. No code, no `src/` edits.
+
+**Methodology:** Option C hybrid (layered by authority). Six sequential phases: Foundation → Tab specs → Exercise library → UIdesign/process → Memory → Synthesis. Severity taxonomy: 🔴 Blocker / 🟠 Must-fix / 🟡 Nice-to-have / ⚪ Cosmetic. All findings recorded inline in `artifacts/gap-audit.md` with GA-nn IDs and proposed fixes.
+
+**Results: 51 gaps logged.** 4 🔴 / 13 🟠 / 29 🟡 / 5 ⚪.
+
+**High-impact clusters:**
+- **`parentExerciseId` schema coverage (GA-01, GA-02, GA-44)** — session 44 handoff claimed EB5 was integrated but master-schematics DB schema table, v3 delta, Dexie schema string, and `ExerciseService.create()` row all still miss the field. CE2 memory doc's v3 schema example retains `category` (contradicts CE1 Decision #28). Session 47+ build silently miss-risk.
+- **`project_state.md` + MEMORY.md index drift (GA-42, GA-43)** — memory claims Phase 4 / 17 tests / Service layer audit next. Reality: Phase 5 / 72 tests / Session 45a queued. Any future Claude instance reading this gets a 15-session-old snapshot.
+- **Pull-Up taxonomy contradiction (GA-32)** — seed-tagging-principles.md Rule 1 lists Pull-Up as co-primary `lats + upperBack`; Vertical pull template says single-primary `lats`. Directly blocks Session 45a parent-map lock on Pull-Up.
+- **Broken cross-drive memory link (GA-31)** — seed-tagging-principles.md line 9 references memory via `../../../.claude/...` — can't resolve (memory on `C:`, artifacts on `D:`; depth wrong regardless).
+- **S4 adherence residuals (GA-19, GA-20)** — feature removed session 36 but `getAdherenceRate` service method + Overview Dashboard row both survived in statistics.md + master-schematics.md.
+- **Stale service names (GA-17, GA-18)** — `getByWorkoutId` should be `getByWorkoutLogId` (logs.md); `getNeglectedCategories` should be `getNeglectedGroups` (statistics.md).
+- **Authority model conflict (GA-38)** — coreprocess.md says "lower-numbered doc wins" (CLAUDE.md #2 beats recap #3); recap.md says "recap wins on CURRENT TASK." Unreconciled.
+
+**Pre-45a fix batch executed this session (2/51 gaps closed):**
+
+- **GA-31** — `seed-tagging-principles.md:9` — stripped broken markdown link syntax, kept plain-text reference with CLAUDE.md § auto-memory pointer.
+- **GA-32** — `seed-tagging-principles.md` Vertical pull template — Pull-Up promoted to explicit Rule-1 override (co-primary `lats + upperBack`, with demote-secondary instruction to prevent double-counting). Template default kept at `lats` single-primary for Lat Pulldown et al. Chin-Up / Narrow-Grip Pull-Up override restructured as a sibling bullet for parity. Resolution direction: Rule 1 is authoritative for exercise-specific calls; templates are pre-specific defaults. Pull-Up parent map is now deterministic for Session 45a.
+
+**Fix batches queued (not executed this session):**
+
+1. **Pre-build batch** (~1.5–2 hr, 8 must-fix items before Session 47+ CE1/CE2 build):
+   - GA-01, GA-02, GA-44: add `parentExerciseId` to master-schematics DB schema + v3 delta + Dexie schema string + `ExerciseService.create()` row; fix CE2 v3 example (drop `category`)
+   - GA-45: update CE2 memory's custom-form location pointer to master-schematics.md § ExerciseSearchModal Spec
+   - GA-17: `getByWorkoutId` → `getByWorkoutLogId` in logs.md
+   - GA-18: `getNeglectedCategories` → `getNeglectedGroups` in statistics.md
+   - GA-19: drop adherence row from Overview Dashboard table
+   - GA-20: drop `getAdherenceRate` from service tables in both statistics.md and master-schematics.md
+
+2. **Cross-conversation safety batch** (~30 min, 3 gaps):
+   - GA-42: rewrite `memory/project_state.md` body to current Phase 5 state
+   - GA-43: rewrite MEMORY.md index line for project_state
+   - GA-46: either close `memory/project_artifact_fixes.md` or update it to reflect what's done vs still-open
+
+3. **Hygiene batch** (~2 hr rolling, 29 nice-to-have items) — fold into sessions as artifacts are touched.
+
+4. **Cosmetic batch** (~30 min, 5 items).
+
+**Artifact changes this session:**
+- `artifacts/gap-audit.md`: created (new file — scaffold + 51 gaps + synthesis + session log; disposable, delete once all items close)
+- `artifacts/seed-tagging-principles.md`: GA-31 + GA-32 edits applied
+- `artifacts/recap.md`: top timestamp + CURRENT TASK required-reading + SESSION HISTORY entry
+- `artifacts/handoff.md`: top timestamp + this entry
+
+**No code written. No `src/` edits.**
+
+**Next session target:** Session 45a — lock 11 parent muscle maps per `seed-tagging-principles.md`. Est ~1.5h. Pull-Up will use co-primary `lats + upperBack` per GA-32 resolution. Alternative: run the Pre-build fix batch first if Session 47+ coordinated CE1/CE2 build is imminent (would clean up 8 must-fix items for ~1.5–2h before the build session).
 
 ---
 

@@ -1,6 +1,6 @@
 WORKOUT TRACKER V2 — RECAP
 ===========================
-Last updated: 2026-04-23 (session 44 CLOSED — all 5 items complete; bonus deliverable: seed-tagging-principles.md drafted for Session 45a–f curation work)
+Last updated: 2026-04-23 (session 44 CLOSED + gap-audit follow-up — 51 gaps logged, 2 Pre-45a fixes applied; Session 45a still queued)
 
 CURRENT TASK (mirrors CLAUDE.md — if they diverge, recap.md wins)
 -------------------------------------------------------------------
@@ -8,7 +8,7 @@ Phase: 5 — Statistics page + new features planning
 Last session ended: Session 44 — CLOSED 2026-04-23. All 5 planned items complete. (1) ✅ `memory/project_ce2_schema_architecture.md` created — 5 CE2 architecture decisions locked (index=yes, delete=choice modal, flat hierarchy, any parent-level exercise qualifies, search=direct). (2) ✅ `memory/project_ce1_final_scope.md` rewritten for full 213-entry library; D-new-4 + D-new-5 added; curation estimate 15–20h. (3) ✅ Build sequencing in `artifacts/exercise-bank.md` rewritten — replaced stale "pass 1/2/3" with 3-phase plan (Curation 45a–f ~13h → Coordination → Build Session 47+). (4) ✅ EB5 integrated into `master-schematics.md` § ExerciseSearchModal Spec — optional "Nest under a parent exercise" dropdown added to Step 1 of custom-create flow; `ExerciseService.create()` signature updated with `parentExerciseId`. (5) ✅ 3 guides authored under template v2 (squat.md, bench-press.md, overhead-press.md) — all 4 classic barbell compounds covered; 8 guides total in `artifacts/exercises/`. **Bonus:** `artifacts/seed-tagging-principles.md` drafted — ~270-line working reference governing Session 45a–f curation (6 rules, 10 movement templates, 5 group-specific conventions, Tier 3 cadence, EMG policy, sanity checks, exception log format). No code, no src/ edits.
 Next action: Session 45a — Seed re-curation Phase 1 of Phase 1. Scope: read `seed-tagging-principles.md` top to bottom, then lock muscle maps (primary + secondaries-with-role) for the 11 parent exercises (Squat, Deadlift, Bench Press, Dips, Pull-Up, Lat Pulldown, RDL, Skull Crusher, Barbell Curl, Plank, Cable Crossover). Seed the "EMG-supported co-primary claims" reference list inside `seed-tagging-principles.md` as decisions are made. Output destination: new file `artifacts/seed-draft.md` (create at session start). Est ~1.5h. Parents first maximizes leverage — variants inherit per the Parent/Variant Rule. THEN Sessions 45b–f run ~11h across Seed+P0 → P1 upper → P1 lower+core → P5+P2+P3 → P4+validation per `exercise-bank.md` § Build sequencing § Phase 1. THEN Session 46 = spec patch 3/3 if needed (ingest locked curation decisions into master-schematics.md + tab artifacts). THEN Session 47+ = CE1/CE2 coordinated v3 build.
 Session scope: Research + planning artifact — tag 11 parent exercises per principles doc. Create `artifacts/seed-draft.md` as output. No code, no src/ edits.
-Required reading next session: recap.md, `artifacts/seed-tagging-principles.md` (mandatory full read — governs the session), `artifacts/exercise-bank.md` (parent rows only: Squat / Deadlift / Bench Press / Dips / Pull-Up / Lat Pulldown / RDL / Skull Crusher / Barbell Curl / Plank / Cable Crossover), `memory/project_ce1_final_scope.md` (D1–D9 muscle taxonomy reference), `master-schematics.md` § Muscle Taxonomy Model (schema + MUSCLE_LABELS + getExerciseGroup) — do NOT read the whole master-schematics file.
+Required reading next session: recap.md, `artifacts/seed-tagging-principles.md` (mandatory full read — governs the session; note: Pull-Up co-primary override now explicit in Vertical pull template per GA-32 fix), `artifacts/exercise-bank.md` (parent rows only: Squat / Deadlift / Bench Press / Dips / Pull-Up / Lat Pulldown / RDL / Skull Crusher / Barbell Curl / Plank / Cable Crossover), `memory/project_ce1_final_scope.md` (D1–D9 muscle taxonomy reference), `master-schematics.md` § Muscle Taxonomy Model (schema + MUSCLE_LABELS + getExerciseGroup) — do NOT read the whole master-schematics file. Optional: `artifacts/gap-audit.md` — 49 remaining gaps with tiered fix batches (Pre-build batch of 8 must-fix items queued before Session 47+ build).
 
 Session 44 state summary:
 - exercise-bank.md: 213 total / 184 additions. Tier breakdown: Seed=29, P0=9, P1=56, P2=53, P3=11, P4=30, P5=25. Intentional numbering gaps at P1 #4, P2 #2/3, P3 #2 (entries moved/deduped in Batch C — not errors). Build sequencing section rewritten session 44 — 3-phase plan (Curation 45a–f → Coordination → Build 47+).
@@ -230,6 +230,20 @@ UI DESIGN DECISIONS LOCKED (UIdesign.md session 4)
 SESSION HISTORY
 ----------------
 Most recent at top. Full history in handoff.md.
+
+  Session 44 3rd follow-up — 2026-04-23 (COMPREHENSIVE GAP AUDIT — 51 gaps logged, 2 Pre-45a fixes applied)
+    - Research session — full 6-phase audit across all artifacts + CLAUDE.md + 18 memory files (~41 files total). New artifact: `artifacts/gap-audit.md` (scaffold + findings + synthesis; disposable — delete after all items close).
+    - Phase 1 Foundation: 16 gaps. 🔴 cluster: `parentExerciseId` missing from master-schematics DB schema + v3 delta + Dexie schema string + ExerciseService.create() signature despite session 44 integration claim.
+    - Phase 2 Tabs: 8 gaps. 🟠 stale service names (`getByWorkoutId` → `getByWorkoutLogId` in logs.md; `getNeglectedCategories` → `getNeglectedGroups` in statistics.md). Orphaned adherence residuals post-S4 resolution (row in Overview Dashboard + service method in both stats and master-schematics).
+    - Phase 3 Exercise library: 11 gaps. 🟠 Pull-Up taxonomy contradiction between Rule 1 and Vertical pull template in seed-tagging-principles.md (Session 45a blocker). Broken cross-drive memory link in same doc. Multiple stale "category" terminology + timestamps in exercise-bank.md.
+    - Phase 4 UIdesign/process: 4 gaps + 2 addendum. 🟠 coreprocess.md vs recap.md authority conflict ("lower-numbered wins" vs "recap wins on CURRENT TASK"). UIdesign.md FAB size/position stale per session 17 (56→52px; position is inline BottomNav center slot, not bottom-right).
+    - Phase 5 Memory: 10 gaps. 🔴 cluster: `project_state.md` body + its MEMORY.md index entry both severely stale (claims Phase 4 / 17 tests; reality is Phase 5 / 72 tests). 🟠 CE2 memory doc has v3 schema example that retains `category` (contradicts CE1 Decision #28) + outdated custom-form location pointer.
+    - Phase 6 Synthesis: 4-tier fix sequencing. Pre-45a batch (2 gaps, ~30 min) executed this session. Pre-build batch (8 must-fix, ~1.5–2h) queued before Session 47+. Cross-conversation safety batch (3 gaps, ~30 min) + hygiene (34 gaps, rolling) + cosmetic (5 gaps) queued.
+    - **Pre-45a fixes applied:**
+        - GA-31: `seed-tagging-principles.md:9` — stripped broken `../../../.claude/...` cross-drive memory link; kept plain-text reference + pointer to CLAUDE.md § auto memory.
+        - GA-32: `seed-tagging-principles.md` Vertical pull template — Pull-Up promoted to explicit Rule-1 override (co-primary `lats + upperBack`, demote `upperBack` out of secondaries when promoted). Chin-Up / Narrow-Grip Pull-Up override restructured as a sibling bullet. Template default kept at `lats` single-primary for Lat Pulldown et al.
+    - Session 45a parent-map lock is now unblocked on Pull-Up (was ambiguous — now deterministic).
+    - No code, no `src/` edits. Artifact-only work.
 
   Session 44 2nd follow-up — 2026-04-23 (PRINCIPLES DOC + ARTIFACT TIDY — items 3, 4 closed)
     - Research + artifact mode — no code, no src/ edits.

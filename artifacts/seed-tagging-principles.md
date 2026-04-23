@@ -6,7 +6,7 @@ Status: draft, session 44 (2026-04-23). Living doc — update as exceptions surf
 
 **Related:**
 - [artifacts/exercise-bank.md](exercise-bank.md) — library catalog + Parent/Variant Rule
-- [memory/project_ce1_final_scope.md](../../../.claude/projects/d--software-eng-workout-tracker-v2/memory/project_ce1_final_scope.md) — D1–D9 taxonomy locks
+- `memory/project_ce1_final_scope.md` — D1–D9 taxonomy locks (memory lives outside the repo — see CLAUDE.md "auto memory" section for path)
 - `master-schematics.md § Muscle Taxonomy Model` — schema + helpers (MUSCLE_LABELS, SECONDARY_VOLUME_MULTIPLIER, getExerciseGroup)
 
 ---
@@ -130,9 +130,10 @@ Apply the template as starting point. Override with exercise-specific rationale 
 - Secondary: `rearDelts` (syn), `biceps` (syn), `brachialis` (syn), `forearms` (stab — grip), `lowerBack` (stab)
 
 ### Vertical pull (Pull-Up, Chin-Up, Lat Pulldown)
-- Primary: `lats`
+- Primary: `lats` (template default — applies to Lat Pulldown and similar cable/machine pulls)
 - Secondary: `upperBack` (syn), `biceps` (syn), `brachialis` (syn), `rearDelts` (syn), `forearms` (stab)
-- Notes: Chin-Up / Narrow-Grip Pull-Up shift biceps to co-primary (EMG-supported). Override per exercise.
+- **Pull-Up override (per Rule 1):** Pull-Up is co-primary `lats + upperBack` — bodyweight vertical pull has enough upper-back engagement to earn co-primary status per EMG. When Pull-Up is tagged co-primary, demote `upperBack` out of the secondary list.
+- **Chin-Up / Narrow-Grip Pull-Up override:** shift `biceps` to co-primary with `lats` (EMG-supported). Override per exercise.
 
 ### Squat pattern (knee-dominant)
 - Primary: `quads`
