@@ -1,5 +1,204 @@
 # HANDOFF — NEW INSTANCE START HERE
-Last updated: 2026-04-23 (session 44 CLOSED + gap-audit follow-up — 51 gaps logged across all artifacts + memory; 2 Pre-45a fixes applied; Session 45a still next.)
+Last updated: 2026-04-23 (session 45b pt. 2 CLOSED — all 27 entries drafted + close-out complete; sanity checks pass, exception log + EMG co-primary list + revision logs updated; ready for Session 45c.)
+
+## Session 45b pt. 2 (2026-04-23) — Main draft completed + close-out; Session 45b CLOSED
+
+**Scope:** Resume pt. 1 mid-draft at entry #14; finish remaining 14 entries; run end-of-session close-out. Research + artifact mode. No code, no `src/` edits.
+
+**Accomplished:**
+- **14 full-format entries written** (continuing sequence from pt. 1):
+  - **Seed Arms + Core (5):**
+    - `#14 Hammer Curl (Seed #22)` — co-primary `[biceps, brachialis]` per Curl template neutral-grip note. 2 secondaries (forearms syn, abs stab matching Barbell Curl).
+    - `#15 Tricep Pushdown (Seed #23)` — expanded pre-lock 7. `frontDelts (stab)` per Rule 2 execution-standard addendum.
+    - `#16 Crunch (Seed #27)` — 0 secondaries (strictest core-direct isolation).
+    - `#17 Hanging Leg Raise (Seed #28)` — expanded pre-lock 4. Co-primary `[abs, hipFlexors]` per training-intent override.
+    - `#18 Ab Wheel Rollout (Seed #29)` — 4 secondaries (lats syn, obliques/triceps/serratus stab). Equipment = `other`.
+  - **P0 (9):**
+    - `#19 DB Bench Press (P0 #1)` — 3 secondaries (same template as Bench, lats not tagged — no bar-pull cue).
+    - `#20 Incline DB Bench (P0 #2)` — 4 secondaries, inherits Incline BB Bench frontDelts-before-triceps ordering.
+    - `#21 DB Row (P0 #3)` — one-arm neutral grip; 5 secondaries (full Horizontal pull template; reduced lowerBack demand vs BB row but still tagged).
+    - `#22 Chin-Up (P0 #4)` — expanded pre-lock 1. Co-primary `[lats, biceps]` per Rule 1 override. parentExerciseId → Pull-Up (Seed #7) despite map divergence — exception logged.
+    - `#23 Bulgarian Split Squat (P0 #5)` — expanded pre-lock 2. Co-primary `[quads, glutes]` per Lunge / split-stance template.
+    - `#24 Barbell Hip Thrust (P0 #6)` — single-primary `glutes` (Contreras EMG — hip thrust is glute-dominant, NOT co-primary with hamstrings). Exception logged.
+    - `#25 DB Shoulder Press (P0 #7)` — inherits OHP Vertical push template; 6 secondaries (same flag as OHP).
+    - `#26 Barbell Shrug (P0 #8)` — `upperTraps` primary + `forearms/lowerBack/neck (stab)`. Rule 5 neck use case.
+    - `#27 DB Curl (P0 #9)` — same map as Barbell Curl (supinated single-primary).
+- **Close-out complete:**
+  - **8 sanity checks** run on full 27 entries — all pass. 2 flagged accepted:
+    - OHP at 6 secondaries (full Vertical push template; same pattern as Squat in 45a).
+    - DB Shoulder Press at 6 secondaries (inherits OHP template).
+  - **7 exceptions appended** to seed-draft.md exception log:
+    - OHP 6-secondary flag (template-standard, accepted).
+    - DB Shoulder Press 6-secondary flag (OHP precedent).
+    - Push-Up serratus-as-synergist (vs default stab; distinct from flat bench due to free scap movement).
+    - DB Fly fly-exception (extended from cable-only to DB fly per equivalent cuff vulnerability at loaded stretch).
+    - Chin-Up map divergence from Pull-Up parent despite parentExerciseId linkage (designated case for CE2 architecture).
+    - Hip Thrust single-primary glutes (rejects Hinge-template co-primary per Contreras EMG).
+    - Ab Wheel Rollout equipment = `other` (wheel not in standard categories).
+  - **EMG co-primary reference list** in `seed-tagging-principles.md` updated — new "Non-parents + missed parent (session 45b)" section with 5 entries: OHP (canonical rejected for vertical press), Chin-Up, Bulgarian Split Squat, Hammer Curl (template-default, low citation burden), Hanging Leg Raise. "Queued" list trimmed to: Close-Grip Bench (45c), Narrow-Grip Pull-Up (45e).
+  - **Revision log entries** added to both seed-draft.md and seed-tagging-principles.md for session 45b pt. 1 + pt. 2 combined.
+
+**Decisions made this session:**
+1. ✅ **Include OHP as late-caught parent** (not deferred to Session 45c). Rationale: it's a Seed-table parent with known variants (DB Shoulder Press P0 #7, Machine Shoulder Press P1 #26, others in P1/P5); deferring would push dependent inheritance out one session for no benefit. Decision codified in seed-draft.md § Full entry blocks — #1 OHP under "Missed parent (omitted from 45a scope)" subsection.
+2. ✅ **Extend fly-exception from cable to DB fly.** Principles doc Isolation template originally specified the rotatorCuff exception for "cable fly / crossover." DB fly has equivalent or greater rotator cuff vulnerability at the loaded-stretch position (heavier stretch, no cable-assist tension). Rationale: the exception is about the movement class (fly) not the implement (cable). Applied to DB Fly entry; Incline DB Fly (P2 #4) will inherit on 45e.
+3. ✅ **Push-Up serratus tagged as synergist** (not stabilizer). Distinct from flat bench because push-up allows free scapular movement while bench pins the scap against the pad. Free scap = full upward-rotation cycle = concentric serratus work, qualifies as synergist under the chest convention "press-past-horizontal." Incline DB Bench + Incline BB Bench don't get this override (bench pins scap).
+
+**Pre-existing pt. 1 decisions carried forward:**
+- OHP scope gap correction (18 Seed, not 17).
+- 2 labeling error fixes in pre-lock section (Face Pull #18→#20; Lateral Raise #15→#18).
+
+**Artifact changes:**
+- `artifacts/seed-draft.md`: 14 new full-format entries (#14–#27); `## Session 45b — End-of-session sanity check` section added; 7 exception log entries appended under new `### Session 45b exceptions` subsection; revision log entry added.
+- `artifacts/seed-tagging-principles.md`: EMG co-primary reference list restructured — "Queued for 45b onward" renamed to "Queued for 45c onward"; new "Non-parents + missed parent (session 45b)" section inserted above it with 5 entries; revision log entry added.
+- `artifacts/recap.md`: Session 45b pt. 2 entry prepended to SESSION HISTORY; CURRENT TASK block updated to reflect session CLOSED + Session 45c as next action.
+- `CLAUDE.md`: CURRENT TASK block updated.
+- `artifacts/handoff.md`: this entry.
+
+**No code written. No `src/` edits. Zero CE1/CE2 scope changes. Zero memory-file edits. Zero principles-doc patches (all patches done during 45b opening).**
+
+**Next session target:** Session 45c — P1 upper body (~20-25 entries, est ~2h). Apply templates + variant inheritance from 45a parents + 45b full-entry blocks. Lock Close-Grip Bench `[chest, triceps]` co-primary per queued list.
+
+---
+
+## Session 45b pt. 1 (2026-04-23) — Main draft started, 13 of 27 entries written, PAUSED mid-draft
+
+**Scope:** Resume Session 45b main draft using the 7 pre-locks + principles-doc patches persisted during 45b opening. User paused mid-work after entry #13. Research + artifact mode. No code, no `src/` edits.
+
+**Accomplished:**
+- **Scope correction — OHP omission patched.** Overhead Press (Seed #17) was missing from both the 45a parent list AND the 45b scope list in CLAUDE.md ("17 remaining Seed" — actual count is 18). Tracked the discrepancy back through exercise-bank.md seed table (29 entries), 45a parent count (11), and 45b listed count (17) — 11 + 17 = 28, off by one. OHP added as late-caught parent at top of the 45b full-entry blocks. True 45b scope = **18 Seed + 9 P0 = 27 entries**, not 26.
+- **Labeling errors fixed** in seed-draft.md § Session 45b pre-lock section:
+  - Item 3 `Face Pull (Seed #18)` → `Face Pull (Seed #20)` (seed #18 is Lateral Raise).
+  - Item 6 `Lateral Raise (Seed #15)` → `Lateral Raise (Seed #18)` (seed #15 is Leg Extension).
+  - Pre-lock content intact; only seed-table numbers corrected.
+- **New compilation-ready subsection** added to seed-draft.md: `### Full entry blocks — Session 45b`. Matches the format of the 45a parent entries (primary + role-tagged secondaries + equipment + Tier 3 + template + group derivation + notes). Pre-lock section above it is preserved as the decision record.
+- **13 full-format entries written** in sequence (all under § Full entry blocks — Session 45b):
+  - `#1 Overhead Press (Seed #17)` — missed parent. 6 secondaries (full Vertical push template); flagged per ≤5 soft threshold, accepted same as Squat (6 template-standard). Single-primary confirmed (co-primary rejected per principles doc).
+  - `#2 Incline BB Bench (Seed #2)` — expanded from pre-lock 5. `frontDelts` precedes `triceps` per EMG. serratus (stab) tagged per pre-lock.
+  - `#3 DB Fly (Seed #3)` — fly exception applied; `rotatorCuff (stab)` tagged per Isolation template fly exception.
+  - `#4 Push-Up (Seed #4)` — serratus as **synergist** (not stabilizer) due to free scap movement at top; distinct from flat bench where scap is pinned.
+  - `#5 Bent-Over BB Row (Seed #8)` — full Horizontal pull template. 5 secondaries.
+  - `#6 Seated Cable Row (Seed #10)` — same map as Bent-Over Row; lowerBack (stab) justified by forward cable-pull moment.
+  - `#7 Leg Press (Seed #13)` — 3 secondaries (machine eliminates the stability demand; discipline below squat-pattern ceiling).
+  - `#8 Lying Leg Curl (Seed #14)` — 1 secondary (calves as gastroc knee-flexor).
+  - `#9 Leg Extension (Seed #15)` — 0 secondaries (strictest isolation in library).
+  - `#10 Standing Calf Raise BW (Seed #16)` — 0 secondaries; bodyweight only, no axial load.
+  - `#11 Lateral Raise (Seed #18)` — expanded from pre-lock 6. `upperTraps (syn)` + `rotatorCuff (stab)`.
+  - `#12 Front Raise (Seed #19)` — 1 secondary (upperTraps syn for scap rotation).
+  - `#13 Face Pull (Seed #20)` — expanded from pre-lock 3. `rotatorCuff (syn)` per Rule 5 synergist exception.
+
+**Decisions made this session:**
+1. ✅ **Include OHP as late-caught parent** (not as a separate Session 45c entry). Reason: it's a Seed-table parent with known variants (DB Shoulder Press P0 #7, others in P1/P5); treating it as P1-era work would defer the dependent inheritance one full session. Added under `#### Missed parent (omitted from 45a scope)` with an inline scope note.
+2. ✅ **Fly exception applies to DB Fly too.** Principles doc specifies "cable fly / crossover" — applied same rationale to dumbbell fly (equivalent or greater cuff vulnerability at loaded stretch). Noted in DB Fly entry as the justification.
+3. ✅ **Push-Up serratus = synergist, not stabilizer.** Distinction from flat bench: pinned scap on bench = serratus only isometric; free scap on push-up = full upward rotation cycle = concentric work. Noted inline.
+
+**Pending close-out (for Session 45b pt. 2 resume):**
+- 14 entries remaining to draft:
+  - **Seed (5):** `#14 Hammer Curl` (co-primary `[biceps, brachialis]` per Curl template), `#15 Tricep Pushdown` (expand pre-lock 7), `#16 Crunch`, `#17 Hanging Leg Raise` (expand pre-lock 4 — co-primary `[abs, hipFlexors]`), `#18 Ab Wheel Rollout`.
+  - **P0 (9):** `#19 DB Bench Press`, `#20 Incline DB Bench`, `#21 DB Row` (one-arm, neutral grip), `#22 Chin-Up` (expand pre-lock 1 — co-primary `[lats, biceps]`), `#23 Bulgarian Split Squat` (expand pre-lock 2 — co-primary `[quads, glutes]`), `#24 Barbell Hip Thrust` (single-primary `glutes` — not co-primary; hip thrust is glute-dominant per Contreras), `#25 DB Shoulder Press` (inherits OHP template, 6 secondaries flag), `#26 Barbell Shrug` (tag `neck (stab)` per Rule 5), `#27 DB Curl`.
+- Re-run 8 sanity checks on the full 18+9 set.
+- Append exception log entries (OHP 6-secondary flag; any new exceptions from remaining 14).
+- Add EMG co-primary reference list entries to `seed-tagging-principles.md`: Chin-Up, Bulgarian Split Squat, Hammer Curl (template-default — low citation burden), Hanging Leg Raise.
+- Add seed-draft.md revision log entry for session 45b pt. 1 + pt. 2 combined.
+
+**Artifact changes:**
+- `artifacts/seed-draft.md`: 2 labeling fixes in pre-lock section; new `### Full entry blocks — Session 45b` subsection with 13 entries; batch-continuation placeholder at bottom.
+- `artifacts/recap.md`: Session 45b pt. 1 entry prepended to SESSION HISTORY; CURRENT TASK block updated with scope correction + pause state + resume instructions.
+- `CLAUDE.md`: CURRENT TASK block updated to reflect pt. 1 pause and pt. 2 scope.
+- `artifacts/handoff.md`: this entry.
+
+**No code written. No `src/` edits. Zero CE1/CE2 scope changes. Zero memory-file edits. Zero principles-doc patches (done during 45b opening).**
+
+**Next session target:** Session 45b pt. 2 — resume at entry #14 Hammer Curl; finish 14 remaining entries; run close-out (sanity + exceptions + EMG list + revision log). Est ~1–1.5h.
+
+---
+
+## Session 45b opening (2026-04-23) — Poliquin audit + methodology refinement + 7 pre-locks; main draft deferred
+
+**Scope:** Begin Session 45b — 26 non-parent entries. Three methodology challenges from user triggered a full audit pass over 45a parents before drafting. Main 26-entry draft deferred when session scope filled. Research + artifact mode. No code, no `src/` edits.
+
+**Accomplished:**
+- **Poliquin-audit pass on all 11 parents** (retroactive). 8 additive stabilizers accepted by user in one batch ("accept all they are all correct technically"):
+  - Squat +`calves (stab)` *(ankle/balance chain)*
+  - Bench Press +`lats (stab)` *(active pull-to-bar + bench tightness)*
+  - Dips +`upperBack (stab)` *(scap-packed position)*
+  - RDL +`abs (stab)` *(anti-flexion under axial load)*
+  - Skull Crusher +`rotatorCuff (stab)` *(supine weighted tricep eccentric)*
+  - Barbell Curl +`abs (stab)` *(anti-extension on standing axial isolation)*
+  - Plank +`rotatorCuff (stab)` *(glenohumeral position under bodyweight hold)*
+  - Cable Crossover +`rotatorCuff (stab)` *(multi-plane cable tension; isolation template exception)*
+- All additive — zero primary changes, zero group-derivation changes. Squat pushed to 6 secondaries — flagged against ≤5 soft threshold; accepted as Poliquin-driven exception.
+- **`seed-tagging-principles.md` patched** in parallel:
+  - Rule 2 gained **Execution standard** addendum — "tag stabilizers engaged under normal competent execution; exclude compensation-from-form-breakdown muscles."
+  - Rule 5 `rotatorCuff` use-case list expanded (+ skull crusher supine weighted, + plank bodyweight hold, + cable fly/crossover multi-plane); synergist exception added for face pull (concentric external rotation).
+  - Rule 6 `abs` exclusion row updated — axial-loaded standing isolation now qualifies for `abs (stab)` tagging.
+  - Isolation template gained cable-fly exception to "0 or 1 secondary" rule.
+  - Revision log entry added.
+- **7 pre-locks for 45b main persisted to `seed-draft.md` § Session 45b scaffold:** Chin-Up `[lats, biceps]` co-primary (Rule 1 override); Bulgarian Split Squat `[quads, glutes]` co-primary (unilateral shift — taxonomy exemplar); Face Pull 4-muscle tag w/ `rotatorCuff (syn)` synergist exception; Hanging Leg Raise `[abs, hipFlexors]` co-primary (user preference over anatomy-only); Incline BB Bench order `frontDelts` before `triceps` (EMG-corrected); Lateral Raise +`upperTraps (syn)` +`rotatorCuff (stab)`; Tricep Pushdown +`frontDelts (stab)` (competent-execution policy).
+
+**Decisions made this session:**
+
+1. ✅ **Incline bench ≠ flat bench + extras.** User challenged assistant's "bench + serratus" framing. EMG evidence reviewed: incline has ~30–45% more upper chest activation, ~58.5% less triceps, more front delts than flat. **Resolution:** On incline variants, reorder secondaries so `frontDelts (syn)` precedes `triceps (syn)`. Applied to the Incline BB Bench pre-lock; will apply to Incline DB Bench in 45b main.
+2. ✅ **Lateral raise trap recruitment.** User challenged "side shoulder only." EMG confirms upper traps engage meaningfully at/above 90° arm elevation. **Resolution:** Tag = `sideDelts (primary) + upperTraps (syn) + rotatorCuff (stab)`. Applied to Lateral Raise pre-lock.
+3. ✅ **Normal competent execution policy.** User challenged tricep pushdown tag assuming perfect form. **Resolution:** Adopted hybrid — tag stabilizers engaged under good-but-imperfect form (e.g. anterior shoulder bracing on pushdown); exclude compensation-from-breakdown muscles (those that kick in only when technique fails). Principles Rule 2 addendum codifies this. Tricep Pushdown gains `frontDelts (stab)`.
+4. ✅ **Poliquin-audit batch accept.** After user requested "audit with Poliquin as consultant; propose changes," 8 additions proposed; user "accept all they are all correct technically. i dont want to lose credibility." All 8 applied retroactively to 45a parents.
+
+**Artifact changes:**
+- `artifacts/seed-draft.md`: 11 parent entries updated with Poliquin adds (footnoted); 45b scaffold populated with 7 pre-locks + 19-entry remainder list; revision log entry added (45b opening); sanity-check re-run logged.
+- `artifacts/seed-tagging-principles.md`: Rule 2 execution-standard addendum; Rule 5 `rotatorCuff` use-case expansion + face pull synergist exception; Rule 6 `abs` axial-loaded-standing-isolation row; Isolation template cable-fly exception; revision log entry.
+- `artifacts/recap.md`: 45b opening entry in SESSION HISTORY; CURRENT TASK timestamp + next-action clarified (still 45b main draft, but now pre-locks are persisted).
+- `CLAUDE.md`: CURRENT TASK block clarified — 45a fully closed (parents + audit + principles patches); 45b main draft (26 entries) remains next action with pre-locks now in seed-draft.md.
+- `artifacts/handoff.md`: this entry.
+
+**No code written. No `src/` edits. Zero CE1/CE2 scope changes. Zero memory-file edits.**
+
+**Next session target:** Session 45b main draft — 26 non-parent entries (17 remaining Seed + 9 P0). 7 pre-locks apply verbatim (see seed-draft.md § Session 45b). 19 remaining entries draft normally per principles templates. Est ~2h.
+
+---
+
+## Session 45a (2026-04-23) — 11 parent muscle maps locked
+
+**Scope:** Session 45a per `artifacts/exercise-bank.md` § Build sequencing § Phase 1 — lock primary + role-tagged secondaries + opportunistic Tier 3 fields for the 11 parent exercises. Research + artifact mode. No code, no `src/` edits.
+
+**Accomplished:**
+- **New artifact: `artifacts/seed-draft.md`** — intermediate curation output for Sessions 45a–f. Will compile to `src/db/seed.ts` at Session 47+ build. Structure: per-session header with entries, exception log, end-of-session sanity check, revision log.
+- **11 parents fully tagged:**
+  - Squat — `quads` single-primary (Path A confirmed post-review)
+  - Deadlift — `[glutes, hamstrings]` co-primary (Hinge template); adductors dropped for conventional narrow stance
+  - Bench Press — `chest` single-primary (Horizontal push template)
+  - Dips — `[chest, triceps]` co-primary (EMG override per Dickie 2017); group derives as **chest** (overrides seed Arms)
+  - Pull-Up — `[lats, upperBack]` co-primary (Rule 1 override; upperBack demoted from secondary list)
+  - Lat Pulldown — `lats` single-primary (template default; no Pull-Up override for cable work)
+  - RDL — `[glutes, hamstrings]` co-primary (Hinge template)
+  - Skull Crusher — `triceps` single-primary; 1 secondary (forearms)
+  - Barbell Curl — `biceps` single-primary (supinated grip, Curl template)
+  - Plank — `abs` single-primary; obliques tagged as stabilizer despite exclusion-rule lean
+  - Cable Crossover — `chest` single-primary (Isolation template)
+- **EMG co-primary reference list seeded in `seed-tagging-principles.md`:** 4 parents locked (Deadlift, Dips, Pull-Up, RDL), 4 queued for 45b–e (Chin-Up, Bulgarian Split Squat, Close-Grip Bench, Narrow-Grip Pull-Up), 4 rejected co-primary claims recorded (Bench, Squat, OHP, Lat Pulldown).
+- **All 8 end-of-session sanity checks passed.**
+
+**Decisions made this session:**
+
+6 decision points surfaced; 5 pre-approved inline; Squat challenged mid-review → full panel research → resolved.
+
+1. ✅ **Dips co-primary `[chest, triceps]`** — group changes from seed Arms → Chest. Bodyweight closed-chain dip EMG supports.
+2. ✅ **RDL order `[glutes, hamstrings]`** — template default kept; both in legs group, tiebreak cosmetic.
+3. ✅ **Deadlift drop adductors** — conventional narrow stance; sumo will re-add in 45b.
+4. ✅ **Plank obliques as stabilizer** — plank is anti-extension core work; EMG supports oblique bracing.
+5. ✅ **Skull Crusher minimal secondaries** — only `forearms (stab)` per Extension template discipline.
+6. ✅ **Squat single-primary `quads` (Path A)** — challenged mid-review; 6-expert panel researched (Nippard, Contreras, Nuckols, Schoenfeld, Horschig, Escamilla). Panel split 3:2:1 single-primary vs co-primary vs context-dependent. Key evidence: Contreras' own 2015 EMG shows upper glute 29.4% mean (squat) vs 69.5% (hip thrust) → squat is not the glute exercise. User confirmed Path A; co-primary rejected. Bulgarian Split Squat remains the taxonomy's designated co-primary squat-pattern exemplar; dedicated Hip Thrust + RDL entries cover glute volume tracking.
+
+**Artifact changes:**
+- `artifacts/seed-draft.md`: created (new file, ~11 parent entries + scaffolding for 45b–f)
+- `artifacts/seed-tagging-principles.md`: EMG co-primary reference list seeded (new section); revision log entry added
+- `artifacts/recap.md`: top timestamp + CURRENT TASK block + KEY FILES + SESSION HISTORY entry
+- `CLAUDE.md`: CURRENT TASK block rolled forward to Session 45b
+- `artifacts/handoff.md`: this entry
+
+**No code written. No `src/` edits. Zero CE1/CE2 scope changes.**
+
+**Next session target:** Session 45b — 26 non-parent entries (17 remaining Seed + 9 P0). Chin-Up override `[lats, biceps]` + Bulgarian Split Squat co-primary `[quads, glutes]` land here. Append to `seed-draft.md` under "Session 45b" header. Est ~2h.
+
+---
 
 ## Session 44 summary (2026-04-23)
 
