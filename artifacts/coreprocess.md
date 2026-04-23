@@ -24,8 +24,8 @@ If two docs conflict, the higher-numbered doc yields to the lower-numbered one.
 
 ## Current Focus
 
-Target: MVP — working demo of a mobile-first workout tracker
-Phase: 4 — Testing & post-demo cleanup (see recap.md for exact next action)
+Target: MVP — working demo of a mobile-first workout tracker (delivered). Next: Statistics tab + new feature iteration.
+Phase: 5 — Statistics page + new features planning (see recap.md for exact next action)
 
 ---
 

@@ -1,14 +1,14 @@
 WORKOUT TRACKER V2 — RECAP
 ===========================
-Last updated: 2026-04-21 (session 38 — commit cleanup, sessions 31–37 landed as 3 commits; next: CE1 deep dive)
+Last updated: 2026-04-22 (session 41 — master-schematics.md patched for CE1 Tier 1 + Tier 3; ready for session 42 tab-spec patch)
 
 CURRENT TASK (mirrors CLAUDE.md — if they diverge, recap.md wins)
 -------------------------------------------------------------------
-Phase: 4 — Testing & post-demo cleanup
-Last session ended: Session 38 — Committed sessions 31–37 in 3 logical commits (U4/U5+D5, tests, spec revisions); build + 72/72 tests verified green before commits (2026-04-21)
-Next action: Session 39 — CE1 deep dive. Resolve arms ambiguity, compound multi-muscle tagging, edit-after-creation UX, category picker UX before F27/F28 spec is final.
-Session scope: Research — custom exercise UX and muscle group accuracy
-Required reading this session: recap.md, master-schematics.md (Issue Tracker CE1, F27, F28, F29), artifacts/tabs/statistics.md (Section 4b, Section 7, §Open Issues)
+Phase: 5 — Statistics page + new features planning
+Last session ended: Session 41 — Spec patch session 1 of 3 COMPLETE. master-schematics.md updated across all 7 sections + Changelog. DB schema v3 delta locked (new fields on exercises/users/logSets; exercises.category dropped). Muscle Taxonomy Model sub-section added. Service Layer rows updated for ExerciseService/UserService/LogSetService. ExerciseSearchModal Spec rewritten for Decision #27 (D6 picker + D7 filter). Six Decisions #24–#29 appended. Issue Tracker: CE1 moved to Resolved; F31–F39 added; F20/F24/F27/F28/F29 language patched. No code written. (2026-04-22)
+Next action: Session 42 — Spec patch session 2 of 3. Patch tab artifacts to reflect CE1 locks: `artifacts/tabs/logs.md` (RPE entry surface on SetRow; picker/filter references updated), `artifacts/tabs/profile.md` (RPE toggle surface — with note it moves to F32 feature toggle menu), `artifacts/tabs/statistics.md` (F27/F28/F29 references refined; broad-group language matches Decision #24; remove any `exercises.category` residuals). Optional: `artifacts/tabs/programs.md` if picker/filter callouts exist there.
+Session scope: Spec patch (artifact updates only — no code yet, no src/ edits)
+Required reading next session: recap.md, master-schematics.md (§ Muscle Taxonomy Model + Decisions #24–#29 for terminology), artifacts/tabs/logs.md, artifacts/tabs/profile.md, artifacts/tabs/statistics.md; `memory/project_ce1_final_scope.md` for authoritative scope
 
 ---
 
@@ -28,7 +28,7 @@ Stack:
 
 CURRENT STATE
 --------------
-Phase: Phase 4 — Testing & post-demo cleanup. Build complete, demo delivered. Entering test infrastructure and cleanup.
+Phase: Phase 5 — Statistics page + new features planning. Phase 4 closed 2026-04-22 (72 tests across 8 files; ErrorContext wired; service guards complete). Current focus: CE1 spec patches (sessions 41–43) then Statistics tab build, with ongoing iteration for new feature sets.
 Step 1 committed: Vite + React 18 + TypeScript scaffold, Dexie v4 schema (8 tables), 29 seed exercises, BrowserRouter routing stubs for all pages, index.css with dark theme CSS variables, Prettier config. Build passes clean.
 UIdesign.md expanded with: color system, alignment standards, button design standards, light mode palette.
 Green accent locked: dark mode #3BAF6A / light mode #2D9F58.
@@ -104,8 +104,9 @@ All steps built, verified, and committed:
 1. Project setup ✓  2. Auth ✓  3. Core shared ✓  4. Programs tab ✓
 5a. Logs: list + active ✓  5b. Finish flows ✓  5c. Read-only + edit ✓  6. Profile + Statistics ✓
 
-NEXT STEPS — Phase 4
+NEXT STEPS — Phase 5
 ----------------------
+Phase 4 close-out (kept for history):
 1. ~~Post-demo cleanup~~ — DONE (session 25)
 2. ~~Statistics planning~~ — DONE (session 26); build deferred until after testing
 3. ~~Future feature planning~~ — DONE (session 27); F13–F19 logged in Issue Tracker
@@ -114,7 +115,15 @@ NEXT STEPS — Phase 4
 6. ~~Unit test audit~~ — DONE (session 32): 72 tests passing across 8 files; all service guards covered
 7. ~~Statistics spec revision~~ — DONE (session 33): removed HRV, hunger, arm/thigh, orphaned goal targets; added post-workout feel rating, PR celebration (set-save + finish), Logs consistency indicator; schema trimmed; S1 closed
 8. ~~ErrorContext (D5)~~ — DONE (session 34): all 12 files wired; ErrorBanner live; 72/72 tests passing
-9. Statistics build — NEXT; resolve P5 + OD6 before starting (S1 closed; S4 resolved session 36; S2 deferred)
+
+Phase 5 active work:
+9. CE1 spec patches — IN PROGRESS:
+    9a. ~~master-schematics.md~~ — DONE (session 41): 7 sections + Changelog patched for Tier 1 + Tier 3
+    9b. Tab artifacts (logs.md / profile.md / statistics.md) — NEXT (session 42)
+    9c. Seed re-curation (29 exercises with EMG citations per Decision #24) — session 43
+10. CE1 build — after 9c: Dexie v3 migration (nuke + reseed), schema field wiring, ExerciseSearchModal rewrite (Decision #27), RPE per-set input, Profile RPE toggle
+11. Statistics build — after CE1 build. Resolve P5 charting library + OD6 button tokens before starting. S1 closed; S4 resolved; S2 deferred.
+12. Iteration — new feature sets (F20–F39) planned and built per the repeat phases 1–4 loop
 
 TEST COVERAGE (session 32)
 ---------------------------
@@ -204,6 +213,53 @@ UI DESIGN DECISIONS LOCKED (UIdesign.md session 4)
 SESSION HISTORY
 ----------------
 Most recent at top. Full history in handoff.md.
+
+  Session 41 — 2026-04-22 (SPEC PATCH 1/3 COMPLETE — master-schematics.md)
+    - Research/spec-patch mode — no code written. Executed Path A spec patch against master-schematics.md per `memory/project_ce1_final_scope.md`.
+    - Planning resolutions locked before writing: (1) `exercises.category` DROPPED — broad group derived via `getExerciseGroup()` helper with "first primary wins" tiebreaker (Option C of 3 options presented); (2) `secondaryMuscles` shape = `{ muscle: Muscle; role }[]` (structured, not parallel arrays); (3) `primaryMuscles: Muscle[]` to support co-primaries per D3; (4) six separate decision rows #24–#29 (not one combined row); (5) deferred items assigned F31–F39; (6) no Dexie multi-entry index on primaryMuscles (JS filter <1ms at 29 rows).
+    - DB Schema patched: exercises table gets primaryMuscles, role-tagged secondaryMuscles, + 6 Tier 3 forward-compat fields (equipment, gripWidth, gripOrientation, stanceWidth, bias, jointLoad); users gets rpeEnabled (default false) + trainingAge (null); logSets gets rpe (nullable, 1–10 half-step). Dexie schema string updated (dropped `category` index on exercises).
+    - v3 migration note rewritten: nuke-and-reseed of exercises + logExercises + logSets; silent migration; single version hop.
+    - NEW sub-section "Muscle Taxonomy Model" added: 26 muscles (24 user-surfaced + 2 background), 6 broad groups, MUSCLE_TO_GROUP map, MUSCLE_LABELS, SECONDARY_VOLUME_MULTIPLIER = 0.5, RECOVERY_WINDOWS (9 large 60h / 15 small 36h / 2 bg-small 36h), getExerciseGroup helper.
+    - Service Layer: ExerciseService.search signature now takes (query + group?: MuscleGroup) and matches muscle tags; UserService.updateProfile accepts rpeEnabled + trainingAge; LogSetService.add/update accept optional rpe.
+    - Exercise Library section: "6 categories" language replaced with specific-muscle model + derived broad group.
+    - ExerciseSearchModal Spec: FULLY REWRITTEN for Decision #27. Filter mode = 6 broad-group chips single-select + muscle-tag name search + role-colored row metadata. Custom-create mode = two-step flow (Step 1 name + multi-select groups → Step 2 sectioned muscle chips with two-tap role cycle + long-press to promote). Background muscles never surface.
+    - Key Design Decisions: six new rows #24 (muscle taxonomy + volume model) / #25 (recovery windows) / #26 (RPE opt-in) / #27 (picker + filter UX) / #28 (v3 migration) / #29 (naming conventions).
+    - Issue Tracker: CE1 moved to Resolved with full resolution note pointing to Decisions #24–#29 + Tier 3 schema fields. Added F31 Injury-Warning, F32 feature toggle menu, F33 jointLoad UI, F34 RPE-derived stats, F35 library expansion, F36 cues/instructions, F37 training-age modifier, F38 cardio tracking, F39 Group 2 dimensions. Patched F20 / F24 / F27 / F28 / F29 language to reference getExerciseGroup() instead of exercises.category; F27/F28/F29 notes flagged as "upgraded by Decision #24" where specific-muscle granularity unlocks new capability.
+    - Changelog: single consolidated Session 41 entry.
+    - Ready for Session 42: patch tab artifacts (logs.md RPE entry surface on SetRow, profile.md RPE toggle, statistics.md F27/F28/F29 cross-refs).
+
+  Session 40 — 2026-04-22 (CE1 PLANNING CLOSED — ready for spec patch)
+    - Research session — no code written. Resumed CE1 planning from session 39's pickup point; carried it to full completion + closed planning phase.
+    - D4 LOCKED at B-lite (role tag synergist/stabilizer on secondaries; both 0.5× in MVP math; future calibration without re-curation).
+    - D5 LOCKED (recovery windows): 9 large (60h), 15 small (36h), 2 background-small (36h). Adductors moved from large to small per user. Galpin training-age modifier deferred entirely (was pre-build checkpoint; now next-cycle work).
+    - D-new-3 LOCKED (RPE per set): logSets.rpe (1-10 with half-points, nullable, optional), users.rpeEnabled toggle (default false), per-set entry UI gated on toggle. ALL RPE-derived stats deferred to next cycle (full list saved in project_rpe_deferred_features.md). Picker UX path = Option X (single toggle now, absorbed into feature toggle menu next cycle).
+    - D6 LOCKED across 4 sub-forks: D6.1 multi-select Step 1 + sectioned Step 2 (Options 2 + 4 parked for post-build review); D6.2 two-tap chip cycle (synergist → stabilizer → remove); D6.3 long-press to promote co-primary (tutorial hint queued for F30); D6.4 seed-only background muscles (B + C parked for post-build review). User pushed back with alternative 3-field dropdown proposal at D6.2; reviewed honestly, defended Option A; user agreed.
+    - D7 LOCKED across 4 sub-forks: 6 broad chips, single-select, primary + all secondaries with role distinguished by UI color (specific element TBD pre-build), name + muscle tag search.
+    - D8 LOCKED across 5 sub-forks: D8.1 nuke and reseed (sub-option B2 — drop exercises + logExercises + logSets); D8.2 N/A (no auto-map needed); D8.3 silent migration; D8.4 single Dexie v3 bump bundles all changes; D8.5 add S2 (jointLoad) and S3 (trainingAge) as forward-compat fields with null defaults. Post-launch migration pattern saved as memory.
+    - D9 LOCKED across 5 sub-forks: camelCase IDs, Title Case labels, single MUSCLE_LABELS map, TS string union, all related concepts (groups, roles, buckets, tiers) also camelCase.
+    - D15.1 LOCKED at Option C (equipment as forward-compat nullable field). D15.2-D15.5 deferred to next cycle.
+    - PATH A LOCKED: simplified scope. Tier 1 (D1-D9 + D-new-3) + Tier 3 (5 forward-compat schema fields: equipment, gripWidth, gripOrientation, stanceWidth, bias as string|null). Tier 2 (D10-D17 full UX work + library expansion + cues/instructions) all deferred to next cycle.
+    - User pushed back twice during the session: (1) wanted stabilizers tracked after originally agreeing to skip — D4 reopened and locked at B-lite; (2) flagged scope was too big for one build cycle — Path A simplified scope chosen.
+    - Library expansion question raised: defer to next cycle (Option 2). Will pair with cues/instructions when those are added.
+    - Memory files created/updated this session: project_rpe_deferred_features.md (NEW), project_picker_ux_post_build.md (NEW), project_tutorial_hints_queue.md (NEW), project_post_launch_migration_pattern.md (NEW), project_ce1_final_scope.md (NEW — supersedes project_ce1_planning_state.md), project_stat_weights_calibration.md (UPDATED — Galpin moved to deferred). MEMORY.md index updated with all new entries and SUPERSEDED tag on planning state.
+    - Spec patch session split agreed: Session 41 = master-schematics.md only; Session 42 = tab artifacts (logs/profile/statistics); Session 43 = seed re-curation with EMG citations.
+    - Session ended with planning closed, no spec edits started yet. All artifact updates begin in session 41.
+
+  Session 39 — 2026-04-22 (PAUSED MID-PLANNING)
+    - Research session — no code written. CE1 deep dive expanded far beyond original 4 sub-questions into full muscle taxonomy + exercise dimensions + injury-warning system planning.
+    - Coach review panel set up at session start (revised from informal Poliquin/Israetel/Cressey/Thibaudeau): Poliquin [locked], Galpin PhD, Rambod, Tuchscherer. Saved to statistics.md § Coach Review Panel as temporary research aid; CP1 logged to delete after F27/F28/F29 build.
+    - Brainstorm phase: closed (per user direction). Active dimensions narrowed to 8 (bias, fatigue ratio, grip width, grip orientation, stance width, equipment, tempo, bilateral) after parking body position, loading vector, RoM, skill, stability.
+    - Coach panel critique of brainstorm — surfaced gaps: RPE absent (Tuchscherer/Galpin), rest absent (Rambod/Poliquin), RoM cut prematurely (Rambod/Galpin), recovery windows treated as universal (Galpin/Tuchscherer).
+    - Planning phase: D1, D2, D3 LOCKED. D4 REOPENED (stabilizers — user reversed earlier "skip" decision). D5 PAUSED mid-discussion.
+    - D1 LOCKED: 24 user-surfaced + 2 background-only = 26 muscles. Expanded from 17. Additions: lower traps (split from "traps"), brachialis, hip flexors, serratus, adductors, abductors, tibialis, neck (background), rotator cuff (background). Renamed: "traps" → "upper traps". Rambod's call for further splits explicitly rejected (bias dimension handles those).
+    - D2 LOCKED: 6 broad groups, derived from specific muscle (storage = specific only, broad via static map). Mapping: chest (chest, serratus); back (lats, upper back, lower back, upper traps, lower traps); shoulders (front delts, side delts, rear delts, rotator cuff bg); arms (biceps, brachialis, triceps, forearms); legs (quads, hamstrings, glutes, calves, adductors, abductors, tibialis); core (abs, obliques, hip flexors); neck (background) attached to shoulders.
+    - D3 LOCKED: Primary 1.0× / secondary 0.5×. Co-primaries allowed when EMG/research supports. No data cap on secondaries. UI displays ALL secondaries in declared order. Implementation: named constant `SECONDARY_VOLUME_MULTIPLIER = 0.5`.
+    - D4 REOPENED: stabilizers tracked. 14 stabilizer muscles confirmed (core, forearms, lower back + 11 more). Architecture options A/B/C/B-lite presented. User leaning B or C; research pass strongly supports B-lite (role tag on secondaries; both 0.5× in MVP math; future calibration possible without re-curation).
+    - Modern training metrics research: hard sets per muscle/week (Schoenfeld), RPE/RIR (RP/Tuchscherer), e1RM tracking (Brzycki/Epley), MEV/MAV/MRV bands (Israetel framework), EWMA over ACWR (Wang 2020 critique on math), per-joint load tracking for tendonitis prevention.
+    - Schema improvements proposed (S1–S10): top 3 — S1 logSets.rpe (=D-new-3), S2 exercises.jointLoad, S3 users.trainingAge.
+    - New decisions surfaced: D-new (feature toggle menu — deferred to next dev cycle), D-new-2 (joint load tags), D-new-3 (RPE per set — accepted), D-new-4 (rest tracking — toggle menu), D-new-5 (lengthened bias/RoM — toggle menu), F-new (Injury-Warning system, likely F31).
+    - Memory files created: project_feature_toggle_menu.md, project_cardio_tracking.md, project_stat_weights_calibration.md, project_ce1_planning_state.md (full session snapshot for clean pickup).
+    - Pickup point for session 40: D4 architecture (B-lite recommended) → D5 recovery windows → D-new-3 RPE spec → D6–D9 → D10–D17 per planning matrix.
 
   Session 38 — 2026-04-21
     - Housekeeping — commit cleanup; no code changes

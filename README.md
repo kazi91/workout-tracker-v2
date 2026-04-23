@@ -74,7 +74,7 @@ npx vitest          # watch mode
 
 ## Status
 
-In progress — Phase 4 testing & cleanup complete through service-layer audit and user-facing error surface. Statistics tab (body metrics, PRs, recomposition signal, Program Intelligence) in planning; build resumes after the custom-exercise UX research pass.
+In progress — Phase 4 (testing & cleanup) closed: 72 tests passing, service-layer guards complete, user-facing error surface wired app-wide. Phase 5 (Statistics tab + new features) active: custom-exercise deep dive (CE1) spec patches in flight, then CE1 build, then Statistics tab (body metrics, PRs, recomposition signal, Program Intelligence), then ongoing feature iteration.
 
 ---
 

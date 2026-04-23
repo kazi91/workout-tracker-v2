@@ -19,8 +19,8 @@
 | 1. Research | Requirements, market, problem definition, tech stack, costs | Done |
 | 2. Blueprint | Architecture, DB schema, component plan, contracts | Complete — all decisions locked (#1–23) |
 | 3. Build | Implement step by step — frontend first, backend later | Complete — all 6 steps built |
-| 4. Test | Unit → integration → e2e, bug tracking | In progress — 17 tests passing; service layer guards complete |
-| 5. Iteration | Repeat phases 1–4 for each new feature set | Not started |
+| 4. Test | Unit → integration → e2e, bug tracking | Complete — closed 2026-04-22. 72 tests passing across 8 files; service layer guards complete; ErrorContext + ErrorBanner wired app-wide. Remaining flow-level tests (finish state machine, auth, ActiveWorkoutContext init) carried into Phase 5 when touched. |
+| 5. Iteration | Statistics page build + new feature sets (repeat phases 1–4 per feature) | In progress — CE1 spec patches active (sessions 41–43); CE1 build, Statistics build, and F20–F39 iteration queued |
 
 ---
 
@@ -64,10 +64,15 @@
 - Build order: project setup → auth → shared components → Programs tab → Logs tab → Profile tab → Statistics placeholder
 - All 6 steps built and verified. UI polish pass complete. See recap.md for full session history.
 
-**Phase 4 — Test MVP (in progress)**
+**Phase 4 — Test MVP (complete — 2026-04-22)**
+- Vitest 4.1.5 + RTL 16 + fake-indexeddb + jsdom installed (session 29)
+- 72 tests passing across 8 files (service layer guards + UI guards)
+- Service layer guards on 7 services (session 30)
+- ErrorContext + ErrorBanner wired app-wide (session 34 — D5 closed)
 
-**Phase 5 — Iteration (not started)**
-- Repeat phases 1–4 for each new feature set after MVP is complete and tested
+**Phase 5 — Statistics page + new features planning (in progress)**
+- Active: CE1 spec patches (sessions 41–43) → CE1 build → Statistics build → F20–F39 iteration
+- Repeat phases 1–4 loop applies to each new feature set
 
 ---
 
@@ -170,6 +175,8 @@ A workout tracking app with a React web frontend (mobile-only layout). Data stor
 | weight | number | Stored in lb — converted to kg at display time |
 | unitPreference | string | 'imperial' (default) or 'metric' — controls all Layer 1 unit displays: lb/kg, ft+in/cm, in/cm |
 | goalWeight | number | Nullable — stored in lb; display in user's unit preference |
+| rpeEnabled | boolean | Default `false` — gates per-set RPE entry UI (Decision #26); will move to feature toggle menu next cycle (F32) |
+| trainingAge | `string \| null` | Forward-compat (F30 onboarding / F37 Galpin recovery modifier) — null until populated |
 | createdAt | Date | |
 
 ### exercises
@@ -177,8 +184,17 @@ A workout tracking app with a React web frontend (mobile-only layout). Data stor
 |-------|------|-------|
 | id | auto | Primary key |
 | name | string | |
-| category | string | chest, back, legs, shoulders, arms, core |
 | isCustom | boolean | false = pre-seeded, true = user-created |
+| primaryMuscles | `Muscle[]` | One or more — co-primaries allowed when EMG/research supports (Decision #24) |
+| secondaryMuscles | `{ muscle: Muscle; role: 'synergist' \| 'stabilizer' }[]` | Role-tagged secondaries (Decision #24 — B-lite); both roles treated at 0.5× in MVP math; future calibration possible without re-curation |
+| equipment | `string \| null` | Forward-compat (UX deferred — F39); null until next cycle |
+| gripWidth | `string \| null` | Forward-compat (UX deferred — F39) |
+| gripOrientation | `string \| null` | Forward-compat (UX deferred — F39) |
+| stanceWidth | `string \| null` | Forward-compat (UX deferred — F39) |
+| bias | `string \| null` | Forward-compat (UX deferred — F39) |
+| jointLoad | `string[]` | Default `[]`; forward-compat for Injury-Warning system (F31) |
+
+> Broad muscle group (chest/back/shoulders/arms/legs/core) is **derived** via `getExerciseGroup(exercise)` — not stored as a column. First entry of `primaryMuscles` is the group anchor when co-primaries span groups (e.g. bench press `[chest, triceps]` → chest). No `category` field (dropped in v3 — Decision #28). See Muscle Taxonomy Model below.
 
 ### programs
 | Field | Type | Notes |
@@ -239,6 +255,7 @@ A workout tracking app with a React web frontend (mobile-only layout). Data stor
 | reps | number | |
 | previousWeight | number | Stored in lb — snapshotted at set creation; matched by set number from last session, falls back to last set |
 | previousReps | number | Displayed as "90 × 8" (with converted weight), null shows "—" |
+| rpe | `number \| null` | 1–10 scale, half-points allowed (7.5, 8.5); nullable and optional even when `users.rpeEnabled` is true — never blocks set save (Decision #26); no pre-fill |
 
 ### bodyMetrics
 | Field | Type | Notes |
@@ -264,11 +281,11 @@ A workout tracking app with a React web frontend (mobile-only layout). Data stor
 
 ---
 
-### Dexie Schema String (locked — D1 resolved)
+### Dexie Schema String (locked — D1 resolved; v3 lock Session 41)
 
 ```
 users:            '++id, email'
-exercises:        '++id, name, category'
+exercises:        '++id, name'
 programs:         '++id, userId'
 workouts:         '++id, programId'
 workoutExercises: '++id, workoutId'
@@ -279,12 +296,59 @@ bodyMetrics:      '++id, userId'
 dailyCheckins:    '++id, userId'
 ```
 
-> **Schema version:** bump Dexie version number when `bodyMetrics` and `dailyCheckins` are added, and when `workoutLogs.rating` and `users.goalWeight` are added. All new fields are nullable — existing records unaffected.
+> **Schema version — planned v3 bump (Decision #28, locked Session 41; executes when CE1 build session lands).**
+>
+> v3 delta:
+> - **Nuke + reseed** (D8.1 sub-option B2): `exercises`, `logExercises`, `logSets` dropped and repopulated from the re-curated seed (29 exercises with full-schema tagging). Active/historical log data on these tables is wiped.
+> - **Silent migration** (D8.3): no banner, no confirm. Acceptable pre-launch only — post-launch updates switch to in-place + banner pattern (see `memory/project_post_launch_migration_pattern.md`).
+> - **Single version hop** (D8.4): all new/renamed fields bundle into one v3 bump — no v2.x intermediate.
+> - **Additive nullable fields** (no data loss on unaffected tables): `users.rpeEnabled` (default `false`), `users.trainingAge`; `exercises.primaryMuscles`, `secondaryMuscles`, `equipment`, `gripWidth`, `gripOrientation`, `stanceWidth`, `bias`, `jointLoad`; `logSets.rpe`.
+> - **Removed field:** `exercises.category` (broad group now derived via `getExerciseGroup`).
+> - **Index changes:** `exercises` loses the `category` compound index (no replacement — broad-group filter is in-memory; 29-exercise scale, sub-millisecond).
+> - **Unaffected tables:** `workouts`, `workoutExercises`, `workoutLogs`, `programs`, `bodyMetrics`, `dailyCheckins`. Pending v2-era additions (`bodyMetrics`, `dailyCheckins`, `workoutLogs.rating`, `users.goalWeight`) bundle into the same v3 hop.
 
 Notes:
 - No compound indexes — per-user and per-exercise result sets are small enough for JS filtering at MVP scale
 - `finishedAt === null` remains the canonical definition of "active" — do not introduce an `isActive` field
 - `name` on exercises supports Dexie prefix search (`.startsWithIgnoreCase()`)
+- No multi-entry index on `exercises.primaryMuscles` — 29-row library; in-memory filter is <1ms. Re-evaluate if the library grows past ~200.
+
+---
+
+### Muscle Taxonomy Model (Decisions #24, #25, #29 — locked Session 40/41)
+
+**`Muscle` (TS string union — camelCase per #29):**
+- **User-surfaced (24):** `chest`, `lats`, `upperBack`, `lowerBack`, `upperTraps`, `lowerTraps`, `frontDelts`, `sideDelts`, `rearDelts`, `serratus`, `biceps`, `brachialis`, `triceps`, `forearms`, `quads`, `hamstrings`, `glutes`, `calves`, `adductors`, `abductors`, `hipFlexors`, `tibialis`, `abs`, `obliques`
+- **Background (2) — seed-only, never user-tagged (D6.4):** `neck`, `rotatorCuff`
+
+**`MuscleGroup` (TS string union — 6 broad groups):** `chest`, `back`, `shoulders`, `arms`, `legs`, `core`. Background `neck` attaches to `shoulders` group for derivation purposes.
+
+**`MUSCLE_TO_GROUP: Record<Muscle, MuscleGroup>` (static map):**
+- **chest:** chest, serratus
+- **back:** lats, upperBack, lowerBack, upperTraps, lowerTraps
+- **shoulders:** frontDelts, sideDelts, rearDelts, rotatorCuff, neck
+- **arms:** biceps, brachialis, triceps, forearms
+- **legs:** quads, hamstrings, glutes, calves, adductors, abductors, tibialis
+- **core:** abs, obliques, hipFlexors
+
+**`MUSCLE_LABELS: Record<Muscle, string>`:** Title Case display strings — e.g. `frontDelts → "Front Delts"`, `upperTraps → "Upper Traps"`, `rotatorCuff → "Rotator Cuff"`. Single source for all UI text referencing muscles (#29).
+
+**Volume multipliers (Decision #24):**
+- `SECONDARY_VOLUME_MULTIPLIER = 0.5` — applied to both `synergist` and `stabilizer` roles in MVP (B-lite)
+- Primary = 1.0×
+- Co-primaries allowed (no data cap); no cap on secondary count
+- Future calibration of stabilizer vs synergist weighting possible without re-curation — only the multiplier constant changes
+
+**`RECOVERY_WINDOWS: Record<Muscle, number>` (hours — Decision #25, config only; no UI this cycle):**
+- **Large bucket (60h, 9):** chest, lats, upperBack, lowerBack, upperTraps, frontDelts, quads, hamstrings, glutes
+- **Small bucket (36h, 15):** lowerTraps, sideDelts, rearDelts, serratus, biceps, brachialis, triceps, forearms, abductors, adductors, hipFlexors, calves, tibialis, abs, obliques
+- **Background-small (36h, 2):** neck, rotatorCuff
+- Galpin training-age modifier deferred to F37. `users.trainingAge` ships forward-compat in v3 so F37 can land without a schema bump.
+
+**`getExerciseGroup(exercise: Exercise): MuscleGroup`** — derivation helper (replaces stored `category`):
+- Returns `MUSCLE_TO_GROUP[exercise.primaryMuscles[0]]`
+- **Tiebreaker:** first declared primary wins when co-primaries span groups (e.g. bench press `[chest, triceps]` → `chest`)
+- All consumers of broad group (filter chips, F27 volume aggregation, F24 neglected callout, F28 push/pull balance, F29 avatar) must call this helper — never read a stored column
 
 ---
 
@@ -295,14 +359,14 @@ All services are plain modules exporting functions. Currently call Dexie directl
 | Service | Methods |
 |---------|---------|
 | AuthService | signup (accepts unitPreference — set at account creation), login, logout, getCurrentUser, getCurrentUserId |
-| UserService | getProfile, updateProfile |
-| ExerciseService | getAll, search (query + category), create |
+| UserService | getProfile, updateProfile (now accepts `rpeEnabled` and `trainingAge` alongside existing fields) |
+| ExerciseService | getAll, search (query + `group?: MuscleGroup`) — broad-group filter derived via `getExerciseGroup`; name search matches exercise name AND muscle tags (D7 — typing "triceps" surfaces exercises with triceps as primary or secondary); create (accepts new-schema fields: `primaryMuscles`, `secondaryMuscles`, and Tier 3 forward-compat fields `equipment`/`gripWidth`/`gripOrientation`/`stanceWidth`/`bias`/`jointLoad` — all nullable or default-empty) |
 | ProgramService | getAll, getById, create, update, delete (cascade order: workoutExercises → workouts → program; children deleted before parent to prevent orphaned rows) |
 | WorkoutService | getByProgramId, getById, create, update, delete (cascade order: workoutExercises → workout), reorder, createFromLog(logId, programId, workoutName) — creates workout + workoutExercises from a log; targetSets = logSet count per exercise, targetReps/targetWeight = first set values (0 if none) |
 | WorkoutExerciseService | getByWorkoutId, add, update, remove, reorder, syncFromLog(workoutId, logId) — adds exercises in log but not in template, removes exercises in template but not in log; existing template exercises untouched; order of new exercises follows log order; getCountsByProgramId(programId) — returns Record<workoutId, number> of exercise counts for all workouts in a program in a single batch query (replaces N+1 pattern in ProgramDetailPage) |
 | WorkoutLogService | getAll, getById, create (userId, workoutId nullable, name — quick-start: name = "Quick Workout [n+1]" where n = getAll(userId).length; from-program: name = workout template name; if workoutId provided, atomically copies workoutExercises → logExercises), finish, update, delete (cascade order: logSets → logExercises → workoutLog), getActive (returns log with finishedAt === null for current user, or null) |
 | LogExerciseService | getByWorkoutLogId, add, remove, reorder |
-| LogSetService | getByExerciseId, add, update, delete, getPreviousData (returns weight+reps by set number, fallback to last set) |
+| LogSetService | getByExerciseId, add (accepts optional `rpe: number \| null`), update (accepts optional `rpe`; missing RPE never blocks save per Decision #26), delete, getPreviousData (returns weight+reps by set number, fallback to last set — `rpe` is NOT pre-filled) |
 | BodyMetricsService | getAll(userId), getRecent(userId, days), log(userId, entry), update(id, entry), delete(id) |
 | DailyCheckinService | getAll(userId), getRecent(userId, days), logToday(userId, entry) — upsert, replaces today's entry if exists, delete(id) |
 | StatisticsService | getSummary(userId), getExerciseHistory(userId, exerciseId, range), getVolumeByPeriod(userId, period), getPRs(userId), checkForPR(userId, exerciseId, weight, reps) — real-time set-save check, getRollingWeightAverage(userId, days), getRecompositionSignal(userId), getAdherenceRate(userId, weeks) |
@@ -326,31 +390,59 @@ All services are plain modules exporting functions. Currently call Dexie directl
 ## Exercise Library (Shared Resource)
 
 - Global list of exercises available across all tabs
-- 29 pre-seeded exercises across 6 categories: chest, back, legs, shoulders, arms, core
-- Users can create custom exercises (stored with `isCustom: true`)
-- Search/filter by name + category
+- 29 pre-seeded exercises — re-curated for CE1 with full-schema tagging: `primaryMuscles`, role-tagged `secondaryMuscles`, plus Tier 3 forward-compat fields (`equipment`, `gripWidth`, `gripOrientation`, `stanceWidth`, `bias`, `jointLoad`) populated where accurate data is available; otherwise null / `[]`
+- Broad muscle group (chest/back/shoulders/arms/legs/core) is **derived** via `getExerciseGroup(exercise)` — not a stored column (Decision #28; see Muscle Taxonomy Model above)
+- Users can create custom exercises (stored with `isCustom: true`) via the new two-step picker UX (Decision #27 — see ExerciseSearchModal Spec below)
+- Search/filter by name + muscle tags + broad-group chip (D7); background muscles (`neck`, `rotatorCuff`) never surface in picker or search
 - Surfaced via `ExerciseSearchModal` (bottom drawer overlay) — used by both Programs and Logs tabs
 
-### ExerciseSearchModal Spec (C5 resolved — MVP minimal)
+### ExerciseSearchModal Spec (C5 resolved — rewritten Session 41 for Decisions #27 (D6, D7))
 
-Bottom drawer overlay. Used from WorkoutDetailPage (active/edit) and WorkoutTemplatePage.
+Bottom drawer overlay. Used from WorkoutDetailPage (active/edit) and WorkoutTemplatePage. Picker + filter behavior locked via Decision #27.
 
-**Layout:**
-- Category filter chips: All | Chest | Back | Legs | Shoulders | Arms | Core — "All" selected by default
-- Search input — instant name filter as user types; no debounce (29 items, Dexie reads near-instant)
-- Results list — exercises filtered by name + selected category chip
-- Empty state: "No exercises found" + "＋ Create custom exercise" option
+#### Filter / browse mode (D7)
 
-**Custom exercise creation (inline, no new page):**
-- Name input + category picker (required)
-- Blank name → "Name can't be blank"
-- Save → `ExerciseService.create()` → exercise added to list and immediately selected → modal closes
+**Filter bar:**
+- Broad-group chips: All | Chest | Back | Shoulders | Arms | Legs | Core — "All" selected by default, **single-select**
+- Broad group per exercise computed via `getExerciseGroup(exercise)` — no stored category
+- Search input — instant filter as user types; no debounce (29 items; sub-millisecond JS filter). Matches exercise `name` **and** muscle tags in `primaryMuscles` / `secondaryMuscles[].muscle` (e.g. typing "triceps" surfaces any exercise where triceps appears as primary or secondary)
+
+**Results list row metadata:**
+- Exercise name (primary line)
+- Primary muscles (bold / accent color) + all secondaries in declared order
+- Role distinguished by UI color — specific visual element (chip tint / text color / badge) TBD pre-build, flagged for design pass
+- Background muscles (`neck`, `rotatorCuff`) never shown in row metadata (D6.4)
 
 **Selection:**
-- Tap exercise → modal closes → exercise added to workout (`LogExerciseService.add()` or `WorkoutExerciseService.add()` depending on context)
+- Tap exercise row → modal closes → exercise added to workout (`LogExerciseService.add()` or `WorkoutExerciseService.add()` depending on caller context)
+
+**Empty state:**
+- "No exercises found" + "＋ Create custom exercise" affordance → transitions to creation mode
+
+#### Custom exercise creation (D6 — two-step inline flow, no new page)
+
+**Step 1 — Name + broad groups (multi-select):**
+- Name input (required; blank → "Name can't be blank")
+- 6 broad-group chips: Chest, Back, Shoulders, Arms, Legs, Core — **multi-select** (tap to toggle; at least one required)
+- "Next" advances when name is non-blank AND ≥1 group selected
+
+**Step 2 — Muscle tagging (D6.1 sectioned by selected group, D6.2 two-tap cycle, D6.3 long-press promote):**
+- Muscles listed under each group header (only groups selected in Step 1 are shown)
+- Background muscles (`neck`, `rotatorCuff`) are NOT shown — seed-only (D6.4)
+- Each muscle is a tappable chip with three role states (**two-tap cycle**):
+  1. Neutral (nothing tagged) → tap to mark as **synergist**
+  2. Synergist → tap to cycle to **stabilizer**
+  3. Stabilizer → tap to remove (back to neutral)
+- Role visual distinction uses the same UI color rule as filter row metadata (element TBD pre-build)
+- Primary selection: **long-press on any tagged muscle → promote to primary** (D6.3). Long-pressing a second tagged muscle creates co-primaries. Long-press on a primary demotes it back to synergist. Tutorial hint queued for F30 (first-run onboarding).
+- At least one primary is required to save. If user saves without promoting anything, first selected muscle is auto-promoted (guard — UX copy TBD pre-build).
+- **Save** → `ExerciseService.create({ name, primaryMuscles, secondaryMuscles, equipment: null, gripWidth: null, gripOrientation: null, stanceWidth: null, bias: null, jointLoad: [], isCustom: true })` → new exercise added to list and immediately selected → modal closes
 
 **Dismissal:**
-- Tap outside overlay → modal closes, no exercise added
+- Tap outside overlay → modal closes, no exercise added (from any step)
+- Back from Step 2 → returns to Step 1 with name + group selections preserved
+
+**Picker UX alternatives parked for post-build review** (see `memory/project_picker_ux_post_build.md`): Option 2 (two-pane Step 1) and Option 4 (combo shortcuts for common muscle clusters). D6.4 alternatives (B: show background muscles collapsed; C: separate advanced mode) also parked.
 
 ---
 
@@ -453,6 +545,12 @@ src/
 | 21 | WorkoutDetailPage mode-switching | Mode derived from finishedAt on load: null = Active, value = Read-only. Edit is always a local state transition from Read-only — never loaded directly from URL. Back tap in Edit mode shows "Discard changes?" Modal (not silent discard) — protects against accidental loss of re-edit work. |
 | 22 | Unit storage and conversion | All weights stored in lb, heights in inches — canonical units regardless of user preference. Conversion to kg/cm happens at display time only via UserSettingsContext. unitPreference: 'imperial' (default) or 'metric' replaces the old 'lb'/'kg' string — one toggle controls all Layer 1 units (weight, height, body measurements). Layer 2 units (time, distance, calories, HR) are universal or require new tables — unaffected by this decision. Floating point drift (~0.1%) is imperceptible in a gym context. Future: per-entry unit override (e.g. powerlifting/competition lifts logged in kg regardless of global preference) is a known need — requires storing unit per entry; deferred post-MVP. |
 | 23 | Unit visibility and signup | Unit label shown beside every weight input ("lb" or "kg" from UserSettingsContext) — user always knows what unit they are entering. Unit preference selected at signup (Imperial/Metric) — prevents corrupt historical data before user visits Profile. Note shown at signup: preference can be changed anytime in Profile. All weight inputs and displayed values across active workout, read-only, edit mode, and Edit Targets Modal follow this rule. |
+| 24 | Muscle taxonomy + volume model (CE1 — D1, D2, D3, D4) | 24 user-surfaced + 2 background muscles (`neck`, `rotatorCuff`). 6 broad groups (chest/back/shoulders/arms/legs/core) **derived** from specific muscle via static `MUSCLE_TO_GROUP` map — no stored `category`. Primary 1.0× / secondary 0.5× via `SECONDARY_VOLUME_MULTIPLIER`. Co-primaries allowed when EMG/research supports; no cap on secondaries. Each secondary tagged with role `synergist \| stabilizer` (D4 B-lite — both 0.5× in MVP; future calibration without re-curation). Broad group determined by `getExerciseGroup()` — first declared primary wins tiebreaker. |
+| 25 | Recovery windows (CE1 — D5) | Static `RECOVERY_WINDOWS` config, no UI this cycle. Large bucket 60h (9 muscles), small bucket 36h (15), background-small 36h (2). Referenced by future fatigue/recovery stats (F29 Muscle Fatigue Avatar). Galpin training-age modifier deferred to F37; `users.trainingAge` ships forward-compat in v3 so the modifier lands without a schema bump. |
+| 26 | RPE per set — opt-in (CE1 — D-new-3) | `users.rpeEnabled` (default `false`). When true, per-set RPE input (1–10 scale, half-points allowed: 7.5, 8.5) in active workout and edit mode. Optional even when enabled — never blocks set save. No pre-fill (always starts blank). Toggle surfaced in Profile for MVP; moves to feature toggle menu next cycle (F32). All RPE-derived stats (e1RM, RPE-adjusted volume, fatigue curves, etc.) deferred to F34 — only raw capture ships this cycle. |
+| 27 | Exercise picker + filter UX (CE1 — D6, D7) | **Filter:** 6 broad-group chips single-select + name/tag search (matches name AND muscle tags). Row metadata shows primary + all secondaries; role distinguished by UI color (specific element TBD pre-build). **Custom create:** two-step flow — Step 1 name + multi-select broad groups → Step 2 sectioned muscle chips with two-tap role cycle (neutral → synergist → stabilizer → remove); long-press to promote to primary (co-primaries allowed). Background muscles never surface in picker or row metadata (D6.4). |
+| 28 | Schema migration to v3 — nuke and reseed (CE1 — D8) | v3 bump drops `exercises` + `logExercises` + `logSets` and repopulates from re-curated seed (D8.1 sub-option B2). Silent migration, no banner (D8.3) — pre-launch only; post-launch pattern switches to in-place + banner (see `memory/project_post_launch_migration_pattern.md`). All new/renamed fields bundle into a single v3 hop (D8.4). `exercises.category` removed; broad group derived via `getExerciseGroup()`. Tier 3 forward-compat fields (`equipment`, `gripWidth`, `gripOrientation`, `stanceWidth`, `bias`, `jointLoad`) added nullable so future Group 2 dimensions (F39) land without a schema bump. |
+| 29 | Naming conventions for muscle taxonomy (CE1 — D9) | `Muscle` IDs camelCase (`frontDelts`, `upperBack`, `rotatorCuff`). Display labels Title Case (`Front Delts`, `Upper Back`, `Rotator Cuff`) sourced from single `MUSCLE_LABELS: Record<Muscle, string>` map. `Muscle` and `MuscleGroup` are TS string unions for type safety. All related concepts (groups, roles, buckets, tiers) also camelCase. |
 
 ---
 
@@ -526,18 +624,27 @@ Applied at every iteration. Each phase has a defined scope — don't skip phases
 | F17 | Future | Body fat predictor — estimate BF% from accessible inputs. Candidate equations: US Navy method (neck + waist [+ hip for women] + height), BMI-based Jackson-Pollock approximation, or skinfold-entry simulation. Must decide: (1) which equation(s) to use; (2) which measurements to collect (store on `bodyMetrics` table — fields may need to expand); (3) whether to show a range rather than a point estimate to communicate uncertainty. No integration required — pure calculation from user input. | Post-MVP | Stats, DB | Future |
 | F18 | Future | Sleep analysis — beyond raw hours logged, derive quality signals: consistency score (variance in bedtime/wake time across 7 days), debt tracker (cumulative shortfall vs `sleepTarget`), trend line. Inputs from `dailyCheckins.sleepHours`. Open question: whether to prompt for sleep/wake times separately (richer data) vs just total hours (current schema). | Post-MVP | Stats, DB | Future |
 | F19 | Future | Step quality — go beyond raw step count to measure activity distribution: active minutes, step cadence buckets (strolling vs brisk vs running pace), streak tracking. Requires steps data source decision (S3: wearable API vs manual entry). Manual entry can only give daily totals — richer cadence data needs a wearable or phone sensor integration. | Post-MVP | Stats, Native/API | Future |
-| F20 | Future | Favorite exercises per muscle group — for each `exercises.category`, rank by frequency in `logExercises`; surface top exercise per category. "Your go-to chest exercise: Bench Press (18 sessions)." No schema changes. Service: `StatisticsService.getFavoriteExercises(userId)`. | Post-MVP | Stats | Future |
+| F20 | Future | Favorite exercises per muscle group — for each broad group (via `getExerciseGroup()`), rank by frequency in `logExercises`; surface top exercise per group. "Your go-to chest exercise: Bench Press (18 sessions)." No schema changes. Service: `StatisticsService.getFavoriteExercises(userId)`. | Post-MVP | Stats | Future |
 | F21 | Future | Program usage frequency — count sessions logged per program (via `workoutId → workout.programId`); rank by session count and avg sessions/week. Surface most-used program and most-logged workout template. No schema changes. Service: `StatisticsService.getProgramUsage(userId)`. | Post-MVP | Stats | Future |
 | F22 | Future | Current split detection — retroactively derive contiguous program usage periods ("current split") from log history. Algorithm: group logs by week; a split begins when ≥60% of a week's workouts belong to one program; ends when that drops below 60% for 2+ consecutive weeks. Returns `{ programId, startDate, endDate, sessionCount }[]`. No schema changes. Service: `StatisticsService.getCurrentSplits(userId)`. Replaces adherence rate (S4). | Post-MVP | Stats | Future |
 | F23 | Future | Program efficacy — per current split (F22), compute: PR density (PRs ÷ sessions), volume growth rate (last 4 weeks vs first 4 weeks), consistency rate (sessions/week), recomposition correlation (requires bodyMetrics Section 2). Only shown when split ≥8 sessions. Display as correlation, not causation. No schema changes. Service: `StatisticsService.getProgramEfficacy(userId, programId)`. | Post-MVP | Stats | Future |
-| F24 | Future | Neglected muscle group callout — cross-reference `exercises.category` against most recent log date per category; alert when a category has no logged exercise in last N days (threshold TBD). "You haven't logged a leg exercise in 18 days." No schema changes. Service: `StatisticsService.getNeglectedCategories(userId, thresholdDays)`. | Post-MVP | Stats | Future |
+| F24 | Future | Neglected muscle group callout — cross-reference broad group (via `getExerciseGroup()`) against most recent log date per group; alert when a group has no logged exercise in last N days (threshold TBD). "You haven't logged a leg exercise in 18 days." No schema changes. Service: `StatisticsService.getNeglectedGroups(userId, thresholdDays)` (renamed from `getNeglectedCategories` per Decision #24). | Post-MVP | Stats | Future |
 | F25 | Future | De facto program inference — reconstruct user's actual typical week from log frequency (most common exercise per day-of-week across last 30 sessions). Surface as "Based on your logs, your typical week looks like…" Useful for users who only quick-start and have never built a formal program. No schema changes. Most complex query in Section 7 — build last. | Post-MVP | Stats | Future |
 | F26 | Future | Workout Stats Card — "Most Skipped Workout": per-program breakdown of session completion counts; workout with fewest logs surfaces as most skipped. Time filter: 30 / 90 / 365 / all time. No schema changes. Service: `StatisticsService.getWorkoutCompletionCounts(userId, programId)`. Only meaningful when user has from-program sessions. | Post-MVP | Stats | Future |
-| F27 | Future | Workout Stats Card — "Volume by Muscle Group": sum of `weight × reps` per `exercises.category` across finished logs. Time filter: 30 / 90 / 365 / all time. Bodyweight sets (weight = 0) excluded from tonnage. No schema changes. Service: `StatisticsService.getVolumeByMuscleGroup(userId, range)`. Display: bar chart or number cards per category. | Post-MVP | Stats | Future |
-| F28 | Future | Workout Stats Card — "Muscle Group Balance": push/pull/legs ratio from F27 volume data — chest + shoulders = push; back = pull; legs = legs; arms split evenly; core standalone. Reuses `getVolumeByMuscleGroup()` — no extra service method. Secondary metric: set count per category per week. Display approach TBD (raw % split vs. push/pull/legs ratio vs. imbalance flag). | Post-MVP | Stats | Future |
+| F27 | Future | Workout Stats Card — "Volume by Muscle Group": sum of `weight × reps` per broad group (via `getExerciseGroup()`) across finished logs. Time filter: 30 / 90 / 365 / all time. Bodyweight sets (weight = 0) excluded from tonnage. **Upgraded by Decision #24:** with `primaryMuscles` + `secondaryMuscles` + `SECONDARY_VOLUME_MULTIPLIER`, F27 can now attribute volume at specific-muscle granularity (not just broad group) — primary contributes 1.0× volume, each secondary contributes 0.5×. Service: `StatisticsService.getVolumeByMuscleGroup(userId, range)`. Display: bar chart or number cards per group. | Post-MVP | Stats | Future |
+| F28 | Future | Workout Stats Card — "Muscle Group Balance": push/pull/legs ratio from F27 volume data — chest + shoulders = push; back = pull; legs = legs; arms split evenly; core standalone. Reuses `getVolumeByMuscleGroup()` — no extra service method. Secondary metric: set count per group per week. **Upgraded by Decision #24:** arms ambiguity (biceps vs triceps) resolved — `biceps`/`brachialis` contribute to pull; `triceps` contributes to push (no 50/50 split). Display approach TBD (raw % split vs. push/pull/legs ratio vs. imbalance flag). | Post-MVP | Stats | Future |
 | F30 | Future | Introductory onboarding tutorial — post-MVP, after all features complete. Two purposes: (1) collect essential user data at first run: age, weight, height, gym experience level (beginner / intermediate / advanced — maps directly to training age used by Statistics features), unit preference, and any other fields needed by built features at that point; (2) guided walkthrough teaching users how to use the app and each feature correctly. Schema: `users.age: number | null`, `users.trainingAge: 'beginner' \| 'intermediate' \| 'advanced' \| null` (or similar). Gym experience field solves the training age gap identified in coach analysis (F29 and Statistics features need this context). Tutorial flow design TBD — decide when feature set is finalized. | Post-MVP (all features done) | Auth, Profile, Stats, All | Future |
-| F29 | Future | Muscle Fatigue Avatar — visual body silhouette (SVG model) showing per-muscle-group fatigue/recovery state via color discoloration. Warm/red = recently trained (needs recovery); cool/green = recovered (ready to train); grey = untrained. Color derived from time elapsed since last training per `exercises.category` + reference recovery windows per muscle group (large muscles: 48–72h; small muscles: 24–48h). No schema changes — derives from `logExercises → exercises.category → workoutLogs.finishedAt`. **Placement TBD**: Statistics tab or Profile tab — decide when SVG model is complete. **Prerequisite**: CE1 resolution (arms split, compound multi-muscle tagging) directly determines avatar accuracy. Recovery windows can be informed by coach reference data (Poliquin/Israetel). | Post-MVP | Stats, Profile | Future |
-| CE1 | Planning | Custom exercise deep dive — resolve before F27/F28 spec is final. Open questions: (1) arms ambiguity — biceps vs triceps affects push/pull balance in F28; split "arms" category or add push/pull tag; (2) compound multi-muscle tagging — bench press hits chest + shoulders + triceps; single category loses accuracy; (3) edit after creation — no current flow to fix wrong name or category; (4) category picker UX — dropdown is awkward on mobile; chips/buttons preferred. Needs dedicated research session before F27/F28 build. | Pre-F27/F28 | Exercises, Stats | Pending |
+| F29 | Future | Muscle Fatigue Avatar — visual body silhouette (SVG model) showing per-muscle fatigue/recovery state via color discoloration. Warm/red = recently trained (needs recovery); cool/green = recovered (ready to train); grey = untrained. **Now driven by specific-muscle model (Decision #24):** color derived from time elapsed since last training per `Muscle` (via `primaryMuscles` + `secondaryMuscles`) against `RECOVERY_WINDOWS` (Decision #25 — 60h large / 36h small / 36h background-small). Secondaries contribute fractional fatigue via `SECONDARY_VOLUME_MULTIPLIER`. No schema changes — derives from `logExercises → exercises.primaryMuscles/secondaryMuscles → workoutLogs.finishedAt`. **Placement TBD**: Statistics tab or Profile tab — decide when SVG model is complete. **CE1 prerequisite RESOLVED** — arms split + compound multi-muscle tagging locked via Decision #24 (was pending in CE1). Awaits F37 (training-age modifier) for per-user recovery adjustment. | Post-MVP | Stats, Profile | Future |
+| F31 | Future | Injury-Warning system (F-new) — cross-reference `exercises.jointLoad` tags (curation pending F33) × cumulative load × recovery state; warn user when a joint is accumulating stress. Depends on F34 (RPE-derived stats) and F33 (jointLoad curation UI). `jointLoad: string[]` field ships in v3 as forward-compat — no schema bump needed when F31 lands. | Post-MVP (deferred cycle) | Stats, DB | Future |
+| F32 | Future | Feature toggle menu (D-new) — granular per-feature opt-ins for advanced tracking dimensions (RPE, bias, fatigue ratio, grip, stance, tempo, bilateral). Default minimal experience; power users opt in to dimensions they want. Absorbs `users.rpeEnabled` (currently surfaced standalone in Profile — Decision #26). See `memory/project_feature_toggle_menu.md`. | Post-MVP (next cycle) | Profile, App-wide | Future |
+| F33 | Future | Joint load tagging UI — `exercises.jointLoad` ships forward-compat (default `[]`) in v3, but no UI to populate during seeding or custom-exercise creation, and no display surface. Pairs with F31 (Injury-Warning system). Curation approach TBD (seed-only vs user-editable). | Post-MVP | Exercises, Stats | Future |
+| F34 | Future | RPE-derived stats — full list in `memory/project_rpe_deferred_features.md`: e1RM tracking (Brzycki/Epley), RPE-adjusted volume, RIR inference, fatigue curves over session, session-avg RPE trends, auto-regulation suggestions, PR-likelihood indicator, etc. None ship this cycle; only raw `logSets.rpe` capture + toggle (Decision #26). | Post-MVP (next cycle) | Stats | Future |
+| F35 | Future | Exercise library expansion — grow seed library from 29 to 30–50 exercises with full new-schema tagging (primaryMuscles, role-tagged secondaries, Tier 3 fields where applicable). Pairs with F36 (cues/instructions content). EMG citations required per seed per Decision #24 sourcing standard. | Post-MVP (separate cycle) | Exercises | Future |
+| F36 | Future | Exercise cues / instructions content — per-exercise setup/form guidance shown in picker or detail view. Content-heavy work; pairs with F35. Schema impact TBD (likely `exercises.cues: string \| null` additive) when scoped. | Post-MVP (later cycle) | Exercises | Future |
+| F37 | Future | Training-age modifier on recovery windows (Galpin) — adjust `RECOVERY_WINDOWS` (Decision #25) based on trainee experience. `users.trainingAge: string \| null` ships forward-compat in v3 (Decision #28); consumer logic deferred to next cycle. Needed before F29 (Muscle Fatigue Avatar) shows per-user-adjusted recovery. Values TBD (likely `beginner \| intermediate \| advanced` aligned with F30 onboarding). | Post-MVP (next cycle) | Stats, Profile | Future |
+| F38 | Future | Cardio / conditioning tracking — doesn't fit current muscle-target schema; needs separate log shape. Slot under future exercise type/equipment dimension (F39 — D15 next cycle). See `memory/project_cardio_tracking.md`. | Post-MVP (dedicated cycle) | Logs, DB | Future |
+| F39 | Future | Group 2 dimensions (D10–D17) — full UX + feature work for bias, fatigue ratio, grip width, grip orientation, stance width, equipment, tempo, bilateral. Tier 3 schema fields already live in v3 as nullable strings (`exercises.equipment`, `gripWidth`, `gripOrientation`, `stanceWidth`, `bias`) — no future schema bump needed. UX, enums, consumer logic, and per-dimension-specific decisions (e.g. D15.2–D15.5 load input UX, D16 tempo definition-level vs program-level vs per-set, D17 logSets.side for bilateral) deferred to next cycle(s). | Post-MVP (next cycle) | Exercises, Logs, Stats | Future |
+| CP1 | Cleanup | Delete "Coach Review Panel" section from statistics.md after F27/F28/F29 build is complete. Research aid only — not permanent spec. | Post F27/F28/F29 | Stats | Pending |
 
 ### Resolved Issues (record only — do not reopen)
 
@@ -568,6 +675,7 @@ Applied at every iteration. Each phase has a defined scope — don't skip phases
 | F7 | Future | Target weight display label | Built session 18 — "| top set: x lbs" |
 | G1 | Gap | Delete workout log UI | Resolved during MVP audit |
 | G8 | Gap | Previous weight × reps display | Resolved during MVP audit |
+| CE1 | Planning | Custom exercise deep dive | Resolved sessions 39–41 — muscle taxonomy + picker/filter UX + migration strategy all locked. Implementation scope = Tier 1 (Decisions #24–#29 + RPE per Decision #26) + Tier 3 forward-compat schema fields. Tier 2 full UX for Group 2 dimensions deferred to F39. Arms ambiguity → `biceps`/`brachialis`/`triceps` as distinct muscles (not "arms" bucket). Compound multi-muscle tagging → `primaryMuscles: Muscle[]` + role-tagged `secondaryMuscles`. Edit-after-creation → same two-step picker flow; deferred to next session's tab-spec patch. Mobile picker UX → Decision #27 (multi-select groups Step 1, sectioned chips Step 2). Session 42 patches tab specs (logs / profile / statistics); Session 43 re-curates 29 seeds with EMG citations. |
 
 > **Pre-demo code review (2026-04-10):** All critical flows verified clean — auth, quick-start workout, from-program workout, finish flows (all 4 state machine paths), read-only/edit modes, B1 edge case, Programs CRUD, Profile, seed guard, FAB hidden logic. No blockers found.
 > **False positive on record:** ExerciseSearchModal appears to not close after custom exercise creation (handleCreate calls onSelect but not onClose directly). This is intentional — the parent's onSelect handler (handleExerciseSelect in WorkoutDetailPage L143 / WorkoutTemplatePage L106) calls setShowExerciseSearch(false), which unmounts the modal. Do not flag this as a bug.
@@ -603,6 +711,7 @@ Detailed specs for each tab live here. Cross-reference these during every build 
 
 | Date | Change |
 |------|--------|
+| 2026-04-22 | **Session 41 — CE1 spec patch 1 of 3 (master-schematics only).** DB schema v3 delta locked: `exercises` gets `primaryMuscles: Muscle[]`, `secondaryMuscles: { muscle, role }[]` (role-tagged per Decision #24 B-lite), plus Tier 3 forward-compat fields (`equipment`, `gripWidth`, `gripOrientation`, `stanceWidth`, `bias`, `jointLoad`); `users` gets `rpeEnabled` + `trainingAge`; `logSets` gets `rpe`. Dropped `exercises.category` — broad group now derived via `getExerciseGroup()` helper (first primary wins tiebreaker). New "Muscle Taxonomy Model" sub-section: 26 muscles (24 user-surfaced + 2 background), 6 groups, `MUSCLE_TO_GROUP` map, `MUSCLE_LABELS`, `SECONDARY_VOLUME_MULTIPLIER = 0.5`, `RECOVERY_WINDOWS` (60h/36h/36h-bg). Service Layer: `ExerciseService.search` signature updated for D7 (group filter + muscle-tag name match); `UserService.updateProfile` + `LogSetService.add/update` accept new fields. ExerciseSearchModal Spec fully rewritten for Decision #27 (D6 two-step picker with two-tap role cycle + long-press promote, D7 6-chip filter + muscle-tag search, D6.4 background muscles never surfaced). Six Decisions #24–#29 appended. Issue Tracker: CE1 moved to Resolved; F31–F39 added (Injury-Warning, feature toggle menu, jointLoad UI, RPE-derived stats, library expansion, cues/instructions, training-age modifier, cardio tracking, Group 2 dimensions); F20/F24/F27/F28/F29 language patched to reference derived group instead of `exercises.category`. Sessions 42 (tabs) + 43 (seed re-curation) follow. |
 | 2026-04-21 | Artifact cleanup (session 30): F13 false schema claim corrected ("already defined" → "specced in Statistics phase; not yet built"); UIdesign.md page title 20px/600 → 24px/700; FAB states split into disabled/inert (active workout page) vs hidden (auth pages); Decision #15 updated to match; Phase 4 status "not started" → "in progress"; B1 row normalized (Severity + Area added); B3 closed |
 | 2026-04-10 | Phase 3 Build marked complete; all user stories U2–U6, U8 marked Done (MVP); issue tracker items G2, G3, G5, G6, G7, R1, R2, B1, N1 marked Resolved — built |
 | 2026-04-10 | UI polish pass complete: trash icons replace text Remove/Delete buttons throughout; set-delete icon changed to red X; WorkoutTemplatePage button layout redesigned (shorter labels, auto-width, Start/Done/Delete rows); FAB centered (left: 50%); tab titles standardized to 24px/700; ProgramsPage "New Program" button moved below list; LogsPage empty state text updated; ProfilePage unit labels moved into label text; autocapitalize="words" added to all name inputs app-wide |

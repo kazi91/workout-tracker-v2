@@ -413,6 +413,33 @@ Steps and sleep auto-sync are post-MVP. Manual entry is the current path. Capaci
 
 ---
 
+## Coach Review Panel (research aid — temporary)
+
+> **Purpose:** Cross-check stats features (especially F27/F28 volume + muscle group balance, F29 fatigue avatar, and recovery windows) against credentialed coaching perspectives before building.
+> **Status:** Planning reference only. **Delete this section when F27/F28/F29 build is complete** — not a permanent part of the spec.
+
+Panel chosen for credibility, decades of experience, breadth of perspective, and proven results with elite athletes. Replaces the earlier informal Poliquin/Israetel/Cressey/Thibaudeau grouping (Israetel dropped for commercial-conflict concerns; Cressey/Thibaudeau dropped for lower relevance to metric-design questions).
+
+| Coach | Role on panel | Credentials / results |
+|---|---|---|
+| **Charles Poliquin** | Eclectic strength + structural balance | Olympic and pro strength coach across multiple sports; originated structural balance ratios (push/pull, agonist/antagonist) — directly relevant to F28 |
+| **Andy Galpin, PhD** | Research authority + elite athletes | Professor, muscle physiology lab (CSUF); works with UFC champions, NFL, MLB; broad physiology coverage beyond hypertrophy |
+| **Hany Rambod** | Elite hypertrophy | 8+ Mr. Olympia titles across clients (Cutler, Heath, Buendia, Choopan); ~30 years coaching; FST-7 methodology |
+| **Mike Tuchscherer** | Powerlifting + fatigue analytics | RTS; pioneered RPE-based autoregulation; coaches top-10 IPF raw lifters; literal expertise in quantifying training stress — most relevant to stats metric design |
+
+**Coverage check:**
+- Science / research voice → Galpin
+- Hypertrophy / physique (F27/F28 volume + muscle balance accuracy) → Rambod
+- Maximal strength + fatigue quantification (F29 recovery windows, metric design) → Tuchscherer
+- Eclectic strength + structural balance (F28 push/pull framing) → Poliquin
+
+**Known caveats:**
+- Rambod famously vague on client specifics — use for directional judgment, not exact prescriptions
+- Galpin can oversimplify on podcasts — cross-reference his lab's published work
+- None carry commercial-conflict red flags at Israetel's level
+
+---
+
 ## Open Issues
 
 > Tracked in the master Issue Tracker (`artifacts/master-schematics.md`) — filter by Area = Statistics.

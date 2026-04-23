@@ -1,5 +1,5 @@
 # HANDOFF — NEW INSTANCE START HERE
-Last updated: 2026-04-21 (session 38 — commit cleanup; sessions 31–37 landed as 3 commits on main)
+Last updated: 2026-04-22 (session 41 — SPEC PATCH 1/3 COMPLETE. master-schematics.md fully patched for CE1 Tier 1 + Tier 3: new schema fields, Muscle Taxonomy Model sub-section, Decisions #24–#29, Issue Tracker CE1 resolved + F31–F39 added, Changelog. Session 42 next = tab artifacts. No code written this cycle yet.)
 
 ---
 
@@ -27,7 +27,8 @@ Full file index (reference — do not read all of these every session):
 
 ## Build State
 **Phase 3 Build is complete.** All 6 steps built, verified, and committed. UI polish pass complete. Demo delivered.
-**Phase 4 — Testing & cleanup.** D8 + service layer test audit + D5 (ErrorContext) all complete. 72/72 tests passing. Statistics research done (session 35) — spec updated, key UX decisions locked. Statistics build is next.
+**Phase 4 — Testing & cleanup: CLOSED 2026-04-22.** D8 + service layer test audit + D5 (ErrorContext) all complete. 72/72 tests passing.
+**Phase 5 — Statistics page + new features planning (in progress).** CE1 spec patches active (session 41 = master-schematics.md done; sessions 42/43 = tabs + seed re-curation). Statistics research done (session 35) — spec updated, key UX decisions locked. Statistics build follows CE1 build.
 
 ### What is built
 - **Step 1** — Vite scaffold, Dexie schema (8 tables), 29 seed exercises, routing stubs, dark theme CSS variables
@@ -73,26 +74,39 @@ Do not re-open planning decisions unless the user explicitly raises them.
 
 ---
 
-## Phase 4 State
+## Phase 4 Close-Out (historical — closed 2026-04-22)
 
 D8 complete. Infrastructure in place: Vitest + RTL + fake-indexeddb + jsdom. DB isolation pattern: `beforeEach(() => db.delete() + db.open())` on the singleton.
 U4 + U5 UI guards complete (session 31): finish blocked with 0 exercises; Save Edits blocked on blank name or 0 exercises; useScrollToError hook with IntersectionObserver bounce arrow; 3 RTL tests added.
 
 D5 complete (session 34): all 12 files wired with ErrorContext try/catch. WorkoutDetailPage.test.tsx updated with ErrorContext mock. 72/72 tests passing.
 
-Remaining test priority order:
+Test coverage at Phase 4 close: 72/72 across 8 files (see recap.md TEST COVERAGE block). Test items still outstanding — carried into Phase 5 when touched:
 1. ~~WorkoutLogService (create, finish, delete cascade)~~ — DONE (session 29)
 2. ~~U4 + U5 WorkoutDetailPage guards~~ — DONE (session 31)
 3. ~~Service layer audit~~ — DONE (session 32)
-4. Finish flow state machine paths (all 4 quick-start paths + from-program sync)
-5. Auth flow (signup → login → logout)
-6. ActiveWorkoutContext initialization
+4. Finish flow state machine paths (all 4 quick-start paths + from-program sync) — deferred into Phase 5
+5. Auth flow (signup → login → logout) — deferred into Phase 5
+6. ActiveWorkoutContext initialization — deferred into Phase 5
 
-Exit criteria: see recap.md — PHASE 4 EXIT CRITERIA section.
+---
+
+## Phase 5 State (active)
+
+**CE1 spec patches in flight:**
+- Session 41 (DONE 2026-04-22): master-schematics.md patched across 7 sections + Changelog. New schema fields on exercises/users/logSets; `exercises.category` dropped (derived via `getExerciseGroup()`); Muscle Taxonomy Model sub-section added; Decisions #24–#29 locked; Issue Tracker = CE1 resolved + F31–F39 added.
+- Session 42 (NEXT): tab artifacts — logs.md (RPE input on SetRow gated on `users.rpeEnabled`; ExerciseSearchModal ref), profile.md (RPE toggle; note it migrates to F32 next cycle), statistics.md (F27/F28/F29 cross-refs to specific-muscle model).
+- Session 43: seed re-curation — 29 exercises re-tagged with full CE1 schema per EMG citations.
+
+**After CE1 spec patches:** CE1 build (Dexie v3 migration + schema wiring + ExerciseSearchModal rewrite + RPE input). Then Statistics build (resolve P5 charting library + OD6 button tokens first). Then iteration on new feature sets (F20–F39).
 
 ---
 
 ## Recent Sessions (most recent first)
+
+**Session 40 — 2026-04-22 (CE1 PLANNING CLOSED — ready for spec patch):** Research session — no code written. Resumed CE1 planning from session 39's pickup point and carried it to full completion. **Locked D4 (B-lite — role tag synergist/stabilizer on secondaries; both 0.5× MVP math); D5 (recovery windows: 9 large 60h / 15 small 36h / 2 background-small 36h; adductors moved to small; Galpin training-age modifier deferred entirely); D-new-3 (RPE per set: logSets.rpe 1-10 with half-points, users.rpeEnabled toggle, opt-in via Profile, all RPE-derived stats deferred); D6 (4 sub-forks — multi-select Step 1 + sectioned Step 2; two-tap chip cycle; long-press promote; seed-only background); D7 (4 sub-forks — 6 broad chips, single-select, primary + all secondaries with role color, name+muscle search); D8 (5 sub-forks — nuke and reseed B2; N/A auto-map; silent migration; single Dexie v3; S2/S3 forward-compat fields); D9 (5 sub-forks — camelCase IDs, Title Case labels, single map, TS string union); D15.1 (Option C — equipment as forward-compat nullable field).** **Path A LOCKED:** simplified scope (Tier 1 already-locked + Tier 3 forward-compat schema fields). **Tier 2 deferred:** D10-D17 full UX work, library expansion, cues/instructions, all RPE stats, joint load curation, injury warning system, feature toggle menu. User pushed back twice this session: (1) wanted stabilizers tracked after originally skipping → D4 reopened; (2) flagged scope too big for one cycle → Path A chosen. User also proposed alternative 3-field dropdown picker UX at D6.2; reviewed honestly, defended Option A; user agreed. Memory files created/updated: project_rpe_deferred_features.md (NEW), project_picker_ux_post_build.md (NEW), project_tutorial_hints_queue.md (NEW), project_post_launch_migration_pattern.md (NEW), project_ce1_final_scope.md (NEW — supersedes planning_state), project_stat_weights_calibration.md (UPDATED for Galpin defer). **Spec patch session split agreed:** Session 41 = master-schematics.md (7 sections: DB Schema, Dexie schema string + version note, Service Layer, Exercise Library, ExerciseSearchModal Spec, Key Design Decisions, Issue Tracker + Changelog); Session 42 = tab artifacts (logs.md, profile.md, statistics.md); Session 43 = seed re-curation with EMG citations. **Pickup point:** read memory/project_ce1_final_scope.md (mandatory authoritative scope) + MEMORY.md index, then begin master-schematics.md edits per the 7-section plan in CURRENT TASK.
+
+**Session 39 — 2026-04-22 (PAUSED MID-PLANNING):** Research session — no code written. CE1 deep dive expanded far beyond original 4 sub-questions into full muscle taxonomy + exercise dimensions + injury-warning system planning. Coach panel set up at session start (Poliquin / Galpin / Rambod / Tuchscherer — Israetel/Cressey/Thibaudeau dropped); panel saved to statistics.md § Coach Review Panel; CP1 logged. **Brainstorm closed**: active dimensions narrowed to 8 (bias, fatigue ratio, grip width, grip orientation, stance width, equipment, tempo, bilateral) after parking body position, loading vector, RoM, skill, stability. Coach panel critique surfaced critical gaps: RPE absent, rest absent, RoM cut prematurely, recovery windows treated as universal. **Planning phase: D1, D2, D3 LOCKED. D4 REOPENED. D5 PAUSED.** D1 = 24+2 muscle taxonomy (additions: lower traps, brachialis, hip flexors, serratus, adductors, abductors, tibialis, neck/rotator cuff as background). D2 = 6 broad groups derived from specific muscle (storage = specific only). D3 = primary 1.0× / secondary 0.5× with co-primaries when EMG-supported, no display cap, declared order, named constant. D4 reopened (user reversed "skip stabilizers"); 14 stabilizer muscles confirmed; user leaning B or C; research strongly supports B-lite (role tag synergist/stabilizer on secondaries; both 0.5× MVP math). D5 paused mid-bucket-discussion. Modern training metrics research validated: hard sets per muscle/week (Schoenfeld), RPE/RIR per set, e1RM tracking, MEV/MAV/MRV bands (Israetel), EWMA over ACWR for injury risk (Wang 2020 critique). Schema improvements proposed S1–S10 (top 3: S1 logSets.rpe, S2 exercises.jointLoad, S3 users.trainingAge). New decisions surfaced: D-new (feature toggle menu — next dev cycle), D-new-2 (joint load tags), D-new-3 (RPE accepted), D-new-4 (rest tracking — toggle menu), D-new-5 (lengthened bias — toggle menu), F-new (Injury-Warning system, likely F31). Memory files created: project_feature_toggle_menu.md, project_cardio_tracking.md, project_stat_weights_calibration.md, project_ce1_planning_state.md. **Pickup point: D4 (B-lite) → D5 → D-new-3 RPE spec → D6–D9 → D10–D17.**
 
 **Session 38 — 2026-04-21:** Housekeeping — commit cleanup. Sessions 31–37 landed on main in 3 logical commits: `69ab01c` (U4/U5 guards + D5 ErrorContext), `3f48f05` (service test audit + U4/U5 RTL tests — 72/72 green), `e0e8917` (Statistics spec revision: F20–F30, CE1, S1/S4 resolved). Pre-commit verification: build clean + 72/72 tests passing. Working tree clean; 3 commits ahead of origin/main (not pushed). No code changes. Next: Session 39 — CE1 deep dive (research mode) per cycle plan (A→B→C: commit → CE1 research → finish-flow/ActiveWorkoutContext tests → Phase 4 close → Statistics build).
 

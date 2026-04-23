@@ -15,11 +15,11 @@ GitHub: https://github.com/kazi91/workout-tracker-v2 (public)
 ---
 
 ## CURRENT TASK
-Phase: 4 — Testing & post-demo cleanup
-Last session ended: Session 38 — Committed sessions 31–37 in 3 logical commits (U4/U5+D5, tests, spec revisions); build + 72/72 tests verified green before commits (2026-04-21)
-Next action: Session 39 — CE1 deep dive. Resolve arms ambiguity, compound multi-muscle tagging, edit-after-creation UX, category picker UX before F27/F28 spec is final.
-Session scope: Research — custom exercise UX and muscle group accuracy
-Required reading this session: recap.md, master-schematics.md (Issue Tracker CE1, F27, F28, F29), artifacts/tabs/statistics.md (Section 4b, Section 7, §Open Issues)
+Phase: 5 — Statistics page + new features planning
+Last session ended: Session 41 — Spec patch 1/3 complete. master-schematics.md fully patched for CE1 Tier 1 + Tier 3: new schema fields on exercises/users/logSets; `exercises.category` dropped (broad group now derived via `getExerciseGroup()`); Muscle Taxonomy Model sub-section added (26 muscles, 6 groups, MUSCLE_TO_GROUP, MUSCLE_LABELS, SECONDARY_VOLUME_MULTIPLIER, RECOVERY_WINDOWS); Service Layer updated; ExerciseSearchModal Spec fully rewritten for Decision #27 (D6 + D7); Decisions #24–#29 appended; Issue Tracker = CE1 resolved + F31–F39 added; Changelog updated. No code written. (2026-04-22)
+Next action: Session 42 — Spec patch 2 of 3. Patch tab artifacts to align with CE1 locks: `artifacts/tabs/logs.md` (SetRow gains optional RPE input gated on `users.rpeEnabled`; ExerciseSearchModal references reflect Decision #27 picker/filter), `artifacts/tabs/profile.md` (RPE toggle surface under user settings — note it migrates to F32 feature toggle menu next cycle), `artifacts/tabs/statistics.md` (F27/F28/F29 cross-refs to specific-muscle model + getExerciseGroup; scrub any `exercises.category` residuals). Optional: `artifacts/tabs/programs.md` if it has picker/filter callouts.
+Session scope: Spec patch (artifact updates, not code) — research mode rules apply (no src/ edits)
+Required reading this session: recap.md, master-schematics.md (§ Muscle Taxonomy Model + Decisions #24–#29 for terminology), artifacts/tabs/logs.md, artifacts/tabs/profile.md, artifacts/tabs/statistics.md, `memory/project_ce1_final_scope.md` (authoritative CE1 scope)
 
 ## Session Start — Opening Message Protocol
 
