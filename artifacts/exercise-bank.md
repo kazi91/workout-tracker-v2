@@ -49,7 +49,7 @@ Derived from CE1 D1/D3 (locked).
 - **P4** — Gated behind feature toggle (Olympic, plyo, KB, conditioning).
 - **P5** — Variant entry. Nested under a parent via `parentExerciseId` (pending schema).
 
-**Counts:** Seed=29, P0=8, P1=43, P2=33, P3=11, P4=30, P5=10 → **135 additions, 164 total library.**
+**Counts:** Seed=29, P0=8, P1=44, P2=33, P3=11, P4=30, P5=10 → **136 additions, 165 total library.**
 
 ---
 
@@ -106,7 +106,7 @@ From [`src/db/seed.ts`](../src/db/seed.ts).
 
 ---
 
-## P1 — Core baseline (43)
+## P1 — Core baseline (44)
 
 Includes Sumo Deadlift and Stiff-Leg Deadlift **graduated from P5** (different muscle maps per Parent/Variant Rule).
 
@@ -155,6 +155,7 @@ Includes Sumo Deadlift and Stiff-Leg Deadlift **graduated from P5** (different m
 | 41 | Bird Dog | Core | |
 | 42 | Side Plank | Core | |
 | 43 | Hanging Knee Raise | Core | Distinct from Hanging Leg Raise |
+| 44 | Smith Machine Squat | Quads | Rehab / injury-training friendly — fixed bar path, no spotter needed. Separate exercise, not a Squat variant. |
 
 ---
 
@@ -301,9 +302,9 @@ Parent defaults decided session 40:
 | # | Decision | Status |
 |---|---|---|
 | EB1 | Parent defaults — high-bar (Squat), conventional (Deadlift), flat BB (Bench Press) | **Decided** (session 40) |
-| EB2 | Variant exposure — global toggle vs per-category toggle vs chevron expander (no toggle) | **Leaning chevron + no toggle** (session 40) — progressive disclosure by default |
+| EB2 | Variant exposure — global toggle vs per-category toggle vs chevron expander (no toggle) | **Decided** (session 40) — chevron expander on parent rows + search always indexes variants. No toggle. Progressive disclosure for casuals, 1-tap reach for power users. |
 | EB3 | Parent rollup in Stats — per-variant only vs rollup vs both | **Deferred** (session 40) — revisit during Stats build. `parentExerciseId` FK keeps rollup trivial to add later. |
-| EB4 | `parentExerciseId` schema addition — timing + planning doc ownership (CE1 sub-decision vs new CE2) | **Open** |
+| EB4 | `parentExerciseId` schema addition — timing + planning doc ownership (CE1 sub-decision vs new CE2) | **Architecture decided** (session 40) — add nullable `parentExerciseId: number \| null` to exercises table. Each variant remains its own row with own ID, tutorial file, GIF, and progression history. **Ownership doc still open** (CE1 sub-decision vs new CE2). |
 | EB5 | Custom exercises — allow user to set `parentExerciseId` to nest their custom variants under seeded parents | **Open** — nice-to-have, low cost |
 | EB6 | P4 toggle categories — naming + default state per category | **Open** — deferred to toggle menu build |
 | EB7 | Tutorial content structure — inline here vs per-exercise files under `artifacts/exercises/[slug].md` | **Deferred** (session 40) — start inline; split when the file physically hurts (Karpathy-style) |
@@ -313,7 +314,7 @@ Parent defaults decided session 40:
 ## Build sequencing (proposed, not locked)
 
 1. Resolve EB4 (schema + planning doc ownership).
-2. Seed expansion pass 1 — P0 + P1 as separate exercises (51 entries, 80 total library).
+2. Seed expansion pass 1 — P0 + P1 as separate exercises (52 entries, 81 total library).
 3. Implement `parentExerciseId` + picker chevron expander.
 4. Seed expansion pass 2 — P5 variants (10 entries).
 5. Seed expansion pass 3 — P2 (33 entries) once CE1 D4/D5 lock.
@@ -425,6 +426,367 @@ Save these for after the basics feel automatic:
 
 ---
 
+### Deadlift (Conventional) — Beginner's Guide
+
+*Catalog entry: Seed #6 — Deadlift (conventional default)*
+
+The king of full-body lifts. Get the setup right and the lift becomes simple. Get it wrong and your lower back pays.
+
+**Step 1 — Bar Position**
+- Bar over mid-foot — roughly over your shoelaces
+- This is non-negotiable. If the bar is too far forward, you'll pull around your knees instead of straight up.
+- Walk up so your shins are about 1 inch from the bar. Don't move the bar — move yourself.
+
+**Step 2 — Stance**
+- Feet: hip-width apart (narrower than a squat)
+- Toes: straight forward or turned out 5–15°
+- Weight: balanced across the whole foot, slight bias toward the heels
+
+**Step 3 — Grip**
+- Hinge down (don't squat) and grab the bar just outside your shins
+- Grip options:
+  - Double overhand — best for learning, limited by grip strength
+  - Mixed grip (one over, one under) — stronger hold, save for heavier sets
+  - Hook grip — strongest, most uncomfortable at first
+- Squeeze the bar like you're trying to bend it
+
+**Step 4 — Set the Body (Bottom-Up Sequence)**
+
+Order matters. Do these in sequence every single rep:
+1. Drop hips until shins touch the bar
+2. Chest up — proud chest, ribs down (not flared)
+3. Lats engaged — *"protect your armpits"* or *"squeeze oranges in your armpits"*
+4. Neck neutral — eyes ~6–10 feet in front of you on the floor
+5. Take a big breath into your belly and brace hard (think 360° pressure, not just stomach out)
+
+**Step 5 — The Pull (Off the Floor)**
+- Cue: *"push the floor away"* — don't think about pulling the bar up
+- Bar drags up the shins — should be in contact or within an inch
+- Hips and shoulders rise together — if your hips shoot up first, the weight is too heavy or you're not braced
+- Keep the bar tight to your body the entire pull
+
+**Step 6 — Lockout (Top of the Lift)**
+- Stand tall — hips and knees fully extended
+- Squeeze glutes at the top
+- Don't: lean back, hyperextend, or shrug the bar up
+- Shoulders stay back and down — not rolled forward, not rolled back theatrically
+
+**Step 7 — The Descent**
+- Hips back first, then bend knees once the bar passes them
+- Control it down — don't drop, don't bounce
+- Reset every rep: stand up, breathe, brace, pull. Touch-and-go reps teach bad bracing.
+
+**Pre-Rep Checklist**
+- [ ] Bar over mid-foot
+- [ ] Shins close to bar
+- [ ] Lats tight
+- [ ] Big brace
+- [ ] Push the floor away
+
+**Common Mistakes — Fix These First**
+
+| Mistake | Cause | Fix |
+|---|---|---|
+| Lower back rounding | Weak brace or too heavy | Lighter weight, brace harder, lats tight |
+| Hips shoot up first | Quads too weak or not engaged off the floor | Push the floor with your legs before the bar moves |
+| Bar drifts away from body | Lats not engaged | *"Squeeze oranges in armpits"* cue |
+| Hyperextending at the top | Trying to "show" lockout | Stand tall, squeeze glutes, stop |
+| Bouncing reps off the floor | Rushing | Full reset every rep as a beginner |
+
+**Beginner Programming**
+- Reps: 3–6 for strength, 5–8 for technique building
+- Sets: 3–5
+- Frequency: 1–2x per week — recovery-heavy lift
+- Placement: first or second exercise on a pull/lower day
+
+**Advanced Cues (Later)**
+- *"Bend the bar around your shins"*
+- *"Spread the floor with your feet"*
+- Wedge yourself into the bar — pull the slack out before the lift
+
+> **Plain English:** Deadlift is a push, not a pull. You're pushing the floor down with your legs while holding the bar still. Once that clicks, the lift gets way easier on your back.
+
+---
+
+### Paused High-Bar Squat — Beginner's Guide
+
+*Catalog entry: P5 #6 — Paused Squat (variant of Squat; default Squat = high-bar, so Paused Squat = Paused High-Bar Squat)*
+
+A high-bar squat with a 1–3 second pause at the bottom. Builds raw leg strength and bulletproofs your bottom position.
+
+**Step 1 — Bar Position (High-Bar)**
+- Bar sits on top of the traps — across the shelf made by your upper traps when you shrug
+- Not on the back of the neck (painful)
+- Not low on the rear delts (that's low-bar squat — different lift)
+
+**Step 2 — Set Up Under the Bar**
+- Get under the bar with feet directly under hips
+- Squeeze shoulder blades together to create the trap shelf
+- Grip the bar slightly outside shoulder width — wherever your shoulder mobility allows
+- Drive elbows down, not back — keeps the chest up
+- Stand up to unrack — don't good-morning it out
+
+**Step 3 — Walk Out**
+- Three steps max: back, foot out, foot out, set
+- Wasted steps drain energy before the set even starts
+- Set feet in your squat stance and don't shuffle
+
+**Step 4 — Stance**
+- Feet: shoulder-width or slightly wider
+- Toes: turned out 15–30° (find what feels natural)
+- Weight: mid-foot, spread across the whole foot
+
+**Step 5 — The Brace**
+- Big breath into the belly (not chest)
+- Brace 360° — like someone's about to punch your stomach AND lower back
+- Hold the brace through the entire rep, including the pause
+
+**Step 6 — The Descent**
+- Knees and hips break at the same time (high-bar is a more upright squat than low-bar)
+- Knees track over toes — let them come forward, that's correct for high-bar
+- Chest stays up — torso stays as upright as your mobility allows
+- Depth: hip crease below the top of the knee at minimum
+- 2–3 second controlled descent
+
+**Step 7 — The Pause (The Whole Point)**
+- Hold the bottom for 1–3 seconds — count it out
+- Stay tight — don't relax into the hole
+- Stay braced — don't exhale during the pause
+- This kills the stretch reflex, so the next part is harder than a normal squat. Expect to use less weight.
+
+**Step 8 — The Drive Up**
+- Cue: *"drive your head into the ceiling"* or *"push the floor away"*
+- Lead with the chest — if hips shoot up first, you'll fold forward (good morning)
+- Knees track over toes the whole way
+- Exhale through the hardest part of the rep (the sticking point)
+
+**Pre-Rep Checklist**
+- [ ] Bar high on traps
+- [ ] Tight upper back
+- [ ] Big belly brace
+- [ ] Controlled descent
+- [ ] Hold the pause without relaxing
+- [ ] Drive up with chest leading
+
+**Common Mistakes — Fix These First**
+
+| Mistake | Cause | Fix |
+|---|---|---|
+| Falling forward at the bottom | Weak upper back or losing brace | Lighter weight, focus on staying braced through pause |
+| Hips shoot up out of the hole | Quads weak or chest dropped | Lead with chest, push knees forward |
+| Knees cave in | Weak glutes or stance too narrow | Cue *"knees out"*, widen stance slightly |
+| Bouncing out of the bottom | Defeating the point of the pause | Slow it down, full count |
+| Heels lifting | Ankle mobility or stance too narrow | Try lifters, work ankle mobility |
+
+**Beginner Programming**
+- Reps: 3–6 with a 2–3 second pause
+- Sets: 3–5
+- Load: 70–80% of your normal squat — pause kills your bounce
+- Placement: main lift on squat day, or accessory after regular squats
+- Frequency: 1x per week is plenty
+
+**Why You'd Bother**
+- Forces you to actually be strong out of the hole instead of bouncing
+- Exposes weak points (forward lean, weak quads)
+- Builds confidence in the bottom position
+
+> **Plain English:** A normal squat lets you use spring tension at the bottom — like a stretched rubber band. Pausing kills the spring, so your muscles have to do all the work from a dead stop. Less weight, way more leg.
+
+---
+
+### Smith Machine Squat — Beginner's Guide
+
+*Catalog entry: P1 #44 — Smith Machine Squat. Separate exercise, not a Squat variant (fixed bar path removes stabilizer involvement). P1 placement reasoning: commonly recommended for injured athletes rebuilding leg strength, since no spotter is needed and the bar can't fall.*
+
+The bar moves on a fixed track. This changes the mechanics — it's not just a "safer barbell squat." Treat it as its own lift.
+
+**Step 1 — Understand What's Different**
+- Fixed bar path — bar can only move straight up and down (or on a slight angle, depending on the machine)
+- No balance demand — you don't need to stabilize the bar
+- Foot position changes everything — you can shift your feet forward or back to bias different muscles
+
+This means: *foot placement is your most important decision.*
+
+**Step 2 — Pick Your Foot Position (Pick One Goal)**
+
+| Goal | Foot Position |
+|---|---|
+| Quad bias | Feet directly under bar or slightly behind |
+| Balanced (most beginners) | Feet ~6 inches in front of bar |
+| Glute/hamstring bias | Feet 12+ inches in front of bar (almost a hack squat feel) |
+
+Start with balanced as a beginner. Experiment later.
+
+**Step 3 — Bar Position on Body**
+- Across the upper traps (high-bar style)
+- Shoulder blades squeezed to create a shelf
+- Grip slightly outside shoulder width
+- Elbows down, chest up
+
+**Step 4 — Unrack**
+- Stand tall, push the bar up slightly, rotate the bar to unhook
+- Confirm it's unhooked before squatting (don't ask how I know)
+- The hooks will catch you on the way back up if you fail — use that as your safety net
+
+**Step 5 — Set the Brace**
+- Big breath into the belly
+- Brace 360°
+- Hold through the full rep
+
+**Step 6 — The Descent**
+- Hips back AND down — but the path is dictated by the bar, so don't fight it
+- Depth: hip crease below knee
+- 2–3 second controlled descent
+- Knees track in line with toes — don't let them cave
+
+If your foot position is forward of the bar, your shins will stay more vertical (less knee stress, more glute/hamstring).
+
+If your feet are under the bar, your knees travel forward more (more quad).
+
+**Step 7 — The Drive Up**
+- Push the floor away
+- Chest leads, hips follow
+- Don't let the fixed bar path trick you into leaning weird — stay stacked under the bar
+
+**Step 8 — Re-Rack**
+- Finish the last rep, rotate the bar back into the hooks
+- Confirm the catch before letting go
+
+**Pre-Rep Checklist**
+- [ ] Foot position matches your goal
+- [ ] Bar high on traps
+- [ ] Bar unhooked
+- [ ] Big brace
+- [ ] Controlled descent
+- [ ] Drive up without leaning forward
+
+**Common Mistakes — Fix These First**
+
+| Mistake | Cause | Fix |
+|---|---|---|
+| Forgetting to unhook | Rushing | Always confirm before squatting |
+| Lower back pain | Feet too far forward, fighting the bar path | Pull feet back closer to bar |
+| Knee pain | Feet too far back, too much forward knee travel | Move feet forward 4–6 inches |
+| Feels harder than barbell squat | Fixed path doesn't match your natural groove | Adjust foot position until it feels smooth |
+| Heels lifting | Ankle mobility or feet too far back | Move feet forward |
+
+**Beginner Programming**
+- Reps: 8–15 (Smith squats shine for hypertrophy work)
+- Sets: 3–4
+- Placement: accessory after free-weight squats, or main lift if you're training around an injury
+- Not a replacement for free squats long-term — but excellent for high-rep leg volume
+
+**When the Smith Squat Is Actually Better**
+- High-rep leg pump work
+- Training to failure safely (no spotter needed — just rotate the bar)
+- Bias-specific work (glute-focused or quad-focused via foot position)
+- Rehabbing around minor injuries
+
+> **Plain English:** A regular squat makes your legs and your stabilizer muscles work. The Smith machine takes the stabilizer job away, so your legs get more direct work — but the fixed path can fight your natural movement if your feet are in the wrong spot. Foot position is the dial that fixes everything.
+
+---
+
+### Pull-Ups (Bodyweight or Weighted) — Beginner's Guide
+
+*Catalog entry: Seed #7 — Pull-Up (pronated default; weighted covered via same entry + load tracking)*
+
+The best upper-body pull movement, period. Same setup whether you're using bodyweight or hanging plates from a belt.
+
+**Step 1 — Grip Setup**
+- Width: slightly wider than shoulder-width
+- Style: pronated (palms facing away) — this is a true pull-up
+  - Palms facing you = chin-up (more biceps, easier)
+  - Neutral grip (palms facing each other) = easiest on shoulders
+- Thumbs: over the bar or wrapped around — personal preference, both work
+
+**Step 2 — The Hang (Starting Position)**
+- Full hang — arms extended, but don't go fully passive
+- Engage shoulders — pull shoulder blades down and back slightly
+- Cue: *"long arms, tight shoulders"*
+- Think: don't let your shoulders touch your ears
+- This active hang protects your shoulders and starts the lift from a stable position
+
+**Step 3 — Set the Body**
+- Squeeze glutes
+- Brace core
+- Legs: straight down or crossed at the ankles, slight bend at the knees
+- Slight hollow body — ribs down, body in a gentle banana-shape forward (not arched back)
+- This stops you from kipping (swinging) for momentum
+
+**Step 4 — Adding Weight (If Weighted)**
+- Belt: dipping belt with chain, plates loaded onto the chain
+- Plate position: in front of you between your legs, not banging your knees
+- Start light — add weight in 5 lb jumps until you find a working weight
+- Bodyweight + 25 lb is a strong intermediate target. +45 lb is advanced.
+
+**Step 5 — The Pull (Concentric)**
+- Cue: *"drive your elbows down to your hips"* — NOT *"pull yourself up"*
+- Lead with the chest — chest comes to the bar, not chin to the bar
+- Lats do the work, not biceps — biceps assist
+- Top position: chin clearly over the bar, chest as close to the bar as you can get
+- Don't kip — no leg swing, no body jerk
+
+**Step 6 — The Descent (Eccentric)**
+- Lower under control — 2–3 seconds down
+- Most growth happens here, especially with weight added
+- Don't drop into the hang — protects your shoulders and elbows
+
+**Step 7 — Reset Between Reps**
+- Brief active hang at the bottom — don't go fully limp
+- Re-engage shoulders before the next pull
+- If you're swinging, pause longer to let it settle
+
+**Pre-Rep Checklist**
+- [ ] Solid grip
+- [ ] Active hang (shoulders engaged)
+- [ ] Glutes and core braced
+- [ ] Slight hollow body
+- [ ] Drive elbows down, not "pull up"
+- [ ] Controlled lower
+
+**Common Mistakes — Fix These First**
+
+| Mistake | Cause | Fix |
+|---|---|---|
+| Kipping (swinging) | Trying to grind out reps you can't do clean | Lower the rep target, do controlled reps only |
+| Chin barely clears the bar | Pulling with arms instead of back | *"Chest to bar"* cue, drive elbows down |
+| Shoulders feel strained | Going from passive hang to dead hang slam | Active hang at the bottom, controlled descent |
+| Elbow pain | Too much volume too fast, or fully passive hang | Reduce volume, keep shoulders packed |
+| Stuck halfway up | Weak top portion | Add isometric holds at the top, or band-assisted reps |
+
+**Can't Do a Pull-Up Yet? Build Up With:**
+
+In order of progression:
+1. Dead hangs — 3 sets of 20–30 second holds
+2. Scapular pulls — hang and just pull shoulder blades down (no arm bend)
+3. Negatives — jump to the top, lower yourself slowly (5+ seconds down), 3–5 reps
+4. Band-assisted pull-ups — band looped over bar and under your knee
+5. Full bodyweight pull-up — start adding reps
+
+Negatives are the fastest way to progress. Do them after your main back work.
+
+**Beginner Programming**
+
+*Bodyweight:*
+- Reps: as many as you can with clean form
+- Sets: 3–5
+- Frequency: 2–3x per week — pull-ups recover fast
+
+*Weighted:*
+- Reps: 3–6 for strength, 6–10 for size
+- Sets: 3–5
+- Progression: add 2.5–5 lb when you hit the top of your rep range across all sets
+- Don't add weight until you can do 8+ clean bodyweight reps
+
+**Advanced Cues (Later)**
+- *"Pull the bar to your chest, not your chest to the bar"*
+- *"Make the bar bend in your hands"*
+- Pause at the top for 1 second per rep — brutal for the lats
+
+> **Plain English:** Pull-ups aren't an arm exercise. You're using your back to bring your elbows down — your hands just happen to be holding the bar. When that clicks, you'll feel it the next day in muscles you didn't know you had.
+
+---
+
 ## Revision log
 
 - **2026-04-22 (session 40)** —
@@ -433,3 +795,7 @@ Save these for after the basics feel automatic:
   - Parent defaults decided: high-bar Squat, conventional Deadlift, flat BB Bench.
   - Flattened all tier sections to one-row-per-exercise tables. Corrected counts: 135 additions, 164 total (prior draft miscounted).
   - EB3 deferred. EB2 leaning chevron. EB7 added (tutorial content structure).
+  - Tutorial content authored: Incline Dumbbell Press, Deadlift (Conventional), Paused High-Bar Squat, Smith Machine Squat, Pull-Ups. (5 entries total.)
+  - Smith Machine Squat added to P1 (#44) as a separate exercise. Rationale: commonly recommended for injured athletes rebuilding leg strength — fixed bar path is safer without a spotter. Total additions now 136, library 165.
+  - **EB2 locked** — chevron expander + search. No toggle.
+  - **EB4 architecture locked** — `parentExerciseId` FK (Option B). Each variant gets own row / ID / tutorial file / GIF / progression history. Ownership doc (CE1 sub vs new CE2) remains open.
