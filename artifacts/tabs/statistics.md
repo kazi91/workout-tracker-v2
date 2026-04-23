@@ -288,6 +288,8 @@ A composite signal card confirming body recomposition is occurring.
 
 > All three layers are derivable from the existing schema — no new tables required. Deferred until after the core Statistics build (Sections 1–6) is complete.
 
+> **CE1 upgrade (Decisions #24 + #27):** `exercises.category` dropped. Broad group (chest/back/shoulders/arms/legs/core) is now derived via `getExerciseGroup(exercise)` from `exercises.primaryMuscles[0]`. All rank/filter/callout logic below resolves groups through that helper — no stored column. Specific-muscle granularity (primary + role-tagged secondaries, `SECONDARY_VOLUME_MULTIPLIER`) unlocks future F27 (volume by muscle), F28 (push/pull + group balance), F29 (fatigue avatar) without further schema work; stat features themselves ship in a later cycle. See master-schematics.md § Muscle Taxonomy Model.
+
 Three progressive insight layers that work regardless of whether the user uses formal programs.
 
 ---
@@ -300,8 +302,8 @@ Pure observation from log history. No inference.
 |--------|--------|---------|
 | Favorite program | `workoutLogs → workouts → programs`, count by programId | "Your most-used program: Push/Pull/Legs — 34 sessions" |
 | Favorite workout | `workoutLogs`, count by workoutId | "Most-logged workout: Pull Day — 14 times" |
-| Favorite exercise per category | `logExercises → exercises`, count by exerciseId grouped by category | "Your go-to exercises: Chest → Bench Press (18 sessions), Back → Deadlift (15 sessions)" |
-| Exercise frequency by category | Same source — rank all exercises within each category | Bar showing frequency per exercise; surfaces neglected muscle groups visually |
+| Favorite exercise per muscle group | `logExercises → exercises`, count by exerciseId grouped by broad group via `getExerciseGroup()` | "Your go-to exercises: Chest → Bench Press (18 sessions), Back → Deadlift (15 sessions)" |
+| Exercise frequency by muscle group | Same source — rank all exercises within each broad group via `getExerciseGroup()` | Bar showing frequency per exercise; surfaces neglected muscle groups visually |
 
 ---
 
@@ -355,7 +357,7 @@ Synthesized callouts derived from layers 7a and 7b.
 
 | Insight | Condition | Display |
 |---------|-----------|---------|
-| Neglected muscle group | A category has no logged exercise in last N days (threshold TBD) | "You haven't logged a leg exercise in 18 days." |
+| Neglected muscle group | A broad group (via `getExerciseGroup()`) has no logged exercise in last N days (threshold TBD) | "You haven't logged a leg exercise in 18 days." |
 | De facto program inference | ≥20 sessions with enough pattern to reconstruct a weekly structure | "Based on your last 30 sessions, your typical week looks like: Mon — Bench Press, Incline DB… Wed — Deadlift, Pull-Up… Fri — Squat, Leg Press…" |
 | Program efficacy ranking | ≥2 programs with ≥8-session splits each | "Programs by effectiveness (PRs/session): 1. Strength Basics 3.2 · 2. Push/Pull/Legs 1.4 · 3. Quick-start 0.8" |
 
@@ -367,7 +369,7 @@ Synthesized callouts derived from layers 7a and 7b.
 
 | Service | Method | Description |
 |---------|--------|-------------|
-| `StatisticsService` | `getFavoriteExercises(userId)` | Top exercise per `category`, ranked by `logExercises` frequency |
+| `StatisticsService` | `getFavoriteExercises(userId)` | Top exercise per broad muscle group (via `getExerciseGroup()`), ranked by `logExercises` frequency |
 | `StatisticsService` | `getProgramUsage(userId)` | Session count + avg sessions/week per program, all time |
 | `StatisticsService` | `getCurrentSplits(userId)` | Array of `{ programId, startDate, endDate, sessionCount }` derived from log history |
 | `StatisticsService` | `getProgramEfficacy(userId, programId)` | PR count, volume delta, consistency rate per split |

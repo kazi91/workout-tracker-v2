@@ -133,15 +133,16 @@ Edit      → tap "← Back"         → Modal: "Discard changes?" → [Discard]
   - Card header row:
     - From-program logs (`workoutId` set): exercise name (left-aligned) | Target: [X] lb × [Y] (right-aligned, same row)
     - Quick-start logs (`workoutId: null`): exercise name only, full row width — target hidden entirely (C2 resolved)
-  - Column header row (static labels above first set): Best | lbs | reps
+  - Column header row (static labels above first set): Best | lbs | reps (+ RPE when `UserSettingsContext.rpeEnabled === true`)
   - Set rows (one per logSet):
     - Set number
     - Best (read-only): previous weight × reps (e.g. "90 × 8") or "—" if null; displayed in user's unit (UserSettingsContext); no "last time" label
     - Weight input — compact variant (see UIdesign.md); numeric, 0–9999, 1 decimal place allowed (e.g. 137.5); unit label beside field ("lb" or "kg" from UserSettingsContext); user enters in their preferred unit — converted to lb on save if metric; invalid or blank shows "Enter a valid number" inline, field stays editable
     - Reps input — compact variant (see UIdesign.md); whole numbers only, 1–999; invalid or blank shows "Enter a valid number" inline, field stays editable
+    - RPE input — compact variant; numeric 1–10, half-points allowed (7.5, 8.5); rendered only when `UserSettingsContext.rpeEnabled === true` (gated per Decision #26); nullable and optional even when rendered — blank never blocks save; no pre-fill (always blank on new set); no "Best" carryover
     - Delete set button
   - "+ Add Set" button — full-width below set rows, green fill, white text
-- "+ Add Exercise" button — opens `ExerciseSearchModal`; new exercise card appears with no sets — user taps "+ Add Set" manually (C9 resolved)
+- "+ Add Exercise" button — opens `ExerciseSearchModal`; new exercise card appears with no sets — user taps "+ Add Set" manually (C9 resolved). Picker/filter + custom-creation behavior per Decision #27 — see master-schematics.md § ExerciseSearchModal Spec (D6 two-step creation, D7 6-group chip + muscle-tag search).
 - "Finish Workout" button — fixed at bottom, triggers finish flow
 - "Discard Workout" button — fixed at bottom alongside Finish; Modal confirm → Yes: deletes log + cascades logExercises + logSets → `/logs` | No: stays on page
 
@@ -228,8 +229,8 @@ Edit      → tap "← Back"         → Modal: "Discard changes?" → [Discard]
 - `LogExerciseService.remove(id)` — remove exercise
 - `LogSetService.getByExerciseId(id)` — load sets
 - `LogSetService.getPreviousData(logExerciseId, setNumber)` — returns previous weight+reps by set number (fallback to last set); used to populate Best column
-- `LogSetService.add(logExerciseId)` — add set
-- `LogSetService.update(id, data)` — update weight/reps
+- `LogSetService.add(logExerciseId, rpe?)` — add set; optional `rpe` passed only when RPE toggle is on
+- `LogSetService.update(id, data)` — update weight/reps; `data` may include `rpe: number | null`; missing RPE never blocks save (Decision #26)
 - `LogSetService.delete(id)` — delete set
 - `ProgramService.create(name)` — quick-start finish flow, "New Program" path
 - `WorkoutService.createFromLog(logId, programId, workoutName)` — creates workout + workoutExercises from log; targets derived: targetSets = logSet count per exercise, targetReps = first set reps (0 if none), targetWeight = first set weight (0 if none)

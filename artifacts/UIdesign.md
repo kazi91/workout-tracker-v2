@@ -599,7 +599,7 @@ Tagged by implementation status:
     [ALIGNED]   Target line tappable → Edit Targets Modal — G2
     [ALIGNED]   "bodyweight" shown when targetWeight = 0
     [ADDITIVE]  Workout card shows muscle group chips based on exercises (e.g. "Chest · Shoulders")
-                — derivable from exercise.category at display time, no schema change
+                — derivable via `getExerciseGroup(exercise)` at display time (Decision #28), no schema change
     [ADDITIVE]  Program card color accent or icon — visual distinction (post-MVP branding)
     [REQUIRES]  Drag-to-reorder exercises within workout — needs reorder UX (service already specced)
     [REQUIRES]  Drag-to-reorder workouts within program — same pattern

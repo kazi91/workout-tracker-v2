@@ -28,12 +28,15 @@
   - Unit preference toggle: Imperial (lb, ft/in) | Metric (kg, cm)
   - Changing preference updates `UserSettingsContext` + persists to DB via `UserService.updateProfile()`
   - All stored values remain in lb/inches — only display changes; no data conversion on toggle
+  - **Enable RPE per set** — toggle; default OFF. When ON, per-set RPE input (1–10, half-points) renders in active workout + edit mode (see logs.md SetRow). Persists to `users.rpeEnabled` via `UserService.updateProfile()`; exposed app-wide through `UserSettingsContext.rpeEnabled` (Decision #26).
+    > **Onboarding link:** first-run tutorial (F30) introduces this toggle — surfaces what RPE is, when to use it, and that it's optional. Default-off stays honest for users who skip the tutorial.
+    > **Migration note:** standalone surface for MVP only; migrates into the feature toggle menu next cycle (F32) alongside bias/fatigue/grip/stance/tempo/bilateral opt-ins.
 - **Account section:**
   - Logout button — calls `AuthService.logout()` → redirects to `/login`
 
 ### Services Used
 - `UserService.getProfile(userId)` — load user data on mount
-- `UserService.updateProfile(userId, data)` — save name/height/weight/unitPreference
+- `UserService.updateProfile(userId, data)` — save name/height/weight/unitPreference/rpeEnabled (trainingAge accepted but no UI this cycle — F37)
 - `AuthService.logout()` — log out
 
 ### State
@@ -44,7 +47,7 @@
 
 ### Context Used
 - `AuthContext` — get current userId, call logout
-- `UserSettingsContext` — read/write unit preference
+- `UserSettingsContext` — read/write `unitPreference` and `rpeEnabled` (both hydrated from `AuthContext.user` on login; reset on logout)
 
 ---
 

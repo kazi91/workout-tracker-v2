@@ -123,7 +123,7 @@
     - `targetWeight === 0` → displays as "3 sets × 10 reps @ bodyweight"
     - `targetWeight > 0` → displays as "3 sets × 10 reps @ 45 lb" (or kg if metric)
   - Remove button
-- "+ Add Exercise" button — opens `ExerciseSearchModal`; exercise added silently with defaults (3 / 10 / 0); user taps target line to edit
+- "+ Add Exercise" button — opens `ExerciseSearchModal`; exercise added silently with defaults (3 / 10 / 0); user taps target line to edit. Picker/filter + custom-creation behavior per Decision #27 — see master-schematics.md § ExerciseSearchModal Spec.
 - **Empty workout hint** — visible until ≥1 exercise added
   - Text: "Add exercises to get started."
 - "Start Workout" button — always visible

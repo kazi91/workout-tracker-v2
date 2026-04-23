@@ -1,14 +1,14 @@
 WORKOUT TRACKER V2 — RECAP
 ===========================
-Last updated: 2026-04-22 (session 41 — master-schematics.md patched for CE1 Tier 1 + Tier 3; ready for session 42 tab-spec patch)
+Last updated: 2026-04-22 (session 42 — tab-spec patch 2/3 complete + sequencing decision: seed re-curation deferred until exercise-bank.md updated)
 
 CURRENT TASK (mirrors CLAUDE.md — if they diverge, recap.md wins)
 -------------------------------------------------------------------
 Phase: 5 — Statistics page + new features planning
-Last session ended: Session 41 — Spec patch session 1 of 3 COMPLETE. master-schematics.md updated across all 7 sections + Changelog. DB schema v3 delta locked (new fields on exercises/users/logSets; exercises.category dropped). Muscle Taxonomy Model sub-section added. Service Layer rows updated for ExerciseService/UserService/LogSetService. ExerciseSearchModal Spec rewritten for Decision #27 (D6 picker + D7 filter). Six Decisions #24–#29 appended. Issue Tracker: CE1 moved to Resolved; F31–F39 added; F20/F24/F27/F28/F29 language patched. No code written. (2026-04-22)
-Next action: Session 42 — Spec patch session 2 of 3. Patch tab artifacts to reflect CE1 locks: `artifacts/tabs/logs.md` (RPE entry surface on SetRow; picker/filter references updated), `artifacts/tabs/profile.md` (RPE toggle surface — with note it moves to F32 feature toggle menu), `artifacts/tabs/statistics.md` (F27/F28/F29 references refined; broad-group language matches Decision #24; remove any `exercises.category` residuals). Optional: `artifacts/tabs/programs.md` if picker/filter callouts exist there.
-Session scope: Spec patch (artifact updates only — no code yet, no src/ edits)
-Required reading next session: recap.md, master-schematics.md (§ Muscle Taxonomy Model + Decisions #24–#29 for terminology), artifacts/tabs/logs.md, artifacts/tabs/profile.md, artifacts/tabs/statistics.md; `memory/project_ce1_final_scope.md` for authoritative scope
+Last session ended: Session 42 — Spec patch session 2 of 3 COMPLETE. Tab artifacts aligned with CE1 locks. logs.md: SetRow gains optional RPE input gated on `UserSettingsContext.rpeEnabled`; column header adds RPE conditionally; LogSetService.add/update signatures updated; "+ Add Exercise" cross-refs master-schematics § ExerciseSearchModal Spec (Decision #27). profile.md: "Enable RPE per set" toggle added under Preferences (persists to `users.rpeEnabled` via `UserService.updateProfile`; surfaced via `UserSettingsContext`); tutorial introduction via F30 + migration to F32 noted; services + Context Used rows updated. statistics.md: Section 7 intro callout added (getExerciseGroup helper + CE1 upgrade path for F27/F28/F29); 4 `category` residuals scrubbed → "broad group via `getExerciseGroup()`". programs.md: one-liner cross-ref to ExerciseSearchModal Spec on "+ Add Exercise". master-schematics.md Decision #26 patched: RPE toggle now specifies UserSettingsContext surface + F30 tutorial introduction. memory/project_tutorial_hints_queue.md: RPE toggle first-run hint added. No code written. (2026-04-22)
+Next action: Session 43 — Exercise bank update. Seed re-curation DEFERRED. Rationale: `artifacts/exercise-bank.md` has active planning (open decision EB4 `parentExerciseId` schema, 136 expansion entries across P0–P5 tiers, proposed build sequence adding 81+ library entries) that will change what the final CE1 seed set looks like. Re-curating only the 29 current seeds now would need redoing after expansion. Session 43 work: (1) resolve EB4 — does `parentExerciseId` land in CE1 v3 migration or a separate CE2 migration?; (2) reconcile `exercise-bank.md` build sequence with `memory/project_ce1_final_scope.md` (which defers "library expansion" entirely — this tension needs an explicit call); (3) lock which P-tiers (if any) ship in CE1 vs subsequent cycles; (4) update exercise-bank.md decisions + status. THEN Session 44 = seed re-curation over the final locked CE1 exercise set. THEN Session 45+ = CE1 build.
+Session scope: Research — exercise bank alignment + decision lock (no code, no src/ edits)
+Required reading next session: recap.md, `artifacts/exercise-bank.md` (full), `memory/project_ce1_final_scope.md` (scope boundaries — library expansion currently deferred), master-schematics.md (§ Muscle Taxonomy Model + Decisions #24–#29 for parent-variant context)
 
 ---
 
@@ -119,9 +119,10 @@ Phase 4 close-out (kept for history):
 Phase 5 active work:
 9. CE1 spec patches — IN PROGRESS:
     9a. ~~master-schematics.md~~ — DONE (session 41): 7 sections + Changelog patched for Tier 1 + Tier 3
-    9b. Tab artifacts (logs.md / profile.md / statistics.md) — NEXT (session 42)
-    9c. Seed re-curation (29 exercises with EMG citations per Decision #24) — session 43
-10. CE1 build — after 9c: Dexie v3 migration (nuke + reseed), schema field wiring, ExerciseSearchModal rewrite (Decision #27), RPE per-set input, Profile RPE toggle
+    9b. ~~Tab artifacts (logs.md / profile.md / statistics.md / programs.md)~~ — DONE (session 42): RPE surface on SetRow, RPE toggle in Profile (UserSettingsContext + F30 tutorial link), statistics.md Section 7 + category scrubs, programs.md modal cross-ref
+    9c. Exercise bank update + scope alignment — NEXT (session 43): resolve EB4 (parentExerciseId in CE1 vs CE2), reconcile bank with `project_ce1_final_scope.md`, lock P-tiers shipping in CE1
+    9d. Seed re-curation — DEFERRED to session 44 (was originally 43; moved because bank changes will alter the final CE1 seed set)
+10. CE1 build — after 9d: Dexie v3 migration (nuke + reseed), schema field wiring, ExerciseSearchModal rewrite (Decision #27), RPE per-set input, Profile RPE toggle
 11. Statistics build — after CE1 build. Resolve P5 charting library + OD6 button tokens before starting. S1 closed; S4 resolved; S2 deferred.
 12. Iteration — new feature sets (F20–F39) planned and built per the repeat phases 1–4 loop
 
@@ -213,6 +214,17 @@ UI DESIGN DECISIONS LOCKED (UIdesign.md session 4)
 SESSION HISTORY
 ----------------
 Most recent at top. Full history in handoff.md.
+
+  Session 42 — 2026-04-22 (SPEC PATCH 2/3 COMPLETE — tab artifacts)
+    - Research/spec-patch mode — no code written. Aligned logs.md, profile.md, statistics.md, programs.md with CE1 locks from session 41.
+    - logs.md: Active-mode SetRow gains optional RPE input (1–10, half-points, nullable, no pre-fill, never blocks save); column header adds RPE conditionally on `UserSettingsContext.rpeEnabled`. LogSetService.add(logExerciseId, rpe?) and update(id, data including rpe) signatures reflected in Services Used. "+ Add Exercise" cross-refs master-schematics § ExerciseSearchModal Spec (Decision #27 — D6 two-step create + D7 6-group chip + muscle-tag search).
+    - profile.md: "Enable RPE per set" toggle added under Preferences, default OFF; persists to `users.rpeEnabled` via `UserService.updateProfile()`; surfaced via `UserSettingsContext.rpeEnabled`. Inline notes: F30 tutorial introduces it on first run; migrates to F32 feature toggle menu next cycle. Services Used row updated to include rpeEnabled (+ trainingAge forward-compat, F37). Context Used row updated to note UserSettingsContext now exposes rpeEnabled alongside unitPreference, both hydrated from AuthContext.user on login, reset on logout.
+    - statistics.md: Section 7 gains CE1 upgrade callout — `exercises.category` dropped, `getExerciseGroup()` derives broad group, specific-muscle granularity unlocks F27/F28/F29 without further schema work. Four `category` residuals scrubbed (7a favorite/frequency rows, 7d neglected callout, 7e `getFavoriteExercises` description) → "broad group via `getExerciseGroup()`".
+    - programs.md: single-line cross-ref added to "+ Add Exercise" pointing at master-schematics § ExerciseSearchModal Spec (Decision #27). No other picker callouts existed.
+    - master-schematics.md Decision #26 patched: RPE toggle locked to `UserSettingsContext.rpeEnabled` (not raw `AuthContext.user`), hydrated from AuthContext.user on login, reset on logout. F30 first-run tutorial introduces the feature.
+    - memory/project_tutorial_hints_queue.md: new "RPE toggle — first-run introduction" hint added (inserted before existing muscle-picker hints). Covers what RPE measures, half-point scale, optional nature, and opt-in during tutorial.
+    - Decisions locked this session (extending #26): (1) RPE toggle lives in UserSettingsContext (not AuthContext) — matches `unitPreference` pattern, clean separation of user-preference settings from identity state; (2) RPE introduced via F30 first-run tutorial (not just a silent toggle).
+    - SEQUENCING CHANGE (end-of-session): seed re-curation deferred from Session 43 → Session 44. Reason: `artifacts/exercise-bank.md` has active expansion planning (open EB4 parentExerciseId + 136-entry P0–P5 list + build sequence) that will change what the final CE1 seed set looks like. Curating only the 29 current seeds now would need redoing post-expansion. Session 43 re-scoped to exercise-bank update + CE1 scope alignment. `memory/project_ce1_final_scope.md` banner added flagging scope as provisional until Session 43 closes.
 
   Session 41 — 2026-04-22 (SPEC PATCH 1/3 COMPLETE — master-schematics.md)
     - Research/spec-patch mode — no code written. Executed Path A spec patch against master-schematics.md per `memory/project_ce1_final_scope.md`.
