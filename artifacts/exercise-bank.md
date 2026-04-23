@@ -49,7 +49,9 @@ Derived from CE1 D1/D3 (locked).
 - **P4** — Gated behind feature toggle (Olympic, plyo, KB, conditioning).
 - **P5** — Variant entry. Nested under a parent via `parentExerciseId` (pending schema).
 
-**Counts:** Seed=29, P0=8, P1=44, P2=33, P3=11, P4=30, P5=10 → **136 additions, 165 total library.**
+**Counts:** Seed=29, P0=9, P1=56, P2=53, P3=11, P4=30, P5=25 → **184 additions, 213 total library.**
+
+*Note: P1 and P2 tables show numbering gaps where entries were moved/deduped in Batch C. Gaps are intentional — renumbering 100+ rows would cost more than it's worth.*
 
 ---
 
@@ -60,21 +62,21 @@ From [`src/db/seed.ts`](../src/db/seed.ts).
 | # | Exercise | Category | Notes |
 |---|---|---|---|
 | 1 | Bench Press | Chest | Flat barbell, touch-and-go (default) |
-| 2 | Incline Bench Press | Chest | Barbell |
+| 2 | Incline Barbell Bench Press | Chest | Flat bench inclined 30–45° |
 | 3 | Dumbbell Fly | Chest | |
 | 4 | Push-Up | Chest | |
-| 5 | Cable Fly | Chest | |
+| 5 | Cable Crossover | Chest | Default = mid-height. Parent of Cable Crossover — High (P5 #24) and Cable Crossover — Low (P5 #25). P2 Mid deduped session 40 (was redundant with this default). |
 | 6 | Deadlift | Back | Conventional (default) |
 | 7 | Pull-Up | Back | Pronated grip |
-| 8 | Barbell Row | Back | |
+| 8 | Bent-Over Barbell Row | Back | Continuous-tension (distinct from Pendlay dead-stop and Yates more-upright) |
 | 9 | Lat Pulldown | Back | |
 | 10 | Seated Cable Row | Back | |
 | 11 | Squat | Legs | High-bar back squat (default) |
 | 12 | Romanian Deadlift | Legs | |
 | 13 | Leg Press | Legs | |
-| 14 | Leg Curl | Legs | Lying |
+| 14 | Lying Leg Curl | Legs | Machine. Shortened-bias (paired with P1 Seated Leg Curl = lengthened-bias) |
 | 15 | Leg Extension | Legs | |
-| 16 | Calf Raise | Legs | Standing |
+| 16 | Standing Calf Raise (Bodyweight) | Legs | Floor or step. Machine version is P1 #23. |
 | 17 | Overhead Press | Shoulders | Barbell |
 | 18 | Lateral Raise | Shoulders | Dumbbell |
 | 19 | Front Raise | Shoulders | |
@@ -83,7 +85,7 @@ From [`src/db/seed.ts`](../src/db/seed.ts).
 | 22 | Hammer Curl | Arms | |
 | 23 | Tricep Pushdown | Arms | |
 | 24 | Skull Crusher | Arms | |
-| 25 | Dips | Arms | |
+| 25 | Dips | Arms | Compound: triceps + chest + front delts. Parent of Tricep Dips, Chest Dips, Weighted Dip variants. Default = bodyweight, neutral torso. |
 | 26 | Plank | Core | |
 | 27 | Crunch | Core | |
 | 28 | Hanging Leg Raise | Core | |
@@ -91,22 +93,24 @@ From [`src/db/seed.ts`](../src/db/seed.ts).
 
 ---
 
-## P0 — Launch blockers (8)
+## P0 — Launch blockers (9)
 
 | # | Exercise | Muscle / Pattern | Notes |
 |---|---|---|---|
 | 1 | Dumbbell Bench Press | Chest | |
 | 2 | Incline Dumbbell Bench Press | Chest | |
 | 3 | Dumbbell Row | Back | One-arm |
-| 4 | Chin-Up | Back | Supinated grip — distinct from Pull-Up |
+| 4 | Chin-Up | Back | Supinated grip. Structurally a variant of Pull-Up (seed #7) via `parentExerciseId` — tier remains P0 for launch-essential priority. |
 | 5 | Bulgarian Split Squat | Quads | |
 | 6 | Barbell Hip Thrust | Glutes | *Glutes = new category* |
 | 7 | Dumbbell Shoulder Press | Shoulders | |
 | 8 | Barbell Shrug | Shoulders | |
+| 9 | Dumbbell Curl | Biceps | Standing, basic DB curl. Genuine P0 gap found in audit. |
 
 ---
 
-## P1 — Core baseline (44)
+## P1 — Core baseline (56)
+*(Numbering gap at #4 from Batch C move to P5 — intentional.)*
 
 Includes Sumo Deadlift and Stiff-Leg Deadlift **graduated from P5** (different muscle maps per Parent/Variant Rule).
 
@@ -115,11 +119,10 @@ Includes Sumo Deadlift and Stiff-Leg Deadlift **graduated from P5** (different m
 | 1 | Decline Bench Press | Chest | Barbell |
 | 2 | Machine Chest Press | Chest | |
 | 3 | Pec Deck | Chest | |
-| 4 | Cable Crossover — High | Chest | High-to-low |
 | 5 | Close-Grip Bench Press | Chest | Triceps emphasis; also logs as tri work |
 | 6 | Chest-Supported Dumbbell Row | Back | |
 | 7 | T-Bar Row | Back | |
-| 8 | Neutral-Grip Pull-Up | Back | |
+| 8 | Neutral-Grip Pull-Up | Back | Structurally a variant of Pull-Up (seed #7) via `parentExerciseId` — tier remains P1 for priority. |
 | 9 | Machine Row | Back | |
 | 10 | Trap Bar Deadlift | Back | |
 | 11 | Sumo Deadlift | Back | Graduated from P5 |
@@ -156,16 +159,28 @@ Includes Sumo Deadlift and Stiff-Leg Deadlift **graduated from P5** (different m
 | 42 | Side Plank | Core | |
 | 43 | Hanging Knee Raise | Core | Distinct from Hanging Leg Raise |
 | 44 | Smith Machine Squat | Quads | Rehab / injury-training friendly — fixed bar path, no spotter needed. Separate exercise, not a Squat variant. |
+| 45 | Machine Assisted Dip | Arms | Assistance machine (kneeling pad reduces bodyweight load). Beginner-friendly. Separate exercise, not a Dips variant (machine removes stabilizer + reduces load). |
+| 46 | Iso-Lateral Chest Press | Chest | Plate-loaded (Hammer Strength equivalent). Unilateral option. |
+| 47 | Iso-Lateral High Row | Back | Plate-loaded. Pull-down-angle row. |
+| 48 | Iso-Lateral Low Row | Back | Plate-loaded. Seated row-angle. |
+| 49 | Machine Assisted Pull-Up | Back | Assistance machine (kneeling pad). Direct counterpart to Machine Assisted Dip. |
+| 50 | Iso-Lateral Shoulder Press | Shoulders | Plate-loaded. Unilateral option. |
+| 51 | 45° Hyperextension | Hamstrings | Back extension bench. Hams + glutes + erectors. |
+| 52 | Machine Hip Thrust | Glutes | Dedicated hip thrust machine (no barbell/plate setup needed). |
+| 53 | Machine Preacher Curl | Biceps | Plate-loaded or selectorized. |
+| 54 | Machine Tricep Extension | Triceps | Seated, selectorized. |
+| 55 | Captain's Chair Knee Raise | Core | Back-supported hanging knee raise. Beginner-friendly. |
+| 56 | Upright Row | Shoulders | BB/DB/cable. Side delts + traps. Common but technique-sensitive — watch shoulder impingement risk. |
+| 57 | Split Squat | Quads | Rear foot flat on floor (distinct from Bulgarian Split Squat where rear foot is elevated). Unilateral. |
 
 ---
 
-## P2 — Programming depth (33)
+## P2 — Programming depth (53)
+*(Numbering gaps at #2 and #3 from Batch C dedupe/move — intentional.)*
 
 | # | Exercise | Muscle / Pattern | Notes |
 |---|---|---|---|
 | 1 | Decline Dumbbell Bench Press | Chest | |
-| 2 | Cable Crossover — Mid | Chest | |
-| 3 | Cable Crossover — Low | Chest | Low-to-high |
 | 4 | Incline Dumbbell Fly | Chest | |
 | 5 | Dumbbell Pullover | Chest | Also back-bias cue |
 | 6 | Chest-Supported T-Bar Row | Back | |
@@ -196,15 +211,37 @@ Includes Sumo Deadlift and Stiff-Leg Deadlift **graduated from P5** (different m
 | 31 | Decline Sit-Up | Core | |
 | 32 | Farmer Carry | Carries | *Carries = new category* |
 | 33 | Suitcase Carry | Carries | Unilateral |
+| 34 | Yates Row | Back | More upright torso than Bent-Over Barbell Row; continuous tension (unlike Pendlay dead-stop). Back-thickness bias. |
+| 35 | Smith Machine Bench Press | Chest | Fixed-path bench. High-volume / failure-safe work. |
+| 36 | Smith Machine Incline Bench Press | Chest | Fixed-path incline. |
+| 37 | Smith Machine Row | Back | Fixed-path bent-over row. Rehab-friendly. |
+| 38 | Smith Machine Overhead Press | Shoulders | Fixed-path OHP. Rehab-friendly. |
+| 39 | Machine Shrug | Shoulders | Dedicated selectorized shrug machine. |
+| 40 | Plate-Loaded Hack Squat | Quads | Distinct from selectorized Hack Squat (#15) — usually different angle/feel. |
+| 41 | Vertical Leg Press | Quads | Distinct from 45° Leg Press — more quad-bias, different ROM feel. |
+| 42 | Reverse Hyperextension Machine | Hamstrings | Dedicated machine — low-back-friendly posterior work. |
+| 43 | Smith Machine Hip Thrust | Glutes | Fixed-path hip thrust workaround. |
+| 44 | Machine Glute Kickback | Glutes | Dedicated standing glute machine. |
+| 45 | Smith Machine Calf Raise | Calves | Fixed-path calf work — used when no dedicated machine. |
+| 46 | Machine Bicep Curl | Biceps | Selectorized seated/standing curl machine. |
+| 47 | Seated Tricep Dip Machine | Triceps | Plate-loaded dedicated tricep dip machine (distinct from Machine Assisted Dip — different purpose/loading). |
+| 48 | Ab Crunch Machine | Core | Selectorized crunch machine. |
+| 49 | Forward Lunge | Quads | Step-forward lunge, step back after each rep. Distinct from Walking Lunge (P1 #16) and Reverse Lunge (P1 #17). |
+| 50 | Single-Leg Hip Thrust | Glutes | Bodyweight or barbell. Unilateral hip thrust. Separate exercise from Barbell Hip Thrust (different stabilizer demand). |
+| 51 | Single-Leg Smith Machine Hip Thrust | Glutes | Fixed-path unilateral hip thrust. |
+| 52 | Single-Leg Machine Hip Thrust | Glutes | Unilateral variant on dedicated hip thrust machine. |
+| 53 | Single-Leg Dumbbell Calf Raise | Calves | Unilateral, DB held in working-side hand, off a step for full ROM. |
+| 54 | Pendulum Squat | Quads | Dedicated machine (Nautilus Pendulum, Hammer Strength V-Squat equivalents). Pure quad builder with fixed arc. Split from P3 #2 session 40. |
+| 55 | Belt Squat | Quads | Weight belt between legs on platform (dedicated belt-squat machine or dip belt + cable). Spine unloaded — training-around-injury friendly. Split from P3 #2 session 40. |
 
 ---
 
 ## P3 — Specialty (11)
+*(Numbering gap at #2 from Batch C Pendulum/Belt split to P2 — intentional.)*
 
 | # | Exercise | Muscle / Pattern | Notes |
 |---|---|---|---|
 | 1 | Meadows Row | Back | Landmine |
-| 2 | Pendulum / Belt Squat | Quads | |
 | 3 | Sissy Squat | Quads | |
 | 4 | B-Stance RDL | Glutes | |
 | 5 | Donkey Calf Raise | Calves | |
@@ -214,6 +251,7 @@ Includes Sumo Deadlift and Stiff-Leg Deadlift **graduated from P5** (different m
 | 9 | L-Sit Hold | Core | |
 | 10 | Overhead Carry | Carries | |
 | 11 | Zercher Carry | Carries | |
+| 12 | Tibialis Raise | Calves | Anterior shin (tibialis anterior). Standing or seated. Underrated for shin-splint prevention and athleticism. |
 
 ---
 
@@ -273,14 +311,22 @@ Default off. Each gated by its respective feature toggle per `memory/project_fea
 
 ---
 
-## P5 — Variants (10)
+## P5 — Variants (25)
 
-Nested under a parent exercise via `parentExerciseId` (pending schema). Exposure mechanism TBD (see EB2 — chevron expander vs global toggle).
+Nested under a parent exercise via `parentExerciseId` (pending schema). Exposure = chevron expander + search indexing (EB2 locked).
 
-Parent defaults decided session 40:
+Parent defaults:
 - **Squat** default = high-bar back squat
 - **Deadlift** default = conventional
 - **Bench Press** default = flat barbell, touch-and-go
+- **Dips** default = bodyweight, neutral torso
+- **Pull-Up** default = pronated, shoulder-width grip
+- **Lat Pulldown** default = wide-grip pronated
+- **Romanian Deadlift** default = barbell, continuous tension
+- **Skull Crusher** default = EZ-bar, flat bench
+- **Barbell Curl** default = standing, standard straight-bar form
+- **Plank** default = front plank on forearms, bodyweight
+- **Cable Crossover** default = mid-height, standard pec-fly path
 
 | # | Parent | Variant | Notes |
 |---|---|---|---|
@@ -294,6 +340,21 @@ Parent defaults decided session 40:
 | 8 | Deadlift | Block Pull | Partial ROM, blocks |
 | 9 | Deadlift | Deficit Deadlift | Extended ROM |
 | 10 | Deadlift | Snatch-Grip Deadlift | Wide grip |
+| 11 | Dips | Tricep Dips | Vertical torso, elbows tucked. Triceps emphasis. |
+| 12 | Dips | Chest Dips | Forward lean, elbows slightly flared. Chest emphasis. |
+| 13 | Dips | Weighted Dip | Belt + plates or DB between ankles. Flag: may be redundant with load tracking on parent Dips entry (Pull-Up precedent uses single entry + weight field). |
+| 14 | Lat Pulldown | Close-Grip Lat Pulldown | Narrow overhand grip. |
+| 15 | Lat Pulldown | V-Bar Lat Pulldown | Neutral-grip V-bar attachment. |
+| 16 | Lat Pulldown | Reverse-Grip Lat Pulldown | Supinated grip — bicep-bias. |
+| 17 | Romanian Deadlift | Paused RDL | 1–3s pause at mid-shin. Hamstring-stretch emphasis. |
+| 18 | Pull-Up | Narrow-Grip Pull-Up | Hands ~shoulder-width or closer; pronated. |
+| 19 | Skull Crusher | Dumbbell Skull Crusher | Can be done with both DBs or one in each hand. |
+| 20 | Skull Crusher | Incline Skull Crusher | Bench at slight incline — changes stretch and triceps emphasis. |
+| 21 | Barbell Curl | Strict Curl | Back against wall or pad; zero body English. Form variant for strength honesty. |
+| 22 | Plank | Knee Plank | Beginner regression — knees on floor instead of toes. |
+| 23 | Plank | Weighted Plank | Plate on upper back. Progression variant. |
+| 24 | Cable Crossover | Cable Crossover — High | High-to-low path. Mid/lower chest bias. Moved from P1 #4 session 40. |
+| 25 | Cable Crossover | Cable Crossover — Low | Low-to-high path. Upper chest bias. Moved from P2 #3 session 40. |
 
 ---
 
@@ -304,27 +365,74 @@ Parent defaults decided session 40:
 | EB1 | Parent defaults — high-bar (Squat), conventional (Deadlift), flat BB (Bench Press) | **Decided** (session 40) |
 | EB2 | Variant exposure — global toggle vs per-category toggle vs chevron expander (no toggle) | **Decided** (session 40) — chevron expander on parent rows + search always indexes variants. No toggle. Progressive disclosure for casuals, 1-tap reach for power users. |
 | EB3 | Parent rollup in Stats — per-variant only vs rollup vs both | **Deferred** (session 40) — revisit during Stats build. `parentExerciseId` FK keeps rollup trivial to add later. |
-| EB4 | `parentExerciseId` schema addition — timing + planning doc ownership (CE1 sub-decision vs new CE2) | **Architecture decided** (session 40) — add nullable `parentExerciseId: number \| null` to exercises table. Each variant remains its own row with own ID, tutorial file, GIF, and progression history. **Ownership doc still open** (CE1 sub-decision vs new CE2). |
-| EB5 | Custom exercises — allow user to set `parentExerciseId` to nest their custom variants under seeded parents | **Open** — nice-to-have, low cost |
+| EB4 | `parentExerciseId` schema addition — timing + planning doc ownership | **Fully decided and executed** (session 43 architecture → session 44 doc). Architecture: nullable `parentExerciseId: number \| null` on exercises table; each variant keeps own row/ID/tutorial/GIF/progression. Ownership: CE2 — doc exists at `memory/project_ce2_schema_architecture.md` with full schema spec, migration plan (bundled with CE1 v3 bump, 2-pass seed order), variant-UX wiring (chevron + flat search), custom-exercise parent picker (EB5), validation rules (flat one-level hierarchy), and deletion behavior (choice modal for parent-with-variants). Karpathy-check passed: real content from day 1. |
+| EB5 | Custom exercises — allow user to set `parentExerciseId` to nest their custom variants under seeded parents | **Decided — allow** (session 43). When creating a custom exercise, user picks an optional parent from existing seeded entries. Custom variants surface in the parent's chevron expander alongside seeded variants. Schema cost: none (field exists from EB4). UX cost: one optional parent-picker dropdown in the custom-exercise form. |
 | EB6 | P4 toggle categories — naming + default state per category | **Open** — deferred to toggle menu build |
-| EB7 | Tutorial content structure — inline here vs per-exercise files under `artifacts/exercises/[slug].md` | **Deferred** (session 40) — start inline; split when the file physically hurts (Karpathy-style) |
+| EB7 | Tutorial content structure — inline here vs per-exercise files under `artifacts/exercises/[slug].md` | **Decided / executed** (session 43) — split to `artifacts/exercises/[slug].md`, one file per exercise. Template locked at `artifacts/exercises/_template.md` (v2). All 5 inline guides migrated + upgraded to v2. New guides go directly to the exercises/ folder. |
 
 ---
 
-## Build sequencing (proposed, not locked)
+## Build sequencing
 
-1. Resolve EB4 (schema + planning doc ownership).
-2. Seed expansion pass 1 — P0 + P1 as separate exercises (52 entries, 81 total library).
-3. Implement `parentExerciseId` + picker chevron expander.
-4. Seed expansion pass 2 — P5 variants (10 entries).
-5. Seed expansion pass 3 — P2 (33 entries) once CE1 D4/D5 lock.
-6. Seed expansion pass 4 — P3 + P4 as toggle system allows.
+**CE1 scope lock:** full 213-entry library ships in CE1 (Seed + P0 + P1 + P2 + P3 + P4 + P5). P4 stays toggle-gated at UX (visibility), not at seed presence. See `memory/project_ce1_final_scope.md` for the authoritative scope. `parentExerciseId` schema + variant-UX wiring owned by `memory/project_ce2_schema_architecture.md` (CE2); migration bundled into CE1's Dexie v3 bump.
+
+Two phases: **curation** (data tagging, no code) then **build** (schema + UI). Curation must complete before build starts.
+
+### Phase 1 — Curation (Sessions 45a–f, ~13h total, no code)
+
+Applies the rules in [`seed-tagging-principles.md`](seed-tagging-principles.md) across all 213 entries. Output: `artifacts/seed-draft.md` with per-entry tagging (primary, secondaries+role, parentExerciseId, equipment, opportunistic Tier 3 fields). Compiles to `src/db/seed.ts` during the build phase — curation does not touch `src/`.
+
+| Session | Scope | Est | Deliverable |
+|---|---|---|---|
+| 45a | Principles review + **11 parent muscle maps** (Squat, Deadlift, Bench, Dips, Pull-Up, Lat Pulldown, RDL, Skull Crusher, Barbell Curl, Plank, Cable Crossover) + start EMG co-primary reference list | ~1.5h | parents locked; reference list seeded |
+| 45b | Standalone Seed + P0 pass (~30 entries) | ~2h | highest-traffic entries tagged with deepest research |
+| 45c | P1 upper body (chest / back / shoulders / arms) | ~2.5h | ~30 entries |
+| 45d | P1 lower body + core | ~2h | ~26 entries |
+| 45e | P5 variants (25, fast — mostly inherit from parents) + P2 + P3 | ~3h | ~89 entries |
+| 45f | P4 (30) + end-to-end sanity pass + validation script sketch | ~2h | library-complete draft; overrides audited |
+
+Rationale for ordering:
+- **Parents first (45a):** parent muscle maps cascade to ~45 inheriting entries (P5 variants + minor P1 relatives). High leverage from 11 careful decisions.
+- **By priority tier, grouped by region:** compounds muscle-knowledge within a session (chest knowledge stays hot across a run of chest exercises); avoids cross-group jumps.
+- **P5 late:** deliberately placed after P1 so parents are all locked by the time variants inherit.
+- **P4 last:** lowest research depth; UX-gated so accuracy is less critical.
+
+End-of-session per CLAUDE.md: run the sanity checks in `seed-tagging-principles.md`; surface exceptions to user for accept/reject before closing.
+
+### Phase 2 — Coordination (CE1 + CE2 merge)
+
+Single Dexie v3 bump bundles both CE1 and CE2 schema changes (per CE2 plan). No separate migration. Spec patch session 3/3 (if needed) lands the locked decisions into `master-schematics.md` + tab artifacts before the build session starts.
+
+### Phase 3 — Build (Session 47+, code)
+
+1. Dexie v3 schema — add muscle taxonomy fields (`primaryMuscles`, `secondaryMuscles`), `parentExerciseId`, RPE fields (`users.rpeEnabled`, `logSets.rpe`), Tier 3 forward-compat fields; drop `exercises.category`.
+2. Migration — nuke + reseed per D8.1 (drops `exercises + logExercises + logSets`).
+3. Seed script — 2-pass insertion per CE2 migration plan (parents first, variants second with parent-id lookup).
+4. `ExerciseSearchModal` rewrite — new filter UX (Decision #27), custom-create two-step flow + optional parent picker (EB5), chevron expander for variants (CE2 EB2).
+5. Custom-exercise `ExerciseService.create()` signature accepts `parentExerciseId`.
+6. Exercise deletion — choice modal for parent-with-variants (CE2).
+7. Profile tab — RPE toggle (`users.rpeEnabled`).
+8. `WorkoutDetailPage` active + edit modes — RPE input on SetRow (gated).
+9. Run CE2 migration test checklist.
+10. P4 dev-flag gating in picker (feature toggle menu itself is next cycle).
 
 ---
 
-## Tutorial content (inline until it hurts)
+## Tutorial content — migrated to `artifacts/exercises/`
 
-> Author per-exercise content below as it's written. When the file outgrows itself, split into `artifacts/exercises/[slug].md` — one file per exercise, same headings. Don't reserve the directory until the first file exists.
+> All per-exercise guides now live in `artifacts/exercises/[slug].md`, one file per exercise. Template v2 at [`exercises/_template.md`](exercises/_template.md). New guides go directly there — don't author inline.
+>
+> **Index of existing guides:**
+> - [Bench Press (Flat Barbell, Touch-and-Go)](exercises/bench-press.md) (Seed #1)
+> - [Deadlift (Conventional)](exercises/deadlift.md) (Seed #6)
+> - [Pull-Ups (Bodyweight or Weighted)](exercises/pull-up.md) (Seed #7)
+> - [Squat (High-Bar Back Squat)](exercises/squat.md) (Seed #11)
+> - [Overhead Press (Standing Barbell)](exercises/overhead-press.md) (Seed #17)
+> - [Incline Dumbbell Press](exercises/incline-dumbbell-press.md) (P0 #2)
+> - [Smith Machine Squat](exercises/smith-machine-squat.md) (P1 #44)
+> - [Paused High-Bar Squat](exercises/paused-squat.md) (P5 #6)
+>
+> The short link stubs below exist for catalog cross-reference. They will be removed once the catalog gains native guide-link support.
 
 ---
 
@@ -332,97 +440,7 @@ Parent defaults decided session 40:
 
 *Catalog entry: P0 #2 — Incline Dumbbell Bench Press*
 
-A step-by-step flow you can follow the first time you try this lift.
-
-**Step 1 — Set Up the Bench**
-- Angle: 30–45°
-- Steeper than 45° turns it into a shoulder press
-- This range biases the upper chest without front delts taking over
-
-**Step 2 — Lock In Your Base (Bottom-Up)**
-
-Build a stable platform before you even pick up the dumbbells.
-- Feet — planted flat, drive them into the floor
-- Glutes — light squeeze (prevents over-arching)
-- Core — brace like you're about to get punched
-- Head — neutral on the bench, don't crane forward
-
-Think: *stable base, not relaxed legs.*
-
-**Step 3 — Set Your Upper Body (The Non-Negotiable Part)**
-
-This is where most beginners go wrong.
-- Shoulder blades: pull down and back — "put them in your back pockets"
-- Chest: proud, up toward the ceiling
-- Hold this position the entire set. Don't relax at the bottom of any rep.
-
-Why it matters: *protects your shoulders and gives the chest leverage to actually do the work.*
-
-**Step 4 — Grip and Elbow Position**
-- Grip: neutral or slightly pronated (palms forward-ish), crush the handles
-- Elbows: 30–60° from your torso
-  - Too flared → shoulder stress
-  - Too tucked → becomes a triceps press
-- Wrists stacked over elbows at all times
-
-**Step 5 — The Descent (Lowering the Weight)**
-
-This is where muscle growth happens. Don't rush it.
-- Tempo: 2–3 seconds down, controlled
-- Depth: until you feel a stretch in the chest — dumbbells around upper/outer chest
-- Forearms: vertical at the bottom
-- Cue: *"stretch your chest, not your shoulders"*
-- Breathe in on the way down
-
-**Step 6 — The Press (Lifting the Weight)**
-- Initiate with the chest, not the shoulders
-- Cue: *"bring your biceps toward your chest"* (not "push the weight up")
-- Path: slight arc inward — wide at the bottom, closer at the top (don't clang them)
-- Top: stop just short of lockout to keep tension on the chest
-- Breathe out as you press
-
-**Step 7 — Mind-Muscle Cues (If You Don't Feel Your Chest)**
-
-Pick one and focus on it for a full set:
-- *"Squeeze your chest to move the weight"*
-- *"Imagine hugging a barrel"*
-- *"Pull the dumbbells together using your chest"*
-
-**Pre-Set Checklist**
-
-Run through this before every set:
-- [ ] Bench at 30–45°
-- [ ] Feet planted
-- [ ] Shoulder blades pinned down and back
-- [ ] Chest up
-- [ ] Controlled descent planned
-- [ ] Pressing with chest, not shoulders
-
-**Common Mistakes — Fix These First**
-
-| Mistake | Cause | Fix |
-|---|---|---|
-| Feels like a shoulder press | Bench too steep or elbows flared | Lower angle, tuck elbows slightly |
-| Losing shoulder blade position | Relaxing at the bottom | Pin shoulders to bench the whole set |
-| Bouncing at the bottom | Too much weight | Lighter weight, slower descent |
-| Dumbbells drift forward | Wrist position | Keep wrists stacked over elbows |
-| No chest activation | Going too heavy too fast | Lighter weight, slow eccentric, squeeze at top |
-
-**Beginner Programming**
-- Reps: 6–12
-- Sets: 3–5
-- Placement: early in the workout if upper chest is your priority
-- Pair with: incline flyes, cable presses
-
-**Once You're Comfortable (Advanced Cues)**
-
-Save these for after the basics feel automatic:
-- *"Bend the dumbbells inward"* — creates constant chest tension
-- *"Lead with elbows, not hands"* — keeps tension off shoulders
-- Tempo: 3 sec down / 1 sec pause / controlled press
-- Partial reps at the bottom after your main sets (hypertrophy bonus)
-
-> **Plain English:** Master steps 1–7 first. The advanced cues are small tweaks that only help once the basic movement is solid — using them too early just adds confusion.
+→ Moved to [exercises/incline-dumbbell-press.md](exercises/incline-dumbbell-press.md). Upgraded to guide template v2 (tiered cues, "what you should feel," severity column, red flags). Session 43 split per EB7.
 
 ---
 
@@ -430,81 +448,7 @@ Save these for after the basics feel automatic:
 
 *Catalog entry: Seed #6 — Deadlift (conventional default)*
 
-The king of full-body lifts. Get the setup right and the lift becomes simple. Get it wrong and your lower back pays.
-
-**Step 1 — Bar Position**
-- Bar over mid-foot — roughly over your shoelaces
-- This is non-negotiable. If the bar is too far forward, you'll pull around your knees instead of straight up.
-- Walk up so your shins are about 1 inch from the bar. Don't move the bar — move yourself.
-
-**Step 2 — Stance**
-- Feet: hip-width apart (narrower than a squat)
-- Toes: straight forward or turned out 5–15°
-- Weight: balanced across the whole foot, slight bias toward the heels
-
-**Step 3 — Grip**
-- Hinge down (don't squat) and grab the bar just outside your shins
-- Grip options:
-  - Double overhand — best for learning, limited by grip strength
-  - Mixed grip (one over, one under) — stronger hold, save for heavier sets
-  - Hook grip — strongest, most uncomfortable at first
-- Squeeze the bar like you're trying to bend it
-
-**Step 4 — Set the Body (Bottom-Up Sequence)**
-
-Order matters. Do these in sequence every single rep:
-1. Drop hips until shins touch the bar
-2. Chest up — proud chest, ribs down (not flared)
-3. Lats engaged — *"protect your armpits"* or *"squeeze oranges in your armpits"*
-4. Neck neutral — eyes ~6–10 feet in front of you on the floor
-5. Take a big breath into your belly and brace hard (think 360° pressure, not just stomach out)
-
-**Step 5 — The Pull (Off the Floor)**
-- Cue: *"push the floor away"* — don't think about pulling the bar up
-- Bar drags up the shins — should be in contact or within an inch
-- Hips and shoulders rise together — if your hips shoot up first, the weight is too heavy or you're not braced
-- Keep the bar tight to your body the entire pull
-
-**Step 6 — Lockout (Top of the Lift)**
-- Stand tall — hips and knees fully extended
-- Squeeze glutes at the top
-- Don't: lean back, hyperextend, or shrug the bar up
-- Shoulders stay back and down — not rolled forward, not rolled back theatrically
-
-**Step 7 — The Descent**
-- Hips back first, then bend knees once the bar passes them
-- Control it down — don't drop, don't bounce
-- Reset every rep: stand up, breathe, brace, pull. Touch-and-go reps teach bad bracing.
-
-**Pre-Rep Checklist**
-- [ ] Bar over mid-foot
-- [ ] Shins close to bar
-- [ ] Lats tight
-- [ ] Big brace
-- [ ] Push the floor away
-
-**Common Mistakes — Fix These First**
-
-| Mistake | Cause | Fix |
-|---|---|---|
-| Lower back rounding | Weak brace or too heavy | Lighter weight, brace harder, lats tight |
-| Hips shoot up first | Quads too weak or not engaged off the floor | Push the floor with your legs before the bar moves |
-| Bar drifts away from body | Lats not engaged | *"Squeeze oranges in armpits"* cue |
-| Hyperextending at the top | Trying to "show" lockout | Stand tall, squeeze glutes, stop |
-| Bouncing reps off the floor | Rushing | Full reset every rep as a beginner |
-
-**Beginner Programming**
-- Reps: 3–6 for strength, 5–8 for technique building
-- Sets: 3–5
-- Frequency: 1–2x per week — recovery-heavy lift
-- Placement: first or second exercise on a pull/lower day
-
-**Advanced Cues (Later)**
-- *"Bend the bar around your shins"*
-- *"Spread the floor with your feet"*
-- Wedge yourself into the bar — pull the slack out before the lift
-
-> **Plain English:** Deadlift is a push, not a pull. You're pushing the floor down with your legs while holding the bar still. Once that clicks, the lift gets way easier on your back.
+→ Moved to [exercises/deadlift.md](exercises/deadlift.md). Upgraded to guide template v2 (tiered cues, "what you should feel," severity column, red flags, recovery notes). Session 43 split per EB7.
 
 ---
 
@@ -512,85 +456,7 @@ Order matters. Do these in sequence every single rep:
 
 *Catalog entry: P5 #6 — Paused Squat (variant of Squat; default Squat = high-bar, so Paused Squat = Paused High-Bar Squat)*
 
-A high-bar squat with a 1–3 second pause at the bottom. Builds raw leg strength and bulletproofs your bottom position.
-
-**Step 1 — Bar Position (High-Bar)**
-- Bar sits on top of the traps — across the shelf made by your upper traps when you shrug
-- Not on the back of the neck (painful)
-- Not low on the rear delts (that's low-bar squat — different lift)
-
-**Step 2 — Set Up Under the Bar**
-- Get under the bar with feet directly under hips
-- Squeeze shoulder blades together to create the trap shelf
-- Grip the bar slightly outside shoulder width — wherever your shoulder mobility allows
-- Drive elbows down, not back — keeps the chest up
-- Stand up to unrack — don't good-morning it out
-
-**Step 3 — Walk Out**
-- Three steps max: back, foot out, foot out, set
-- Wasted steps drain energy before the set even starts
-- Set feet in your squat stance and don't shuffle
-
-**Step 4 — Stance**
-- Feet: shoulder-width or slightly wider
-- Toes: turned out 15–30° (find what feels natural)
-- Weight: mid-foot, spread across the whole foot
-
-**Step 5 — The Brace**
-- Big breath into the belly (not chest)
-- Brace 360° — like someone's about to punch your stomach AND lower back
-- Hold the brace through the entire rep, including the pause
-
-**Step 6 — The Descent**
-- Knees and hips break at the same time (high-bar is a more upright squat than low-bar)
-- Knees track over toes — let them come forward, that's correct for high-bar
-- Chest stays up — torso stays as upright as your mobility allows
-- Depth: hip crease below the top of the knee at minimum
-- 2–3 second controlled descent
-
-**Step 7 — The Pause (The Whole Point)**
-- Hold the bottom for 1–3 seconds — count it out
-- Stay tight — don't relax into the hole
-- Stay braced — don't exhale during the pause
-- This kills the stretch reflex, so the next part is harder than a normal squat. Expect to use less weight.
-
-**Step 8 — The Drive Up**
-- Cue: *"drive your head into the ceiling"* or *"push the floor away"*
-- Lead with the chest — if hips shoot up first, you'll fold forward (good morning)
-- Knees track over toes the whole way
-- Exhale through the hardest part of the rep (the sticking point)
-
-**Pre-Rep Checklist**
-- [ ] Bar high on traps
-- [ ] Tight upper back
-- [ ] Big belly brace
-- [ ] Controlled descent
-- [ ] Hold the pause without relaxing
-- [ ] Drive up with chest leading
-
-**Common Mistakes — Fix These First**
-
-| Mistake | Cause | Fix |
-|---|---|---|
-| Falling forward at the bottom | Weak upper back or losing brace | Lighter weight, focus on staying braced through pause |
-| Hips shoot up out of the hole | Quads weak or chest dropped | Lead with chest, push knees forward |
-| Knees cave in | Weak glutes or stance too narrow | Cue *"knees out"*, widen stance slightly |
-| Bouncing out of the bottom | Defeating the point of the pause | Slow it down, full count |
-| Heels lifting | Ankle mobility or stance too narrow | Try lifters, work ankle mobility |
-
-**Beginner Programming**
-- Reps: 3–6 with a 2–3 second pause
-- Sets: 3–5
-- Load: 70–80% of your normal squat — pause kills your bounce
-- Placement: main lift on squat day, or accessory after regular squats
-- Frequency: 1x per week is plenty
-
-**Why You'd Bother**
-- Forces you to actually be strong out of the hole instead of bouncing
-- Exposes weak points (forward lean, weak quads)
-- Builds confidence in the bottom position
-
-> **Plain English:** A normal squat lets you use spring tension at the bottom — like a stretched rubber band. Pausing kills the spring, so your muscles have to do all the work from a dead stop. Less weight, way more leg.
+→ Moved to [exercises/paused-squat.md](exercises/paused-squat.md). Upgraded to guide template v2 (tiered cues, "what you should feel," severity column, red flags, recovery notes). Session 43 split per EB7.
 
 ---
 
@@ -598,91 +464,7 @@ A high-bar squat with a 1–3 second pause at the bottom. Builds raw leg strengt
 
 *Catalog entry: P1 #44 — Smith Machine Squat. Separate exercise, not a Squat variant (fixed bar path removes stabilizer involvement). P1 placement reasoning: commonly recommended for injured athletes rebuilding leg strength, since no spotter is needed and the bar can't fall.*
 
-The bar moves on a fixed track. This changes the mechanics — it's not just a "safer barbell squat." Treat it as its own lift.
-
-**Step 1 — Understand What's Different**
-- Fixed bar path — bar can only move straight up and down (or on a slight angle, depending on the machine)
-- No balance demand — you don't need to stabilize the bar
-- Foot position changes everything — you can shift your feet forward or back to bias different muscles
-
-This means: *foot placement is your most important decision.*
-
-**Step 2 — Pick Your Foot Position (Pick One Goal)**
-
-| Goal | Foot Position |
-|---|---|
-| Quad bias | Feet directly under bar or slightly behind |
-| Balanced (most beginners) | Feet ~6 inches in front of bar |
-| Glute/hamstring bias | Feet 12+ inches in front of bar (almost a hack squat feel) |
-
-Start with balanced as a beginner. Experiment later.
-
-**Step 3 — Bar Position on Body**
-- Across the upper traps (high-bar style)
-- Shoulder blades squeezed to create a shelf
-- Grip slightly outside shoulder width
-- Elbows down, chest up
-
-**Step 4 — Unrack**
-- Stand tall, push the bar up slightly, rotate the bar to unhook
-- Confirm it's unhooked before squatting (don't ask how I know)
-- The hooks will catch you on the way back up if you fail — use that as your safety net
-
-**Step 5 — Set the Brace**
-- Big breath into the belly
-- Brace 360°
-- Hold through the full rep
-
-**Step 6 — The Descent**
-- Hips back AND down — but the path is dictated by the bar, so don't fight it
-- Depth: hip crease below knee
-- 2–3 second controlled descent
-- Knees track in line with toes — don't let them cave
-
-If your foot position is forward of the bar, your shins will stay more vertical (less knee stress, more glute/hamstring).
-
-If your feet are under the bar, your knees travel forward more (more quad).
-
-**Step 7 — The Drive Up**
-- Push the floor away
-- Chest leads, hips follow
-- Don't let the fixed bar path trick you into leaning weird — stay stacked under the bar
-
-**Step 8 — Re-Rack**
-- Finish the last rep, rotate the bar back into the hooks
-- Confirm the catch before letting go
-
-**Pre-Rep Checklist**
-- [ ] Foot position matches your goal
-- [ ] Bar high on traps
-- [ ] Bar unhooked
-- [ ] Big brace
-- [ ] Controlled descent
-- [ ] Drive up without leaning forward
-
-**Common Mistakes — Fix These First**
-
-| Mistake | Cause | Fix |
-|---|---|---|
-| Forgetting to unhook | Rushing | Always confirm before squatting |
-| Lower back pain | Feet too far forward, fighting the bar path | Pull feet back closer to bar |
-| Knee pain | Feet too far back, too much forward knee travel | Move feet forward 4–6 inches |
-| Feels harder than barbell squat | Fixed path doesn't match your natural groove | Adjust foot position until it feels smooth |
-| Heels lifting | Ankle mobility or feet too far back | Move feet forward |
-
-**Beginner Programming**
-- Reps: 8–15 (Smith squats shine for hypertrophy work)
-- Sets: 3–4
-- Placement: accessory after free-weight squats, or main lift if you're training around an injury
-- Not a replacement for free squats long-term — but excellent for high-rep leg volume
-
-**When the Smith Squat Is Actually Better**
-- High-rep leg pump work
-- Training to failure safely (no spotter needed — just rotate the bar)
-- Bias-specific work (glute-focused or quad-focused via foot position)
-- Rehabbing around minor injuries
-
-> **Plain English:** A regular squat makes your legs and your stabilizer muscles work. The Smith machine takes the stabilizer job away, so your legs get more direct work — but the fixed path can fight your natural movement if your feet are in the wrong spot. Foot position is the dial that fixes everything.
+→ Moved to [exercises/smith-machine-squat.md](exercises/smith-machine-squat.md). Upgraded to guide template v2 (tiered cues, "what you should feel," severity column, red flags). Session 43 split per EB7.
 
 ---
 
@@ -690,100 +472,7 @@ If your feet are under the bar, your knees travel forward more (more quad).
 
 *Catalog entry: Seed #7 — Pull-Up (pronated default; weighted covered via same entry + load tracking)*
 
-The best upper-body pull movement, period. Same setup whether you're using bodyweight or hanging plates from a belt.
-
-**Step 1 — Grip Setup**
-- Width: slightly wider than shoulder-width
-- Style: pronated (palms facing away) — this is a true pull-up
-  - Palms facing you = chin-up (more biceps, easier)
-  - Neutral grip (palms facing each other) = easiest on shoulders
-- Thumbs: over the bar or wrapped around — personal preference, both work
-
-**Step 2 — The Hang (Starting Position)**
-- Full hang — arms extended, but don't go fully passive
-- Engage shoulders — pull shoulder blades down and back slightly
-- Cue: *"long arms, tight shoulders"*
-- Think: don't let your shoulders touch your ears
-- This active hang protects your shoulders and starts the lift from a stable position
-
-**Step 3 — Set the Body**
-- Squeeze glutes
-- Brace core
-- Legs: straight down or crossed at the ankles, slight bend at the knees
-- Slight hollow body — ribs down, body in a gentle banana-shape forward (not arched back)
-- This stops you from kipping (swinging) for momentum
-
-**Step 4 — Adding Weight (If Weighted)**
-- Belt: dipping belt with chain, plates loaded onto the chain
-- Plate position: in front of you between your legs, not banging your knees
-- Start light — add weight in 5 lb jumps until you find a working weight
-- Bodyweight + 25 lb is a strong intermediate target. +45 lb is advanced.
-
-**Step 5 — The Pull (Concentric)**
-- Cue: *"drive your elbows down to your hips"* — NOT *"pull yourself up"*
-- Lead with the chest — chest comes to the bar, not chin to the bar
-- Lats do the work, not biceps — biceps assist
-- Top position: chin clearly over the bar, chest as close to the bar as you can get
-- Don't kip — no leg swing, no body jerk
-
-**Step 6 — The Descent (Eccentric)**
-- Lower under control — 2–3 seconds down
-- Most growth happens here, especially with weight added
-- Don't drop into the hang — protects your shoulders and elbows
-
-**Step 7 — Reset Between Reps**
-- Brief active hang at the bottom — don't go fully limp
-- Re-engage shoulders before the next pull
-- If you're swinging, pause longer to let it settle
-
-**Pre-Rep Checklist**
-- [ ] Solid grip
-- [ ] Active hang (shoulders engaged)
-- [ ] Glutes and core braced
-- [ ] Slight hollow body
-- [ ] Drive elbows down, not "pull up"
-- [ ] Controlled lower
-
-**Common Mistakes — Fix These First**
-
-| Mistake | Cause | Fix |
-|---|---|---|
-| Kipping (swinging) | Trying to grind out reps you can't do clean | Lower the rep target, do controlled reps only |
-| Chin barely clears the bar | Pulling with arms instead of back | *"Chest to bar"* cue, drive elbows down |
-| Shoulders feel strained | Going from passive hang to dead hang slam | Active hang at the bottom, controlled descent |
-| Elbow pain | Too much volume too fast, or fully passive hang | Reduce volume, keep shoulders packed |
-| Stuck halfway up | Weak top portion | Add isometric holds at the top, or band-assisted reps |
-
-**Can't Do a Pull-Up Yet? Build Up With:**
-
-In order of progression:
-1. Dead hangs — 3 sets of 20–30 second holds
-2. Scapular pulls — hang and just pull shoulder blades down (no arm bend)
-3. Negatives — jump to the top, lower yourself slowly (5+ seconds down), 3–5 reps
-4. Band-assisted pull-ups — band looped over bar and under your knee
-5. Full bodyweight pull-up — start adding reps
-
-Negatives are the fastest way to progress. Do them after your main back work.
-
-**Beginner Programming**
-
-*Bodyweight:*
-- Reps: as many as you can with clean form
-- Sets: 3–5
-- Frequency: 2–3x per week — pull-ups recover fast
-
-*Weighted:*
-- Reps: 3–6 for strength, 6–10 for size
-- Sets: 3–5
-- Progression: add 2.5–5 lb when you hit the top of your rep range across all sets
-- Don't add weight until you can do 8+ clean bodyweight reps
-
-**Advanced Cues (Later)**
-- *"Pull the bar to your chest, not your chest to the bar"*
-- *"Make the bar bend in your hands"*
-- Pause at the top for 1 second per rep — brutal for the lats
-
-> **Plain English:** Pull-ups aren't an arm exercise. You're using your back to bring your elbows down — your hands just happen to be holding the bar. When that clicks, you'll feel it the next day in muscles you didn't know you had.
+→ Moved to [exercises/pull-up.md](exercises/pull-up.md). Upgraded to guide template v2 (tiered cues, "what you should feel," severity column, red flags). Session 43 split per EB7.
 
 ---
 
@@ -799,3 +488,75 @@ Negatives are the fastest way to progress. Do them after your main back work.
   - Smith Machine Squat added to P1 (#44) as a separate exercise. Rationale: commonly recommended for injured athletes rebuilding leg strength — fixed bar path is safer without a spotter. Total additions now 136, library 165.
   - **EB2 locked** — chevron expander + search. No toggle.
   - **EB4 architecture locked** — `parentExerciseId` FK (Option B). Each variant gets own row / ID / tutorial file / GIF / progression history. Ownership doc (CE1 sub vs new CE2) remains open.
+  - **Seed sanity pass (partial):** renamed 5 entries (Incline Bench → Incline Barbell Bench Press, Cable Fly → Cable Crossover, Barbell Row → Bent-Over Barbell Row, Leg Curl → Lying Leg Curl, Calf Raise → Standing Calf Raise (Bodyweight)), updated Dips notes.
+  - Added: P1 #45 Machine Assisted Dip, P2 #34 Yates Row, P5 #11–13 Dips variants (Tricep Dips, Chest Dips, Weighted Dip). Counts: 141 additions, 170 total.
+  - **Batch A (machines) added** — 24 entries: 10 to P1 (#46–55) and 14 to P2 (#35–48). Covers iso-lateral plate-loaded machines, Smith Machine variants, dedicated hip thrust/glute/curl/tricep machines, hyperextension benches, Captain's Chair. Counts: 165 additions, 194 total library.
+  - **Batch B (parent-family variants) added** — 11 entries: P0 #9 Dumbbell Curl; P5 #14–23 (Lat Pulldown: Close-Grip/V-Bar/Reverse-Grip; RDL: Paused RDL; Pull-Up: Narrow-Grip; Skull Crusher: DB/Incline; Barbell Curl: Strict Curl; Plank: Knee/Weighted). Structural notes added to Chin-Up (P0 #4) and Neutral-Grip Pull-Up (P1 #8) pointing to Pull-Up as parent — tiers preserved. Push-Up family deferred per user decision. Counts: 176 additions, 205 total library.
+  - **Batch D (standalone gaps) added** — 8 entries: P1 #56 Upright Row, P1 #57 Split Squat; P2 #49 Forward Lunge, P2 #50 Single-Leg Hip Thrust, P2 #51 Single-Leg Smith Hip Thrust, P2 #52 Single-Leg Machine Hip Thrust, P2 #53 Single-Leg DB Calf Raise; P3 #12 Tibialis Raise. Counts: 184 additions, 213 total library. Batch C (Pendulum/Belt split + Cable Crossover restructure) pending user decision.
+  - **Batch C executed (Option 1C + 2B):**
+    - Pendulum/Belt Squat (P3 #2) split into two P2 entries: P2 #54 Pendulum Squat, P2 #55 Belt Squat. P3 #2 vacated (numbering gap intentional).
+    - Cable Crossover restructured as parent + variants per Option 2B: seed #5 Cable Crossover is now the parent (mid-height default). P1 #4 Cable Crossover — High moved to P5 #24 as variant. P2 #3 Cable Crossover — Low moved to P5 #25 as variant. P2 #2 Cable Crossover — Mid deduped (was redundant with seed default).
+    - Tier counts: P1 56 (-1), P2 53 (-2 +2 = net 0), P3 11 (-1), P5 25 (+2). Total library unchanged at 213 (+2 Pendulum/Belt split, -1 Cable Mid dedupe, -1 Pendulum/Belt lumped removal = 0 net). Additions unchanged at 184. Intentional numbering gaps left in P1, P2, P3 where entries were moved/deduped.
+
+- **2026-04-22 (session 43 — exercise guide split + template v2)** —
+  - **EB7 executed** — all 5 inline tutorial guides migrated to `artifacts/exercises/[slug].md`. Inline sections in this file replaced with one-line link stubs. Reduces exercise-bank.md by ~450 lines.
+  - **Guide template v2 locked** at `artifacts/exercises/_template.md`. Built via coaches-panel tier review. S-tier additions: tiered cue blocks (B/I/A), "What You Should Feel" proprioceptive map, severity column in mistakes, red flags section, progression path with stage targets, progression criteria in programming. A-tier: "if it feels off" troubleshooting line, selective confirmation cues, sharpened mistake descriptions, split advanced cues (form vs. intensity), recovery notes for Big-3, deload trigger with plain-English gloss. Skipped B-tier and C-tier (metadata strip, variations table, rename, timeline) to keep guides lean.
+  - **5 guides upgraded to v2:**
+    - [pull-up.md](exercises/pull-up.md) — first full v2 rewrite (reference implementation)
+    - [incline-dumbbell-press.md](exercises/incline-dumbbell-press.md) — migrated + upgraded
+    - [deadlift.md](exercises/deadlift.md) — migrated + upgraded (includes Recovery Notes as Big-3 lift)
+    - [paused-squat.md](exercises/paused-squat.md) — migrated + upgraded (includes Recovery Notes as squat-family)
+    - [smith-machine-squat.md](exercises/smith-machine-squat.md) — migrated + upgraded
+  - Template/standards work ran across sessions 42–43. No seed, schema, or catalog changes this session.
+
+- **2026-04-22 (session 43 — decision close-out)** —
+  - **EB4-ownership locked: CE2 spin-up.** Rationale: CE1 already past scope threshold (Session 39 note); `parentExerciseId` is an exercise-relationship concern, distinct from CE1's muscle-taxonomy focus. Karpathy-aligned only if CE2 is populated with real content from day 1. Session 44 creates `memory/project_ce2_schema_architecture.md` with schema spec + migration plan + variant-UX wiring.
+  - **EB5 locked: allow.** Custom exercises can set optional `parentExerciseId` to any seeded parent. Custom variants surface in the parent's chevron expander alongside seeded variants. Zero schema cost (field exists via EB4), one optional parent-picker dropdown in custom-exercise form.
+  - **CE1 scope expanded: all tiers.** Session 43 decision: full 213-exercise library ships in CE1 (Seed + P0 + P1 + P2 + P3 + P4 + P5). P4 stays UX-gated via feature toggle (visibility), not seed-gated. `memory/project_ce1_final_scope.md` to be rewritten session 44 to supersede the prior "library expansion deferred" stance. Build plans (pass 1/2/3/etc.) to be rewritten session 44 now that scope is full-library; stale draft retained in Build sequencing section for reference.
+  - **Open decisions remaining:** EB3 (Stats rollup — deferred), EB6 (P4 toggle categories — deferred to toggle menu build). All other EB decisions closed.
+
+- **2026-04-22 (session 44 — CE1/CE2 execution)** —
+  - **`memory/project_ce1_final_scope.md` rewritten.** Supersedes "library expansion deferred" stance. New scope = full 213-entry library. Added D-new-4 (library expansion) and D-new-5 (parentExerciseId + variant architecture, owned by CE2). Curation effort estimate updated from ~2 hrs (29 entries) to ~15–20 hrs (213 entries) with tier-based prioritization. "What ships / doesn't ship" lists updated. Related-files block gained CE2 reference + session 43 close-out references (bank + guides).
+  - **`memory/project_ce2_schema_architecture.md` created** with real content (Karpathy caveat satisfied). Locks 5 session-44 architecture decisions: (1) secondary index on `parentExerciseId` = yes; (2) deletion = choice modal (cascade or null-orphan); (3) hierarchy = flat (forbid grandchildren); (4) custom parent restriction = any parent-level exercise qualifies (seed or custom); (5) search = direct variant results (no parent grouping). Covers schema spec, v2→v3 migration plan (2-pass seed order, bundled with CE1 v3 bump), validation rules, picker chevron UX, search behavior, custom-exercise parent picker (EB5), deletion flow with choice modal, CE1-build contribution checklist, testing plan.
+  - **MEMORY.md index updated** with CE2 pointer and refreshed CE1 description.
+  - **Still pending for session 44:** (3) rewrite Build sequencing section here in exercise-bank.md now that CE1 scope is locked full-library; (4) integrate EB5 into custom-exercise form spec (flag profile.md or programs.md update). Optional: more guide drafting using template v2.
+
+- **2026-04-23 (session 44 follow-up — Big-3 + OHP guides)** —
+  - **3 new guides authored under template v2** (item 5 from session 44 plan):
+    - [squat.md](exercises/squat.md) — Seed #11 (high-bar back squat default; includes Recovery Notes as Big-3 lift)
+    - [bench-press.md](exercises/bench-press.md) — Seed #1 (flat barbell touch-and-go default; includes Recovery Notes)
+    - [overhead-press.md](exercises/overhead-press.md) — Seed #17 (standing barbell strict press default; includes Recovery Notes + Progression Path)
+  - **Tutorial Content index** in this file updated to list all 8 authored guides (re-ordered by tier rank: 5 Seed, 1 P0, 1 P1, 1 P5).
+  - **Coverage status:** all 4 classic compound barbell lifts (squat / bench / deadlift / OHP) now have v2 guides. Next-priority gaps remain at Seed and P0 — Bulgarian Split Squat (P0 #5), Barbell Hip Thrust (P0 #6), Dumbbell Row (P0 #3), Chin-Up (P0 #4 — natural pair with pull-up.md), plus remaining Seed entries.
+  - **No catalog, schema, or seed changes** — guide-authoring only.
+
+- **2026-04-23 (session 44 follow-up — guide style refresh, all 8 guides + template)** —
+  - **Tier 1 universal cuts/adds applied to all 8 guides + `_template.md`:**
+    - Cut inline "Severity definitions" boilerplate (~5 lines × 8 guides — values are self-evident in column context)
+    - Cut "Plain English on deload" paragraph from Programming sections (~3 lines × 8 — Programming line already in plain English)
+    - Cut `**Cues — pick ONE per set:**` labels above cue trios (B/I/A glyphs telegraph the structure)
+    - Replaced `## Pre-Rep Checklist` (4–6 redundant bullets) with single `## Mid-set check` callout — preserves the actually-valuable trailing diagnostic line
+    - Added `## Quick cues` block (3 bullets, strict cap) at top of every guide — highest-leverage mid-set cues for re-read use
+    - Stripped `*Catalog entry: ... — prose ...*` to bare `*Catalog: [tier ref] · Template: v2*` — naming relationships moved to exercise-bank.md (this file)
+  - **Tier 2 surgical edits:**
+    - `squat.md`: hook stripped of "King of leg lifts. Builds X, Y, Z" filler
+    - `bench-press.md`: hook stripped of "Builds chest, shoulders, triceps" filler
+    - `overhead-press.md`: hook stripped of "Builds shoulders, triceps, core" filler
+    - `deadlift.md`: hook stripped of "King of full-body lifts" filler; added Right when/Wrong when to Step 5 (the pull) — was missing on the highest-failure step; added `Log:` grip used to Programming
+    - `pull-up.md`: added `Log:` bodyweight at session — added weight is meaningless without it
+    - `incline-dumbbell-press.md`: dropped arbitrary "Pair with: incline flyes, cable crossovers" line from Programming
+    - `paused-squat.md`: compressed 8 steps → 6 (folded Walk Out + Stance + Brace into one "Get Into Position" step); added `Log:` pause length used
+    - `smith-machine-squat.md`: compressed 8 steps → 6 (folded Bar Position + Unrack + Brace into one "Set Up and Unrack" step); added `Log:` foot position used
+  - **Template (`_template.md`) edits:**
+    - Catalog/template line shape updated to match
+    - Quick cues section added after hook
+    - Cue-trio label dropped from Step 5 + Step 6 examples
+    - Pre-Rep Checklist section replaced with Mid-set check
+    - Severity definitions block dropped from Common Mistakes example
+    - Plain English on deload dropped from Programming example
+    - `**Log:**` template bullet added (optional, only when there's per-session config that affects meaning of weight/reps)
+    - Right when/Wrong when rule strengthened: mandatory on every step a beginner can't visually self-validate (was optional)
+    - Tone rules: added italic = cue / bold = key term convention
+  - **Net impact:** ~115 lines lighter across 8 guides; ~24 lines added back as Quick cues; one new mid-set value-add per guide.
+  - **Skipped:** What You Should Feel ↔ Common Mistakes dedupe (apparent duplicates serve different framings — felt vs visible — pulling them thins the felt-diagnostic block too much; left as-is).
+  - **No catalog, schema, or seed changes.**

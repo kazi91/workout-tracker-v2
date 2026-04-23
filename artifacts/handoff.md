@@ -1,5 +1,200 @@
 # HANDOFF — NEW INSTANCE START HERE
-Last updated: 2026-04-22 (session 42 — SPEC PATCH 2/3 COMPLETE + sequencing change. Tab artifacts aligned with CE1 locks. master-schematics.md Decision #26 patched. Session 43 next = EXERCISE BANK UPDATE (was seed re-curation; deferred to session 44 because exercise-bank.md has active expansion planning that will change final CE1 seed set). No code written this cycle yet.)
+Last updated: 2026-04-23 (session 44 CLOSED — all 5 items + bonus seed-tagging-principles.md. Session 45a is next: lock 11 parent muscle maps. No code written.)
+
+## Session 44 summary (2026-04-23)
+
+**Scope:** Execute on the four decisions locked end-of-session-43 (EB4-ownership=CE2, EB5=allow, CE1 scope=all tiers, EB7 already-done). Research + planning artifacts only; no code.
+
+**Accomplished:**
+- **Item 1 — CE2 planning doc created:** `memory/project_ce2_schema_architecture.md` fully populated with concrete content (Karpathy-check passed, no empty shell). All 5 CE2 architecture decisions locked:
+  - #1 Secondary index on `parentExerciseId` = **yes** (chevron expansion is a hot path)
+  - #2 Deletion behavior = **choice modal** (user picks cascade or null-orphan at delete time)
+  - #3 Hierarchy = **flat / forbid grandchildren** (mobile picker UX is the binding constraint)
+  - #4 Custom parent restriction = **any parent-level exercise** (seed or custom both qualify)
+  - #5 Search for variants = **direct results** (flat; no parent-grouping)
+- **Item 2 — CE1 scope memo rewritten:** `memory/project_ce1_final_scope.md` supersedes the prior "library expansion deferred" stance. New scope ships full 213-entry library in CE1. Added D-new-4 (library expansion) + D-new-5 (pointer to CE2) to Tier 1. Updated curation effort estimate from ~2hrs to 15–20hrs. Reordered Next Steps around sessions 44/45/46. Added sibling-doc reference to CE2.
+- **MEMORY.md index refreshed:** added CE2 entry; refreshed CE1 description (was "Tier 1 + Tier 3 forward-compat"; now "full 213-entry library + parentExerciseId coordination via CE2").
+- **recap.md + CLAUDE.md CURRENT TASK blocks synced:** timestamp bumped; status flipped to "session 44 in progress"; next-action narrowed to items 3 and 4 only; required-reading list updated for pickup (adds CE2, adds programs.md/profile.md, drops stale "CE1 memo to be rewritten").
+
+**Items remaining for session 44 continuation or session 45:**
+- **Item 3** — Rewrite Build sequencing section in `artifacts/exercise-bank.md`. Old pass 1/2/3/etc. plan is stale now that CE1 scope = full library. Needs a fresh sequence aligned with the locked full-library scope.
+- **Item 4** — Integrate EB5 (custom-exercise `parentExerciseId` picker) into custom-exercise form spec. Read `artifacts/tabs/programs.md` and `artifacts/tabs/profile.md` first to decide which owns the custom-exercise form, then spec the optional parent-picker dropdown there.
+- **Item 5 (optional)** — ✅ DONE 2026-04-23 (see follow-up entry below).
+
+Both remaining items are mechanical (no fresh architecture decisions required).
+
+**Artifact changes:**
+- `memory/project_ce2_schema_architecture.md`: created (new file)
+- `memory/project_ce1_final_scope.md`: substantial rewrite
+- `memory/MEMORY.md`: CE2 entry added; CE1 description refreshed
+- `artifacts/recap.md`: CURRENT TASK block updated for session 44 status
+- `CLAUDE.md`: CURRENT TASK block synced with recap
+- `artifacts/handoff.md`: this entry
+
+**No code written.** No `src/` edits. Research + planning only.
+
+---
+
+## Session 44 2nd follow-up (2026-04-23) — Principles doc + items 3 & 4 closed
+
+**Scope:** Finish session 44 open items (rewrite `exercise-bank.md` Build sequencing; integrate EB5 into custom-exercise form spec) + draft seed-tagging reference doc. Research + artifact mode; no code, no `src/` edits.
+
+**Accomplished:**
+- **Strategy brainstorm for Session 45 (seed re-curation):** 6-session plan across 213 entries, ~13h total. Hybrid batching = parents first (leverage inheritance) then by muscle group within priority band. Tiered EMG research budget. Intermediate output in `seed-draft.md` (markdown), compiled to `seed.ts` at build time.
+- **New artifact: `artifacts/seed-tagging-principles.md`** (~270 lines):
+  - 6 rules: primary selection, secondary selection, role assignment, parent/variant inheritance, background muscles, exclusion defaults
+  - 10 movement-pattern templates (horizontal/vertical push + pull, squat, hinge, lunge, carry, curl, extension, isolation)
+  - 5 group-specific convention blocks (chest / back / shoulders / arms / legs / core)
+  - Tier 3 tagging cadence (equipment always; grip/stance/bias opportunistic; jointLoad skip)
+  - EMG reference policy tiered by priority
+  - End-of-session sanity checklist + exception log format for `seed-draft.md`
+- **Item 3 CLOSED — `artifacts/exercise-bank.md` Build sequencing rewritten.** Stale "pass 1/2/3/etc." replaced with 3-phase plan:
+  - Phase 1 Curation (Sessions 45a–f, ~13h, no code) — session-by-session table with scope + estimate
+  - Phase 2 Coordination — CE1 + CE2 share single Dexie v3 bump
+  - Phase 3 Build (Session 47+) — 10-item schema + UI checklist
+- **Item 4 CLOSED — EB5 integrated into `master-schematics.md` § ExerciseSearchModal Spec.** Step 1 of custom-create flow gains optional "Nest under a parent exercise" dropdown. Dropdown contents = all exercises with `parentExerciseId === null`, sorted alphabetically. Selection sets `parentExerciseId` on save; unselected → null. No muscle-map pre-fill from parent this cycle (post-MVP polish). `ExerciseService.create()` signature updated to include `parentExerciseId`.
+- **Location finding:** The session 44 plan speculated the custom-exercise form lived in `profile.md` or `programs.md`. Actually it's specced in `master-schematics.md` § ExerciseSearchModal Spec (Session 41 rewrite moved the picker spec there). No tab-artifact edits needed.
+- **State docs synced:** `recap.md` + `CLAUDE.md` CURRENT TASK + `handoff.md` all rolled forward to Session 45a scope.
+
+**Decisions locked this session:**
+- None fresh. All CE1 + CE2 + EB decisions already locked. This session executed on open items from the session 44 plan.
+
+**Artifact changes:**
+- `artifacts/seed-tagging-principles.md`: created (new file, ~270 lines)
+- `artifacts/exercise-bank.md`: Build sequencing section rewritten
+- `artifacts/master-schematics.md`: ExerciseSearchModal Spec § Custom exercise creation Step 1 + Save line updated for EB5
+- `artifacts/recap.md`: top timestamp + CURRENT TASK block + state summary + KEY FILES + SESSION HISTORY entry
+- `CLAUDE.md`: CURRENT TASK block rolled forward to Session 45a
+- `artifacts/handoff.md`: top timestamp + this entry
+
+**No code written.** No `src/` edits.
+
+**Next session target:** Session 45a — lock 11 parent muscle maps per `seed-tagging-principles.md`. Output goes into new `artifacts/seed-draft.md`. Est ~1.5h.
+
+---
+
+## Session 44 follow-up (2026-04-23) — Guide style refresh
+
+**Scope:** Review-driven cleanup of all 8 exercise guides + template v2. User asked: "find ways we can improve them. i want to add value not clutter." Applied Tier 1 universal cuts + Tier 2 surgical edits + step compression on the two over-segmented guides. Research/artifact-authoring only, no code.
+
+**Tier 1 (universal — all 8 guides + `_template.md`):**
+- Cut inline `Severity definitions` boilerplate (5-line block × 8 — values self-evident in column context)
+- Cut `Plain English on deload` paragraph from Programming sections (3-line block × 8)
+- Cut `**Cues — pick ONE per set:**` labels above each B/I/A cue trio
+- Replaced `## Pre-Rep Checklist` (4–6 redundant bullets) with `## Mid-set check` (single diagnostic line)
+- Added `## Quick cues` block at top of every guide (3 bullets, strict cap) — for in-app glance use
+- Stripped `*Catalog entry: ... — prose ...*` to bare `*Catalog: [ref] · Template: v2*`
+
+**Tier 2 (surgical):**
+- Hook sharpens (drop "Builds X, Y, Z" filler): squat.md, bench-press.md, overhead-press.md, deadlift.md
+- deadlift.md: added Right when/Wrong when to Step 5 (the pull); added `Log:` grip used
+- pull-up.md: added `Log:` bodyweight at session
+- incline-dumbbell-press.md: dropped arbitrary "Pair with" line
+- paused-squat.md: 8 steps → 6 (folded Walk Out + Stance + Brace into one "Get Into Position" step); `Log:` pause length
+- smith-machine-squat.md: 8 steps → 6 (folded Bar Position + Unrack + Brace into one "Set Up and Unrack" step); `Log:` foot position
+
+**Template (`_template.md`):**
+- All universal edits applied
+- Right when/Wrong when rule strengthened: mandatory on every step a beginner can't visually self-validate (was optional)
+- Tone rules: added italic = cue / bold = key term
+- Optional `**Log:**` bullet added to Programming example
+
+**Net impact:** ~115 lines lighter across 8 guides; one new mid-set value-add per guide.
+
+**Skipped from review proposals:** What You Should Feel ↔ Common Mistakes dedupe — apparent duplicates serve different framings (felt sensation vs visible pattern); pulling them thinned the felt-diagnostic block too much.
+
+**Artifact changes:**
+- `artifacts/exercises/_template.md`: 9 edits
+- `artifacts/exercises/{squat, bench-press, overhead-press, deadlift, pull-up, incline-dumbbell-press, paused-squat, smith-machine-squat}.md`: universal Tier 1 edits + per-file surgical
+- `artifacts/exercise-bank.md`: revision log entry added
+- `artifacts/recap.md`: SESSION HISTORY entry added
+- `artifacts/handoff.md`: this entry
+
+**No code written.** No `src/` edits.
+
+---
+
+## Session 44 follow-up (2026-04-23) — Big-3 + OHP guides
+
+**Scope:** Item 5 from session 44 plan — author next batch of exercise guides under template v2. Research / artifact-authoring only; no code, no `src/` edits.
+
+**Accomplished:**
+- 3 new guides written under template v2:
+  - `artifacts/exercises/squat.md` — Seed #11 (high-bar back squat default; Big-3 → Recovery Notes included)
+  - `artifacts/exercises/bench-press.md` — Seed #1 (flat barbell touch-and-go default; Recovery Notes included)
+  - `artifacts/exercises/overhead-press.md` — Seed #17 (standing barbell strict press default; Recovery Notes + "Can't Press Bodyweight Yet?" Progression Path included)
+- All 3 follow the v2 contract: tiered B/I/A cues on movement steps, "What You Should Feel" proprioceptive map, severity column on Common Mistakes, Red Flags, progression criteria + deload trigger in Programming, split Advanced (Form / Intensity), Plain English closer.
+- Naming pattern: title includes the parent default in parentheses (e.g., "Squat (High-Bar Back Squat)") to match EB1 lock; non-default variants will get separate guides via `parentExerciseId` once CE2 lands.
+- `artifacts/exercise-bank.md`: Tutorial Content index expanded to 8 entries, re-ordered by tier rank; revision log entry added under "session 44 follow-up — Big-3 + OHP guides".
+- `artifacts/recap.md`: KEY FILES line updated, item 5 marked done, new SESSION HISTORY entry added.
+
+**Coverage milestone:** all 4 classic compound barbell lifts (squat / bench / deadlift / OHP) now have v2 guides.
+
+**Next-priority gaps** (suggested for next guide-writing session):
+- Bulgarian Split Squat (P0 #5)
+- Barbell Hip Thrust (P0 #6)
+- Dumbbell Row (P0 #3)
+- Chin-Up (P0 #4) — natural pair with `pull-up.md`, can lean on it for shared portions
+- Remaining Seed entries (Romanian Deadlift, Barbell Curl, etc.)
+
+**Artifact changes:**
+- `artifacts/exercises/squat.md`: created (new file, ~190 lines)
+- `artifacts/exercises/bench-press.md`: created (new file, ~190 lines)
+- `artifacts/exercises/overhead-press.md`: created (new file, ~210 lines)
+- `artifacts/exercise-bank.md`: index updated, revision log entry added
+- `artifacts/recap.md`: timestamp + KEY FILES + item 5 status + SESSION HISTORY entry
+- `artifacts/handoff.md`: this entry
+
+**No code written.** Item 3 (Build sequencing rewrite) and Item 4 (EB5 form integration) still pending.
+
+---
+
+
+
+## Session 43 summary (2026-04-22)
+
+**Scope:** Exercise bank refinement. Originally planned as session 43 item 4 ("update exercise-bank.md decisions"); expanded into a comprehensive bank build-out once work began.
+
+**Accomplished:**
+- Library: 29 → 213 entries, 6 priority tiers (Seed=29, P0=9, P1=56, P2=53, P3=11, P4=30, P5=25).
+- Batch A (machines, 24 entries): iso-lateral plate-loaded (Chest Press, High/Low Row, Shoulder Press), Smith variants (Bench, Incline Bench, Row, OHP, Hip Thrust, Calf Raise), dedicated machines (Hip Thrust, Glute Kickback, Preacher Curl, Bicep Curl, Tricep Extension, Shrug, Tricep Dip, Crunch, Assisted Pull-Up, Vertical Leg Press, Plate-Loaded Hack Squat, Reverse Hyperextension, 45° Hyperextension, Captain's Chair).
+- Batch B (parent-family variants, 11 entries): Lat Pulldown grips (Close/V-Bar/Reverse), Paused RDL, Narrow-Grip Pull-Up, Skull Crusher variants (DB/Incline), Strict Curl, Plank variants (Knee/Weighted), plus Dumbbell Curl promoted to P0.
+- Batch C: Pendulum/Belt Squat split into 2 P2 entries (Pendulum Squat, Belt Squat); Cable Crossover restructured as parent+variants (High/Low → P5, Mid deduped).
+- Batch D (standalone gaps, 8 entries): Upright Row, Split Squat (non-Bulgarian), Forward Lunge, Tibialis Raise, Single-Leg Hip Thrust ×3 implements (bodyweight/Smith/machine), Single-Leg DB Calf Raise.
+
+**Decisions locked:**
+- EB1 — parent defaults: high-bar Squat, conventional Deadlift, flat BB Bench Press, bodyweight Dips; later expanded: Pull-Up pronated, Lat Pulldown wide-grip, RDL barbell, Skull Crusher EZ-bar, Barbell Curl standing, Plank forearm, Cable Crossover mid-height.
+- EB2 — variant exposure: chevron expander on parent rows + search always indexes variant names. No toggle. Progressive disclosure.
+- EB4 architecture — `parentExerciseId: number | null` FK on `exercises` table. Each variant keeps its own row, ID, tutorial file, GIF, progression history. Decided using Option B from 3-way analysis (flat vs parent+FK vs swap-under-parent).
+
+**Decisions still open (session 44):**
+- EB3 — Stats rollup (per-variant only vs parent rollup). Deferred — revisit during Stats visual design.
+- EB6 — P4 toggle categories (naming + default state). Deferred to toggle menu build.
+
+**Decisions closed end-of-session 43:**
+- **EB4-ownership = CE2** spin-up. New planning doc `memory/project_ce2_schema_architecture.md` to be populated session 44 with concrete content (schema spec, migration plan, variant-UX wiring). Karpathy caveat applied: no empty shell.
+- **EB5 = allow** custom exercises to set optional `parentExerciseId` on any seeded parent. Zero schema cost (field from EB4), one optional parent-picker dropdown in custom-exercise form.
+- **EB7 executed externally** during session 43: all 5 inline guides migrated to `artifacts/exercises/[slug].md`, template v2 locked at `artifacts/exercises/_template.md`.
+- **CE1 scope = all tiers.** Full 213-exercise library ships in CE1. `memory/project_ce1_final_scope.md` to be rewritten session 44 (prior "library expansion deferred" stance superseded). P4 stays UX-gated via feature toggle, not seed-gated. Build plans to be rewritten.
+
+**Parent/Variant Rule confirmed:**
+Variant = same primary/secondary muscle map as parent; differs only in execution style, range, or implement. Different muscle map = separate exercise. Applied: Paused Squat (variant), Box Squat (variant), Front Squat (separate — quad-dominant shift), Sumo Deadlift (separate — adductor shift), Stiff-Leg Deadlift (separate — hamstring-dominant), Tricep/Chest Dips (variants — emphasis within same muscle set).
+
+**Tutorial content authored:**
+5 entries (Incline DB Press, Deadlift Conventional, Paused High-Bar Squat, Smith Machine Squat, Pull-Ups). Initially inline in exercise-bank.md; migrated to `artifacts/exercises/[slug].md` (one file per exercise) and upgraded to template v2 by end of session (see EB7 closure note above). Template v2 format: title + catalog entry + hook → Setup steps (with optional right-when/wrong-when on non-obvious steps) → Movement steps with **tiered cue blocks (Beginner = internal+analogy, Intermediate = outcome, Advanced = external+terse)** → "What You Should Feel" proprioceptive map → Pre-Rep Checklist with "if it feels off" troubleshoot line → Common Mistakes table with **Severity column (Form-only / Strength-leak / Injury-risk)** + severity definitions block → Red Flags → Beginner Programming with progression criteria + deload trigger + plain-English deload gloss → optional "Can't Do It Yet? Progression Path" with stage targets (mandatory for bodyweight lifts with entry barriers) → optional Recovery Notes (mandatory for Big-3) → Advanced split into Form refinements vs Intensity techniques → Plain English closer. Length target 200–500 lines/guide. Template locked at `artifacts/exercises/_template.md`. Tier review (S/A/B/C) used to decide section inclusion; B-tier and C-tier additions (metadata strip, variations table, rename, timeline) skipped to keep guides lean.
+
+**Artifact changes:**
+- `artifacts/exercise-bank.md`: created and fully populated (this session).
+- `CLAUDE.md`: added exercise-bank.md pointer to "Reference only" block.
+- `artifacts/recap.md`: CURRENT TASK updated to session 44 pickup.
+
+**Numbering gaps intentional:** P1 #4, P2 #2/3, P3 #2 vacated by Batch C moves/dedupes. Renumbering 100+ rows would cost more than it's worth; gaps annotated under each tier header.
+
+**No code written.** No `src/` edits. Research session only.
+
+---
+
+
 
 ---
 
@@ -96,8 +291,9 @@ Test coverage at Phase 4 close: 72/72 across 8 files (see recap.md TEST COVERAGE
 **CE1 spec patches in flight:**
 - Session 41 (DONE 2026-04-22): master-schematics.md patched across 7 sections + Changelog. New schema fields on exercises/users/logSets; `exercises.category` dropped (derived via `getExerciseGroup()`); Muscle Taxonomy Model sub-section added; Decisions #24–#29 locked; Issue Tracker = CE1 resolved + F31–F39 added.
 - Session 42 (DONE 2026-04-22): tab artifacts aligned. logs.md = SetRow RPE input gated on `UserSettingsContext.rpeEnabled` + ExerciseSearchModal cross-ref to Decision #27. profile.md = "Enable RPE per set" toggle under Preferences + F30 first-run tutorial intro + F32 migration note. statistics.md = Section 7 CE1 upgrade callout + 4 `category` residuals scrubbed to `getExerciseGroup()`. programs.md = single-line modal cross-ref. master-schematics.md Decision #26 patched (RPE toggle → UserSettingsContext.rpeEnabled, hydrated from AuthContext.user on login, F30 tutorial introduces it). memory/project_tutorial_hints_queue.md = RPE first-run hint added.
-- Session 43 (NEXT — RE-SEQUENCED): exercise-bank.md update + CE1 scope alignment. Resolve EB4 (parentExerciseId in CE1 v3 vs CE2). Reconcile `exercise-bank.md` (136-entry expansion plan across P0–P5) against `memory/project_ce1_final_scope.md` (library expansion currently deferred). Lock which P-tiers ship in CE1 vs subsequent cycles. Update exercise-bank.md decisions + status.
-- Session 44 (DEFERRED from 43): seed re-curation over the final locked CE1 exercise set (scope determined in Session 43). Full CE1-schema tagging per EMG citations. Output = spec table (artifact), not code.
+- Session 43 (DONE 2026-04-22): exercise-bank.md built out to 213 entries across 6 priority tiers (Batches A/B/C/D). All major EB decisions closed: EB1 (parent defaults) / EB2 (chevron expander + search) / EB4 architecture (`parentExerciseId` nullable FK) / EB4-ownership = CE2 / EB5 = allow / EB7 = per-file guides with template v2. CE1 scope = full 213-library. EB3 + EB6 deferred to their respective build sessions. 5 tutorial guides authored, migrated to `artifacts/exercises/[slug].md`, upgraded to template v2. See Session 43 summary at top of file for full detail.
+- Session 44 (NEXT): EXECUTE on session 43 decisions. (1) Create `memory/project_ce2_schema_architecture.md` with concrete content (schema spec for `parentExerciseId`, v2→v3 migration plan, variant-UX wiring: picker chevron + search indexing). (2) Rewrite `memory/project_ce1_final_scope.md` to supersede prior "library expansion deferred" stance — new scope ships all 213 entries (P4 stays UX-gated via feature toggle, not seed-gated). (3) Rewrite Build Sequencing section in exercise-bank.md aligned with full-library CE1 scope (prior pass 1/2/3 plan stale). (4) Integrate EB5 (custom exercise `parentExerciseId` nesting = allow) into custom-exercise form spec — flag for profile.md / programs.md / master-schematics.md update. (5) Optional: more guide drafting if bandwidth.
+- Session 45 (DEFERRED): seed re-curation over the final locked CE1 exercise set. Full CE1-schema tagging per EMG citations. Output = spec table (artifact), not code.
 
 **After CE1 spec patches:** CE1 build (Dexie v3 migration + schema wiring + ExerciseSearchModal rewrite + RPE input). Then Statistics build (resolve P5 charting library + OD6 button tokens first). Then iteration on new feature sets (F20–F39).
 

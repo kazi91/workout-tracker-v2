@@ -421,10 +421,11 @@ Bottom drawer overlay. Used from WorkoutDetailPage (active/edit) and WorkoutTemp
 
 #### Custom exercise creation (D6 — two-step inline flow, no new page)
 
-**Step 1 — Name + broad groups (multi-select):**
+**Step 1 — Name + broad groups (multi-select) + optional parent (EB5):**
 - Name input (required; blank → "Name can't be blank")
 - 6 broad-group chips: Chest, Back, Shoulders, Arms, Legs, Core — **multi-select** (tap to toggle; at least one required)
-- "Next" advances when name is non-blank AND ≥1 group selected
+- **Optional parent-exercise picker (EB5 — CE2):** labeled "Nest under a parent exercise (optional)"; default unselected. Dropdown contents = all exercises where `parentExerciseId === null`, sorted alphabetically (seed parents + any parent-level customs). Selecting a parent sets `parentExerciseId` on save; unselected → `parentExerciseId = null` (new custom becomes a parent-level entry itself). Per CE2 Rule 1 (flat hierarchy), variants cannot become parents — dropdown is self-filtering. No muscle-map pre-fill from parent this cycle; user still completes Step 2 manually (pre-fill is a polish item for post-MVP).
+- "Next" advances when name is non-blank AND ≥1 group selected. Parent selection is never required.
 
 **Step 2 — Muscle tagging (D6.1 sectioned by selected group, D6.2 two-tap cycle, D6.3 long-press promote):**
 - Muscles listed under each group header (only groups selected in Step 1 are shown)
@@ -436,7 +437,7 @@ Bottom drawer overlay. Used from WorkoutDetailPage (active/edit) and WorkoutTemp
 - Role visual distinction uses the same UI color rule as filter row metadata (element TBD pre-build)
 - Primary selection: **long-press on any tagged muscle → promote to primary** (D6.3). Long-pressing a second tagged muscle creates co-primaries. Long-press on a primary demotes it back to synergist. Tutorial hint queued for F30 (first-run onboarding).
 - At least one primary is required to save. If user saves without promoting anything, first selected muscle is auto-promoted (guard — UX copy TBD pre-build).
-- **Save** → `ExerciseService.create({ name, primaryMuscles, secondaryMuscles, equipment: null, gripWidth: null, gripOrientation: null, stanceWidth: null, bias: null, jointLoad: [], isCustom: true })` → new exercise added to list and immediately selected → modal closes
+- **Save** → `ExerciseService.create({ name, primaryMuscles, secondaryMuscles, parentExerciseId, equipment: null, gripWidth: null, gripOrientation: null, stanceWidth: null, bias: null, jointLoad: [], isCustom: true })` → new exercise added to list and immediately selected → modal closes. `parentExerciseId` comes from Step 1 parent picker (null if unselected).
 
 **Dismissal:**
 - Tap outside overlay → modal closes, no exercise added (from any step)
