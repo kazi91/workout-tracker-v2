@@ -100,6 +100,6 @@ Repeat phases 1–4 for every new feature after MVP ships.
 
 ## Session Rules (for Claude instances)
 
-Operational session rules (reading order, token management, build discipline, model selection) live in CLAUDE.md. That file is the starting point for every new Claude instance — not this one.
+Operational session rules (reading order, token management, build discipline) live in CLAUDE.md. That file is the starting point for every new Claude instance — not this one.
 
 This file provides the WHY. CLAUDE.md provides the HOW.

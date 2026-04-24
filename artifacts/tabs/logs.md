@@ -224,7 +224,7 @@ Edit      → tap "← Back"         → Modal: "Discard changes?" → [Discard]
 - `WorkoutLogService.finish(id)` — finish active workout
 - `WorkoutLogService.update(id, data)` — rename, save edits
 - `WorkoutLogService.delete(id)` — delete log (cascades)
-- `LogExerciseService.getByWorkoutId(id)` — load exercises
+- `LogExerciseService.getByWorkoutLogId(id)` — load exercises
 - `LogExerciseService.add(workoutLogId, exerciseId)` — add exercise
 - `LogExerciseService.remove(id)` — remove exercise
 - `LogSetService.getByExerciseId(id)` — load sets

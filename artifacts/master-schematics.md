@@ -17,10 +17,10 @@
 | Phase | Description | Status |
 |-------|-------------|--------|
 | 1. Research | Requirements, market, problem definition, tech stack, costs | Done |
-| 2. Blueprint | Architecture, DB schema, component plan, contracts | Complete — all decisions locked (#1–23) |
+| 2. Blueprint | Architecture, DB schema, component plan, contracts | Complete — Phase 2 locked decisions #1–23; Decisions #24–29 added later during Phase 5 CE1 spec patches |
 | 3. Build | Implement step by step — frontend first, backend later | Complete — all 6 steps built |
 | 4. Test | Unit → integration → e2e, bug tracking | Complete — closed 2026-04-22. 72 tests passing across 8 files; service layer guards complete; ErrorContext + ErrorBanner wired app-wide. Remaining flow-level tests (finish state machine, auth, ActiveWorkoutContext init) carried into Phase 5 when touched. |
-| 5. Iteration | Statistics page build + new feature sets (repeat phases 1–4 per feature) | In progress — CE1 spec patches active (sessions 41–43); CE1 build, Statistics build, and F20–F39 iteration queued |
+| 5. Iteration | Statistics page build + new feature sets (repeat phases 1–4 per feature) | In progress — CE1 + CE2 spec patches done (sessions 41–44); full-library seed re-curation in progress (sessions 45a–e closed, 45f next); CE1/CE2 coordinated build (Session 47+), Statistics build, and F20–F39 iteration queued |
 
 ---
 
@@ -185,6 +185,7 @@ A workout tracking app with a React web frontend (mobile-only layout). Data stor
 | id | auto | Primary key |
 | name | string | |
 | isCustom | boolean | false = pre-seeded, true = user-created |
+| parentExerciseId | `number \| null` | Nullable FK → another exercise's id. `null` = parent-level (or standalone). Non-null = variant; references a parent-level exercise (parent's own `parentExerciseId` must be `null` per CE2 Rule 1 — flat hierarchy). Owned by CE2; bundled into v3 migration with CE1. Secondary index for fast chevron-expansion queries. |
 | primaryMuscles | `Muscle[]` | One or more — co-primaries allowed when EMG/research supports (Decision #24) |
 | secondaryMuscles | `{ muscle: Muscle; role: 'synergist' \| 'stabilizer' }[]` | Role-tagged secondaries (Decision #24 — B-lite); both roles treated at 0.5× in MVP math; future calibration possible without re-curation |
 | equipment | `string \| null` | Forward-compat (UX deferred — F39); null until next cycle |
@@ -299,12 +300,12 @@ dailyCheckins:    '++id, userId'
 > **Schema version — planned v3 bump (Decision #28, locked Session 41; executes when CE1 build session lands).**
 >
 > v3 delta:
-> - **Nuke + reseed** (D8.1 sub-option B2): `exercises`, `logExercises`, `logSets` dropped and repopulated from the re-curated seed (29 exercises with full-schema tagging). Active/historical log data on these tables is wiped.
+> - **Nuke + reseed** (D8.1 sub-option B2): `exercises`, `logExercises`, `logSets` dropped and repopulated from the re-curated seed (213 entries with full-schema tagging — see `artifacts/exercise-bank.md` for tier breakdown and `artifacts/seed-draft.md` for entry-level tagging). Active/historical log data on these tables is wiped.
 > - **Silent migration** (D8.3): no banner, no confirm. Acceptable pre-launch only — post-launch updates switch to in-place + banner pattern (see `memory/project_post_launch_migration_pattern.md`).
 > - **Single version hop** (D8.4): all new/renamed fields bundle into one v3 bump — no v2.x intermediate.
-> - **Additive nullable fields** (no data loss on unaffected tables): `users.rpeEnabled` (default `false`), `users.trainingAge`; `exercises.primaryMuscles`, `secondaryMuscles`, `equipment`, `gripWidth`, `gripOrientation`, `stanceWidth`, `bias`, `jointLoad`; `logSets.rpe`.
+> - **Additive nullable fields** (no data loss on unaffected tables): `users.rpeEnabled` (default `false`), `users.trainingAge`; `exercises.parentExerciseId` (CE2 — nullable FK for variant architecture), `primaryMuscles`, `secondaryMuscles`, `equipment`, `gripWidth`, `gripOrientation`, `stanceWidth`, `bias`, `jointLoad`; `logSets.rpe`.
 > - **Removed field:** `exercises.category` (broad group now derived via `getExerciseGroup`).
-> - **Index changes:** `exercises` loses the `category` compound index (no replacement — broad-group filter is in-memory; 29-exercise scale, sub-millisecond).
+> - **Index changes:** `exercises` loses the `category` compound index (no replacement — broad-group filter is in-memory; 29-exercise scale, sub-millisecond) and gains a secondary index on `parentExerciseId` (CE2 — fast chevron-expansion `WHERE parentExerciseId = X` queries).
 > - **Unaffected tables:** `workouts`, `workoutExercises`, `workoutLogs`, `programs`, `bodyMetrics`, `dailyCheckins`. Pending v2-era additions (`bodyMetrics`, `dailyCheckins`, `workoutLogs.rating`, `users.goalWeight`) bundle into the same v3 hop.
 
 Notes:
@@ -360,7 +361,7 @@ All services are plain modules exporting functions. Currently call Dexie directl
 |---------|---------|
 | AuthService | signup (accepts unitPreference — set at account creation), login, logout, getCurrentUser, getCurrentUserId |
 | UserService | getProfile, updateProfile (now accepts `rpeEnabled` and `trainingAge` alongside existing fields) |
-| ExerciseService | getAll, search (query + `group?: MuscleGroup`) — broad-group filter derived via `getExerciseGroup`; name search matches exercise name AND muscle tags (D7 — typing "triceps" surfaces exercises with triceps as primary or secondary); create (accepts new-schema fields: `primaryMuscles`, `secondaryMuscles`, and Tier 3 forward-compat fields `equipment`/`gripWidth`/`gripOrientation`/`stanceWidth`/`bias`/`jointLoad` — all nullable or default-empty) |
+| ExerciseService | getAll, search (query + `group?: MuscleGroup`) — broad-group filter derived via `getExerciseGroup`; name search matches exercise name AND muscle tags (D7 — typing "triceps" surfaces exercises with triceps as primary or secondary); create (accepts new-schema fields: `primaryMuscles`, `secondaryMuscles`, optional `parentExerciseId: number \| null` (CE2 — see exercises table for validation rules), and Tier 3 forward-compat fields `equipment`/`gripWidth`/`gripOrientation`/`stanceWidth`/`bias`/`jointLoad` — all nullable or default-empty) |
 | ProgramService | getAll, getById, create, update, delete (cascade order: workoutExercises → workouts → program; children deleted before parent to prevent orphaned rows) |
 | WorkoutService | getByProgramId, getById, create, update, delete (cascade order: workoutExercises → workout), reorder, createFromLog(logId, programId, workoutName) — creates workout + workoutExercises from a log; targetSets = logSet count per exercise, targetReps/targetWeight = first set values (0 if none) |
 | WorkoutExerciseService | getByWorkoutId, add, update, remove, reorder, syncFromLog(workoutId, logId) — adds exercises in log but not in template, removes exercises in template but not in log; existing template exercises untouched; order of new exercises follows log order; getCountsByProgramId(programId) — returns Record<workoutId, number> of exercise counts for all workouts in a program in a single batch query (replaces N+1 pattern in ProgramDetailPage) |
@@ -369,7 +370,7 @@ All services are plain modules exporting functions. Currently call Dexie directl
 | LogSetService | getByExerciseId, add (accepts optional `rpe: number \| null`), update (accepts optional `rpe`; missing RPE never blocks save per Decision #26), delete, getPreviousData (returns weight+reps by set number, fallback to last set — `rpe` is NOT pre-filled) |
 | BodyMetricsService | getAll(userId), getRecent(userId, days), log(userId, entry), update(id, entry), delete(id) |
 | DailyCheckinService | getAll(userId), getRecent(userId, days), logToday(userId, entry) — upsert, replaces today's entry if exists, delete(id) |
-| StatisticsService | getSummary(userId), getExerciseHistory(userId, exerciseId, range), getVolumeByPeriod(userId, period), getPRs(userId), checkForPR(userId, exerciseId, weight, reps) — real-time set-save check, getRollingWeightAverage(userId, days), getRecompositionSignal(userId), getAdherenceRate(userId, weeks) |
+| StatisticsService | getSummary(userId), getExerciseHistory(userId, exerciseId, range), getVolumeByPeriod(userId, period), getPRs(userId), checkForPR(userId, exerciseId, weight, reps) — real-time set-save check, getRollingWeightAverage(userId, days), getRecompositionSignal(userId) |
 | WorkoutLogService | (existing methods) + updateRating(id, rating) — save post-workout feel rating |
 
 ---
@@ -452,7 +453,6 @@ Bottom drawer overlay. Used from WorkoutDetailPage (active/edit) and WorkoutTemp
 ```
 src/
 ├── App.tsx                        — Root component, routing, seed trigger; on mount: db.exercises.count() === 0 → seed() (C8 resolved)
-│                                    ⚠ AUDIT C8: Seed trigger mechanism unspecced — when/how seed.ts runs is not documented. Resolve before build step 1.
 ├── index.css                      — Global reset, mobile-first base styles (480px max-width)
 ├── main.tsx                       — Vite entry point
 ├── types/
@@ -508,7 +508,8 @@ src/
 - Error: "Invalid email or password"
 - Success: redirect to `/logs`
 
-> **AUDIT M8:** AuthContext loading state unspecced — while checking localStorage on mount, the app needs to avoid a flash of unauthenticated content or premature redirect. Decide handling at auth build step.
+**Auth implementation notes:**
+
 - **localStorage security notes (MVP context):**
   - Only a userId (number) is stored — not a password or token; harmless without direct device access
   - XSS risk is the same as sessionStorage — negligible for a local-only app with no third-party scripts

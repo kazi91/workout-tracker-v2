@@ -1,6 +1,6 @@
 WORKOUT TRACKER V2 — UI DESIGN REFERENCE
 ==========================================
-Last updated: 2026-04-05
+Last updated: 2026-04-21 (session 30 — most recent edit; FAB states split, page title 24px, Portfolio Legibility add)
 
 Purpose: Establish UI standards before build begins. Brainstorm visual features and ideas,
 note what aligns with current plans and what changes each idea would require.
@@ -489,11 +489,11 @@ trace back to one of these rules.
     Tab switches:     instant, no animation (native app convention)
 
   WORKOUT FAB
-    Size:             56px circle
+    Size:             52px circle (session 17)
     Background:       accent green
     Icon:             white play/resume icon (Lucide)
-    Position:         bottom-right, 16px from edge, above nav bar
-    Shadow:           subtle drop shadow to lift above content
+    Position:         inline center slot within BottomNav (session 17)
+    Shadow:           subtle drop shadow (box-shadow: 0 2px 8px rgba(0,0,0,0.4); disabled state: none)
     States:           "Start Workout" (Logs tab, no active workout)
                       "Resume Workout" (all tabs, active workout)
                       disabled/inert (WorkoutDetailPage active mode — opacity 0.35, no onClick)

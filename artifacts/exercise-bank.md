@@ -2,7 +2,7 @@
 
 > **Purpose:** Single source of truth for the exercise library — current seed, priority-ordered expansion list, parent/variant rules, and open decisions. Future home for per-exercise tutorial content.
 > **Status:** Research/planning draft. No seed changes until tiers + variant architecture are approved.
-> **Last updated:** 2026-04-22 (session 40)
+> **Last updated:** 2026-04-23 (session 44 2nd follow-up)
 
 ---
 
@@ -47,7 +47,7 @@ Derived from CE1 D1/D3 (locked).
 - **P2** — Programming depth. Hypertrophy specialization, structural balance, full coverage.
 - **P3** — Specialty / niche. High utility for advanced users.
 - **P4** — Gated behind feature toggle (Olympic, plyo, KB, conditioning).
-- **P5** — Variant entry. Nested under a parent via `parentExerciseId` (pending schema).
+- **P5** — Variant entry. Nested under a parent via `parentExerciseId` (CE2 schema locked; bundled into CE1's v3 migration).
 
 **Counts:** Seed=29, P0=9, P1=56, P2=53, P3=11, P4=30, P5=25 → **184 additions, 213 total library.**
 
@@ -313,7 +313,7 @@ Default off. Each gated by its respective feature toggle per `memory/project_fea
 
 ## P5 — Variants (25)
 
-Nested under a parent exercise via `parentExerciseId` (pending schema). Exposure = chevron expander + search indexing (EB2 locked).
+Nested under a parent exercise via `parentExerciseId` (CE2 schema locked; bundled into CE1's v3 migration). Exposure = chevron expander + search indexing (EB2 locked).
 
 Parent defaults:
 - **Squat** default = high-bar back squat
@@ -376,7 +376,7 @@ Parent defaults:
 
 **CE1 scope lock:** full 213-entry library ships in CE1 (Seed + P0 + P1 + P2 + P3 + P4 + P5). P4 stays toggle-gated at UX (visibility), not at seed presence. See `memory/project_ce1_final_scope.md` for the authoritative scope. `parentExerciseId` schema + variant-UX wiring owned by `memory/project_ce2_schema_architecture.md` (CE2); migration bundled into CE1's Dexie v3 bump.
 
-Two phases: **curation** (data tagging, no code) then **build** (schema + UI). Curation must complete before build starts.
+Three phases: **curation** (data tagging, no code) → **coordination** (CE1+CE2 spec merge) → **build** (schema + UI). Curation must complete before build starts.
 
 ### Phase 1 — Curation (Sessions 45a–f, ~13h total, no code)
 

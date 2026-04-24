@@ -2,7 +2,7 @@
 
 > **Purpose:** Detailed spec for the Statistics tab. Use this as the source of truth when building or modifying anything under `/statistics`. Cross-reference with master schematic (`artifacts/master-schematics.md`) for DB schema, services, and shared components.
 >
-> **Last updated:** 2026-04-21 — spec revised post-research session: removed fluff (HRV, hunger rating, arm/thigh circumference, orphaned goal targets); added PR celebration (set-save + finish), post-workout feel rating, Logs tab consistency indicator. Device integration (steps/sleep auto-sync) deferred — evaluate Capacitor as a separate architectural session.
+> **Last updated:** 2026-04-22 — spec revised post-research session: removed fluff (HRV, hunger rating, arm/thigh circumference, orphaned goal targets); added PR celebration (set-save + finish), post-workout feel rating, Logs tab consistency indicator. Device integration (steps/sleep auto-sync) deferred — evaluate Capacitor as a separate architectural session. Session 42 patch: Section 7 CE1 upgrade callout added; four `category` residuals scrubbed (broad group now via `getExerciseGroup()`).
 
 ---
 
@@ -143,7 +143,6 @@ All derived from existing `logSets` / `logExercises` / `workoutLogs` — no new 
 | Total workouts | `workoutLogs` count all-time | |
 | Current streak | Consecutive weeks with ≥ 1 workout | Week-based, not day-based |
 | Last workout | Date + name of most recent `workoutLog` | |
-| Weekly adherence rate | Workouts completed / workouts planned | Only meaningful if user has a program |
 
 > **Logs tab consistency indicator:** A condensed summary line ("3 workouts this week · 🔥 5-week streak") is also surfaced on LogsPage below the page title — same `getSummary()` call, no extra service work. Keeps motivation visible in the primary flow.
 
@@ -266,7 +265,6 @@ A composite signal card confirming body recomposition is occurring.
 | `StatisticsService` | `checkForPR(userId, exerciseId, weight, reps)` | Real-time PR check at set-save; excludes current session; returns which records broken |
 | `StatisticsService` | `getRollingWeightAverage(userId, days)` | N-day rolling average from bodyMetrics |
 | `StatisticsService` | `getRecompositionSignal(userId)` | Evaluates strength trend + waist trend; returns signal state |
-| `StatisticsService` | `getAdherenceRate(userId, weeks)` | Workouts completed / planned for last N weeks |
 | `WorkoutLogService` | `updateRating(id, rating)` | Save post-workout feel rating; called at finish |
 
 ---
@@ -373,7 +371,7 @@ Synthesized callouts derived from layers 7a and 7b.
 | `StatisticsService` | `getProgramUsage(userId)` | Session count + avg sessions/week per program, all time |
 | `StatisticsService` | `getCurrentSplits(userId)` | Array of `{ programId, startDate, endDate, sessionCount }` derived from log history |
 | `StatisticsService` | `getProgramEfficacy(userId, programId)` | PR count, volume delta, consistency rate per split |
-| `StatisticsService` | `getNeglectedCategories(userId, thresholdDays)` | Categories with no logged exercise in last N days |
+| `StatisticsService` | `getNeglectedGroups(userId, thresholdDays)` | Broad muscle groups (via `getExerciseGroup()`) with no logged exercise in last N days |
 
 ---
 

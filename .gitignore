@@ -42,3 +42,6 @@ Thumbs.db
 PRESENTATION_AID.md
 PRESENTATION_AID.html
 demo-seed.js
+
+# Local research notes — not part of the spec corpus
+artifacts/plugin-research/
