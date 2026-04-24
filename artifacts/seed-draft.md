@@ -2,7 +2,7 @@
 
 Working output for Sessions 45a–f. Every entry tagged per [seed-tagging-principles.md](seed-tagging-principles.md). Will compile to `src/db/seed.ts` at build time.
 
-**Status:** Session 45a CLOSED 2026-04-23. All 11 parent maps locked. Variants + non-parent P0/P1/P2/P3/P4/P5 entries queued for 45b–f.
+**Status:** Sessions 45a–e CLOSED 2026-04-23. 183 of 213 entries tagged (all Seed + P0 + P1 + P2 + P3 + P5). Only P4 (30 entries) remains for 45f, plus end-to-end cross-curation validation pass.
 
 **Conventions recap (full rules in principles doc):**
 - Primary = force generator / rep-fails-if-it-fails. 1 typical; co-primary only when EMG supports.
@@ -705,21 +705,2182 @@ Run against the full 27 entries above (18 Seed non-parent + 9 P0 + 1 missed-pare
 
 ---
 
-## Session 45c — P1 upper body — queued
+## Session 45c — P1 upper body (27 entries)
+
+**Scope:** P1 rows #1–#7, #25–#37, #45–#50, #53, #56 per `artifacts/exercise-bank.md`. Covers Chest (6), Back (5), Shoulders (9), Arms — Biceps (5), Arms — Triceps (2). Research depth = Medium per principles doc EMG policy (cite only when overriding template default). One EMG override this session: Close-Grip Bench Press `[chest, triceps]` per Barnett 1995 — locked from queued list.
+
+### Full entry blocks — Session 45c
+
+#### Chest (6)
+
+### 1. Decline Bench Press (P1 #1)
+
+- **primary:** `chest`
+- **secondary:**
+  - `triceps` — synergist
+  - `frontDelts` — synergist *(reduced vs flat bench; decline angle shifts away from shoulder flexion)*
+  - `rotatorCuff` — stabilizer *(pressing stability demand)*
+  - `lats` — stabilizer *(bar-path control + bench tightness — matches flat Bench Press)*
+- **equipment:** `barbell`
+- **gripWidth:** `medium`
+- **gripOrientation:** `pronated`
+- **parentExerciseId:** `null`
+- **Template:** Horizontal push. No override. No serratus (decline → scap pinned, no past-horizontal reach per chest convention).
+- **Group derivation:** chest → `chest`.
+- **Notes:** 4 secondaries — matches Bench Press precedent. Decline angle emphasizes lower/outer pec but doesn't change primary. Decline DB Bench (P2 #1) will inherit.
 
 ---
 
-## Session 45d — P1 lower body + core — queued
+### 2. Machine Chest Press (P1 #2)
+
+- **primary:** `chest`
+- **secondary:**
+  - `triceps` — synergist
+  - `frontDelts` — synergist
+- **equipment:** `machine`
+- **parentExerciseId:** `null`
+- **Template:** Horizontal push — machine variant. Fixed path removes `rotatorCuff (stab)`; back-supported seat removes `lats (stab)` (no bench-tightness cue).
+- **Group derivation:** chest → `chest`.
+- **Notes:** 2 secondaries — machine discipline (matches Leg Press precedent: reduced secondaries vs free-weight parent). Smith Machine Bench Press (P2 #35) will inherit.
 
 ---
 
-## Session 45e — P5 variants + P2 + P3 — queued
+### 3. Pec Deck (P1 #3)
 
-*P5 variants inherit parent maps from 45a; log divergences only.*
+- **primary:** `chest`
+- **secondary:**
+  - `frontDelts` — synergist *(shoulder flexion component during horizontal adduction)*
+- **equipment:** `machine`
+- **parentExerciseId:** `null`
+- **Template:** Isolation — single-joint fly. Fly exception NOT applied: pad-supported + guided motion removes the multi-plane cuff demand that earns `rotatorCuff (stab)` on cable crossover + DB fly. Pec Deck stays strict isolation.
+- **Group derivation:** chest → `chest`.
+- **Notes:** 1 secondary — strictest isolation among chest exercises this session. Machine pad constrains shoulder position; cuff demand minimal.
 
 ---
 
-## Session 45f — P4 + cross-curation validation — queued
+### 4. Close-Grip Bench Press (P1 #5) — EMG co-primary override
+
+- **primary:** `chest`, `triceps` *(co-primary — narrow grip shifts triceps to primary-mover status per Barnett 1995 EMG; standalone entry, not a Bench Press variant per Parent/Variant Rule — map diverges from Bench)*
+- **secondary:**
+  - `frontDelts` — synergist
+  - `rotatorCuff` — stabilizer
+  - `lats` — stabilizer *(same bench-tightness cue as Bench Press)*
+- **equipment:** `barbell`
+- **gripWidth:** `narrow`
+- **gripOrientation:** `pronated`
+- **parentExerciseId:** `null`
+- **Template:** Horizontal push — overridden to co-primary per EMG. Locks principles doc's queued entry for this session.
+- **Group derivation:** chest → `chest` (tiebreak: chest first; group stays chest, not arms — distinguishes from JM Press which has triceps single-primary).
+- **Notes:** 3 secondaries. JM Press (P3 #7) is structurally similar (triceps-dominant narrow press) but will take triceps single-primary with chest de-emphasized when tagged in 45e. EMG co-primary reference list: move from Queued → Non-parents (session 45c).
+
+---
+
+### 5. Machine Assisted Dip (P1 #45)
+
+- **primary:** `chest`, `triceps` *(co-primary — inherits Dips movement pattern at reduced load; machine doesn't change muscle coordination, only load)*
+- **secondary:**
+  - `frontDelts` — synergist
+- **equipment:** `machine`
+- **parentExerciseId:** `null` *(per exercise-bank: separate exercise, not a Dips variant — machine removes stabilizer + reduces load)*
+- **Template:** Horizontal push — Dips co-primary preserved; machine discipline drops `upperBack (stab)` + `rotatorCuff (stab)` from Dips parent map.
+- **Group derivation:** chest → `chest` (first primary — matches Dips parent group derivation).
+- **Notes:** 1 secondary — machine-beginner discipline. Kneeling-pad assistance reduces bodyweight load but preserves chest+triceps co-primary coordination. Logged as exception (machine variant inheriting co-primary despite 2-stabilizer loss from parent map).
+
+---
+
+### 6. Iso-Lateral Chest Press (P1 #46)
+
+- **primary:** `chest`
+- **secondary:**
+  - `triceps` — synergist
+  - `frontDelts` — synergist
+- **equipment:** `machine`
+- **parentExerciseId:** `null`
+- **Template:** Horizontal push — machine variant. Same reasoning as Machine Chest Press (#2): fixed path + back-supported seat removes cuff + lats stabilizers.
+- **Group derivation:** chest → `chest`.
+- **Notes:** 2 secondaries. Plate-loaded with independent-arm option (unilateral use). Default = bilateral; no obliques (stab) tag unless used unilaterally (per-session form variation, not map change).
+
+---
+
+#### Back (5)
+
+### 7. Chest-Supported Dumbbell Row (P1 #6)
+
+- **primary:** `lats`, `upperBack` *(co-primary per Horizontal pull template)*
+- **secondary:**
+  - `rearDelts` — synergist
+  - `biceps` — synergist
+  - `brachialis` — synergist *(neutral grip amplifies brachialis contribution)*
+  - `forearms` — stabilizer *(grip)*
+- **equipment:** `dumbbell`
+- **gripOrientation:** `neutral`
+- **parentExerciseId:** `null`
+- **Template:** Horizontal pull. Chest pad eliminates hip-hinge demand → drop `lowerBack (stab)` from template default.
+- **Group derivation:** lats → `back`.
+- **Notes:** 4 secondaries. Same muscles as DB Row (P0 #3) minus `lowerBack` (chest-support removes hinge). Chest-Supported T-Bar Row (P2 #6) will inherit this map.
+
+---
+
+### 8. T-Bar Row (P1 #7)
+
+- **primary:** `lats`, `upperBack` *(co-primary per Horizontal pull template)*
+- **secondary:**
+  - `rearDelts` — synergist
+  - `biceps` — synergist
+  - `brachialis` — synergist *(close-handle neutral grip is T-bar default)*
+  - `forearms` — stabilizer *(grip)*
+  - `lowerBack` — stabilizer *(bent-over hip hinge held throughout)*
+- **equipment:** `barbell` *(landmine or T-bar station)*
+- **gripOrientation:** `neutral` *(close-handle V-grip default)*
+- **parentExerciseId:** `null`
+- **Template:** Horizontal pull — full template applied (same as Bent-Over BB Row).
+- **Group derivation:** lats → `back`.
+- **Notes:** 5 secondaries — at ceiling. Same map as Bent-Over BB Row; differs in implement path (landmine arc vs free barbell) and grip default (neutral vs pronated).
+
+---
+
+### 9. Iso-Lateral High Row (P1 #47)
+
+- **primary:** `lats`
+- **secondary:**
+  - `upperBack` — synergist *(demoted from co-primary — high-angle pull behaves like Lat Pulldown, not row)*
+  - `biceps` — synergist
+  - `brachialis` — synergist
+  - `rearDelts` — synergist
+  - `forearms` — stabilizer *(grip)*
+- **equipment:** `machine`
+- **parentExerciseId:** `null`
+- **Template:** Vertical pull — naming is "row" but pull-down-angle path functions as vertical pull (closer to Lat Pulldown than horizontal row). No Pull-Up co-primary override (cable/machine, no bodyweight amplification).
+- **Group derivation:** lats → `back`.
+- **Notes:** 5 secondaries — at ceiling. Naming/template mismatch logged as exception: exercise-bank lists as "row" but the high pull angle justifies Vertical pull treatment. Distinct from Iso-Lateral Low Row (#10), which is horizontal-row angle and gets co-primary.
+
+---
+
+### 10. Iso-Lateral Low Row (P1 #48)
+
+- **primary:** `lats`, `upperBack` *(co-primary per Horizontal pull template)*
+- **secondary:**
+  - `rearDelts` — synergist
+  - `biceps` — synergist
+  - `brachialis` — synergist
+  - `forearms` — stabilizer *(grip)*
+- **equipment:** `machine`
+- **parentExerciseId:** `null`
+- **Template:** Horizontal pull — chest-supported seated row angle. Drop `lowerBack (stab)` per chest-support precedent (see Chest-Supported DB Row #7).
+- **Group derivation:** lats → `back`.
+- **Notes:** 4 secondaries. Same map as Chest-Supported DB Row — plate-loaded machine equivalent. Machine Row (P1 #9) will inherit this map in 45d.
+
+---
+
+### 11. Machine Assisted Pull-Up (P1 #49)
+
+- **primary:** `lats`
+- **secondary:**
+  - `upperBack` — synergist
+  - `biceps` — synergist
+  - `brachialis` — synergist
+  - `rearDelts` — synergist
+  - `forearms` — stabilizer *(grip)*
+- **equipment:** `machine`
+- **parentExerciseId:** `null` *(per exercise-bank: separate exercise, machine removes stabilizer + reduces load)*
+- **Template:** Vertical pull — default (no Pull-Up co-primary override; assistance reduces bodyweight amplification, pattern tracks closer to Lat Pulldown than bodyweight Pull-Up).
+- **Group derivation:** lats → `back`.
+- **Notes:** 5 secondaries — at ceiling, matches Lat Pulldown template. Kneeling-pad assistance + machine guidance reduces both load and cuff demand.
+
+---
+
+#### Shoulders (9)
+
+### 12. Arnold Press (P1 #25)
+
+- **primary:** `frontDelts`
+- **secondary:**
+  - `sideDelts` — synergist *(grip-rotation element amplifies sideDelt recruitment vs strict DB press)*
+  - `triceps` — synergist
+  - `upperTraps` — synergist
+  - `serratus` — synergist
+  - `rotatorCuff` — stabilizer
+  - `abs` — stabilizer *(anti-extension; scales with seated/standing)*
+- **equipment:** `dumbbell`
+- **parentExerciseId:** `null`
+- **Template:** Vertical push — inherits DB Shoulder Press map. Grip-rotation element amplifies sideDelt engagement slightly but doesn't change primary or template.
+- **Group derivation:** frontDelts → `shoulders`.
+- **Notes:** 6 secondaries — flagged per ≤5 soft threshold; accepted per DB Shoulder Press + OHP precedent (Vertical push template-standard, same pattern as Squat).
+
+---
+
+### 13. Machine Shoulder Press (P1 #26)
+
+- **primary:** `frontDelts`
+- **secondary:**
+  - `sideDelts` — synergist
+  - `triceps` — synergist
+  - `upperTraps` — synergist
+  - `serratus` — synergist
+- **equipment:** `machine`
+- **parentExerciseId:** `null`
+- **Template:** Vertical push — machine variant. Fixed path removes `rotatorCuff (stab)`; back-supported seat removes `abs (stab)` (no standing axial anti-extension demand).
+- **Group derivation:** frontDelts → `shoulders`.
+- **Notes:** 4 secondaries — machine discipline reduces from OHP's 6. Smith Machine OHP (P2 #38) will inherit. Iso-Lateral Shoulder Press (#19) gets the same map.
+
+---
+
+### 14. Cable Lateral Raise (P1 #27)
+
+- **primary:** `sideDelts`
+- **secondary:**
+  - `upperTraps` — synergist *(scap upward rotation at/above 90°)*
+  - `rotatorCuff` — stabilizer
+- **equipment:** `cable`
+- **parentExerciseId:** `null`
+- **Template:** Isolation — inherits Lateral Raise (Seed #18) map. Cable provides continuous tension through ROM but doesn't change muscle recruitment profile.
+- **Group derivation:** sideDelts → `shoulders`.
+- **Notes:** 2 secondaries. Machine Lateral Raise (P2 #18) will inherit this same map in 45e.
+
+---
+
+### 15. Rear Delt Pec Deck (P1 #28)
+
+- **primary:** `rearDelts`
+- **secondary:**
+  - `upperBack` — synergist *(rhomboid + mid-trap retraction at end range)*
+- **equipment:** `machine`
+- **parentExerciseId:** `null`
+- **Template:** Isolation — reverse fly pattern. Pad-supported, fixed path; no cuff exception (same reasoning as Pec Deck #3: support removes multi-plane cuff demand).
+- **Group derivation:** rearDelts → `shoulders`.
+- **Notes:** 1 secondary. Strict isolation discipline. Chest pad holds torso position, removing trunk stabilizer demand.
+
+---
+
+### 16. Bent-Over Dumbbell Reverse Fly (P1 #29)
+
+- **primary:** `rearDelts`
+- **secondary:**
+  - `upperBack` — synergist *(retraction — rhomboids, mid-traps)*
+  - `lowerBack` — stabilizer *(hip-hinge hold sustained under DB load)*
+- **equipment:** `dumbbell`
+- **parentExerciseId:** `null`
+- **Template:** Isolation — reverse fly. Same rearDelt-isolation pattern as Rear Delt Pec Deck (#15) but free-weight + hinge adds `lowerBack (stab)`.
+- **Group derivation:** rearDelts → `shoulders`.
+- **Notes:** 2 secondaries. `lowerBack` included despite short-lever isolation because sustained bent-over position under dumbbell load meets Rule 6 tag-when criteria (hinge hold under load).
+
+---
+
+### 17. Dumbbell Shrug (P1 #30)
+
+- **primary:** `upperTraps`
+- **secondary:**
+  - `forearms` — stabilizer *(grip)*
+  - `lowerBack` — stabilizer *(axial load on standing)*
+  - `neck` — stabilizer *(per Rule 5 heavy-shrug use case)*
+- **equipment:** `dumbbell`
+- **gripOrientation:** `neutral`
+- **parentExerciseId:** `null`
+- **Template:** Shrug pattern — inherits Barbell Shrug (P0 #8) map verbatim.
+- **Group derivation:** upperTraps → `back`.
+- **Notes:** 3 secondaries. DBs at sides (neutral grip) vs barbell front-hold — same trap activation, same stabilizer profile.
+
+---
+
+### 18. Landmine Press (P1 #31)
+
+- **primary:** `frontDelts`
+- **secondary:**
+  - `chest` — synergist *(diagonal press angle retains meaningful horizontal-adduction component)*
+  - `triceps` — synergist
+  - `serratus` — synergist *(press past horizontal along landmine arc qualifies)*
+  - `obliques` — stabilizer *(anti-rotation on unilateral load — default = one-arm landmine press)*
+- **equipment:** `barbell` *(barbell-in-landmine setup)*
+- **parentExerciseId:** `null`
+- **Template:** Hybrid — between Horizontal push and Vertical push (~45° diagonal). `frontDelts` primary per shoulder-group convention (the lift's dominant angle is shoulder flexion). `chest` tagged as synergist for the horizontal-adduction component at the bottom of the arc.
+- **Group derivation:** frontDelts → `shoulders`.
+- **Notes:** 4 secondaries. Unilateral default → `obliques (stab)` covers anti-rotation; no separate `abs (stab)` (obliques handles the full core demand here). RotatorCuff not tagged — landmine fixes one end of the bar, reducing multi-plane shoulder instability vs free DB press. Logged as exception (hybrid press angle, chest-as-synergist on a shoulder exercise).
+
+---
+
+### 19. Iso-Lateral Shoulder Press (P1 #50)
+
+- **primary:** `frontDelts`
+- **secondary:**
+  - `sideDelts` — synergist
+  - `triceps` — synergist
+  - `upperTraps` — synergist
+  - `serratus` — synergist
+- **equipment:** `machine`
+- **parentExerciseId:** `null`
+- **Template:** Vertical push — machine variant. Same map as Machine Shoulder Press (#13); plate-loaded with independent-arm option.
+- **Group derivation:** frontDelts → `shoulders`.
+- **Notes:** 4 secondaries. Differs from Machine Shoulder Press only in loading mechanism (plate-loaded vs selectorized) + unilateral option.
+
+---
+
+### 20. Upright Row (P1 #56)
+
+- **primary:** `sideDelts`
+- **secondary:**
+  - `upperTraps` — synergist *(scap elevation + upward rotation throughout the pull)*
+  - `frontDelts` — synergist *(anterior elevation component)*
+  - `biceps` — synergist *(elbow flexion through the pull)*
+  - `rotatorCuff` — stabilizer *(technique-sensitive — internal-rotation-at-abduction angle creates impingement risk; cuff stabilizes actively)*
+- **equipment:** `barbell` *(BB canonical; DB + cable variants exist but BB is default)*
+- **gripWidth:** `shoulder`
+- **gripOrientation:** `pronated`
+- **parentExerciseId:** `null`
+- **Template:** No clean template — hybrid lateral-raise + vertical-pull motion. `sideDelts` primary per the signature lateral-abduction arc (shoulder-width grip default; narrow-grip would shift toward upperTraps primary, tagged as a variant consideration).
+- **Group derivation:** sideDelts → `shoulders`.
+- **Notes:** 4 secondaries. Logged as exception (hybrid pattern, no clean template fit). `rotatorCuff (stab)` included despite not being an overhead press because internal-rotation-at-abduction under load meets Rule 5 cuff tag-when criteria (active stabilization at impingement-risk angle).
+
+---
+
+#### Arms — Biceps (5)
+
+### 21. EZ-Bar Curl (P1 #32)
+
+- **primary:** `biceps`
+- **secondary:**
+  - `brachialis` — synergist
+  - `forearms` — synergist *(brachioradialis; semi-pronated EZ-bar curve increases brachioradialis contribution slightly vs straight bar)*
+  - `abs` — stabilizer *(anti-extension — standing axial isolation; matches Barbell Curl precedent)*
+- **equipment:** `barbell` *(EZ-bar family)*
+- **gripOrientation:** `supinated` *(slight pronation from EZ-bar curve; still supinated family)*
+- **parentExerciseId:** `null`
+- **Template:** Curl — supinated single-primary. Same map as Barbell Curl; EZ-bar is grip ergonomics, not a map shift.
+- **Group derivation:** biceps → `arms`.
+- **Notes:** 3 secondaries. Matches Barbell Curl secondary profile.
+
+---
+
+### 22. Preacher Curl (P1 #33)
+
+- **primary:** `biceps`
+- **secondary:**
+  - `brachialis` — synergist
+  - `forearms` — synergist *(brachioradialis)*
+- **equipment:** `barbell` *(EZ-bar or straight bar; preacher bench fixes upper arms)*
+- **gripOrientation:** `supinated`
+- **parentExerciseId:** `null`
+- **Template:** Curl — supinated single-primary. Preacher bench supports upper arms and removes standing axial load → drop `abs (stab)` from Barbell Curl template.
+- **Group derivation:** biceps → `arms`.
+- **Notes:** 2 secondaries. Machine Preacher Curl (#25) shares the same map.
+
+---
+
+### 23. Incline Dumbbell Curl (P1 #34)
+
+- **primary:** `biceps`
+- **secondary:**
+  - `brachialis` — synergist
+  - `forearms` — synergist *(brachioradialis)*
+- **equipment:** `dumbbell`
+- **gripOrientation:** `supinated`
+- **parentExerciseId:** `null`
+- **Template:** Curl — supinated single-primary. Lengthened-bias variant (incline bench stretches biceps at starting position). Reclined seated position drops `abs (stab)` — no standing axial anti-extension demand.
+- **Group derivation:** biceps → `arms`.
+- **Notes:** 2 secondaries — matches Preacher Curl profile (bench-supported = no abs). Lengthened-bias is stretch emphasis, not a map change.
+
+---
+
+### 24. Cable Curl (P1 #35)
+
+- **primary:** `biceps`
+- **secondary:**
+  - `brachialis` — synergist
+  - `forearms` — synergist *(brachioradialis)*
+  - `abs` — stabilizer *(standing axial isolation; matches Barbell Curl)*
+- **equipment:** `cable`
+- **gripOrientation:** `supinated` *(straight-bar default; rope / EZ attachments are variant configurations)*
+- **parentExerciseId:** `null`
+- **Template:** Curl — supinated single-primary. Standing cable curl; continuous tension through ROM but same muscle activation profile as barbell.
+- **Group derivation:** biceps → `arms`.
+- **Notes:** 3 secondaries — matches Barbell Curl map.
+
+---
+
+### 25. Machine Preacher Curl (P1 #53)
+
+- **primary:** `biceps`
+- **secondary:**
+  - `brachialis` — synergist
+  - `forearms` — synergist *(brachioradialis)*
+- **equipment:** `machine`
+- **gripOrientation:** `supinated`
+- **parentExerciseId:** `null`
+- **Template:** Curl — supinated single-primary. Selectorized or plate-loaded preacher-style machine; same map as Preacher Curl (#22).
+- **Group derivation:** biceps → `arms`.
+- **Notes:** 2 secondaries. Differs from Preacher Curl only in loading mechanism.
+
+---
+
+#### Arms — Triceps (2)
+
+### 26. Overhead Cable Extension (P1 #36)
+
+- **primary:** `triceps`
+- **secondary:**
+  - `forearms` — stabilizer *(grip on rope attachment)*
+  - `rotatorCuff` — stabilizer *(overhead position + weighted eccentric; same Rule 5 use case as Skull Crusher)*
+- **equipment:** `cable`
+- **gripOrientation:** `neutral` *(rope attachment default)*
+- **parentExerciseId:** `null`
+- **Template:** Extension — inherits Skull Crusher approach. Overhead variant earns `rotatorCuff (stab)` per Rule 5 patched use-case (supine/overhead weighted tricep work).
+- **Group derivation:** triceps → `arms`.
+- **Notes:** 2 secondaries — matches Skull Crusher post-audit treatment.
+
+---
+
+### 27. Overhead Dumbbell Extension (P1 #37)
+
+- **primary:** `triceps`
+- **secondary:**
+  - `forearms` — stabilizer *(grip)*
+  - `rotatorCuff` — stabilizer *(overhead weighted eccentric position)*
+- **equipment:** `dumbbell`
+- **gripOrientation:** `neutral` *(DB held vertical with both hands, or single DB overhead)*
+- **parentExerciseId:** `null`
+- **Template:** Extension — same map as Overhead Cable Extension (#26). DB vs cable = implement difference, not map difference.
+- **Group derivation:** triceps → `arms`.
+- **Notes:** 2 secondaries.
+
+---
+
+## Session 45c — End-of-session sanity check
+
+Run against the full 27 entries above (6 Chest + 5 Back + 9 Shoulders + 5 Biceps + 2 Triceps):
+
+- [x] Every entry has ≥1 primary
+- [x] No primary lists a background muscle (`neck` / `rotatorCuff`)
+- [x] No entry has >2 primaries — 2 entries at co-primary (Close-Grip Bench `[chest, triceps]` per EMG override; Machine Assisted Dip `[chest, triceps]` per Dips-pattern inheritance)
+- [~] No entry has >5 secondaries — **Arnold Press at 6 flagged** (accepted per DB SP + OHP Vertical push template precedent). T-Bar Row, Iso-Lat High Row, Machine Assisted Pull-Up at 5 (at ceiling, within discipline).
+- [x] No muscle appears in both primary and secondary on same entry
+- [x] `parentExerciseId` populated per rule: all 27 null (no structural parent linkages in scope; Chin-Up-style divergences absent)
+- [x] `equipment` populated on every entry (27/27)
+- [x] Tagging style reads consistent across the 27 entries — Horizontal push/pull templates consistent; Curl template supinated-default applied uniformly; Isolation discipline maintained (Pec Deck + Rear Delt Pec Deck both at strict isolation; Cable Crossover fly exception NOT extended to pad-supported pec deck machines); Machine discipline reduces secondaries consistently (Machine Chest Press 2, Machine SP 4, Machine Assisted Pull-Up 5 vs Lat Pulldown 5 template match).
+
+**Session 45c status: CLOSED** (2026-04-23). 27 entries drafted; user accepted all 6 flagged exceptions. Ready for Session 45d (P1 lower body + core).
+
+---
+
+## Session 45d — P1 lower body + core (27 entries)
+
+**Scope:** P1 rows #10–#24, #38–#43, #44, #51–#52, #54–#55, #57 per `artifacts/exercise-bank.md`. Covers Hinge (3), Quads (8), Hamstrings (2), Glutes (4), Calves (2), Core (7), + 1 Triceps catch-up (Machine Tricep Extension #54 — originally in upper-body range but placed in 45d machine cluster per CURRENT TASK scope). Research depth = Medium per principles doc EMG policy. No new EMG overrides this session (Narrow-Grip Pull-Up remains queued for 45e).
+
+### Full entry blocks — Session 45d
+
+#### Hinge (3)
+
+### 1. Trap Bar Deadlift (P1 #10)
+
+- **primary:** `glutes`, `hamstrings` *(co-primary per Hinge template — still hip-extension-dominant despite increased quad recruitment)*
+- **secondary:**
+  - `quads` — synergist *(trap bar's higher starting hip + more knee flexion increases quad contribution meaningfully vs conventional DL; Lake et al. 2017)*
+  - `upperBack` — stabilizer *(bar-close cue less critical than conventional but handles-at-sides still demand scap-packed posture)*
+  - `lowerBack` — stabilizer
+  - `forearms` — stabilizer *(grip — neutral handle grip is easier than mixed/hook, but still a limiter on heavy loads)*
+- **equipment:** `barbell` *(trap bar = specialized barbell family)*
+- **gripOrientation:** `neutral` *(trap bar handles default)*
+- **parentExerciseId:** `null`
+- **Template:** Hinge — co-primary preserved; `quads (syn)` elevated in prominence vs conventional Deadlift.
+- **Group derivation:** glutes → `legs`.
+- **Notes:** 4 secondaries. Tri-primary rejected (Rule 1): quads is significant but rep-fail mode is hip extension, not knee extension. Distinct from conventional Deadlift (different grip + starting hip position change map enough to warrant separate entry per exercise-bank listing).
+
+---
+
+### 2. Sumo Deadlift (P1 #11)
+
+- **primary:** `glutes`, `hamstrings` *(co-primary per Hinge template)*
+- **secondary:**
+  - `adductors` — synergist *(re-added from conventional Deadlift template — wide stance makes adductors a meaningful hip-extension contributor; matches 45a Deadlift exception "template default targets sumo/wide-stance variants")*
+  - `quads` — synergist *(lower starting hip position increases knee flexion → more quad work than conventional)*
+  - `upperBack` — stabilizer *(bar stays close)*
+  - `lowerBack` — stabilizer
+  - `forearms` — stabilizer *(grip)*
+- **equipment:** `barbell`
+- **stanceWidth:** `sumo`
+- **gripOrientation:** `pronated` *(mixed grip common at heavy loads but not map-defining)*
+- **parentExerciseId:** `null`
+- **Template:** Hinge — full template with `adductors` re-added.
+- **Group derivation:** glutes → `legs`.
+- **Notes:** 5 secondaries — at ceiling. Graduated from P5 → P1 (exercise-bank Batch A) because adductor-dominant map diverges from conventional Deadlift per Parent/Variant Rule. Closes 45a Deadlift exception loop (adductors dropped from parent because sumo tag would re-add).
+
+---
+
+### 3. Stiff-Leg Deadlift (P1 #12)
+
+- **primary:** `glutes`, `hamstrings` *(co-primary per Hinge template)*
+- **secondary:**
+  - `upperBack` — stabilizer *(bar stays close)*
+  - `lowerBack` — stabilizer
+  - `abs` — stabilizer *(anti-flexion under axial load; matches RDL precedent)*
+  - `forearms` — stabilizer *(grip)*
+- **equipment:** `barbell`
+- **stanceWidth:** `shoulder`
+- **parentExerciseId:** `null`
+- **Template:** Hinge — same map as RDL (P1 #12... seed) with starting position from the floor (vs RDL which tops out before the floor). Execution difference doesn't change map.
+- **Group derivation:** glutes → `legs`.
+- **Notes:** 4 secondaries — matches RDL exactly. Hamstrings-dominant feel but template order preserved `[glutes, hamstrings]` per 45a RDL convention. Quads NOT tagged — knees stay relatively straight; negligible concentric quad work (distinguishes from Trap Bar + Sumo where quads earn syn tag). Graduated from P5 → P1 per exercise-bank (different map from conventional DL — hamstring-bias, no quad tag).
+
+---
+
+#### Quads (8)
+
+### 4. Front Squat (P1 #13)
+
+- **primary:** `quads`
+- **secondary:**
+  - `glutes` — synergist
+  - `adductors` — synergist
+  - `hamstrings` — synergist *(small, co-contraction)*
+  - `upperBack` — stabilizer *(front-rack position demands active thoracic extension hold)*
+  - `abs` — stabilizer *(upright-torso anti-flexion demand is higher than back squat)*
+  - `lowerBack` — stabilizer
+- **equipment:** `barbell`
+- **stanceWidth:** `shoulder`
+- **parentExerciseId:** `null`
+- **Template:** Squat (knee-dominant) — front-rack variant. Swaps `calves (stab)` from Squat parent for `upperBack (stab)` — front-rack demand is more salient than ankle chain here.
+- **Group derivation:** quads → `legs`.
+- **Notes:** 6 secondaries — matches Squat parent count. Per exercise-bank: separate exercise from Squat (not a variant) because quad/upper-back emphasis shifts meaningfully. Flagged in exception log per continued 6-sec pattern (Squat precedent, template-driven).
+
+---
+
+### 5. Goblet Squat (P1 #14)
+
+- **primary:** `quads`
+- **secondary:**
+  - `glutes` — synergist
+  - `adductors` — synergist
+  - `hamstrings` — synergist *(small)*
+  - `upperBack` — stabilizer *(isometric hold of DB at chest)*
+  - `abs` — stabilizer *(anti-flexion with front load)*
+- **equipment:** `dumbbell` *(kettlebell variant also common; default dumbbell)*
+- **stanceWidth:** `shoulder`
+- **parentExerciseId:** `null`
+- **Template:** Squat — front-loaded variant. Drops `lowerBack (stab)` + `calves (stab)` vs Squat parent: goblet loads are typically light (DB mass << BB with plates), reducing axial and ankle-chain stabilizer demand below tagging threshold.
+- **Group derivation:** quads → `legs`.
+- **Notes:** 5 secondaries. Typically a teaching/warm-up tool; light load profile justifies trim from Squat's 6. If loaded heavily, would approach Front Squat's demand profile — but default goblet = light-to-moderate.
+
+---
+
+### 6. Hack Squat (P1 #15)
+
+- **primary:** `quads`
+- **secondary:**
+  - `glutes` — synergist
+  - `adductors` — synergist
+  - `hamstrings` — synergist *(small)*
+- **equipment:** `machine`
+- **parentExerciseId:** `null`
+- **Template:** Squat — machine variant. Matches Leg Press (45b #7) machine discipline: fixed sled path eliminates `lowerBack (stab)` (back supported against pad) + `abs (stab)` (no anti-extension demand without axial-load standing) + `calves (stab)` (foot plate removes ankle balance).
+- **Group derivation:** quads → `legs`.
+- **Notes:** 3 secondaries — matches Leg Press. Plate-Loaded Hack Squat (P2 #40) will inherit this map.
+
+---
+
+### 7. Walking Lunge (P1 #16)
+
+- **primary:** `quads`, `glutes` *(co-primary per Lunge / split-stance template)*
+- **secondary:**
+  - `hamstrings` — synergist
+  - `adductors` — synergist
+  - `calves` — stabilizer *(balance demand on single-leg phases)*
+  - `abs` — stabilizer *(anti-rotation under unilateral load; matches BSS precedent)*
+- **equipment:** `dumbbell` *(DBs at sides default; barbell-on-back common)*
+- **parentExerciseId:** `null`
+- **Template:** Lunge / split-stance — co-primary per template. Drops `obliques (stab)` per BSS precedent (abs covers the anti-rotation demand; adding obliques would double-count).
+- **Group derivation:** quads → `legs`.
+- **Notes:** 4 secondaries — matches BSS. Walking version adds forward-momentum gait but doesn't change map vs stationary split stance.
+
+---
+
+### 8. Reverse Lunge (P1 #17)
+
+- **primary:** `quads`, `glutes` *(co-primary per Lunge template)*
+- **secondary:**
+  - `hamstrings` — synergist
+  - `adductors` — synergist
+  - `calves` — stabilizer *(balance)*
+  - `abs` — stabilizer *(anti-rotation)*
+- **equipment:** `dumbbell`
+- **parentExerciseId:** `null`
+- **Template:** Lunge / split-stance — same map as Walking Lunge. Step-backward pattern reduces knee-forward shear vs forward lunge but doesn't change muscle map.
+- **Group derivation:** quads → `legs`.
+- **Notes:** 4 secondaries. Forward Lunge (P2 #49) will inherit this map when tagged in 45e.
+
+---
+
+### 9. Step-Up (P1 #18)
+
+- **primary:** `quads`, `glutes` *(co-primary per Lunge / split-stance template — unilateral loading pattern)*
+- **secondary:**
+  - `hamstrings` — synergist
+  - `adductors` — synergist
+  - `calves` — stabilizer *(balance on the step)*
+  - `abs` — stabilizer *(anti-rotation)*
+- **equipment:** `dumbbell` *(DBs at sides; BB-on-back also valid)*
+- **parentExerciseId:** `null`
+- **Template:** Lunge / split-stance — co-primary per unilateral loading. Same map as Walking/Reverse Lunge.
+- **Group derivation:** quads → `legs`.
+- **Notes:** 4 secondaries. Single-leg stepping action parallels split-stance mechanics; principles-doc Lunge template covers it cleanly.
+
+---
+
+### 10. Smith Machine Squat (P1 #44)
+
+- **primary:** `quads`
+- **secondary:**
+  - `glutes` — synergist
+  - `adductors` — synergist
+  - `hamstrings` — synergist *(small)*
+  - `lowerBack` — stabilizer *(axial load still present — Smith fixes bar path but not spinal load)*
+  - `abs` — stabilizer *(anti-extension under axial load)*
+- **equipment:** `smith`
+- **stanceWidth:** `shoulder`
+- **parentExerciseId:** `null`
+- **Template:** Squat — Smith variant. Fixed vertical bar path removes `calves (stab)` (ankle-chain demand eliminated) but preserves axial load → `lowerBack` + `abs` stabilizer tags stay.
+- **Group derivation:** quads → `legs`.
+- **Notes:** 5 secondaries — between free Squat's 6 and Leg Press's 3. Per exercise-bank: separate exercise (not a Squat variant) because fixed bar path removes stabilizer demand enough to meaningfully differ. Smith Machine Hip Thrust (P2 #43) + Smith Machine Calf Raise (P2 #45) will inherit Smith-machine discipline pattern from here.
+
+---
+
+### 11. Split Squat (P1 #57)
+
+- **primary:** `quads`, `glutes` *(co-primary per Lunge / split-stance template)*
+- **secondary:**
+  - `hamstrings` — synergist
+  - `adductors` — synergist
+  - `calves` — stabilizer *(balance, though reduced vs BSS elevated-rear-foot variant)*
+  - `abs` — stabilizer *(anti-rotation)*
+- **equipment:** `dumbbell`
+- **parentExerciseId:** `null`
+- **Template:** Lunge / split-stance — same map as BSS (P0 #5) with rear foot flat on floor. Per exercise-bank: distinct from BSS (different stability demand) but same muscle recruitment.
+- **Group derivation:** quads → `legs`.
+- **Notes:** 4 secondaries — matches BSS. Stability demand is lower with rear foot flat, but the template doesn't differentiate stability levels within the pattern.
+
+---
+
+#### Hamstrings (2)
+
+### 12. Seated Leg Curl (P1 #19)
+
+- **primary:** `hamstrings`
+- **secondary:**
+  - `calves` — synergist *(gastrocnemius crosses the knee; assists knee flexion in both lying and seated positions)*
+- **equipment:** `machine`
+- **parentExerciseId:** `null`
+- **Template:** Isolation — same map as Lying Leg Curl (45b #8). Seated position puts hamstring in lengthened starting position (hip-flexed) — lengthened-bias variant, but same muscle map.
+- **Group derivation:** hamstrings → `legs`.
+- **Notes:** 1 secondary. Paired with Lying Leg Curl (shortened-bias) — same map, different bias emphasis.
+
+---
+
+### 13. 45° Hyperextension (P1 #51)
+
+- **primary:** `glutes`, `hamstrings` *(co-primary per Hinge template — bodyweight hip-extension movement)*
+- **secondary:**
+  - `lowerBack` — synergist *(promoted to synergist per Rule 6 exception: "synergist only on Good Morning, 45° Back Extension — spinal extension under load is the movement")*
+  - `abs` — stabilizer *(anti-extension at top range)*
+- **equipment:** `bodyweight` *(default; weighted plate-held variants also common)*
+- **parentExerciseId:** `null`
+- **Template:** Hinge — reduced-secondary variant. Rule 6 exception applied: `lowerBack` is synergist (not stab) because spinal extension is part of the concentric movement, not merely a position-hold.
+- **Group derivation:** glutes → `legs`.
+- **Notes:** 2 secondaries. Listed in exception log per Rule 6 `lowerBack (syn)` promotion (only cases in library: Good Morning + this entry). Glute-dominant form is the common default; hamstring emphasis via toes-in stance is a form variation not a map change.
+
+---
+
+#### Glutes (4)
+
+### 14. Glute Bridge (P1 #20)
+
+- **primary:** `glutes`
+- **secondary:**
+  - `hamstrings` — synergist
+  - `adductors` — synergist
+  - `lowerBack` — stabilizer
+  - `abs` — stabilizer
+- **equipment:** `bodyweight` *(default; BB/DB-loaded variants also common but bodyweight is canonical)*
+- **parentExerciseId:** `null`
+- **Template:** Hinge-adjacent (glute-specific hip extension) — inherits Barbell Hip Thrust (P0 #6) map verbatim.
+- **Group derivation:** glutes → `legs`.
+- **Notes:** 4 secondaries. Same map as Hip Thrust — floor-based (bridge) vs bench-based (hip thrust) differ in ROM but not muscle recruitment.
+
+---
+
+### 15. Hip Abduction Machine (P1 #21)
+
+- **primary:** `abductors`
+- **secondary:** *(none)*
+- **equipment:** `machine`
+- **parentExerciseId:** `null`
+- **Template:** Isolation — strict. Hip abduction machine isolates glute med/min (covered by `abductors` muscle tag in taxonomy — separate from `glutes` which covers glute max).
+- **Group derivation:** abductors → `legs`.
+- **Notes:** 0 secondaries — matches Leg Extension + Calf Raise BW strictest-isolation discipline. Glutes not tagged — glute max has minor abduction role via posterior fibers but isn't the driver on this machine.
+
+---
+
+### 16. Hip Adduction Machine (P1 #22)
+
+- **primary:** `adductors`
+- **secondary:** *(none)*
+- **equipment:** `machine`
+- **parentExerciseId:** `null`
+- **Template:** Isolation — strict. Adductor isolation.
+- **Group derivation:** adductors → `legs`.
+- **Notes:** 0 secondaries — strictest isolation. Direct counterpart to Hip Abduction Machine.
+
+---
+
+### 17. Machine Hip Thrust (P1 #52)
+
+- **primary:** `glutes`
+- **secondary:**
+  - `hamstrings` — synergist
+  - `adductors` — synergist
+  - `lowerBack` — stabilizer
+  - `abs` — stabilizer
+- **equipment:** `machine`
+- **parentExerciseId:** `null`
+- **Template:** Hinge-adjacent — same map as Barbell Hip Thrust (P0 #6). Dedicated machine doesn't reduce secondaries vs free-weight BB version because the hip extension pattern is identical; pad position mimics free-weight bar placement.
+- **Group derivation:** glutes → `legs`.
+- **Notes:** 4 secondaries — matches Barbell Hip Thrust. Single-Leg Machine Hip Thrust (P2 #52) will inherit with obliques (stab) for unilateral variant when tagged in 45e.
+
+---
+
+#### Calves (2)
+
+### 18. Standing Calf Raise (Machine) (P1 #23)
+
+- **primary:** `calves`
+- **secondary:** *(none)*
+- **equipment:** `machine`
+- **parentExerciseId:** `null`
+- **Template:** Isolation — calf. Machine version of Standing Calf Raise BW (45b #10); same map (bodyweight and machine both isolate calves with no secondary). Machine adds load but doesn't recruit new muscles.
+- **Group derivation:** calves → `legs`.
+- **Notes:** 0 secondaries. Shoulder pads support axial load but machine base is fixed → no `lowerBack (stab)` tag despite axial loading (Rule 6 axial threshold is for standing compounds, not isolation machines).
+
+---
+
+### 19. Seated Calf Raise (P1 #24)
+
+- **primary:** `calves`
+- **secondary:** *(none)*
+- **equipment:** `machine`
+- **parentExerciseId:** `null`
+- **Template:** Isolation — calf. Knee-bent position biases soleus emphasis (gastroc shortened at knee = reduced contribution) but `calves` tag in our 26-muscle taxonomy covers both gastroc + soleus; emphasis shift doesn't change map.
+- **Group derivation:** calves → `legs`.
+- **Notes:** 0 secondaries. Soleus emphasis is noted in exercise-bank but schema-level map is identical to standing calf raise — taxonomy doesn't split gastroc/soleus.
+
+---
+
+#### Core (7)
+
+### 20. Cable Crunch (P1 #38)
+
+- **primary:** `abs`
+- **secondary:** *(none)*
+- **equipment:** `cable`
+- **parentExerciseId:** `null`
+- **Template:** Core — same map as Crunch (45b #16). Weighted variant adds load but doesn't recruit new muscles (spinal flexion is still the only driver). Kneeling position + cable tension matches bodyweight crunch mechanics.
+- **Group derivation:** abs → `core`.
+- **Notes:** 0 secondaries — strictest core-direct isolation, matching Crunch. Lats not tagged — arms hold rope position passively; no active pull.
+
+---
+
+### 21. Pallof Press (P1 #39)
+
+- **primary:** `obliques`
+- **secondary:**
+  - `abs` — synergist *(anti-extension component works alongside anti-rotation)*
+- **equipment:** `cable`
+- **parentExerciseId:** `null`
+- **Template:** Core — anti-rotation. Obliques primary per principles Core convention ("obliques direct work = primary"). Anti-rotation IS the defining feature — rep fails when obliques lose the counter-rotation.
+- **Group derivation:** obliques → `core`.
+- **Notes:** 1 secondary. Shoulder/triceps engage to hold the press-out position but work continues if they fatigue (cable can be closer to body); they don't define the exercise. Strict isolation discipline maintained.
+
+---
+
+### 22. Dead Bug (P1 #40)
+
+- **primary:** `abs`
+- **secondary:**
+  - `hipFlexors` — synergist *(leg-raise component — Rule 6 tag-when: "leg raise family; direct concentric hip flexion")*
+  - `obliques` — stabilizer *(anti-rotation during contralateral limb movement)*
+- **equipment:** `bodyweight`
+- **parentExerciseId:** `null`
+- **Template:** Core — supine anti-extension with contralateral limb movement. Abs primary (spine-stable anti-extension is the driver).
+- **Group derivation:** abs → `core`.
+- **Notes:** 2 secondaries. `hipFlexors (syn)` included because dead bug involves concentric hip flexion to hold the start position + control the lowering — qualifies under Rule 6 leg-raise-family exception. Shoulder flexion on the arm component dropped — passive hold, not driver.
+
+---
+
+### 23. Bird Dog (P1 #41)
+
+- **primary:** `abs`
+- **secondary:**
+  - `obliques` — synergist *(contralateral anti-rotation demand during opposite-limb extension)*
+  - `glutes` — synergist *(hip extension on the raised leg)*
+- **equipment:** `bodyweight`
+- **parentExerciseId:** `null`
+- **Template:** Core — quadruped anti-rotation with contralateral limb extension. Abs primary (torso-rigid hold is the driver); obliques earn syn (not stab) because anti-rotation is actively resisted, not merely held.
+- **Group derivation:** abs → `core`.
+- **Notes:** 2 secondaries. `glutes (syn)` unusual for a core exercise but justified — hip extension on the raised leg is a concentric contribution, not a pass-through stabilizer. Rear delt/upper back engagement on the arm component dropped (passive hold under bodyweight). Logged in exception log per unusual glutes tag on core exercise.
+
+---
+
+### 24. Side Plank (P1 #42)
+
+- **primary:** `obliques`
+- **secondary:**
+  - `abs` — synergist *(anti-lateral-flexion demand shares load with obliques)*
+  - `abductors` — synergist *(lateral hip hold — glute med/min actively hold pelvis neutral)*
+  - `frontDelts` — stabilizer *(shoulder support under bodyweight)*
+- **equipment:** `bodyweight`
+- **parentExerciseId:** `null`
+- **Template:** Core — lateral plank hold. Obliques primary per Plank parent note: "Side Plank will be separate map (obliques primary)." Distinct from front Plank (abs primary) — 45° rotation of load axis flips the primary.
+- **Group derivation:** obliques → `core`.
+- **Notes:** 3 secondaries. `abductors (syn)` tagged per principles Legs convention ("abductors tags on: side-plane work — Copenhagen plank" is the cited use case; side plank is functionally equivalent). rotatorCuff not tagged — unlike front plank's shoulder-under-bodyweight demand, side plank's single-arm support concentrates force through one shoulder but cuff demand is handled by deltoid mass (judgment call).
+
+---
+
+### 25. Hanging Knee Raise (P1 #43)
+
+- **primary:** `abs`, `hipFlexors` *(co-primary — inherits HLR training-intent override per 45b #17)*
+- **secondary:**
+  - `obliques` — stabilizer *(anti-rotation on free-swing hang)*
+  - `forearms` — stabilizer *(grip for the hang)*
+- **equipment:** `bodyweight`
+- **parentExerciseId:** `null`
+- **Template:** Core — same map as HLR with reduced ROM (knee-bent = shorter lever arm, reduced hip-flexor demand but same recruitment pattern).
+- **Group derivation:** abs → `core` (tiebreak: first primary wins — matches HLR).
+- **Notes:** 2 secondaries — matches HLR exactly. Per exercise-bank: distinct from HLR (easier variant, same pattern). EMG co-primary reference list: HLR already seeded in 45b; knee raise inherits without need to add.
+
+---
+
+### 26. Captain's Chair Knee Raise (P1 #55)
+
+- **primary:** `abs`, `hipFlexors` *(co-primary — inherits HLR map)*
+- **secondary:**
+  - `obliques` — stabilizer *(anti-rotation)*
+- **equipment:** `machine` *(Captain's Chair station with forearm pads + back support)*
+- **parentExerciseId:** `null`
+- **Template:** Core — back-supported HLR pattern. Same co-primary as HLR; forearm pads support upper arms + back pad supports torso → drop `forearms (stab)` vs HLR (no grip demand; arms rest on pads, not hanging from them).
+- **Group derivation:** abs → `core`.
+- **Notes:** 1 secondary — leaner than HLR because chair supports what HLR needs to stabilize. Beginner-friendly entry point to leg-raise family.
+
+---
+
+#### Upper-body catch-up — Triceps (1)
+
+### 27. Machine Tricep Extension (P1 #54)
+
+- **primary:** `triceps`
+- **secondary:**
+  - `forearms` — stabilizer *(grip on attachment)*
+- **equipment:** `machine`
+- **parentExerciseId:** `null`
+- **Template:** Extension — seated selectorized machine. Matches Tricep Pushdown (45b #15) approach but machine discipline drops `frontDelts (stab)` — seated back-supported machine with pad-held upper arms removes the anterior-shoulder stabilization demand that earns the pushdown's frontDelts tag.
+- **Group derivation:** triceps → `arms`.
+- **Notes:** 1 secondary — strictest tricep-machine discipline. **Scope catch-up:** was missed from 45c's upper-body pass; 45d's scope range placed it in the machine cluster alongside #51/#52/#55. Logged in exception log per scope-handoff.
+
+---
+
+## Session 45d — End-of-session sanity check
+
+Run against the full 27 entries above (3 Hinge + 8 Quads + 2 Hamstrings + 4 Glutes + 2 Calves + 7 Core + 1 Triceps):
+
+- [x] Every entry has ≥1 primary
+- [x] No primary lists a background muscle (`neck` / `rotatorCuff`)
+- [x] No entry has >2 primaries — 7 entries at co-primary, all justified: Trap Bar DL, Sumo DL, Stiff-Leg DL (Hinge template), Walking/Reverse/Step-Up/Split Squat (Lunge template — unilateral shift), 45° Hyperextension (Hinge), Hanging Knee Raise + Captain's Chair (HLR map inheritance)
+- [~] No entry has >5 secondaries — **Front Squat at 6 flagged** (accepted per Squat parent precedent; front-rack upperBack tag swaps in for calves to stay at template max). Sumo DL at 5 (at ceiling, within Hinge template discipline).
+- [x] No muscle appears in both primary and secondary on same entry
+- [x] `parentExerciseId` populated per rule: all 27 null
+- [x] `equipment` populated on every entry (27/27)
+- [x] Tagging style reads consistent — Hinge template applied uniformly (co-primary glutes+hamstrings, forearms stab for grip, lowerBack stab); Lunge template co-primary applied uniformly with 4-sec discipline per BSS precedent; Isolation maintained strictly (Leg Ext, Hip Abd, Hip Add, Calf Raise Machine, Seated Calf, Crunch all at 0 secondaries); Machine discipline reduces secondaries (Hack Squat 3, Smith Machine Squat 5, Machine Tricep Ext 1).
+
+**Session 45d status: CLOSED** (2026-04-23). 27 entries drafted; user accepted all 6 flagged exceptions. Ready for Session 45e (P5 variants + P2 + P3).
+
+---
+
+## Session 45e — P5 variants + P2 + P3 (89 entries)
+
+**Scope:** 25 P5 variants (inherit from 45a parents — light pass per Rule 4) + 53 P2 + 11 P3 (medium pass per principles EMG policy). Final EMG override from principles-doc queued list locks here: **Narrow-Grip Pull-Up** (P5 #18) `[lats, biceps]` per Pull-Up Rule 1 override.
+
+**Conventions for this session:**
+- P5 variants follow Rule 4: `parentExerciseId` set; muscles noted as `// inherit from parent`. Tier 3 fields (bias, grip, stance) populated per variant identity.
+- P2/P3 entries get full muscle blocks; cite template / parent precedent inline.
+- Machine discipline applied per Leg Press / Hack Squat / Machine Chest Press precedents.
+
+### Full entry blocks — Session 45e
+
+#### P5 — Bench Press variants (2)
+
+### 1. Paused Bench Press (P5 #1)
+
+- **muscles:** inherit from parent
+- **equipment:** `barbell`
+- **gripWidth:** `medium`
+- **gripOrientation:** `pronated`
+- **bias:** `paused`
+- **parentExerciseId:** Bench Press (Seed #1)
+- **Notes:** 1–3s pause at chest. Timing variant — Rule 4 inherit, no map change.
+
+---
+
+### 2. Spoto Press (P5 #2)
+
+- **muscles:** inherit from parent
+- **equipment:** `barbell`
+- **gripWidth:** `medium`
+- **gripOrientation:** `pronated`
+- **bias:** `paused`
+- **parentExerciseId:** Bench Press (Seed #1)
+- **Notes:** ~1" floating pause above chest. Eccentric-control emphasis; same recruitment as parent per Rule 4.
+
+---
+
+#### P5 — Squat variants (4)
+
+### 3. Low-Bar Back Squat (P5 #3)
+
+- **muscles:** inherit from parent
+- **equipment:** `barbell`
+- **stanceWidth:** `shoulder`
+- **parentExerciseId:** Squat (Seed #11)
+- **Notes:** Bar on rear delts (not high-bar shelf); more horizontal torso. Posterior-chain emphasis shift only — Rule 4 variant per Parent/Variant Rule.
+
+---
+
+### 4. Safety Bar Squat (P5 #4)
+
+- **muscles:** inherit from parent
+- **equipment:** `barbell` *(SSB = specialized barbell family)*
+- **stanceWidth:** `shoulder`
+- **parentExerciseId:** Squat (Seed #11)
+- **Notes:** Yoke/handles allow neutral wrist + slightly more upright torso. Implement variant — same map.
+
+---
+
+### 5. Box Squat (P5 #5)
+
+- **muscles:** inherit from parent
+- **equipment:** `barbell`
+- **stanceWidth:** `shoulder`
+- **bias:** `paused`
+- **parentExerciseId:** Squat (Seed #11)
+- **Notes:** Brief seated pause on box at parallel/below. Pause/timing variant — same map.
+
+---
+
+### 6. Paused Squat (P5 #6)
+
+- **muscles:** inherit from parent
+- **equipment:** `barbell`
+- **stanceWidth:** `shoulder`
+- **bias:** `paused`
+- **parentExerciseId:** Squat (Seed #11)
+- **Notes:** 1–3s pause at bottom. Timing variant.
+
+---
+
+#### P5 — Deadlift variants (4)
+
+### 7. Rack Pull (P5 #7)
+
+- **muscles:** inherit from parent
+- **equipment:** `barbell`
+- **bias:** `partial` *(pin-set partial ROM from above-knee or mid-shin)*
+- **parentExerciseId:** Deadlift (Seed #6)
+- **Notes:** Partial-ROM Hinge variant — same map (lockout-emphasis, not a map shift).
+
+---
+
+### 8. Block Pull (P5 #8)
+
+- **muscles:** inherit from parent
+- **equipment:** `barbell`
+- **bias:** `partial`
+- **parentExerciseId:** Deadlift (Seed #6)
+- **Notes:** Plates resting on blocks (typically mid-shin). Partial-ROM variant — same map.
+
+---
+
+### 9. Deficit Deadlift (P5 #9)
+
+- **muscles:** inherit from parent
+- **equipment:** `barbell`
+- **bias:** `lengthened` *(extended ROM from elevated platform → deeper hip flexion at start)*
+- **parentExerciseId:** Deadlift (Seed #6)
+- **Notes:** Extended ROM increases bottom-position quad/hamstring stretch — emphasis shift, not map change.
+
+---
+
+### 10. Snatch-Grip Deadlift (P5 #10)
+
+- **muscles:** inherit from parent
+- **equipment:** `barbell`
+- **gripWidth:** `wide`
+- **gripOrientation:** `pronated`
+- **parentExerciseId:** Deadlift (Seed #6)
+- **Notes:** Wide grip — upper-back demand increases (still stabilizer per parent). Grip-width variant per Parent/Variant Rule.
+
+---
+
+#### P5 — Dips variants (3)
+
+### 11. Tricep Dips (P5 #11)
+
+- **muscles:** inherit from parent
+- **equipment:** `bodyweight`
+- **parentExerciseId:** Dips (Seed #25)
+- **Notes:** Vertical torso, elbows tucked. Triceps-emphasis variant — same co-primary map per Dips parent (torso angle is emphasis, not map shift). Group derivation stays `chest` (first-primary tiebreak).
+
+---
+
+### 12. Chest Dips (P5 #12)
+
+- **muscles:** inherit from parent
+- **equipment:** `bodyweight`
+- **parentExerciseId:** Dips (Seed #25)
+- **Notes:** Forward lean, elbows slightly flared. Chest-emphasis variant — same co-primary map.
+
+---
+
+### 13. Weighted Dip (P5 #13)
+
+- **muscles:** inherit from parent
+- **equipment:** `bodyweight` *(plate/DB load tracked via weight field; implement family stays bodyweight per Pull-Up precedent)*
+- **parentExerciseId:** Dips (Seed #25)
+- **Notes:** Belt + plates or DB between ankles. Load progression — same map. Exercise-bank flagged this may be redundant with parent + load tracking; kept as separate entry per current bank state.
+
+---
+
+#### P5 — Lat Pulldown variants (3)
+
+### 14. Close-Grip Lat Pulldown (P5 #14)
+
+- **muscles:** inherit from parent
+- **equipment:** `cable`
+- **gripWidth:** `narrow`
+- **gripOrientation:** `pronated`
+- **parentExerciseId:** Lat Pulldown (Seed #9)
+- **Notes:** Narrow overhand grip. Grip-width variant; same Vertical pull map.
+
+---
+
+### 15. V-Bar Lat Pulldown (P5 #15)
+
+- **muscles:** inherit from parent
+- **equipment:** `cable`
+- **gripWidth:** `narrow`
+- **gripOrientation:** `neutral`
+- **parentExerciseId:** Lat Pulldown (Seed #9)
+- **Notes:** Neutral-grip V-bar attachment. Grip-orientation variant; brachialis emphasis still covered by parent's existing brachialis (syn) tag.
+
+---
+
+### 16. Reverse-Grip Lat Pulldown (P5 #16)
+
+- **muscles:** inherit from parent
+- **equipment:** `cable`
+- **gripWidth:** `medium`
+- **gripOrientation:** `supinated`
+- **parentExerciseId:** Lat Pulldown (Seed #9)
+- **Notes:** Supinated grip. Bicep-emphasis shift — but Curl-template-style co-primary `[lats, biceps]` rejected for the cable-loaded version (no bodyweight amplification; same logic as Pull-Up vs Lat Pulldown EMG-policy split). Same map as Lat Pulldown parent.
+
+---
+
+#### P5 — Romanian Deadlift variant (1)
+
+### 17. Paused RDL (P5 #17)
+
+- **muscles:** inherit from parent
+- **equipment:** `barbell`
+- **bias:** `paused`
+- **parentExerciseId:** Romanian Deadlift (Seed #12)
+- **Notes:** 1–3s pause at mid-shin (hamstring-stretch emphasis). Timing variant — same map.
+
+---
+
+#### P5 — Pull-Up variant (1) — EMG override
+
+### 18. Narrow-Grip Pull-Up (P5 #18)
+
+- **primary:** `lats`, `biceps` *(co-primary per Pull-Up Rule 1 override — narrow pronated grip amplifies biceps to co-primary status, matching Chin-Up treatment despite pronated grip; closes principles-doc queued EMG override)*
+- **secondary:**
+  - `upperBack` — synergist *(demoted from co-primary vs Pull-Up parent; biceps takes its place as the second primary)*
+  - `brachialis` — synergist
+  - `rearDelts` — synergist
+  - `forearms` — stabilizer *(grip)*
+- **equipment:** `bodyweight`
+- **gripWidth:** `narrow`
+- **gripOrientation:** `pronated`
+- **parentExerciseId:** Pull-Up (Seed #7)
+- **Template:** Vertical pull — Narrow-Grip Pull-Up override. Map diverges from Pull-Up parent (biceps replaces upperBack at co-primary slot) — structural variant linkage preserved per CE2 architecture (matches Chin-Up treatment from 45b).
+- **Group derivation:** lats → `back` (first primary; matches Pull-Up parent).
+- **Notes:** 4 secondaries. Logs as map-divergence-with-parent-FK exception (same pattern as Chin-Up #22 in 45b). EMG co-primary reference list: move from "Queued for 45d onward" → "Non-parents (session 45e)".
+
+---
+
+#### P5 — Skull Crusher variants (2)
+
+### 19. Dumbbell Skull Crusher (P5 #19)
+
+- **muscles:** inherit from parent
+- **equipment:** `dumbbell`
+- **parentExerciseId:** Skull Crusher (Seed #24)
+- **Notes:** Both DBs or one in each hand. Implement variant — same map. Forearms (stab) inheritance covers DB grip; cuff (stab) preserved per Rule 5 supine-weighted-tricep use case.
+
+---
+
+### 20. Incline Skull Crusher (P5 #20)
+
+- **muscles:** inherit from parent
+- **equipment:** `barbell` *(EZ-bar default)*
+- **bias:** `lengthened` *(incline bench → triceps long-head stretched at top)*
+- **parentExerciseId:** Skull Crusher (Seed #24)
+- **Notes:** Slight bench incline — stretches long head of triceps. Emphasis shift (lengthened-bias), same map.
+
+---
+
+#### P5 — Barbell Curl variant (1)
+
+### 21. Strict Curl (P5 #21)
+
+- **muscles:** inherit from parent
+- **equipment:** `barbell`
+- **gripOrientation:** `supinated`
+- **parentExerciseId:** Barbell Curl (Seed #21)
+- **Notes:** Back against wall/pad; zero body English. Form-discipline variant — same recruitment map (abs stab still applies — pad-supported but axially loaded standing position is preserved; if leaned against pad with no axial load, abs would drop, but canonical strict curl keeps standing posture).
+
+---
+
+#### P5 — Plank variants (2)
+
+### 22. Knee Plank (P5 #22)
+
+- **muscles:** inherit from parent
+- **equipment:** `bodyweight`
+- **parentExerciseId:** Plank (Seed #26)
+- **Notes:** Knees on floor regression. Reduced load only — same recruitment pattern.
+
+---
+
+### 23. Weighted Plank (P5 #23)
+
+- **muscles:** inherit from parent
+- **equipment:** `bodyweight` *(plate on upper back tracked via load field, like Weighted Dip)*
+- **parentExerciseId:** Plank (Seed #26)
+- **Notes:** Plate on upper back. Load progression only — same map.
+
+---
+
+#### P5 — Cable Crossover variants (2)
+
+### 24. Cable Crossover — High (P5 #24)
+
+- **muscles:** inherit from parent
+- **equipment:** `cable`
+- **parentExerciseId:** Cable Crossover (Seed #5)
+- **Notes:** High-to-low path (mid/lower chest bias). Path variant — same map (fly-exception cuff-stab tag preserved per parent).
+
+---
+
+### 25. Cable Crossover — Low (P5 #25)
+
+- **muscles:** inherit from parent
+- **equipment:** `cable`
+- **parentExerciseId:** Cable Crossover (Seed #5)
+- **Notes:** Low-to-high path (upper chest bias). Path variant — same map. Serratus considered (low-to-high reaches past horizontal at top) but not added: cable height changes ROM endpoint, not the fundamental adduction pattern; sticking with parent's no-serratus discipline.
+
+---
+
+#### P2 — Chest (5)
+
+### 26. Decline Dumbbell Bench Press (P2 #1)
+
+- **primary:** `chest`
+- **secondary:**
+  - `triceps` — synergist
+  - `frontDelts` — synergist *(reduced vs flat — decline angle shifts away from shoulder flexion)*
+  - `rotatorCuff` — stabilizer *(separate dumbbells require independent stabilization)*
+- **equipment:** `dumbbell`
+- **parentExerciseId:** `null`
+- **Template:** Horizontal push. Inherits Decline Bench Press (45c #1) angle profile + DB Bench Press (45b #19) implement profile — drop `lats (stab)` (no bar-tightness with separate DBs, per DB Bench precedent).
+- **Group derivation:** chest → `chest`.
+- **Notes:** 3 secondaries — matches DB Bench profile with decline-angle frontDelts reduction.
+
+---
+
+### 27. Incline Dumbbell Fly (P2 #4)
+
+- **primary:** `chest`
+- **secondary:**
+  - `frontDelts` — synergist *(more active than flat fly; incline shoulder-flexion angle)*
+  - `rotatorCuff` — stabilizer *(fly exception — Isolation template)*
+- **equipment:** `dumbbell`
+- **parentExerciseId:** `null`
+- **Template:** Isolation — fly exception applied (inherits DB Fly 45b #3 fly-exception precedent). Incline angle increases frontDelt contribution slightly but doesn't change template.
+- **Group derivation:** chest → `chest`.
+- **Notes:** 2 secondaries — matches DB Fly profile.
+
+---
+
+### 28. Dumbbell Pullover (P2 #5)
+
+- **primary:** `chest`
+- **secondary:**
+  - `lats` — synergist *(long-head shoulder extension contributes meaningfully through ROM — pullover is a known chest/back hybrid)*
+  - `triceps` — synergist *(elbow held in slight flexion isometrically; long head crosses shoulder, contributes to shoulder extension)*
+  - `serratus` — synergist *(overhead reach engages scap upward rotation)*
+- **equipment:** `dumbbell`
+- **parentExerciseId:** `null`
+- **Template:** No clean template — chest-focused single-joint with overhead pull component. Default tag = chest primary per conventional categorization (exercise-bank lists as Chest); lats syn covers the back-bias cue noted in exercise-bank.
+- **Group derivation:** chest → `chest`.
+- **Notes:** 3 secondaries. Co-primary `[chest, lats]` considered + rejected — pullover is chest-dominant on neutral-elbow execution; back-biased cue is a form variation, not the default. If user wants back-bias as canonical, flip to lats-primary at audit.
+
+---
+
+### 29. Smith Machine Bench Press (P2 #35)
+
+- **primary:** `chest`
+- **secondary:**
+  - `triceps` — synergist
+  - `frontDelts` — synergist
+- **equipment:** `smith`
+- **gripWidth:** `medium`
+- **gripOrientation:** `pronated`
+- **parentExerciseId:** `null`
+- **Template:** Horizontal push — Smith variant. Fixed bar path removes `rotatorCuff (stab)` + `lats (stab)` from Bench Press parent (matches Machine Chest Press 45c #2 discipline + Smith Machine Squat 45d #10 fixed-path treatment).
+- **Group derivation:** chest → `chest`.
+- **Notes:** 2 secondaries — matches Machine Chest Press. Smith fixes path; no bench-tightness-via-bar-control demand.
+
+---
+
+### 30. Smith Machine Incline Bench Press (P2 #36)
+
+- **primary:** `chest`
+- **secondary:**
+  - `frontDelts` — synergist *(incline emphasis precedes triceps per Incline BB Bench 45b #2 EMG note)*
+  - `triceps` — synergist
+- **equipment:** `smith`
+- **gripWidth:** `medium`
+- **gripOrientation:** `pronated`
+- **parentExerciseId:** `null`
+- **Template:** Horizontal push — Smith incline variant. Inherits Incline BB Bench (45b #2) angle profile + Smith machine discipline (drops cuff, serratus stays out per Smith fixed-path).
+- **Group derivation:** chest → `chest`.
+- **Notes:** 2 secondaries — matches Smith Bench Press discipline with incline frontDelt-precedes-triceps order.
+
+---
+
+#### P2 — Back (7)
+
+### 31. Chest-Supported T-Bar Row (P2 #6)
+
+- **muscles:** inherit from parent
+- **equipment:** `barbell` *(T-bar / landmine)*
+- **gripOrientation:** `neutral`
+- **parentExerciseId:** `null` *(separate exercise — chest pad changes stabilizer profile vs free T-Bar; structural variant flagged for end-of-curation audit if EB-style parent linkage desired)*
+- **Template:** Horizontal pull — inherits Chest-Supported DB Row (45c #7) map verbatim (chest pad drops `lowerBack (stab)` from full template).
+- **Group derivation:** lats → `back`.
+- **Notes:** 4 secondaries — matches Chest-Supp DB Row + Iso-Lat Low Row (45c #10). `parentExerciseId: null` per same logic as those entries (chest-supported variants tagged as standalone, not Bent-Over Row variants).
+
+---
+
+### 32. Pendlay Row (P2 #7)
+
+- **primary:** `lats`, `upperBack` *(co-primary per Horizontal pull template)*
+- **secondary:**
+  - `rearDelts` — synergist
+  - `biceps` — synergist
+  - `brachialis` — synergist
+  - `forearms` — stabilizer *(grip)*
+  - `lowerBack` — stabilizer
+- **equipment:** `barbell`
+- **gripWidth:** `medium`
+- **gripOrientation:** `pronated`
+- **parentExerciseId:** `null` *(per exercise-bank Bent-Over Row note: "continuous-tension distinct from Pendlay dead-stop and Yates more-upright" — three are listed as separate exercises in bank, not parent/variant)*
+- **Template:** Horizontal pull — same map as Bent-Over BB Row (45b #5). Dead-stop reset on floor between reps doesn't change recruitment pattern.
+- **Group derivation:** lats → `back`.
+- **Notes:** 5 secondaries — matches Bent-Over BB Row exactly.
+
+---
+
+### 33. Inverted Row (P2 #8)
+
+- **primary:** `lats`, `upperBack` *(co-primary per Horizontal pull template)*
+- **secondary:**
+  - `rearDelts` — synergist
+  - `biceps` — synergist
+  - `brachialis` — synergist
+  - `abs` — stabilizer *(rigid-body anti-sag throughout horizontal hold — matches Push-Up rationale 45b #4)*
+  - `forearms` — stabilizer *(grip)*
+- **equipment:** `bodyweight`
+- **gripWidth:** `medium`
+- **gripOrientation:** `pronated` *(rings/TRX neutral common; default barbell pronated)*
+- **parentExerciseId:** `null`
+- **Template:** Horizontal pull — bodyweight variant. `lowerBack (stab)` dropped (no hip-hinge — supine horizontal body position); `abs (stab)` added per push-up-style rigid-body anti-sag demand.
+- **Group derivation:** lats → `back`.
+- **Notes:** 5 secondaries — at ceiling, justified for bodyweight horizontal pull with rigid-body demand.
+
+---
+
+### 34. Straight-Arm Pulldown (P2 #9)
+
+- **primary:** `lats`
+- **secondary:**
+  - `triceps` — stabilizer *(elbows locked through ROM under cable load)*
+  - `abs` — stabilizer *(standing axial under cable forward-pull resistance)*
+- **equipment:** `cable`
+- **gripWidth:** `shoulder`
+- **gripOrientation:** `pronated` *(straight-bar default)*
+- **parentExerciseId:** `null`
+- **Template:** Isolation — single-joint shoulder extension via lats only (elbows locked = no biceps recruitment). Strict isolation — 1 syn + 1 stab maintained.
+- **Group derivation:** lats → `back`.
+- **Notes:** 2 secondaries. UpperBack not tagged — cable straight-arm path doesn't drive scap retraction the way rows do. Long-head triceps spans shoulder but its primary action here is anti-flexion at elbow under load — stabilizer.
+
+---
+
+### 35. Single-Arm Lat Pulldown (P2 #10)
+
+- **primary:** `lats`
+- **secondary:**
+  - `upperBack` — synergist
+  - `biceps` — synergist
+  - `brachialis` — synergist
+  - `rearDelts` — synergist
+  - `forearms` — stabilizer *(grip)*
+  - `obliques` — stabilizer *(unilateral cable load → anti-rotation)*
+- **equipment:** `cable`
+- **gripOrientation:** `neutral` *(D-handle default)*
+- **parentExerciseId:** `null` *(per exercise-bank: not flagged as Lat Pulldown variant; treated as standalone unilateral variant)*
+- **Template:** Vertical pull — inherits Lat Pulldown (Seed #9) map + adds `obliques (stab)` for unilateral anti-rotation demand.
+- **Group derivation:** lats → `back`.
+- **Notes:** 6 secondaries — flagged per ≤5 soft threshold; accepted per unilateral-loading addition (obliques is the single addition over parent's 5). Logged in exception log.
+
+---
+
+### 36. Yates Row (P2 #34)
+
+- **primary:** `lats`, `upperBack` *(co-primary per Horizontal pull template)*
+- **secondary:**
+  - `rearDelts` — synergist
+  - `biceps` — synergist *(more active vs Bent-Over BB Row — supinated grip increases biceps recruitment per typical Yates execution)*
+  - `brachialis` — synergist
+  - `forearms` — stabilizer *(grip)*
+  - `lowerBack` — stabilizer *(more upright torso vs Bent-Over Row but still hinged)*
+- **equipment:** `barbell`
+- **gripWidth:** `medium`
+- **gripOrientation:** `supinated` *(Yates default — distinguishes from pronated Bent-Over BB Row)*
+- **parentExerciseId:** `null`
+- **Template:** Horizontal pull — same map as Bent-Over BB Row (45b #5). Upright-torso + supinated grip = back-thickness bias (emphasis), not map shift.
+- **Group derivation:** lats → `back`.
+- **Notes:** 5 secondaries — matches Bent-Over BB Row.
+
+---
+
+### 37. Smith Machine Row (P2 #37)
+
+- **primary:** `lats`, `upperBack` *(co-primary per Horizontal pull template)*
+- **secondary:**
+  - `rearDelts` — synergist
+  - `biceps` — synergist
+  - `brachialis` — synergist
+  - `forearms` — stabilizer *(grip)*
+  - `lowerBack` — stabilizer *(hip hinge held under axial load; Smith fixes path but spinal load preserved like Smith Machine Squat 45d #10)*
+- **equipment:** `smith`
+- **gripWidth:** `medium`
+- **gripOrientation:** `pronated`
+- **parentExerciseId:** `null`
+- **Template:** Horizontal pull — Smith variant. Same map as Bent-Over BB Row; Smith fixes path but doesn't reduce stabilizer demand because the limiter is grip + hip-hinge hold, not bar-path drift (matches Smith Machine Squat reasoning — fixed path doesn't drop axial-stabilizer tags).
+- **Group derivation:** lats → `back`.
+- **Notes:** 5 secondaries — matches Bent-Over BB Row. Rehab-friendly per exercise-bank.
+
+---
+
+#### P2 — Hamstrings (5)
+
+### 38. Nordic Curl (P2 #11)
+
+- **primary:** `hamstrings`
+- **secondary:**
+  - `calves` — synergist *(gastroc crosses knee; eccentric contribution under heavy bodyweight)*
+  - `glutes` — stabilizer *(neutral pelvis hold throughout)*
+  - `abs` — stabilizer *(rigid-body anti-extension during the lowering phase — torso falls under control; rigid-body demand high)*
+- **equipment:** `bodyweight`
+- **parentExerciseId:** `null`
+- **Template:** No direct template — eccentric-emphasis knee-flexion. Hamstrings primary; calves syn matches Lying Leg Curl (45b #8) precedent.
+- **Group derivation:** hamstrings → `legs`.
+- **Notes:** 3 secondaries. Glutes (stab) + abs (stab) added vs Lying Leg Curl because the bodyweight-eccentric loading demands whole-body rigidity (machine version is fully supported, Nordic isn't).
+
+---
+
+### 39. Glute-Ham Raise (P2 #12)
+
+- **primary:** `hamstrings`
+- **secondary:**
+  - `glutes` — synergist *(hip extension component is a meaningful contributor — GHR pattern combines knee flexion + hip extension)*
+  - `calves` — synergist *(gastroc crosses knee; assists knee flexion)*
+  - `abs` — stabilizer *(rigid-body trunk hold during the bottom range)*
+- **equipment:** `bodyweight` *(GHR bench / glute-ham developer; bodyweight load profile)*
+- **parentExerciseId:** `null`
+- **Template:** No direct template — combined knee-flexion + hip-extension hamstring exercise. Single-primary `hamstrings` (GHR is hamstring-dominant despite glute contribution; rep fails when hamstrings give out, not glutes). Co-primary considered + rejected per Hip Thrust precedent (single-primary for the muscle that defines failure).
+- **Group derivation:** hamstrings → `legs`.
+- **Notes:** 3 secondaries. Glutes (syn) elevated vs Nordic Curl because GHR explicitly combines hip-extension into the movement (Nordic is knee-flexion only).
+
+---
+
+### 40. Good Morning (P2 #13)
+
+- **primary:** `glutes`, `hamstrings` *(co-primary per Hinge template — McAllister 2014 / Hinge default)*
+- **secondary:**
+  - `lowerBack` — synergist *(promoted to syn per Rule 6 explicit exception: "synergist only on Good Morning, 45° Back Extension — spinal extension under load is the movement")*
+  - `upperBack` — stabilizer *(bar on back stays close to spine — keeps neutral)*
+  - `abs` — stabilizer *(anti-flexion under axial load; matches RDL precedent)*
+- **equipment:** `barbell`
+- **stanceWidth:** `shoulder`
+- **parentExerciseId:** `null`
+- **Template:** Hinge — `lowerBack` promoted to synergist per Rule 6 exception (only library cases: this entry + 45° Hyperextension 45d #13).
+- **Group derivation:** glutes → `legs`.
+- **Notes:** 3 secondaries. Forearms (stab) dropped vs Deadlift — bar on back, no grip demand. Logged in exception log per Rule 6 lowerBack-syn promotion.
+
+---
+
+### 41. Single-Leg RDL (P2 #14)
+
+- **primary:** `glutes`, `hamstrings` *(co-primary per Hinge template)*
+- **secondary:**
+  - `upperBack` — stabilizer *(weight stays close)*
+  - `lowerBack` — stabilizer
+  - `abs` — stabilizer *(anti-flexion)*
+  - `obliques` — stabilizer *(unilateral load → anti-rotation, distinct from bilateral RDL's no-obliques tag)*
+  - `calves` — stabilizer *(single-leg balance)*
+- **equipment:** `dumbbell` *(DB in opposite hand or both hands; default DB)*
+- **parentExerciseId:** `null`
+- **Template:** Hinge — unilateral variant. Inherits RDL (Seed #12) map + adds `obliques (stab)` for unilateral anti-rotation + `calves (stab)` for single-leg balance.
+- **Group derivation:** glutes → `legs`.
+- **Notes:** 5 secondaries — at ceiling. Forearms (stab) dropped vs Conventional DL — DB load < BB max load, grip not the limiter.
+
+---
+
+### 42. Reverse Hyperextension Machine (P2 #42)
+
+- **primary:** `glutes`, `hamstrings` *(co-primary per Hinge template — bodyweight-loaded reverse hip extension)*
+- **secondary:**
+  - `lowerBack` — synergist *(promoted to syn per Rule 6 exception — same as 45° Hyperextension; spinal extension under load is the movement)*
+- **equipment:** `machine`
+- **parentExerciseId:** `null`
+- **Template:** Hinge — dedicated machine. Inherits 45° Hyperextension (45d #13) treatment with even stricter discipline: machine pad supports full torso → drops `abs (stab)` (no anti-extension demand against machine).
+- **Group derivation:** glutes → `legs`.
+- **Notes:** 1 secondary. Strictest hinge-machine discipline. Flagged in exception log per Rule 6 lowerBack-syn promotion (third library case after Good Morning + 45° Hyperextension).
+
+---
+
+#### P2 — Glutes (7)
+
+### 43. Dumbbell Hip Thrust (P2 #15)
+
+- **muscles:** inherit from Barbell Hip Thrust (P0 #6 = 45b #24)
+- **equipment:** `dumbbell`
+- **parentExerciseId:** `null` *(per exercise-bank: separate entry, not BB Hip Thrust variant — implement family different)*
+- **Template:** Hinge-adjacent — same map as BB Hip Thrust. DB load profile typically lighter; map preserved.
+- **Group derivation:** glutes → `legs`.
+- **Notes:** 4 secondaries — matches BB Hip Thrust exactly (`hamstrings`, `adductors`, `lowerBack`, `abs`).
+
+---
+
+### 44. Cable Kickback (P2 #16)
+
+- **primary:** `glutes`
+- **secondary:**
+  - `hamstrings` — synergist *(small — hip extension assist)*
+  - `obliques` — stabilizer *(unilateral cable load → anti-rotation)*
+- **equipment:** `cable`
+- **parentExerciseId:** `null`
+- **Template:** Isolation — single-joint hip extension. Glutes primary; hamstrings (syn) covers the small hip-extension assist. Strict isolation discipline maintained.
+- **Group derivation:** glutes → `legs`.
+- **Notes:** 2 secondaries. Lower back not tagged — cable line of pull is horizontal/slight-down; no axial spinal load.
+
+---
+
+### 45. Smith Machine Hip Thrust (P2 #43)
+
+- **muscles:** inherit from Barbell Hip Thrust (P0 #6 = 45b #24)
+- **equipment:** `smith`
+- **parentExerciseId:** `null`
+- **Template:** Hinge-adjacent — Smith variant. Inherits BB Hip Thrust map; Smith fixes vertical bar path but pad-against-hips loading pattern is identical to free-weight BB version (matches Machine Hip Thrust 45d #17 reasoning — pad position preserves recruitment).
+- **Group derivation:** glutes → `legs`.
+- **Notes:** 4 secondaries — matches BB Hip Thrust + Machine Hip Thrust.
+
+---
+
+### 46. Machine Glute Kickback (P2 #44)
+
+- **primary:** `glutes`
+- **secondary:**
+  - `hamstrings` — synergist *(small)*
+- **equipment:** `machine`
+- **parentExerciseId:** `null`
+- **Template:** Isolation — dedicated standing glute machine. Same map as Cable Kickback (#44 above) minus `obliques (stab)` — machine handles + chest pad neutralize the unilateral anti-rotation demand.
+- **Group derivation:** glutes → `legs`.
+- **Notes:** 1 secondary. Machine discipline applied — pad-supported station eliminates trunk stabilizer demand.
+
+---
+
+### 47. Single-Leg Hip Thrust (P2 #50)
+
+- **primary:** `glutes`
+- **secondary:**
+  - `hamstrings` — synergist
+  - `adductors` — synergist
+  - `lowerBack` — stabilizer
+  - `abs` — stabilizer
+  - `obliques` — stabilizer *(unilateral load → anti-rotation, distinct from bilateral hip thrust's no-obliques tag)*
+- **equipment:** `bodyweight` *(default; barbell variant also common per exercise-bank)*
+- **parentExerciseId:** `null`
+- **Template:** Hinge-adjacent — unilateral variant. Inherits BB Hip Thrust (45b #24) map + adds `obliques (stab)` per unilateral anti-rotation precedent (matches Single-Leg RDL #41 above).
+- **Group derivation:** glutes → `legs`.
+- **Notes:** 5 secondaries — at ceiling. Per exercise-bank: separate exercise from BB Hip Thrust (different stabilizer demand), not a variant — `parentExerciseId: null`.
+
+---
+
+### 48. Single-Leg Smith Machine Hip Thrust (P2 #51)
+
+- **muscles:** inherit from Single-Leg Hip Thrust (P2 #50 above)
+- **equipment:** `smith`
+- **parentExerciseId:** `null`
+- **Template:** Hinge-adjacent — Smith unilateral variant. Same 5-sec map as Single-Leg Hip Thrust; Smith fixes path but preserves unilateral anti-rotation demand (obliques stab stays).
+- **Group derivation:** glutes → `legs`.
+- **Notes:** 5 secondaries — matches Single-Leg Hip Thrust.
+
+---
+
+### 49. Single-Leg Machine Hip Thrust (P2 #52)
+
+- **muscles:** inherit from Machine Hip Thrust (P1 #52 = 45d #17) + `obliques (stab)` for unilateral
+- **equipment:** `machine`
+- **parentExerciseId:** `null`
+- **Template:** Hinge-adjacent — dedicated machine + unilateral variant. Inherits Machine Hip Thrust map (4 sec: hamstrings, adductors, lowerBack, abs) + adds `obliques (stab)` per unilateral pattern precedent (45d #17 note explicitly anticipated this).
+- **Group derivation:** glutes → `legs`.
+- **Notes:** 5 secondaries — closes 45d #17's forward reference.
+
+---
+
+#### P2 — Calves (3)
+
+### 50. Leg Press Calf Raise (P2 #17)
+
+- **muscles:** inherit from Standing Calf Raise BW (Seed #16 = 45b #10)
+- **equipment:** `machine` *(performed on Leg Press station with knees locked, ankles plantarflexing only)*
+- **parentExerciseId:** `null`
+- **Template:** Isolation — calf. Strict 0-secondary discipline (Leg Press station replaces ankle-balance with sled support; same map as bodyweight + machine standing calf raise).
+- **Group derivation:** calves → `legs`.
+- **Notes:** 0 secondaries — matches Calf Raise BW + Standing Calf Raise Machine + Seated Calf Raise.
+
+---
+
+### 51. Smith Machine Calf Raise (P2 #45)
+
+- **muscles:** inherit from Standing Calf Raise BW (Seed #16 = 45b #10)
+- **equipment:** `smith`
+- **parentExerciseId:** `null`
+- **Template:** Isolation — calf. Smith fixes vertical path but doesn't change calf-isolation map (same as bodyweight / machine standing variants).
+- **Group derivation:** calves → `legs`.
+- **Notes:** 0 secondaries.
+
+---
+
+### 52. Single-Leg Dumbbell Calf Raise (P2 #53)
+
+- **muscles:** inherit from Standing Calf Raise BW (Seed #16 = 45b #10)
+- **equipment:** `dumbbell`
+- **parentExerciseId:** `null`
+- **Template:** Isolation — calf. Unilateral DB variant; balance demand minor (calves themselves handle ankle stability — no separate tag justified per Calf Raise BW precedent of 0-sec strict isolation).
+- **Group derivation:** calves → `legs`.
+- **Notes:** 0 secondaries. Obliques considered + rejected — DB held in working-side hand with off-step single-leg position is not under heavy enough axial/asymmetric load to qualify per Rule 6 exclusion test.
+
+---
+
+#### P2 — Quads (5)
+
+### 53. Plate-Loaded Hack Squat (P2 #40)
+
+- **muscles:** inherit from Hack Squat (P1 #15 = 45d #6)
+- **equipment:** `machine`
+- **stanceWidth:** `shoulder`
+- **parentExerciseId:** `null`
+- **Template:** Squat — machine variant. Plate-loaded vs selectorized doesn't change recruitment. Same 3-sec map as Hack Squat (matches Leg Press machine discipline).
+- **Group derivation:** quads → `legs`.
+- **Notes:** 3 secondaries. Per exercise-bank: distinct entry from Hack Squat (#15) due to typical angle/feel difference, not a map shift.
+
+---
+
+### 54. Vertical Leg Press (P2 #41)
+
+- **muscles:** inherit from Leg Press (Seed #13 = 45b #7)
+- **equipment:** `machine`
+- **stanceWidth:** `shoulder`
+- **parentExerciseId:** `null`
+- **Template:** Squat — machine variant. Vertical sled angle vs 45° doesn't change muscle recruitment pattern; same map as Leg Press.
+- **Group derivation:** quads → `legs`.
+- **Notes:** 3 secondaries — matches Leg Press. ROM feel differs but map preserved.
+
+---
+
+### 55. Forward Lunge (P2 #49)
+
+- **muscles:** inherit from Reverse Lunge (P1 #17 = 45d #8)
+- **equipment:** `dumbbell`
+- **parentExerciseId:** `null`
+- **Template:** Lunge / split-stance — co-primary `[quads, glutes]` per template. Same map as Walking/Reverse Lunge (forward step pattern is the gait variant, not a map shift).
+- **Group derivation:** quads → `legs`.
+- **Notes:** 4 secondaries — matches Reverse Lunge. Per exercise-bank: distinct from Walking Lunge (no continuous gait) and Reverse Lunge (step direction); same recruitment.
+
+---
+
+### 56. Pendulum Squat (P2 #54)
+
+- **primary:** `quads`
+- **secondary:**
+  - `glutes` — synergist
+  - `adductors` — synergist
+  - `hamstrings` — synergist *(small)*
+- **equipment:** `machine`
+- **stanceWidth:** `shoulder`
+- **parentExerciseId:** `null`
+- **Template:** Squat — dedicated machine variant. Same 3-sec map as Hack Squat / Leg Press (machine discipline: fixed arc removes lowerBack/abs/calves tags from free squat).
+- **Group derivation:** quads → `legs`.
+- **Notes:** 3 secondaries — matches Hack Squat + Leg Press machine cluster. Per exercise-bank: pure quad builder with fixed arc.
+
+---
+
+### 57. Belt Squat (P2 #55)
+
+- **primary:** `quads`
+- **secondary:**
+  - `glutes` — synergist
+  - `adductors` — synergist
+  - `hamstrings` — synergist *(small)*
+- **equipment:** `machine` *(dedicated belt-squat machine; dip-belt + cable also common)*
+- **stanceWidth:** `shoulder`
+- **parentExerciseId:** `null`
+- **Template:** Squat — spine-unloaded variant. Drops `lowerBack` + `abs` stabilizer tags from squat parent (no axial spinal load — weight hangs from hips below center of mass); drops `calves` (machine platform supports balance).
+- **Group derivation:** quads → `legs`.
+- **Notes:** 3 secondaries — matches machine cluster. Spine-unloaded design = training-around-injury friendly per exercise-bank.
+
+---
+
+#### P2 — Shoulders (5)
+
+### 58. Machine Lateral Raise (P2 #18)
+
+- **muscles:** inherit from Lateral Raise (Seed #18 = 45b #11)
+- **equipment:** `machine`
+- **parentExerciseId:** `null`
+- **Template:** Isolation — same map as Cable Lateral Raise (45c #14): `sideDelts` primary + `upperTraps (syn)` + `rotatorCuff (stab)`. Machine doesn't reduce these because the upper-traps engagement is angle-driven (>90° elevation) and cuff demand is shoulder-position-driven, not implement-driven.
+- **Group derivation:** sideDelts → `shoulders`.
+- **Notes:** 2 secondaries — matches Cable Lateral Raise. Pad-supported torso doesn't drop cuff (cuff tag is glenohumeral position under load, not trunk stability).
+
+---
+
+### 59. Cable External Rotation (P2 #19)
+
+- **primary:** `rotatorCuff` *(per anatomical reality — external rotation IS the cuff's signature movement; dedicated cuff isolation has no other prime mover. Rule 5 Dedicated-cuff-isolation exception applied per session 45e principles-doc patch.)*
+- **secondary:** *(none)*
+- **equipment:** `cable`
+- **parentExerciseId:** `null`
+- **Template:** Isolation — cuff isolation. Rule 5 Primary exception applied (session 45e patch).
+- **Group derivation:** rotatorCuff → `shoulders` *(per Rule 5 Primary exception — cuff remains excluded from muscle-target filter chips in the picker, but exercise groups under Shoulders for catalog browsing).*
+- **Notes:** 0 secondaries — strictest isolation. Rule 5 Dedicated-cuff-isolation primary exception — first of two library cases (Cable ER + DB ER).
+
+---
+
+### 60. Dumbbell External Rotation (P2 #20)
+
+- **primary:** `rotatorCuff` *(same rationale as Cable ER — Rule 5 Dedicated-cuff-isolation primary exception per session 45e patch)*
+- **secondary:** *(none)*
+- **equipment:** `dumbbell`
+- **parentExerciseId:** `null`
+- **Template:** Isolation — cuff isolation, side-lying variant. Same map as Cable ER.
+- **Group derivation:** rotatorCuff → `shoulders` *(per Rule 5 Primary exception; matches Cable ER)*.
+- **Notes:** 0 secondaries. Rule 5 Dedicated-cuff-isolation primary exception — second of two library cases.
+
+---
+
+### 61. Smith Machine Overhead Press (P2 #38)
+
+- **primary:** `frontDelts`
+- **secondary:**
+  - `sideDelts` — synergist
+  - `triceps` — synergist
+  - `upperTraps` — synergist
+  - `serratus` — synergist
+  - `abs` — stabilizer *(standing axial anti-extension preserved — Smith fixes path but spinal load remains)*
+- **equipment:** `smith`
+- **gripWidth:** `medium`
+- **gripOrientation:** `pronated`
+- **parentExerciseId:** `null`
+- **Template:** Vertical push — Smith variant. Inherits OHP (45b #1) map; Smith fixes path → drops `rotatorCuff (stab)` (matches Smith Bench / Machine Chest Press cuff-drop precedent). Abs stays (standing axial load preserved per Smith Machine Squat reasoning).
+- **Group derivation:** frontDelts → `shoulders`.
+- **Notes:** 5 secondaries — between OHP's 6 and Machine Shoulder Press's 4 (Smith preserves standing posture so abs stays, but fixed path drops cuff).
+
+---
+
+### 62. Machine Shrug (P2 #39)
+
+- **muscles:** inherit from Barbell Shrug (P0 #8 = 45b #26)
+- **equipment:** `machine`
+- **parentExerciseId:** `null`
+- **Template:** Shrug pattern — dedicated machine. Same 3-sec map as BB Shrug + DB Shrug (45c #17): `forearms (stab)`, `lowerBack (stab)`, `neck (stab)` per Rule 5 heavy-shrug use case. Machine handles preserve all three stabilizer demands (grip + axial + neck-bracing under heavy load).
+- **Group derivation:** upperTraps → `back`.
+- **Notes:** 3 secondaries — matches BB Shrug + DB Shrug.
+
+---
+
+#### P2 — Biceps (4)
+
+### 63. Spider Curl (P2 #21)
+
+- **primary:** `biceps`
+- **secondary:**
+  - `brachialis` — synergist
+  - `forearms` — synergist *(brachioradialis)*
+- **equipment:** `dumbbell` *(EZ-bar variant also common)*
+- **gripOrientation:** `supinated`
+- **parentExerciseId:** `null`
+- **Template:** Curl — supinated single-primary. Prone bench-supported (chest down on incline) → drops `abs (stab)` per Preacher / Incline DB Curl precedent (bench-supported = no standing axial demand).
+- **Group derivation:** biceps → `arms`.
+- **Notes:** 2 secondaries — matches Preacher Curl / Incline DB Curl bench-supported profile.
+
+---
+
+### 64. Concentration Curl (P2 #22)
+
+- **primary:** `biceps`
+- **secondary:**
+  - `brachialis` — synergist
+  - `forearms` — synergist *(brachioradialis)*
+- **equipment:** `dumbbell`
+- **gripOrientation:** `supinated`
+- **parentExerciseId:** `null`
+- **Template:** Curl — supinated single-primary. Single-arm seated leaned-over-knee — elbow braced on inner thigh removes shoulder/torso stabilizer demand. Drops `abs (stab)` (seated bent-over, no standing axial).
+- **Group derivation:** biceps → `arms`.
+- **Notes:** 2 secondaries — matches bench-supported curl profile (Preacher / Incline DB).
+
+---
+
+### 65. Reverse Curl (P2 #23)
+
+- **primary:** `biceps`, `brachialis` *(co-primary per Curl template reverse-grip note: "hammer / neutral / reverse grip → brachialis co-primary")*
+- **secondary:**
+  - `forearms` — synergist *(brachioradialis significant in pronated curl — wrist extensors also engage to hold pronated grip under load)*
+  - `abs` — stabilizer *(standing axial isolation; matches BB Curl precedent)*
+- **equipment:** `barbell` *(EZ-bar variant also common)*
+- **gripOrientation:** `pronated`
+- **parentExerciseId:** `null`
+- **Template:** Curl — co-primary per pronated-grip template branch. Tiebreak: `biceps` precedes `brachialis` (matches Hammer Curl 45b #14 ordering — larger muscle + conventional naming).
+- **Group derivation:** biceps → `arms` (matches Hammer Curl).
+- **Notes:** 2 secondaries. EMG co-primary reference list: add as template-default (same low citation burden as Hammer Curl — inherent to pronated/neutral grip biomechanics).
+
+---
+
+### 66. Machine Bicep Curl (P2 #46)
+
+- **primary:** `biceps`
+- **secondary:**
+  - `brachialis` — synergist
+  - `forearms` — synergist *(brachioradialis)*
+- **equipment:** `machine`
+- **gripOrientation:** `supinated` *(default; some machines offer hammer-grip option)*
+- **parentExerciseId:** `null`
+- **Template:** Curl — supinated single-primary. Selectorized seated/standing curl machine; pad-supported upper arms remove standing axial → drops `abs (stab)` per Preacher / Machine Preacher Curl precedent.
+- **Group derivation:** biceps → `arms`.
+- **Notes:** 2 secondaries — matches Machine Preacher Curl (45c #25) profile.
+
+---
+
+#### P2 — Triceps (3)
+
+### 67. Tricep Kickback (P2 #24)
+
+- **primary:** `triceps`
+- **secondary:**
+  - `rearDelts` — stabilizer *(shoulder-extended position holds upper arm parallel to torso through ROM)*
+- **equipment:** `dumbbell`
+- **gripOrientation:** `neutral`
+- **parentExerciseId:** `null`
+- **Template:** Extension — strict isolation, bent-over single-arm or bilateral. RearDelts (stab) per Extension template note ("rearDelts (stab) on overhead variants" — extends to shoulder-extended kickback position by analogy: upper arm held against torso under load demands rear-shoulder hold).
+- **Group derivation:** triceps → `arms`.
+- **Notes:** 1 secondary — extension template's "minimal" discipline maintained.
+
+---
+
+### 68. Bench Dips (P2 #25)
+
+- **primary:** `triceps`
+- **secondary:**
+  - `frontDelts` — synergist *(shoulder extension at bottom range — bench-dip-specific)*
+  - `rotatorCuff` — stabilizer *(extreme shoulder extension under bodyweight; Rule 5 cuff use case — bodyweight shoulder-loaded hold)*
+- **equipment:** `bodyweight`
+- **parentExerciseId:** `null`
+- **Template:** Extension — bodyweight tricep variant. Vertical-torso bench dip (distinct from Tricep Dips parallel-bar variant which inherits Dips co-primary chest+triceps map). Triceps single-primary because chest doesn't activate meaningfully on bench dip (torso vertical, no horizontal-adduction component).
+- **Group derivation:** triceps → `arms`.
+- **Notes:** 2 secondaries. Cuff (stab) included per impingement-risk extreme-shoulder-extension position (matches Upright Row #20 in 45c reasoning — Rule 5 tag-when at risk angles).
+
+---
+
+### 69. Seated Tricep Dip Machine (P2 #47)
+
+- **primary:** `triceps`
+- **secondary:**
+  - `frontDelts` — synergist *(shoulder extension assist under fixed-path machine arc)*
+- **equipment:** `machine`
+- **parentExerciseId:** `null`
+- **Template:** Extension — dedicated tricep dip machine (distinct from Machine Assisted Dip 45c #5 which is a Dips-pattern co-primary chest+triceps machine; this is a tricep-isolation machine). Pad-supported torso + back support drops `rotatorCuff (stab)` from Bench Dips map (no extreme shoulder-extension position in machine arc).
+- **Group derivation:** triceps → `arms`.
+- **Notes:** 1 secondary. Per exercise-bank: distinct purpose/loading from Machine Assisted Dip — this is dedicated tricep work, not assisted bodyweight dip.
+
+---
+
+#### P2 — Forearms (2)
+
+### 70. Wrist Curl (P2 #26)
+
+- **primary:** `forearms` *(wrist flexors — direct work)*
+- **secondary:** *(none)*
+- **equipment:** `barbell` *(BB / DB / cable all common; default BB)*
+- **gripOrientation:** `supinated` *(palms-up flexor side)*
+- **parentExerciseId:** `null`
+- **Template:** Isolation — strictest forearm direct work. Wrist flexion under load, elbows fixed.
+- **Group derivation:** forearms → `arms` *(forearms group derivation TBD if not yet locked; default to arms per conventional categorization)*.
+- **Notes:** 0 secondaries — strict isolation. New Forearms category per exercise-bank Batch A.
+
+---
+
+### 71. Reverse Wrist Curl (P2 #27)
+
+- **primary:** `forearms` *(wrist extensors — direct work)*
+- **secondary:** *(none)*
+- **equipment:** `barbell`
+- **gripOrientation:** `pronated`
+- **parentExerciseId:** `null`
+- **Template:** Isolation — wrist extension under load. Counterpart to Wrist Curl.
+- **Group derivation:** forearms → `arms`.
+- **Notes:** 0 secondaries. Same map as Wrist Curl with grip-orientation flipped (extensor vs flexor side).
+
+---
+
+#### P2 — Core (5)
+
+### 72. Pallof Chop / Lift (P2 #28)
+
+- **primary:** `obliques`
+- **secondary:**
+  - `abs` — synergist *(anti-extension component combines with anti-rotation)*
+  - `frontDelts` — stabilizer *(shoulder-stabilization through diagonal cable pull)*
+- **equipment:** `cable`
+- **parentExerciseId:** `null`
+- **Template:** Core — diagonal anti-rotation. Inherits Pallof Press (45d #21) map + adds `frontDelts (stab)` per diagonal arm-arc demand (chop/lift extends arm overhead; Pallof Press is press-out only).
+- **Group derivation:** obliques → `core`.
+- **Notes:** 2 secondaries — adds frontDelts vs Pallof Press's 1 secondary, justified by overhead arm extension.
+
+---
+
+### 73. Hollow Hold (P2 #29)
+
+- **primary:** `abs`
+- **secondary:**
+  - `hipFlexors` — synergist *(legs held above floor — direct concentric hip flexion to start + hold; Rule 6 leg-raise-family tag-when criterion)*
+  - `obliques` — stabilizer *(anti-rotation during hold)*
+- **equipment:** `bodyweight`
+- **parentExerciseId:** `null`
+- **Template:** Core — supine isometric anti-extension. Abs primary; hipFlexors syn per Rule 6 (leg-raise family — concentric hip flexion holds leg position).
+- **Group derivation:** abs → `core`.
+- **Notes:** 2 secondaries.
+
+---
+
+### 74. Russian Twist (P2 #30)
+
+- **primary:** `obliques`
+- **secondary:**
+  - `abs` — synergist *(trunk flexion hold combines with rotation)*
+  - `hipFlexors` — stabilizer *(legs held off floor in seated V-position — leg-raise-family tag adapted for hold; per Rule 6)*
+- **equipment:** `bodyweight` *(weighted variants common — DB / KB / plate)*
+- **parentExerciseId:** `null`
+- **Template:** Core — direct rotation. Obliques primary per Core convention ("obliques direct work = primary"). Abs (syn) for the V-sit trunk-flexion hold; hipFlexors (stab) per leg-elevated position.
+- **Group derivation:** obliques → `core`.
+- **Notes:** 2 secondaries.
+
+---
+
+### 75. Decline Sit-Up (P2 #31)
+
+- **primary:** `abs`, `hipFlexors` *(co-primary per Crunch entry note 45b #16: "Sit-Up = different map — hip flexors become co-primary once trunk rises past ~45°")*
+- **secondary:**
+  - `obliques` — stabilizer *(anti-rotation during decline sit-up — bench angle adds asymmetric trunk-flexion demand)*
+- **equipment:** `bodyweight` *(decline bench)*
+- **parentExerciseId:** `null`
+- **Template:** Core — full-ROM trunk flexion. Co-primary `[abs, hipFlexors]` per Sit-Up vs Crunch map distinction documented in 45b. Tiebreak: `abs` first (matches HLR/Hanging Knee Raise/Captain's Chair convention).
+- **Group derivation:** abs → `core` (first primary).
+- **Notes:** 1 secondary. EMG co-primary reference list: add per Sit-Up trunk-rise-past-45° rule (Crunch note in 45b is the canonical source — codify here as locked instance).
+
+---
+
+### 76. Ab Crunch Machine (P2 #48)
+
+- **muscles:** inherit from Crunch (Seed #27 = 45b #16)
+- **equipment:** `machine`
+- **parentExerciseId:** `null`
+- **Template:** Core — same map as Crunch + Cable Crunch (45d #20). Selectorized weighted version; weight-loading doesn't recruit new muscles (spinal flexion still the only driver).
+- **Group derivation:** abs → `core`.
+- **Notes:** 0 secondaries — matches Crunch + Cable Crunch strictest core-direct isolation.
+
+---
+
+#### P2 — Carries (2)
+
+### 77. Farmer Carry (P2 #32)
+
+- **primary:** `forearms`, `upperTraps` *(co-primary per Loaded Carry template — "Farmer = forearms + upperTraps")*
+- **secondary:**
+  - `abs` — stabilizer *(anti-extension under bilateral axial load)*
+  - `obliques` — stabilizer *(anti-lateral-flexion at each step gait)*
+  - `lowerBack` — stabilizer *(axial standing load)*
+  - `quads` — synergist *(walking gait + load support)*
+  - `glutes` — synergist *(gait-driven hip extension)*
+  - `calves` — synergist *(gait + balance under load)*
+- **equipment:** `dumbbell` *(KB / trap bar variants common; default DB)*
+- **gripOrientation:** `neutral`
+- **parentExerciseId:** `null`
+- **Template:** Loaded Carry — full template. New `Carries` category per exercise-bank Batch A.
+- **Group derivation:** forearms → `arms` (first primary per tiebreak).
+- **Notes:** 6 secondaries — flagged per ≤5 soft threshold; accepted per Loaded Carry template (full-body integration is the defining feature; carries inherently engage gait + posture). Logged in exception log.
+
+---
+
+### 78. Suitcase Carry (P2 #33)
+
+- **primary:** `forearms`, `upperTraps` *(co-primary — matches Farmer Carry; one-side load is the variation)*
+- **secondary:**
+  - `obliques` — synergist *(unilateral load → anti-lateral-flexion is the defining feature, promoted to syn vs Farmer's stab)*
+  - `abs` — stabilizer *(anti-extension)*
+  - `lowerBack` — stabilizer
+  - `quads` — synergist *(gait)*
+  - `glutes` — synergist *(gait)*
+  - `calves` — synergist *(gait)*
+- **equipment:** `dumbbell` *(KB common)*
+- **gripOrientation:** `neutral`
+- **parentExerciseId:** `null`
+- **Template:** Loaded Carry — unilateral variant. Inherits Farmer Carry map + promotes `obliques` from stab → syn (one-sided load makes anti-lateral-flexion the signature).
+- **Group derivation:** forearms → `arms`.
+- **Notes:** 6 secondaries — matches Farmer Carry count; same template-driven exception accepted.
+
+---
+
+#### P3 — Back (1)
+
+### 79. Meadows Row (P3 #1)
+
+- **primary:** `lats`, `upperBack` *(co-primary per Horizontal pull template)*
+- **secondary:**
+  - `rearDelts` — synergist
+  - `biceps` — synergist
+  - `brachialis` — synergist
+  - `forearms` — stabilizer *(grip — single-arm, often heavier per side than bilateral row)*
+  - `lowerBack` — stabilizer *(bent-over hip hinge held)*
+  - `obliques` — stabilizer *(unilateral landmine load → anti-rotation)*
+- **equipment:** `barbell` *(barbell-in-landmine setup)*
+- **gripOrientation:** `pronated` *(overhand single-arm grip on barbell sleeve)*
+- **parentExerciseId:** `null`
+- **Template:** Horizontal pull — landmine single-arm variant. Inherits T-Bar Row (45c #8) map + adds `obliques (stab)` for unilateral anti-rotation.
+- **Group derivation:** lats → `back`.
+- **Notes:** 6 secondaries — flagged per ≤5 soft threshold; accepted per unilateral-loading addition (obliques is the single addition over standard horizontal-pull template at 5).
+
+---
+
+#### P3 — Quads (1)
+
+### 80. Sissy Squat (P3 #3)
+
+- **primary:** `quads`
+- **secondary:**
+  - `abs` — stabilizer *(extreme knee-flexion + lean-back position demands anti-extension trunk hold under bodyweight)*
+- **equipment:** `bodyweight` *(sissy squat bench / sissy squat handle variants common)*
+- **parentExerciseId:** `null`
+- **Template:** Isolation — quad-extreme variant. Knees-forward extreme position + leaned-back trunk = pure quad-isolation pattern. Drops glutes/adductors/hams from Squat template (Sissy Squat eliminates hip extension — knees travel forward, hips don't extend through ROM).
+- **Group derivation:** quads → `legs`.
+- **Notes:** 1 secondary. Strictest quad-isolation in the library (alongside Leg Extension); abs (stab) added per extreme leaned-back trunk demand under bodyweight.
+
+---
+
+#### P3 — Glutes (1)
+
+### 81. B-Stance RDL (P3 #4)
+
+- **primary:** `glutes`, `hamstrings` *(co-primary per Hinge template — biased toward front-leg working side)*
+- **secondary:**
+  - `upperBack` — stabilizer
+  - `lowerBack` — stabilizer
+  - `abs` — stabilizer
+  - `obliques` — stabilizer *(B-stance partial-unilateral load → anti-rotation; less than full single-leg RDL but more than bilateral)*
+  - `forearms` — stabilizer *(grip)*
+- **equipment:** `dumbbell` *(BB also common)*
+- **parentExerciseId:** `null`
+- **Template:** Hinge — partial-unilateral (kickstand) variant. Inherits RDL (Seed #12) map + adds `obliques (stab)` for the B-stance asymmetric loading (between bilateral RDL and full Single-Leg RDL).
+- **Group derivation:** glutes → `legs`.
+- **Notes:** 5 secondaries — at ceiling. Matches Single-Leg RDL profile minus `calves (stab)` (B-stance maintains rear-foot ground contact for balance — calves aren't a balance limiter).
+
+---
+
+#### P3 — Calves (2)
+
+### 82. Donkey Calf Raise (P3 #5)
+
+- **muscles:** inherit from Standing Calf Raise BW (Seed #16 = 45b #10)
+- **equipment:** `bodyweight` *(traditionally with partner on lower back; donkey-calf-raise machine variant also exists)*
+- **parentExerciseId:** `null`
+- **Template:** Isolation — calf. Hip-hinged position (bent-over) emphasizes gastroc stretch but doesn't change muscle map (calves still single-primary, no secondaries).
+- **Group derivation:** calves → `legs`.
+- **Notes:** 0 secondaries — matches Calf Raise BW + Standing Calf Raise Machine + Seated Calf Raise + Leg Press Calf Raise + Smith Calf Raise.
+
+---
+
+### 83. Tibialis Raise (P3 #12)
+
+- **primary:** `tibialis`
+- **secondary:** *(none)*
+- **equipment:** `bodyweight` *(standing variant; seated tib-machine variant also exists)*
+- **parentExerciseId:** `null`
+- **Template:** Isolation — direct tibialis anterior work. Per Legs convention: "tibialis tags on direct raises only — Not on squats, not on calf raises."
+- **Group derivation:** tibialis → `legs`.
+- **Notes:** 0 secondaries — strictest isolation. Antagonist to calves; underrated for shin-splint prevention per exercise-bank.
+
+---
+
+#### P3 — Shoulders (1)
+
+### 84. Cable Y-Raise (P3 #6)
+
+- **primary:** `lowerTraps`
+- **secondary:**
+  - `rearDelts` — synergist *(Y motion is overhead horizontal abduction component)*
+  - `upperTraps` — synergist *(scap upward rotation for the overhead Y position)*
+  - `serratus` — synergist *(scap upward rotation past horizontal — Y motion reaches well past horizontal)*
+- **equipment:** `cable`
+- **gripOrientation:** `neutral` *(thumbs-up for Y position)*
+- **parentExerciseId:** `null`
+- **Template:** No direct template — overhead Y-motion targets lower traps primarily (only common library exercise where lowerTraps is primary). Lower traps depress + upward-rotate the scap; the Y-position concentrates this demand.
+- **Group derivation:** lowerTraps → `back` *(per BB Shrug 45b #26 group derivation: all trapezius segments in back group)*.
+- **Notes:** 3 secondaries. Only library entry with `lowerTraps` as primary (BB Shrug + DB Shrug + Machine Shrug all upperTraps; Y-Raise inverts to lower-trap focus). Logged for end-of-curation audit as the canonical lower-trap-primary exemplar.
+
+---
+
+#### P3 — Triceps (1)
+
+### 85. JM Press (P3 #7)
+
+- **primary:** `triceps` *(single-primary per principles doc note: "Close-Grip Bench has triceps co-primary [chest, triceps]; JM Press has triceps single-primary, group = arms" — distinguishes by tiebreak group derivation)*
+- **secondary:**
+  - `chest` — synergist *(de-emphasized vs Bench but still meaningful contributor — JM is a hybrid press/extension)*
+  - `frontDelts` — synergist
+  - `rotatorCuff` — stabilizer *(supine pressing position with triceps emphasis — same Rule 5 use case as Skull Crusher)*
+- **equipment:** `barbell`
+- **gripWidth:** `narrow`
+- **gripOrientation:** `pronated`
+- **parentExerciseId:** `null`
+- **Template:** Hybrid Horizontal push / Extension — JM hybrid pattern between Close-Grip Bench and Skull Crusher. Triceps single-primary differentiates from Close-Grip Bench co-primary (per 45c #4 EMG override locked + principles doc clarification).
+- **Group derivation:** triceps → `arms` (matches Skull Crusher group derivation; differs from Close-Grip Bench's `chest` group).
+- **Notes:** 3 secondaries. JM is the canonical "triceps-primary press" — chest is meaningful but rep fails when triceps fail (vs Close-Grip where chest still drives final lockout).
+
+---
+
+#### P3 — Forearms (1)
+
+### 86. Wrist Roller (P3 #8)
+
+- **primary:** `forearms` *(both flexors and extensors — alternating concentric on each rotation)*
+- **secondary:**
+  - `frontDelts` — stabilizer *(arms held outstretched horizontally — sustained shoulder-flexion hold under bodyweight)*
+- **equipment:** `other` *(wrist roller is a specific implement — rolled rope + plate setup)*
+- **parentExerciseId:** `null`
+- **Template:** Isolation — forearm direct work. Both flex and extend wrist segments engage as the rope winds. FrontDelts (stab) per outstretched-arm hold demand (distinct from Wrist Curl seated/bench-supported position).
+- **Group derivation:** forearms → `arms`.
+- **Notes:** 1 secondary.
+
+---
+
+#### P3 — Core (1)
+
+### 87. L-Sit Hold (P3 #9)
+
+- **primary:** `abs`, `hipFlexors` *(co-primary per HLR map inheritance — L-Sit is a hip-flexion + spine-stable hold)*
+- **secondary:**
+  - `triceps` — synergist *(elbow lockout under bodyweight — sustained press-down through ROM)*
+  - `quads` — synergist *(knee extension hold — straight-leg L position)*
+  - `obliques` — stabilizer *(anti-rotation)*
+- **equipment:** `bodyweight` *(parallettes / dip bars / floor variants)*
+- **parentExerciseId:** `null`
+- **Template:** Core — combined hip-flexion hold + arm-support press. Inherits HLR co-primary + adds `triceps (syn)` + `quads (syn)` per the additional load-bearing demands (HLR is hanging, no triceps/quads; L-Sit is supported, both engage).
+- **Group derivation:** abs → `core` (tiebreak: first primary).
+- **Notes:** 4 secondaries.
+
+---
+
+#### P3 — Carries (2)
+
+### 88. Overhead Carry (P3 #10)
+
+- **primary:** `frontDelts` *(single-primary — Loaded Carry template suggests "Overhead = frontDelts + rotatorCuff" co-primary, but Rule 5 forbids cuff-as-primary; resolved by keeping cuff as **synergist** per Rule 5 face-pull-style synergist exception — overhead carry has continuous concentric cuff demand throughout gait)*
+- **secondary:**
+  - `rotatorCuff` — synergist *(Rule 5 synergist exception applied — second library case after face pull; overhead-loaded gait demands continuous active cuff stabilization through ROM, not just isometric hold)*
+  - `upperTraps` — synergist *(scap upward rotation sustained throughout overhead hold)*
+  - `serratus` — synergist *(scap upward rotation past horizontal)*
+  - `triceps` — synergist *(elbow extension lockout sustained under load + gait)*
+  - `abs` — stabilizer *(anti-extension under overhead-loaded gait)*
+  - `obliques` — stabilizer *(anti-lateral-flexion gait)*
+  - `lowerBack` — stabilizer
+  - `quads` — synergist *(gait)*
+  - `glutes` — synergist *(gait)*
+  - `calves` — synergist *(gait)*
+- **equipment:** `kettlebell` *(KB / DB / BB all common; KB default for one-handed common form)*
+- **parentExerciseId:** `null`
+- **Template:** Loaded Carry — overhead variant. Avoids cuff-as-primary by promoting cuff to synergist instead (Rule 5 face-pull exception extended to overhead carry — the only library entries with cuff-as-syn).
+- **Group derivation:** frontDelts → `shoulders`.
+- **Notes:** 10 secondaries — heavily flagged. Overhead carry is exceptionally full-body (overhead hold + gait + bracing); template-driven count accepted per Farmer/Suitcase Carry precedent of high-secondary loaded carries. Logged in exception log + flagged for user to confirm cuff-as-synergist treatment matches intent.
+
+---
+
+### 89. Zercher Carry (P3 #11)
+
+- **primary:** `upperBack`, `biceps` *(co-primary — Zercher hold uses crook-of-elbow grip; biceps work isometrically under heavy load through gait + upper back maintains scap-packed posture against forward load)*
+- **secondary:**
+  - `forearms` — stabilizer *(grip — wrists flexed under bar-in-elbow-crook pressure)*
+  - `abs` — stabilizer *(anti-extension under front-loaded axial demand)*
+  - `obliques` — stabilizer *(anti-lateral-flexion gait)*
+  - `lowerBack` — stabilizer *(axial standing load + slight forward lean)*
+  - `quads` — synergist *(gait)*
+  - `glutes` — synergist *(gait)*
+  - `calves` — synergist *(gait)*
+- **equipment:** `barbell`
+- **parentExerciseId:** `null`
+- **Template:** Loaded Carry — front-rack-equivalent variant (Zercher uses elbow crook, not shoulders). Co-primary `[upperBack, biceps]` reflects the bear-hug isometric demand: biceps holds the bar against forward gravity, upper back holds scap-packed posture against the same forward load.
+- **Group derivation:** upperBack → `back` (first primary per tiebreak).
+- **Notes:** 7 secondaries — flagged per ≤5 soft threshold; accepted per Loaded Carry template precedent (Farmer/Suitcase/Overhead all flagged similarly). Co-primary `[upperBack, biceps]` is the unique Zercher signature — no other library entry pairs these as primaries.
+
+---
+
+## Session 45e — End-of-session sanity check
+
+Run against the full 89 entries above (25 P5 + 53 P2 + 11 P3):
+
+- [x] Every entry has ≥1 primary
+- [~] No primary lists a background muscle (`neck` / `rotatorCuff`) — **VIOLATED on Cable ER (#59) + DB ER (#60)** by deliberate Rule 5 override; flagged for user accept/reject + proposed Rule 5 patch
+- [x] No entry has >2 primaries — co-primary entries: Narrow-Grip Pull-Up (Pull-Up override), Good Morning + Reverse Hyper + B-Stance RDL (Hinge), Forward Lunge inheritance (Lunge), Decline Sit-Up (sit-up co-primary), L-Sit (HLR inheritance), Reverse Curl (Curl pronated-grip co-primary), Farmer/Suitcase Carry (Loaded Carry template), Zercher Carry (unique upperBack+biceps)
+- [~] No entry has >5 secondaries — **flagged**: Single-Arm Lat Pulldown (#35) at 6, Farmer Carry (#77) at 6, Suitcase Carry (#78) at 6, Meadows Row (#79) at 6, Overhead Carry (#88) at 10, Zercher Carry (#89) at 7. Carries explained by Loaded Carry template (full-body gait engagement); unilateral-load entries explained by obliques addition over template default
+- [x] No muscle appears in both primary and secondary on same entry
+- [x] Every variant has `parentExerciseId` set: 25 P5 entries all populated; P2/P3 entries all `null` per standalone treatment
+- [x] `equipment` populated on every entry (89/89)
+- [x] Tagging style reads consistent — Rule 4 inheritance pattern uniform across all 25 P5 entries; machine discipline applied consistently (Smith preserves axial → keeps abs/lowerBack; pad-supported drops cuff/lats); fly exception extended consistently to Incline DB Fly (#27); HLR map inherited consistently to L-Sit (#87); cuff conflict surfaced as exception not silently overridden
+
+---
 
 ---
 
@@ -742,6 +2903,45 @@ Run against the full 27 entries above (18 Seed non-parent + 9 P0 + 1 missed-pare
 - **Barbell Hip Thrust (P0 #6)** — single-primary `glutes` despite being a hip-extension compound exercise. Co-primary `[glutes, hamstrings]` would match the Hinge template but is rejected per Contreras EMG showing hip thrust is overwhelmingly glute-dominant (hip thrust is the canonical glute-isolation compound; hamstrings assist, not co-drive).
 - **Ab Wheel Rollout (Seed #29)** — `equipment: 'other'`. Ab wheel is a specific implement not in standard categories (not bodyweight since the wheel's roll mechanics define the movement; not any standard implement family).
 
+### Session 45c exceptions
+
+- **Close-Grip Bench Press (P1 #5)** — co-primary `[chest, triceps]` overrides default single-primary Horizontal push template. Rationale: narrow grip shifts triceps to primary-mover status per Barnett 1995 EMG. Standalone entry (not a Bench Press variant — map diverges). Locks principles doc's queued entry for this session.
+- **Arnold Press (P1 #25)** — 6 secondaries per full Vertical push template. Accepted as template-standard (matches DB Shoulder Press + OHP precedent; same pattern as Squat).
+- **Machine Assisted Dip (P1 #45)** — inherits Dips co-primary `[chest, triceps]` on a machine variant despite `parentExerciseId: null` (per exercise-bank: separate exercise, not a Dips variant). Machine discipline drops `upperBack (stab)` + `rotatorCuff (stab)` from Dips parent map; 2 stabilizer losses vs parent, co-primary preserved because machine reduces load, not muscle coordination.
+- **Iso-Lateral High Row (P1 #47)** — named "row" in exercise-bank but tagged under Vertical pull template (single-primary `lats`) per pull-down-angle behavior. Map diverges from Horizontal pull row cluster (no co-primary `upperBack`). Naming/template mismatch flagged for end-of-curation audit.
+- **Landmine Press (P1 #31)** — hybrid press angle (~45° diagonal, between Horizontal and Vertical push). Tagged `frontDelts` primary per shoulder-group convention; `chest` tagged as synergist (unusual for a shoulder exercise) for the horizontal-adduction component at the bottom of the arc. No clean template fit.
+- **Upright Row (P1 #56)** — hybrid lateral-raise + vertical-pull motion; no clean template. `rotatorCuff (stab)` included at a non-overhead angle per impingement-risk rationale (internal-rotation-at-abduction under load meets Rule 5 cuff tag-when criteria).
+
+### Session 45d exceptions
+
+- **Front Squat (P1 #13)** — 6 secondaries per Squat parent precedent. Swaps `calves (stab)` from Squat parent for `upperBack (stab)` — front-rack position demands active thoracic extension hold. Accepted as template-driven (same flag pattern as Squat parent in 45a).
+- **Sumo Deadlift (P1 #11)** — re-adds `adductors (syn)` dropped from conventional Deadlift's Hinge template. Closes the 45a Deadlift exception loop ("template default targets sumo/wide-stance variants; re-add when tagged").
+- **45° Hyperextension (P1 #51)** — `lowerBack` promoted to **synergist** (not stabilizer) per Rule 6 explicit exception ("synergist only on Good Morning, 45° Back Extension"). Only cases in library where lowerBack is syn.
+- **Bird Dog (P1 #41)** — `glutes (syn)` tagged on a core exercise. Unusual for the Core group, but justified because hip extension on the raised leg is a concentric contribution (not a position hold). Obliques promoted to synergist (not stabilizer) on the same rationale — anti-rotation is actively resisted, not merely held.
+- **Side Plank (P1 #42)** — `abductors (syn)` tagged per principles Legs convention (side-plane / Copenhagen-plank pattern). Primary is `obliques` per Plank parent note ("Side Plank will be separate map, obliques primary"). Map diverges from front Plank (abs primary) despite shared "plank" name.
+- **Machine Tricep Extension (P1 #54)** — scope catch-up from 45c. Was in P1 upper-body range but omitted from 45c's scope definition (`#1–#7, #25–#37, #45–#50, #53, #56` — `#54` fell in the gap). 45d's scope (`#54–#55`) picked it up alongside the machine cluster. Flagged for end-of-curation audit to confirm no other scope gaps.
+
+### Session 45e exceptions
+
+- **Narrow-Grip Pull-Up (P5 #18)** — co-primary `[lats, biceps]` overrides Pull-Up parent map (which is `[lats, upperBack]`); structural variant linkage preserved (parentExerciseId → Pull-Up Seed #7) despite map divergence. Same pattern as Chin-Up (P0 #4) from 45b — both narrow / supinated grip variants of Pull-Up that promote biceps to co-primary per Rule 1 EMG-based Pull-Up override. Closes principles-doc queue: Narrow-Grip Pull-Up moved from "Queued for 45d onward" → "Non-parents (session 45e)".
+- **Cable External Rotation (P2 #19)** — `rotatorCuff` tagged as **primary** per Rule 5 Dedicated-cuff-isolation exception (session 45e patch accepted at close-out). Rationale: Cable ER is dedicated cuff-isolation exercise where cuff IS the only prime mover. Group derivation: `shoulders` (cuff excluded from muscle-target picker filter but exercise groups under Shoulders for catalog browsing). Principles doc Rule 5 patched concurrently.
+- **Dumbbell External Rotation (P2 #20)** — same Rule 5 Dedicated-cuff-isolation primary exception as Cable ER. Group derivation: `shoulders`.
+- **Reverse Curl (P2 #23)** — co-primary `[biceps, brachialis]` per Curl template pronated-grip branch ("hammer / neutral / reverse grip → brachialis co-primary"). Template-default; matches Hammer Curl (Seed #22 = 45b #14) treatment. EMG co-primary reference list: add as second template-default-pronated-grip entry alongside Hammer Curl.
+- **Decline Sit-Up (P2 #31)** — co-primary `[abs, hipFlexors]` per Crunch entry note (45b #16) documenting Sit-Up vs Crunch map distinction ("hip flexors become co-primary once trunk rises past ~45°"). Codifies the Crunch note into a locked exception. EMG co-primary reference list: add as canonical sit-up-family template default.
+- **Single-Arm Lat Pulldown (P2 #10)** — 6 secondaries (over ≤5 soft threshold). Inherits Lat Pulldown 5-sec template + adds `obliques (stab)` for unilateral anti-rotation. Single-addition-over-template-default justified.
+- **Farmer Carry (P2 #32)** — 6 secondaries per Loaded Carry template (full-body integration: gait + bracing + axial). Co-primary `[forearms, upperTraps]` per template-default for Farmer pattern. Template-driven exception accepted.
+- **Suitcase Carry (P2 #33)** — 6 secondaries per Loaded Carry template; obliques promoted from stab → syn vs Farmer (unilateral load = anti-lateral-flexion is the signature). Template-driven.
+- **Meadows Row (P3 #1)** — 6 secondaries inheriting T-Bar Row + adds `obliques (stab)` for landmine unilateral anti-rotation. Single-addition-over-template-default justified (matches Single-Arm Lat Pulldown rationale).
+- **Good Morning (P2 #13) + Reverse Hyperextension Machine (P2 #42)** — `lowerBack` promoted to **synergist** per Rule 6 explicit exception. Together with 45° Hyperextension (45d #13), these are the only three library cases where lowerBack is syn. Closes the principles-doc Rule 6 explicit-exception list ("synergist only on Good Morning, 45° Back Extension").
+- **Cable Y-Raise (P3 #6)** — `lowerTraps` as primary; only library entry with lowerTraps as primary (BB Shrug + DB Shrug + Machine Shrug all upperTraps-primary; Y-Raise inverts to lower-trap focus). Canonical lowerTraps-primary exemplar.
+- **Overhead Carry (P3 #10)** — 10 secondaries per Loaded Carry template-overhead variant. `rotatorCuff` tagged as **synergist** (not primary) — avoids Rule 5 cuff-as-primary conflict by using face-pull-style synergist exception. Second library entry with cuff-as-syn (after Face Pull from 45b). Single-primary `frontDelts` keeps within Rule 5 letter while honoring template intent. **FLAGGED for user to confirm cuff-as-synergist treatment matches intent vs explicit cuff-as-primary co-primary `[frontDelts, rotatorCuff]`.**
+- **Zercher Carry (P3 #11)** — 7 secondaries + unique co-primary `[upperBack, biceps]`. No other library entry pairs these as primaries — Zercher signature reflects bear-hug isometric demand (biceps holds bar in elbow crook + upper back holds scap-packed against forward load). EMG co-primary reference list: add as Zercher-specific exemplar.
+- **JM Press (P3 #7)** — `triceps` single-primary distinguishes from Close-Grip Bench Press (45c #4) co-primary `[chest, triceps]`. Both narrow-grip presses; JM tiebreaks to triceps-only (group = arms) vs CGB tiebreaks to chest-first (group = chest). Codifies principles-doc note: "Close-Grip Bench: triceps co-primary → standalone entry. JM Press: triceps primary, chest de-emphasized → standalone." Both standalone, neither a Bench variant.
+- **Dumbbell Pullover (P2 #5)** — chest single-primary kept despite back-bias cue noted in exercise-bank. Conventional categorization (chest exercise) wins by default; flagged for end-of-curation audit if user wants back-primary or co-primary `[chest, lats]` treatment.
+- **Smith Machine Overhead Press (P2 #38)** — 5 secondaries (between OHP's 6 and Machine SP's 4). Smith fixes path → drops cuff (matches Smith Bench precedent) but keeps abs (standing axial preserved per Smith Squat precedent). Hybrid machine-discipline outcome between fully-supported Machine SP and free-weight OHP.
+- **L-Sit Hold (P3 #9)** — `quads (syn)` + `triceps (syn)` added to HLR-style co-primary base. Unusual quads-on-core tag justified by knee-extension hold demand (HLR doesn't need quads — legs hang; L-Sit needs straight-leg active extension). Triceps-on-core justified by sustained press-down arm support.
+- **Sissy Squat (P3 #3)** — extreme-knee-flexion + leaned-back position drops Hinge/Lunge template's hip-extension-driven syns (no glutes, hams, adductors) → quads single-primary + abs (stab). Strictest quad-isolation in library alongside Leg Extension.
+
 ---
 
 ## Revision log
@@ -751,3 +2951,6 @@ Run against the full 27 entries above (18 Seed non-parent + 9 P0 + 1 missed-pare
 - **2026-04-23 (session 45b opening — Poliquin-audit pass on 45a parents)** — Retroactive audit using Poliquin lens + new "normal competent execution" policy. 8 stabilizers added across 8 parents (all additive; zero primary changes, zero group derivation changes): Squat +`calves`, Bench Press +`lats`, Dips +`upperBack`, RDL +`abs`, Skull Crusher +`rotatorCuff`, Barbell Curl +`abs`, Plank +`rotatorCuff`, Cable Crossover +`rotatorCuff`. Principles doc patched concurrently: Rule 2 execution-standard addendum, Rule 5 `rotatorCuff` use-case expansion + synergist exception for face pull, Rule 6 `abs` axial-loaded standing isolation allowance, Isolation template cable-fly exception. Pre-existing 45a sanity-check status preserved except Squat flagged at 6 secondaries (accepted — Poliquin-driven chain-thinking over ≤5 soft threshold).
 - **2026-04-23 (session 45b main-draft deferred)** — 26-entry main draft not written this session. Seven pre-locks persisted into Session 45b scaffold above (Chin-Up, Bulgarian Split Squat, Face Pull, Hanging Leg Raise, Incline BB Bench, Lateral Raise, Tricep Pushdown) — reasoning finalized this session; apply verbatim on resume. Three methodology adjustments drove session scope change: (1) Incline bench EMG correction — front delts precede triceps on incline variants; (2) Lateral raise trap recruitment — `upperTraps (syn)` added at/above 90° elevation; (3) Normal competent execution policy — tag stabilizers that engage under good-but-imperfect form, not perfect-technique-only. Remaining 19 entries queued for next session. Zero code, zero `src/` edits.
 - **2026-04-23 (session 45b pt. 1 + pt. 2 — CLOSED)** — Main draft completed across two work sessions. **27 full-format entries** written under new `### Full entry blocks — Session 45b` subsection: 18 Seed non-parent (including OHP as late-caught parent — scope correction from 17→18, patched an omission from 45a + 45b scope lists) + 9 P0. Seven pre-locks (Chin-Up, BSS, Face Pull, HLR, Incline BB Bench, Lateral Raise, Tricep Pushdown) expanded to full format; pre-lock section preserved as decision record. Two labeling errors fixed in pre-lock section (Face Pull #18→#20; Lateral Raise #15→#18). 7 new exceptions logged (OHP 6-sec, DB SP 6-sec, Push-Up serratus as syn, DB Fly fly-exception, Chin-Up map divergence w/ parent linkage, Hip Thrust single-primary glutes, Ab Wheel equipment=other). 3 decisions made: OHP inclusion as missed parent; DB Fly fly-exception extension; Push-Up serratus-as-synergist policy. All 8 sanity checks pass (2 flagged — OHP + DB SP at 6 secondaries, accepted per Vertical push template). Session 45b CLOSED. Zero code, zero `src/` edits, zero principles-doc patches (all patches done during 45b opening).
+- **2026-04-23 (session 45c — CLOSED)** — 27 P1 upper-body entries tagged under new `## Session 45c` section: 6 Chest (Decline Bench, Machine Chest Press, Pec Deck, Close-Grip Bench, Machine Assisted Dip, Iso-Lateral Chest Press), 5 Back (Chest-Supp DB Row, T-Bar Row, Iso-Lat High Row, Iso-Lat Low Row, Machine Assisted Pull-Up), 9 Shoulders (Arnold, Machine SP, Cable LR, Rear Delt Pec Deck, Bent-Over DB Reverse Fly, DB Shrug, Landmine Press, Iso-Lat Shoulder Press, Upright Row), 5 Biceps (EZ-Bar, Preacher, Incline DB, Cable, Machine Preacher), 2 Triceps (OH Cable Ext, OH DB Ext). **1 EMG override locked** from principles-doc queue: Close-Grip Bench `[chest, triceps]` per Barnett 1995. **6 exceptions logged** under new `### Session 45c exceptions` subsection: Close-Grip Bench co-primary, Arnold Press 6-sec (Vertical push template), Machine Assisted Dip inherited-co-primary-on-machine, Iso-Lat High Row naming/template mismatch, Landmine Press hybrid angle, Upright Row hybrid pattern. Sanity checks: all pass (Arnold Press flagged at 6 secondaries, accepted per DB SP + OHP precedent). Naming-convention note: Machine discipline (Machine Chest Press 2 sec, Machine SP 4 sec, Machine Assisted Pull-Up 5 sec) applied consistently with Leg Press (45b #7) precedent. Pec Deck + Rear Delt Pec Deck both held to strict isolation discipline (fly-exception NOT extended to pad-supported machines). Zero code, zero `src/` edits.
+- **2026-04-23 (session 45d — CLOSED)** — 27 P1 lower-body + core entries tagged under new `## Session 45d` section: 3 Hinge (Trap Bar DL, Sumo DL, Stiff-Leg DL — all graduated-from-P5), 8 Quads (Front Squat, Goblet Squat, Hack Squat, Walking Lunge, Reverse Lunge, Step-Up, Smith Machine Squat, Split Squat), 2 Hamstrings (Seated Leg Curl, 45° Hyperextension), 4 Glutes (Glute Bridge, Hip Abduction Machine, Hip Adduction Machine, Machine Hip Thrust), 2 Calves (Standing Calf Raise Machine, Seated Calf Raise), 7 Core (Cable Crunch, Pallof Press, Dead Bug, Bird Dog, Side Plank, Hanging Knee Raise, Captain's Chair Knee Raise), 1 Triceps catch-up (Machine Tricep Extension — scope handoff from 45c). **No new EMG overrides** this session — Narrow-Grip Pull-Up remains queued for 45e. **6 exceptions logged** under new `### Session 45d exceptions` subsection: Front Squat 6-sec (Squat precedent w/ upperBack-for-calves swap), Sumo DL adductor re-add (closes 45a Deadlift loop), 45° Hyperextension `lowerBack (syn)` (Rule 6 exception), Bird Dog glutes-on-core, Side Plank abductors + obliques-primary (Plank parent note fulfillment), Machine Tricep Extension scope catch-up. Sanity checks: all pass (Front Squat flagged at 6 accepted per Squat precedent; Sumo DL at 5 within ceiling). Machine discipline applied consistently (Hack Squat 3 sec matches Leg Press, Smith Machine Squat 5 sec between free Squat and Leg Press, Hip Abd/Add Machine + Calf Raise Machine all at strict 0-sec isolation). Zero principles-doc rule/template patches. Zero code, zero `src/` edits.
+- **2026-04-23 (session 45e — CLOSED)** — 89 entries tagged under new `## Session 45e` section: 25 P5 variants (Bench×2, Squat×4, Deadlift×4, Dips×3, Lat Pulldown×3, RDL×1, Pull-Up×1, Skull Crusher×2, Barbell Curl×1, Plank×2, Cable Crossover×2) + 53 P2 entries (5 Chest, 7 Back, 5 Hamstrings, 7 Glutes, 3 Calves, 5 Quads, 5 Shoulders, 4 Biceps, 3 Triceps, 2 Forearms, 5 Core, 2 Carries) + 11 P3 entries (1 Back, 1 Quads, 1 Glutes, 2 Calves, 1 Shoulders, 1 Triceps, 1 Forearms, 1 Core, 2 Carries). **1 EMG override locked** from queued list: Narrow-Grip Pull-Up `[lats, biceps]` per Pull-Up Rule 1 override (matches Chin-Up treatment) — closes principles-doc queue. **18 exceptions logged** under new `### Session 45e exceptions` subsection — all user-accepted at close-out. Most consequential: (1) **Cable ER + DB ER `rotatorCuff` as primary** per Rule 5 Dedicated-cuff-isolation exception (principles-doc Rule 5 patched concurrently; group derivation → `shoulders`); (2) **Overhead Carry cuff-as-syn** kept (Rule 5 face-pull-style synergist exception extended; second library case after Face Pull); (3) Reverse Curl + Decline Sit-Up + Zercher Carry added to EMG list (template-default codification + Zercher unique signature); (4) Loaded Carry template flags 4 entries at 6+ secondaries (Farmer/Suitcase/Overhead/Zercher) — accepted per template; (5) Good Morning + Reverse Hyper close out Rule 6 lowerBack-syn explicit-exception list (3 total library entries); (6) Cable Y-Raise as canonical lowerTraps-primary exemplar (only library entry); (7) Zercher Carry unique `[upperBack, biceps]` co-primary; (8) JM Press triceps-single-primary differentiated from Close-Grip Bench co-primary by tiebreak group derivation. Machine discipline applied consistently throughout (Smith preserves axial → keeps abs; pad-supported drops cuff/lats; selectorized matches plate-loaded). Sanity checks: 6 pass + 2 flagged-and-accepted — primary background-muscle violation on Cable/DB ER (Rule 5 patch accepted) + 6 entries over ≤5 soft threshold (Single-Arm Lat Pulldown, Farmer Carry, Suitcase Carry, Meadows Row, Overhead Carry, Zercher Carry — all template-driven). **1 principles-doc Rule 5 patch APPLIED** at close-out: Rule 5 now allows `rotatorCuff` as primary on dedicated cuff-isolation exercises (Cable ER + DB ER only library cases); Face Pull + Overhead Carry promoted to named cases under the stab→syn role exception. Zero code, zero `src/` edits, zero memory-file edits.

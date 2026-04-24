@@ -74,7 +74,7 @@ npx vitest          # watch mode
 
 ## Status
 
-In progress — Phase 4 (testing & cleanup) closed: 72 tests passing, service-layer guards complete, user-facing error surface wired app-wide. Phase 5 (Statistics tab + new features) active: custom-exercise deep dive (CE1) spec patches in flight, then CE1 build, then Statistics tab (body metrics, PRs, recomposition signal, Program Intelligence), then ongoing feature iteration.
+In progress — Phase 5 (Statistics + new features) active. Seed re-curation underway (sessions 45a–e closed): 183 of 213 exercises tagged with primary/secondary muscle maps + parent/variant architecture; P4 (30 entries) + cross-curation validation remaining before CE1/CE2 coordinated build and Statistics tab.
 
 ---
 

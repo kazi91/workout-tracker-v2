@@ -97,12 +97,13 @@ Per exercise-bank.md's Parent/Variant Rule: *variant shares parent's muscle map;
 
 ## Rule 5 — Background muscles
 
-- `neck` and `rotatorCuff` are **background-only**. Never primaries. Never surfaced in user-facing picker.
+- `neck` and `rotatorCuff` are **background-only**. Never primaries *(except per Dedicated-cuff-isolation exception below)*. Never surfaced in user-facing picker as a filter target.
 - Seed only as secondary with role = `stabilizer`. Appropriate uses:
   - `rotatorCuff` → overhead press family; heavy bench with stability demand; **supine weighted tricep work** (e.g., skull crushers — eccentric shoulder-flexed hold); **bodyweight shoulder-loaded holds** (plank); **open-chain cable fly / crossover work** (multi-plane tension on held arm position); face pull (promoted to **synergist**, not stabilizer — active external rotation is the signature movement)
   - `neck` → heavy shrugs, loaded carries (Farmer's / Overhead), weighted dips with head-bracing
 - **Default = don't tag** background muscles. Only include when a concrete rationale exists.
-- **Role exception:** `rotatorCuff` is normally stabilizer. Promote to `synergist` only on exercises where the cuff contracts concentrically through ROM (face pull = only current example; ER-cable isolation = future candidate).
+- **Role exception (stab → syn):** `rotatorCuff` is normally stabilizer. Promote to `synergist` only on exercises where the cuff contracts concentrically through ROM. Current library cases: Face Pull (Seed #20 — session 45b) + Overhead Carry (P3 #10 — session 45e).
+- **Primary exception — Dedicated cuff isolation (session 45e patch):** `rotatorCuff` may be tagged as **primary** ONLY on exercises where the cuff is the sole prime mover and no other muscle meaningfully drives the rep. Current library cases: Cable External Rotation (P2 #19) + Dumbbell External Rotation (P2 #20). Group derivation for these entries: `shoulders` (picker grouping default — cuff remains excluded from muscle-target filter chips, but exercises group under Shoulders for catalog browsing).
 
 ## Rule 6 — Exclusion defaults (what NOT to tag)
 
@@ -307,10 +308,26 @@ Living list. Append each entry that gets co-primary treatment during Sessions 45
 - **Hammer Curl (Seed #22)** — `[biceps, brachialis]` — template-default co-primary per Curl template's neutral-grip branch ("hammer / neutral / reverse grip → brachialis co-primary"). Low citation burden — inherent to neutral-grip biomechanics (brachialis dominates at mid-pronation).
 - **Hanging Leg Raise (Seed #28)** — `[abs, hipFlexors]` — anatomy alone would be hipFlexors single-primary (direct concentric hip flexion is the driver), but strict-form HLR with posterior pelvic tilt drives meaningful abs work concurrently. Co-primary reflects user training-intent alignment.
 
-### Queued for 45c onward
+### Non-parents (session 45c)
 
-- **Close-Grip Bench Press (P1 #5)** — `[chest, triceps]` — triceps co-primary per Barnett 1995 EMG. Standalone, not a Bench variant. Lock during 45c.
-- **Narrow-Grip Pull-Up (P5 #18)** — `[lats, biceps]` — Pull-Up override applied. Lock during 45e.
+- **Close-Grip Bench Press (P1 #5)** — `[chest, triceps]` — triceps co-primary per Barnett 1995 EMG. Standalone, not a Bench variant (map diverges → Parent/Variant Rule excludes variant relationship). Group derivation stays `chest` per tiebreak (first primary wins) — distinguishes from JM Press (P3 #7, triceps single-primary, group = arms).
+
+### Non-parents (session 45e)
+
+- **Narrow-Grip Pull-Up (P5 #18)** — `[lats, biceps]` — Pull-Up Rule 1 override applied (matches Chin-Up treatment despite pronated grip — narrow grip amplifies biceps recruitment to co-primary). Map diverges from Pull-Up parent (biceps replaces upperBack at co-primary slot); structural variant linkage preserved (parentExerciseId → Pull-Up Seed #7) per CE2 architecture. Closes the EMG-override queue.
+- **Reverse Curl (P2 #23)** — `[biceps, brachialis]` — template-default co-primary per Curl template's pronated-grip branch ("hammer / neutral / reverse grip → brachialis co-primary"). Same template-default treatment as Hammer Curl (Seed #22, session 45b). Low citation burden — inherent to pronated-grip biomechanics (brachialis dominates at full pronation).
+- **Decline Sit-Up (P2 #31)** — `[abs, hipFlexors]` — codifies the Crunch-vs-Sit-Up map distinction documented in 45b's Crunch entry note: "Sit-Up = different map — hip flexors become co-primary once trunk rises past ~45°." Canonical sit-up-family exemplar.
+- **Zercher Carry (P3 #11)** — `[upperBack, biceps]` — unique co-primary; only library entry pairing these as primaries. Reflects Zercher signature: bear-hug isometric demand where biceps holds bar in elbow crook + upper back maintains scap-packed posture against forward gravity load throughout gait.
+
+### Rejected co-primary claims (additional from 45e)
+
+- **Reverse-Grip Lat Pulldown (P5 #16)** — single-primary `lats`. Curl-template-style co-primary `[lats, biceps]` rejected for cable-loaded variant (no bodyweight amplification — same logic as Pull-Up vs Lat Pulldown parent split: Pull-Up gets co-primary override, Lat Pulldown does not).
+- **Glute-Ham Raise (P2 #12)** — single-primary `hamstrings`. Co-primary `[hamstrings, glutes]` considered but rejected per Hip Thrust precedent (glutes is meaningful contributor but rep fails when hamstrings give out, not glutes).
+- **Dumbbell Pullover (P2 #5)** — single-primary `chest` per conventional categorization. Co-primary `[chest, lats]` considered + rejected as default; back-bias is form variation, not the canonical default. Flagged for end-of-curation audit if user prefers back-primary or co-primary treatment.
+
+### Queued for 45f onward
+
+- *(none — EMG override queue cleared by 45e Narrow-Grip Pull-Up lock)*
 
 ### Rejected co-primary claims (for reference)
 
@@ -327,3 +344,6 @@ Living list. Append each entry that gets co-primary treatment during Sessions 45
 - **2026-04-23 (session 45a)** — EMG co-primary reference list seeded: 4 parents locked (Deadlift, Dips, Pull-Up, RDL); 4 future entries queued for 45b–e (Chin-Up, Bulgarian Split Squat, Close-Grip Bench, Narrow-Grip Pull-Up); 4 rejected co-primary claims recorded. Open-items section struck through for EMG list.
 - **2026-04-23 (session 45b opening — Poliquin-audit pass)** — (1) Rule 2 gains "Execution standard — normal competent execution" addendum: tag stabilizers under good-but-imperfect form; exclude muscles engaged only via form breakdown. (2) Rule 5 `rotatorCuff` use cases expanded: + supine weighted tricep work (skull crusher), + bodyweight shoulder-loaded holds (plank), + open-chain cable fly / crossover. Role exception added: cuff can be **synergist** on face pull (concentric external rotation is the signature movement). (3) Rule 6 `abs` tag-when column gains "axial-loaded standing isolation with anti-extension demand" (covers standing barbell curl). (4) Isolation template gains cable fly / crossover exception — cuff tag allowed as stabilizer. Retroactive 45a parent changes: Squat +calves, Bench +lats, Dips +upperBack, RDL +abs, Skull Crusher +rotatorCuff, Barbell Curl +abs, Plank +rotatorCuff, Cable Crossover +rotatorCuff (8 total, all stabilizers). Hanging Leg Raise queued for co-primary `[abs, hipFlexors]` treatment in 45b.
 - **2026-04-23 (session 45b pt. 1 + pt. 2 CLOSED)** — EMG co-primary reference list updated. "Queued for 45b onward" section split: locked entries (Chin-Up, Bulgarian Split Squat, Hanging Leg Raise) moved to new "Non-parents + missed parent (session 45b)" section. Added: Overhead Press (as canonical rejected co-primary for vertical press pattern); Hammer Curl (template-default co-primary per Curl neutral-grip branch). Remaining queued entries (Close-Grip Bench, Narrow-Grip Pull-Up) kept under "Queued for 45c onward."
+- **2026-04-23 (session 45c CLOSED)** — EMG co-primary reference list updated. Close-Grip Bench Press moved from "Queued for 45c onward" → new "Non-parents (session 45c)" section (`[chest, triceps]` per Barnett 1995). "Queued" section renamed to "Queued for 45d onward" and now contains only Narrow-Grip Pull-Up (45e). No rule/template patches this session — 45c applied principles as-written.
+- **2026-04-23 (session 45d CLOSED)** — No rule/template patches; no EMG co-primary additions. 45d applied principles as-written. Rule 6 `lowerBack (syn)` exception explicitly exercised on 45° Hyperextension (P1 #51) — only cases in library where lowerBack is promoted to synergist are Good Morning (P2 #13, not yet tagged) and 45° Back Extension. Narrow-Grip Pull-Up remains the sole queued EMG override for 45e.
+- **2026-04-23 (session 45e — CLOSED)** — EMG co-primary reference list updated. **New "Non-parents (session 45e)" section** with 4 entries: Narrow-Grip Pull-Up (closes the EMG-override queue per Pull-Up Rule 1 override), Reverse Curl (template-default per pronated-grip Curl branch), Decline Sit-Up (sit-up-family canonical co-primary), Zercher Carry (unique upperBack+biceps signature). **3 new rejected-co-primary entries** added: Reverse-Grip Lat Pulldown (no bodyweight amplification → not Pull-Up override case), Glute-Ham Raise (Hip Thrust-style single-primary), Dumbbell Pullover (chest-default per conventional categorization). Rule 6 `lowerBack (syn)` explicit-exception list filled to capacity: 3 library entries (Good Morning P2 #13, 45° Hyperextension P1 #51, Reverse Hyperextension Machine P2 #42). Rule 5 `rotatorCuff` synergist exception extended: 2 library cases (Face Pull from 45b + Overhead Carry P3 #10). **1 Rule 5 patch APPLIED at close-out:** `rotatorCuff` may now be tagged as **primary** on dedicated cuff-isolation exercises where cuff is the sole prime mover (Cable ER P2 #19 + DB ER P2 #20 — only library cases). Group derivation for these entries = `shoulders` (cuff stays excluded from muscle-target filter chips in picker; exercises group under Shoulders for catalog browsing). User-rejected alternative for Overhead Carry (kept cuff-as-syn, declined cuff-as-primary co-primary). Queued list cleared — no EMG overrides remain for 45f.
