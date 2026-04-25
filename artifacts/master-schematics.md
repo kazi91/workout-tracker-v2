@@ -282,7 +282,7 @@ A workout tracking app with a React web frontend (mobile-only layout). Data stor
 
 ---
 
-### Dexie Schema String (locked — D1 resolved; v3 lock Session 41)
+### Dexie Schema String — v2 (current — locked D1; codebase runs this)
 
 ```
 users:            '++id, email'
@@ -296,6 +296,23 @@ logSets:          '++id, logExerciseId'
 bodyMetrics:      '++id, userId'
 dailyCheckins:    '++id, userId'
 ```
+
+### Dexie Schema String — v3 (planned — locked Session 41; executes at CE1+CE2 coordinated build, Session 47+)
+
+```
+users:            '++id, email'
+exercises:        '++id, name, parentExerciseId'
+programs:         '++id, userId'
+workouts:         '++id, programId'
+workoutExercises: '++id, workoutId'
+workoutLogs:      '++id, userId'
+logExercises:     '++id, workoutLogId'
+logSets:          '++id, logExerciseId'
+bodyMetrics:      '++id, userId'
+dailyCheckins:    '++id, userId'
+```
+
+Diff vs v2: only `exercises` line changes — gains a secondary index on `parentExerciseId` (CE2; for fast `WHERE parentExerciseId = X` chevron-expansion queries). All v3 additive nullable fields (`primaryMuscles`, `secondaryMuscles`, Tier 3 forward-compat, `users.rpeEnabled`, `logSets.rpe`, etc.) are stored on the records but not indexed — listed as schema-string fields would imply indexing, which they don't need at MVP scale.
 
 > **Schema version — planned v3 bump (Decision #28, locked Session 41; executes when CE1 build session lands).**
 >
