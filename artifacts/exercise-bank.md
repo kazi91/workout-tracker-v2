@@ -2,7 +2,7 @@
 
 > **Purpose:** Single source of truth for the exercise library — current seed, priority-ordered expansion list, parent/variant rules, and open decisions. Future home for per-exercise tutorial content.
 > **Status:** Research/planning draft. No seed changes until tiers + variant architecture are approved.
-> **Last updated:** 2026-04-23 (session 44 2nd follow-up)
+> **Last updated:** 2026-04-24 (session 45f CLOSED)
 
 ---
 
@@ -49,7 +49,7 @@ Derived from CE1 D1/D3 (locked).
 - **P4** — Gated behind feature toggle (Olympic, plyo, KB, conditioning).
 - **P5** — Variant entry. Nested under a parent via `parentExerciseId` (CE2 schema locked; bundled into CE1's v3 migration).
 
-**Counts:** Seed=29, P0=9, P1=56, P2=53, P3=11, P4=30, P5=25 → **184 additions, 213 total library.**
+**Counts:** Seed=29, P0=9, P1=56, P2=53, P3=11, P4=31, P5=25 → **185 additions, 214 total library.** *(P4 30→31 in session 45f: Sled Pull split into backward-walk default + Sled Row NEW.)*
 
 *Note: P1 and P2 tables show numbering gaps where entries were moved/deduped in Batch C. Gaps are intentional — renumbering 100+ rows would cost more than it's worth.*
 
@@ -64,7 +64,7 @@ From [`src/db/seed.ts`](../src/db/seed.ts).
 | 1 | Bench Press | Chest | Flat barbell, touch-and-go (default) |
 | 2 | Incline Barbell Bench Press | Chest | Flat bench inclined 30–45° |
 | 3 | Dumbbell Fly | Chest | |
-| 4 | Push-Up | Chest | |
+| 4 | Push-Up | Chest | **12th library parent** (promoted session 45f). Default = bodyweight, shoulder-width hands, neutral torso. Variants: Clap Push-Up (P4 #15 — explosive). |
 | 5 | Cable Crossover | Chest | Default = mid-height. Parent of Cable Crossover — High (P5 #24) and Cable Crossover — Low (P5 #25). P2 Mid deduped session 40 (was redundant with this default). |
 | 6 | Deadlift | Back | Conventional (default) |
 | 7 | Pull-Up | Back | Pronated grip |
@@ -255,7 +255,7 @@ Includes Sumo Deadlift and Stiff-Leg Deadlift **graduated from P5** (different m
 
 ---
 
-## P4 — Toggle-gated (30)
+## P4 — Toggle-gated (31)
 
 Default off. Each gated by its respective feature toggle per `memory/project_feature_toggle_menu.md`.
 
@@ -282,7 +282,7 @@ Default off. Each gated by its respective feature toggle per `memory/project_fea
 | 2 | Broad Jump | |
 | 3 | Depth Jump | |
 | 4 | Pogo Hop | |
-| 5 | Clap Push-Up | |
+| 5 | Clap Push-Up | Structurally a variant of Push-Up (seed #4) via `parentExerciseId` — tier remains P4 (plyo toggle-gated). Session 45f: promotes Push-Up to 12th library parent. |
 | 6 | Medicine Ball Slam | |
 | 7 | Medicine Ball Chest Throw | |
 
@@ -297,17 +297,18 @@ Default off. Each gated by its respective feature toggle per `memory/project_fea
 | 5 | Turkish Get-Up | |
 | 6 | KB Single-Leg Deadlift | |
 
-### Conditioning (7)
+### Conditioning (8)
 
 | # | Exercise | Notes |
 |---|---|---|
 | 1 | Sled Push | |
-| 2 | Sled Pull | |
+| 2 | Sled Pull | Default = backward-walk gait (leg-primary). Session 45f split out row-style variant as Sled Row (#8). |
 | 3 | Assault Bike | |
 | 4 | Rower | |
 | 5 | Ski Erg | |
 | 6 | Burpee | |
 | 7 | Sprint | |
+| 8 | Sled Row | **Added session 45f.** Row-style sled pull (back-primary). Split from original ambiguous "Sled Pull" entry. |
 
 ---
 
@@ -315,7 +316,7 @@ Default off. Each gated by its respective feature toggle per `memory/project_fea
 
 Nested under a parent exercise via `parentExerciseId` (CE2 schema locked; bundled into CE1's v3 migration). Exposure = chevron expander + search indexing (EB2 locked).
 
-Parent defaults:
+Parent defaults (12 library parents):
 - **Squat** default = high-bar back squat
 - **Deadlift** default = conventional
 - **Bench Press** default = flat barbell, touch-and-go
@@ -327,6 +328,7 @@ Parent defaults:
 - **Barbell Curl** default = standing, standard straight-bar form
 - **Plank** default = front plank on forearms, bodyweight
 - **Cable Crossover** default = mid-height, standard pec-fly path
+- **Push-Up** default = bodyweight, shoulder-width hands, neutral torso *(promoted to parent in session 45f via Clap Push-Up P4 #15 variant linkage)*
 
 | # | Parent | Variant | Notes |
 |---|---|---|---|
@@ -560,3 +562,12 @@ Single Dexie v3 bump bundles both CE1 and CE2 schema changes (per CE2 plan). No 
   - **Net impact:** ~115 lines lighter across 8 guides; ~24 lines added back as Quick cues; one new mid-set value-add per guide.
   - **Skipped:** What You Should Feel ↔ Common Mistakes dedupe (apparent duplicates serve different framings — felt vs visible — pulling them thins the felt-diagnostic block too much; left as-is).
   - **No catalog, schema, or seed changes.**
+
+- **2026-04-24 (session 45f — CLOSED)** —
+  - **P4 #25 Sled Pull split** into backward-walk default (leg-primary) + new P4 #31 Sled Row (back-primary). Conditioning count 7 → 8; P4 count 30 → 31; library total 213 → 214.
+  - **Push-Up (seed #4) promoted to 12th library parent** via Clap Push-Up (P4 #15) variant linkage. Parent defaults list extended. Default = bodyweight, shoulder-width hands, neutral torso. Clap Push-Up flagged with `parentExerciseId` → Push-Up (tier remains P4, plyo toggle-gated; same model as Chin-Up P0 #4 + Neutral-Grip Pull-Up P1 #8 structural-variant treatment).
+  - **19 P4 entries tagged in `seed-draft.md`** (see `## Session 45f` section): 7 Plyometric + 4 of 6 Kettlebell + 8 Conditioning. **12 parked** (Power/Olympic 10 + KB Clean + KB Snatch) pending Olympic-lift template research.
+  - **2 new EMG overrides** added to principles-doc reference list: Turkish Get-Up `[abs, obliques]` (first library abs+obliques pairing); Sprint `[hamstrings, glutes]` (novel max-velocity mechanics outside existing templates).
+  - **Panel-of-coaches consult methodology** introduced by user (Schoenfeld / Haff / Tsatsouline / Dan John / Nuckols — applied per entry before tag proposal).
+  - **New Tier 3 `bias: 'explosive'` value** introduced by Clap Push-Up (plyo variant of standard Push-Up). Principles doc conventions table updated.
+  - **No code, no `src/` edits, no memory-file edits.**

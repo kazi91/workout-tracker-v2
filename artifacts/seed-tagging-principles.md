@@ -164,6 +164,40 @@ Apply the template as starting point. Override with exercise-specific rationale 
 - Secondary: full trunk — `abs`, `obliques`, `lowerBack` (all stab)
 - Notes: main place `neck` might legitimately appear (heavy load bracing).
 
+### Olympic lift / ballistic triple extension (session 45g)
+
+Pattern signature: explosive hip-knee-ankle extension (second pull / drive) + grip-and-finish phase (catch in front rack, overhead, or pressed-out lockout). Three sub-patterns within one template family. **Library kinetic-chain ceiling lives here** — Snatch family at 12 sec, Clean & Jerk at 13 sec; both supersede Overhead Carry (P3 #10, 10 sec) as the heaviest-tagged exercises in the library.
+
+**Sub-pattern A — Pulling lifts (Clean / Snatch family + dedicated pulls)**
+
+Base = Hinge template (second pull = ballistic hinge per Garhammer / Häkkinen EMG). Add catch-phase syn for the receive position.
+
+- Primary: `glutes`, `hamstrings` (co-primary — Hinge default)
+- Base secondaries (all variants): `quads` (syn — scoop transition + finish), `upperTraps` (syn — explosive shrug = signature OL elevation), `calves` (syn — triple extension finish), `lats` (syn — bar-close cue + bar-drift bail-out), `lowerBack` (stab), `forearms` (stab — grip), `upperBack` (stab — bar stays close)
+- Pulls only (no catch): base map = 7 sec
+- Clean variants (front rack catch): + `frontDelts` (syn — rack catch) + `abs` (stab — front rack axial) = 9 sec
+- Snatch variants (overhead catch): + `frontDelts` (syn — punch-through + lockout) + `triceps` (syn — overhead lockout) + `sideDelts` (syn — high pull abduction + turnover) + `serratus` (syn — overhead scap upward rotation) + `abs` (stab — overhead axial) + `rotatorCuff` (stab — Rule 5 overhead) = 12 sec; promote `upperBack` stab → syn (Poliquin snatch-grip — wider grip = active scap retraction)
+- Clean & Jerk: union of Clean variants map + jerk additions (`triceps` syn lockout + `sideDelts` syn vertical-push + `serratus` syn overhead scap + `rotatorCuff` stab Rule 5) = 13 sec [LIBRARY KINETIC-CHAIN CEILING]
+
+**Sub-pattern B — Jerks + Push Press (overhead drive)**
+
+NOT hinge. This is Vertical push template + leg drive. Rep is defined by overhead lockout, not pull power.
+
+- Primary: `frontDelts` single (per OHP precedent — co-primary `[frontDelts, quads]` rejected; leg drive is brief assist, lockout is the rep)
+- Secondary: full Vertical push template (`sideDelts` syn, `triceps` syn, `upperTraps` syn, `serratus` syn, `rotatorCuff` stab, `abs` stab) + leg drive (`quads` syn, `glutes` syn, `hamstrings` syn — drive hip extension recruited alongside glutes, `calves` syn — triple extension drive finish) + `upperBack` (stab — bar-stack through dip; bails out forward bar drift, the #1 jerk error) = 11 sec
+- Push Press variant: same map; reorder `triceps` first (continuous press through full ROM)
+- Split Jerk variant: same map (split-leg catch is balanced bilateral; no oblique add)
+
+**Sub-pattern C — KB ballistic variants**
+
+Base = KB Swing map (NOT barbell-clean derivative — per Tsatsouline framework, KB ballistics are hinge-with-catch).
+
+- Primary: `glutes`, `hamstrings` (co-primary — KB Swing Hinge base)
+- Base secondaries: `forearms` (stab — grip on KB handle ballistic), `lowerBack` (stab — hinge axial), `abs` (stab — anti-extension at top lockout), `obliques` (stab — single-arm anti-rotation per Suitcase Carry / Meadows Row / KB SL-DL precedent)
+- KB Clean (rack catch): + `frontDelts` (syn — rack receive) + `upperTraps` (syn — finish shrug, real-world execution) + `calves` (syn — triple extension parallel) = 7 sec
+- KB Snatch (overhead catch): + `frontDelts` (syn — overhead drive + lockout) + `triceps` (syn — overhead lockout) + `upperTraps` (syn — punch-through finish) + `sideDelts` (syn — early turnover lateral abduction) + `serratus` (syn — overhead scap) + `rotatorCuff` (stab — Rule 5 overhead heavy ballistic single-arm) = 10 sec
+- Note: `upperBack` intentionally absent on both KB variants (single-arm offset KB doesn't drive scap-pack against a bar the way barbell does)
+
 ### Curl (elbow flexion)
 - Primary: `biceps`
 - Secondary: `brachialis` (syn), `forearms` (syn — brachioradialis)
@@ -223,7 +257,7 @@ Apply the template as starting point. Override with exercise-specific rationale 
 | `gripWidth` | Only when implied by exercise name | `narrow` / `medium` / `wide` |
 | `gripOrientation` | Populate for curls / rows / pulls | `pronated` / `supinated` / `neutral` / `alternating` |
 | `stanceWidth` | Only when implied by exercise name | `narrow` / `shoulder` / `wide` / `sumo` |
-| `bias` | Populate for named-bias variants only | `paused` / `tempo` / `partial` / `lengthened` / `peak-contraction` |
+| `bias` | Populate for named-bias variants only | `paused` / `tempo` / `partial` / `lengthened` / `peak-contraction` / `explosive` |
 | `jointLoad` | Skip. Empty array `[]` on every entry. | — |
 
 ---
@@ -241,6 +275,8 @@ Research depth scales with priority tier (matches the tiered budget from the str
 | P4 | Light — anatomy-default | No research |
 
 **Primary references to trust** (order of preference): Schoenfeld (EMG + hypertrophy studies), Contreras (glute-specific), Boeckh-Behrens (EMG aggregates), peer-reviewed systematic reviews.
+
+**Six-coach consult panel (formalized session 45f, expanded session 45g):** Schoenfeld (EMG / hypertrophy) / Haff (NSCA Olympic-lift authority) / Tsatsouline (hardstyle KB) / Dan John (five-movement framework) / Nuckols (practical strength) / **Poliquin** (strength/structural — added 45g). Apply panel-of-six per entry on novel-pattern lifts (Olympic, KB-ballistic, plyometric, sprint mechanics). Poliquin lens specifically governs: snatch-grip upperBack syn promotion + cuff stab on overhead heavy free-path.
 
 **Secondary references (use with skepticism):** RP, T-Nation, credible YouTube anatomy (JeffNippard, AthleanX with filter).
 
@@ -325,9 +361,23 @@ Living list. Append each entry that gets co-primary treatment during Sessions 45
 - **Glute-Ham Raise (P2 #12)** — single-primary `hamstrings`. Co-primary `[hamstrings, glutes]` considered but rejected per Hip Thrust precedent (glutes is meaningful contributor but rep fails when hamstrings give out, not glutes).
 - **Dumbbell Pullover (P2 #5)** — single-primary `chest` per conventional categorization. Co-primary `[chest, lats]` considered + rejected as default; back-bias is form variation, not the canonical default. Flagged for end-of-curation audit if user prefers back-primary or co-primary treatment.
 
-### Queued for 45f onward
+### Non-parents (session 45f)
 
-- *(none — EMG override queue cleared by 45e Narrow-Grip Pull-Up lock)*
+- **Turkish Get-Up (P4 #22)** — `[abs, obliques]` — multi-planar full-body stability lift where trunk control across supine-to-standing phases is rep-limiter; abs drives anti-extension through overhead phases, obliques drives lateral flexion through side-bridge/roll phases. **First library entry pairing `abs` + `obliques` as co-primary.** Rep-fails when trunk control collapses in either plane; shoulder lockout is load-bearing but not the rep-limiter (user-locked, 2026-04-24). Group derivation: `core` (abs-first tiebreak).
+- **Sprint (P4 #30)** — `[hamstrings, glutes]` — max-velocity locomotion; ham-dominant hip extension + knee-flex recovery + glute-driven hip extension through gait cycle. Not covered by any existing movement-pattern template (sprint mechanics are distinct from Hinge / Lunge / squat-pattern plyos). **Only library entry tagged with ham-first primary order.** Rationale: hamstring strain is most common sprinting injury — reflects rep-limiter reality per Schoenfeld/Nuckols/Haff panel consensus (2026-04-24).
+
+### Non-parents (session 45g)
+
+- **Power Clean / Hang Clean (P4 #1, #2)** — `[glutes, hamstrings]` per OL Pulling sub-pattern (Hinge base + front-rack catch additions). Same map per Rule 4 (hang start = timing variant). 9 sec each. Canonical Olympic-clean exemplar.
+- **Clean & Jerk (P4 #3)** — `[glutes, hamstrings]` per OL Pulling + Jerk union. **13 secondaries — LIBRARY KINETIC-CHAIN CEILING** (supersedes Overhead Carry at 10; Snatch at 12). Only library entry combining two complete OL phases. Six-coach panel consensus per `seed-draft.md` § 45g.
+- **Power Snatch / Hang Snatch (P4 #4, #5)** — `[glutes, hamstrings]` per OL Pulling sub-pattern + overhead-catch additions. **12 secondaries — snatch-family library ceiling.** UpperBack syn (not stab) per Poliquin snatch-grip rationale (wider grip = active scap retraction).
+- **Push Jerk / Split Jerk / Push Press (P4 #6, #7, #10)** — `frontDelts` single-primary per OL Jerk sub-pattern (Vertical push template + full leg drive: quads + glutes + hams + calves syn). **Co-primary `[frontDelts, quads]` rejected** per OHP precedent (leg drive is brief assist, lockout is the rep — same logic as 45b OHP rejection). 11 secondaries each. Canonical Olympic-jerk exemplar.
+- **Clean Pull / Snatch Pull (P4 #8, #9)** — `[glutes, hamstrings]` per OL Pulling sub-pattern (no catch). Cleanest exemplar of base OL Pulling map. 7 sec each. Snatch Pull promotes `upperBack` stab → syn (Poliquin snatch-grip).
+- **KB Clean / KB Snatch (P4 #20, #21)** — `[glutes, hamstrings]` per OL KB-ballistic sub-pattern (KB Swing Hinge base + catch additions, NOT barbell-clean derivative — Tsatsouline framework). KB Clean 7 sec; KB Snatch 10 sec.
+
+### Queued for 46+ onward
+
+*Queue empty as of session 45g — all parked entries resolved. Library re-curation complete: 213 → 214 entries (P4 30 → 31 added in 45f; queue clear in 45g).*
 
 ### Rejected co-primary claims (for reference)
 
@@ -335,6 +385,7 @@ Living list. Append each entry that gets co-primary treatment during Sessions 45
 - **Squat (high-bar)** — quads only. Glutes substantial but secondary; co-primary would misrepresent the exercise's knee-dominant bias. Front Squat and Low-Bar shift emphasis, not map.
 - **OHP / Overhead Press** — `frontDelts` only. SideDelts + triceps strong synergists but not co-primary. Lock during 45b.
 - **Lat Pulldown** — `lats` only. UpperBack engaged but to a lesser degree than in bodyweight Pull-Up. Template default stands.
+- **Push Jerk / Split Jerk / Push Press (45g)** — `frontDelts` single only. Co-primary `[frontDelts, quads]` considered + rejected — leg drive is a brief assist that launches the bar; rep is defined by overhead lockout, which front delts drive. Same logic as OHP rejection. Group derivation = `shoulders`.
 
 ---
 
@@ -347,3 +398,5 @@ Living list. Append each entry that gets co-primary treatment during Sessions 45
 - **2026-04-23 (session 45c CLOSED)** — EMG co-primary reference list updated. Close-Grip Bench Press moved from "Queued for 45c onward" → new "Non-parents (session 45c)" section (`[chest, triceps]` per Barnett 1995). "Queued" section renamed to "Queued for 45d onward" and now contains only Narrow-Grip Pull-Up (45e). No rule/template patches this session — 45c applied principles as-written.
 - **2026-04-23 (session 45d CLOSED)** — No rule/template patches; no EMG co-primary additions. 45d applied principles as-written. Rule 6 `lowerBack (syn)` exception explicitly exercised on 45° Hyperextension (P1 #51) — only cases in library where lowerBack is promoted to synergist are Good Morning (P2 #13, not yet tagged) and 45° Back Extension. Narrow-Grip Pull-Up remains the sole queued EMG override for 45e.
 - **2026-04-23 (session 45e — CLOSED)** — EMG co-primary reference list updated. **New "Non-parents (session 45e)" section** with 4 entries: Narrow-Grip Pull-Up (closes the EMG-override queue per Pull-Up Rule 1 override), Reverse Curl (template-default per pronated-grip Curl branch), Decline Sit-Up (sit-up-family canonical co-primary), Zercher Carry (unique upperBack+biceps signature). **3 new rejected-co-primary entries** added: Reverse-Grip Lat Pulldown (no bodyweight amplification → not Pull-Up override case), Glute-Ham Raise (Hip Thrust-style single-primary), Dumbbell Pullover (chest-default per conventional categorization). Rule 6 `lowerBack (syn)` explicit-exception list filled to capacity: 3 library entries (Good Morning P2 #13, 45° Hyperextension P1 #51, Reverse Hyperextension Machine P2 #42). Rule 5 `rotatorCuff` synergist exception extended: 2 library cases (Face Pull from 45b + Overhead Carry P3 #10). **1 Rule 5 patch APPLIED at close-out:** `rotatorCuff` may now be tagged as **primary** on dedicated cuff-isolation exercises where cuff is the sole prime mover (Cable ER P2 #19 + DB ER P2 #20 — only library cases). Group derivation for these entries = `shoulders` (cuff stays excluded from muscle-target filter chips in picker; exercises group under Shoulders for catalog browsing). User-rejected alternative for Overhead Carry (kept cuff-as-syn, declined cuff-as-primary co-primary). Queued list cleared — no EMG overrides remain for 45f.
+- **2026-04-24 (session 45f — CLOSED)** — EMG co-primary reference list updated. **New "Non-parents (session 45f)" section** with 2 entries: Turkish Get-Up `[abs, obliques]` (first library pairing of abs+obliques — multi-planar stability lift per user preference over draft's frontDelts-single); Sprint `[hamstrings, glutes]` (max-velocity locomotion — novel outside any existing template per panel consensus). **"Queued for 46+ onward" section added** with 12 parked entries (Olympic 10 + KB Clean + KB Snatch) pending Olympic-lift template research. **Tier 3 `bias` conventions expanded:** added `explosive` value (introduced by Clap Push-Up P4 #15 as plyo variant of Push-Up). **Parent catalog grows 11 → 12:** Push-Up promoted from seed non-parent to 12th library parent via Clap Push-Up variant linkage (CE2 decision "any parent-level exercise qualifies as parent" — Push-Up default = bodyweight, shoulder-width hands, neutral torso). **Panel-of-coaches consult methodology** introduced by user — 5-coach panel (Schoenfeld / Haff / Tsatsouline / Dan John / Nuckols) applied per entry before proposal. Zero rule/template patches (principles doc applied as-written except for `bias` convention addition). Cross-curation validation pass executed alongside: 14 existing 45a–e overrides re-verified valid; parent/variant FK consistency confirmed across 108-entry corpus; group-derivation spot checks clean.
+- **2026-04-24 (session 45g — CLOSED)** — **Major template + panel patch.** (1) **New movement-pattern template codified:** "Olympic lift / ballistic triple extension" with 3 sub-patterns (Pulling = Hinge base + catch additions; Jerk = Vertical push + leg drive; KB-ballistic = KB Swing base + catch additions). Inserted after Loaded carry block. (2) **Six-coach consult panel formalized + expanded:** Poliquin added alongside Schoenfeld / Haff / Tsatsouline / Dan John / Nuckols; panel block added under EMG reference policy. Poliquin lens governs snatch-grip upperBack syn promotion + cuff stab on overhead heavy free-path. (3) **EMG co-primary reference list:** "Non-parents (session 45g)" section added with 6 entry-groups covering all 12 parked OL/KB-ballistic entries (Power/Hang Clean, Clean & Jerk, Power/Hang Snatch, Push/Split Jerk + Push Press, Clean/Snatch Pull, KB Clean/KB Snatch). Push/Split Jerk + Push Press also added to "Rejected co-primary claims" section (`[frontDelts, quads]` rejected per OHP precedent). **"Queued for 46+ onward" section cleared** — no parked entries remain in seed re-curation. (4) **NEW LIBRARY KINETIC-CHAIN CEILING:** Clean & Jerk at 13 secondaries (supersedes Overhead Carry at 10); Power/Hang Snatch at 12 (snatch-family ceiling). (5) **Tagging accuracy lens** formally codified per `feedback_tagging_accuracy.md` (saved 2026-04-24 outside repo per CLAUDE.md auto-memory): correct-execution + common-mistake recruitment scope. NOT extreme edge cases. Drove broad lats-on-OL-pulls + upperBack-stab-on-jerks + calves-on-KB-Clean + sideDelts-on-KB-Snatch additions. **Library re-curation complete:** 213 → 214 entries; all 120 sessions 45a–g entries tagged across 7 sub-sessions.
