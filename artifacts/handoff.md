@@ -1,5 +1,71 @@
 # HANDOFF — NEW INSTANCE START HERE
-Last updated: 2026-04-23 (session 45b pt. 2 CLOSED — all 27 entries drafted + close-out complete; sanity checks pass, exception log + EMG co-primary list + revision logs updated; ready for Session 45c.)
+Last updated: 2026-04-24 (session 46 CLOSED — pre-build gap-audit batch resolved 11 items, 7 already-done audit-only + 4 newly fixed; ready for Session 47+ CE1/CE2 v3 build. Seed re-curation COMPLETE (45a–g, 214/214 entries). Compact catch-up block below covers sessions 45c through 46; per-session detail lives in `recap.md` § SESSION HISTORY.)
+
+## Sessions 45c–46 catch-up (2026-04-23 to 2026-04-24) — CONSOLIDATED
+
+Six sessions ran back-to-back without per-session handoff entries. Compact summaries below; full detail in `artifacts/recap.md` § SESSION HISTORY.
+
+### Session 45c (2026-04-23) — P1 upper body, 27 entries CLOSED
+- 6 Chest + 5 Back + 9 Shoulders + 5 Biceps + 2 Triceps tagged in `seed-draft.md` § Session 45c.
+- 1 EMG override locked: Close-Grip Bench `[chest, triceps]` (Barnett 1995) — closes principles-doc queue for 45c.
+- 6 exceptions logged: Close-Grip Bench co-primary; Arnold Press 6-sec (Vertical push); Machine Assisted Dip inherited co-primary on machine; Iso-Lat High Row naming/template mismatch; Landmine Press hybrid angle; Upright Row hybrid pattern.
+- Machine discipline applied consistently (Machine Chest Press 2 sec, Machine SP 4 sec, Machine Assisted Pull-Up 5 sec). Pec Deck + Rear Delt Pec Deck held to strict isolation.
+
+### Session 45d (2026-04-23) — P1 lower body + core, 27 entries CLOSED
+- 3 Hinge + 8 Quads + 2 Hamstrings + 4 Glutes + 2 Calves + 7 Core + 1 Triceps catch-up tagged in `seed-draft.md` § Session 45d.
+- No new EMG overrides; principles applied as-written.
+- 6 exceptions logged: Front Squat 6-sec (Squat precedent w/ upperBack-for-calves swap); Sumo DL adductor re-add (closes 45a Deadlift loop); 45° Hyperextension `lowerBack (syn)` per Rule 6 explicit exception; Bird Dog glutes-on-core; Side Plank abductors + obliques-primary; Machine Tricep Extension scope catch-up from 45c.
+
+### Session 45e (2026-04-23) — P5 + P2 + P3, 89 entries CLOSED
+- 25 P5 variants + 53 P2 + 11 P3 tagged in `seed-draft.md` § Session 45e. Largest single sub-session.
+- 1 EMG override locked: Narrow-Grip Pull-Up `[lats, biceps]` (Pull-Up Rule 1 override) — closes principles-doc queue for 45e.
+- 18 exceptions logged. Most consequential: **Cable ER + DB ER `rotatorCuff` as primary** per new Rule 5 Dedicated-cuff-isolation exception (principles-doc Rule 5 patched concurrently); Overhead Carry kept cuff-as-syn (Rule 5 face-pull-style exception extended); Reverse Curl + Decline Sit-Up + Zercher Carry added to EMG list; Loaded Carry template flags 4 entries at 6+ secondaries; Good Morning + Reverse Hyper close out Rule 6 lowerBack-syn explicit-exception list; Cable Y-Raise as canonical lowerTraps-primary; Zercher Carry unique `[upperBack, biceps]` co-primary.
+- 1 principles-doc Rule 5 patch APPLIED at close-out: cuff may be primary on dedicated cuff-isolation exercises (Cable ER + DB ER only library cases).
+
+### Session 45f (2026-04-24) — P4 plyo + KB + conditioning, 19 entries CLOSED + 12 parked
+- 7 Plyometric + 4 of 6 Kettlebell + 8 Conditioning tagged in `seed-draft.md` § Session 45f.
+- 12 entries parked pending Olympic-lift template research (deferred to 45g).
+- 2 new EMG overrides: Turkish Get-Up `[abs, obliques]` (first library abs+obliques pairing); Sprint `[hamstrings, glutes]` (max-velocity locomotion novel outside any template).
+- **Push-Up promoted to 12th library parent** via Clap Push-Up variant linkage. Exercise-bank.md updated concurrently.
+- **Sled Pull split** into backward-walk default (P4 #25) + Sled Row (P4 #31 NEW) per user direction. Library 213 → 214; P4 30 → 31.
+- New Tier 3 `bias: 'explosive'` value introduced (Clap Push-Up).
+- **Panel-of-coaches consult methodology introduced by user** (Schoenfeld / Haff / Tsatsouline / Dan John / Nuckols — applied per entry).
+- Cross-curation validation pass executed alongside (14 existing 45a–e overrides re-verified valid; FK consistency clean).
+
+### Session 45g (2026-04-24) — P4 OL + KB-ballistic, 12 parked entries CLOSED; SEED RE-CURATION COMPLETE 214/214
+- 12 previously-parked entries tagged in `seed-draft.md` § Session 45g: Group A Cleans (Power, Hang, C&J) + Group B Snatches (Power, Hang) + Group C Pulls (Clean Pull, Snatch Pull) + Group D Jerks/Push Press (Push Jerk, Split Jerk, Push Press) + 2 KB-ballistic (KB Clean, KB Snatch).
+- **New movement-pattern template codified** in principles doc: "Olympic lift / ballistic triple extension" with 3 sub-patterns (Pulling = Hinge base + catch additions; Jerk = Vertical push + leg drive; KB-ballistic = KB Swing base + catch additions).
+- **Six-coach panel expanded:** Poliquin formally added alongside the 5-coach panel from 45f. Poliquin lens drove snatch-grip upperBack syn promotion + cuff stab on overhead heavy free-path.
+- **Tagging accuracy lens formally codified** per `feedback_tagging_accuracy.md` (saved outside repo per CLAUDE.md auto-memory): correct-execution + common-mistake recruitment scope. NOT extreme edge cases. Drove broad lats-on-OL-pulls + upperBack-stab-on-jerks + calves-on-KB-Clean + sideDelts-on-KB-Snatch additions.
+- **NEW LIBRARY KINETIC-CHAIN CEILING:** Clean & Jerk at 13 secondaries; Power/Hang Snatch at 12 — supersede Overhead Carry (10) per six-coach consensus on OL full-body demand.
+- 4 new EMG overrides added (Olympic Cleans + Snatches + Jerks + KB-ballistic).
+- Cross-curation validation: 16 existing overrides re-verified valid; group-derivations clean across full 120-entry curation corpus.
+- **Library re-curation COMPLETE** as of 45g close-out. All 214 entries tagged. `seed-draft.md` ready for compilation to `src/db/seed.ts` at Session 47+ build.
+- Catch-up: Session 45f history entry — missing from prior recap.md close-out — added retroactively in 45g.
+
+### Session 46 (2026-04-24) — Pre-build gap-audit batch CLOSED (11 items)
+- Pre-edit audit revealed 7 of 8 Pre-build items already resolved inline during sessions 41–44 spec patching (gap-audit was authored before some of those sessions completed; the work happened along the way but the audit doc was never updated).
+- **Already-resolved (audit-log only):** GA-02 (`ExerciseService.create()` already includes `parentExerciseId`); GA-17 (`logs.md` already shows `getByWorkoutLogId`); GA-18 (`statistics.md` already shows `getNeglectedGroups`); GA-19 (Overview Dashboard table — no adherence row); GA-20 (`getAdherenceRate` not present in either service table); GA-44 (CE2 memory v3 schema example already drops `category`); GA-45 (CE2 memory already points to master-schematics § ExerciseSearchModal Spec).
+- **Newly fixed (4 items):** **GA-01** — added explicit v3 Dexie schema code block alongside v2 in `master-schematics.md` § Dexie Schema String; v3 string adds `parentExerciseId` as secondary index. Concurrent close-out of **GA-13** (mislabeled v3 header). **GA-42** — rewrote `project_state.md` body to post-45g state. **GA-43** — refreshed MEMORY.md project_state index line. **GA-46** — restructured `project_artifact_fixes.md`: 4 of 6 sub-items resolved (page title done s30; FAB states done s30; color-preview moot; CLAUDE.md Post-Demo Cleanup section deleted s28); remaining 2 (FAB size 56→52px, FAB position) re-pointed at GA-40 + GA-41 as canonical trackers.
+- Gap-audit.md status header bumped: **13/51 closed** (Pre-45a 2 + Pre-build 8 + Cross-conversation safety 3); 38 hygiene+cosmetic remain (deferrable).
+- **Methodology note:** Audit-before-edit revealed the cleanest way to "execute a batch" is to first verify each item's current state. The audit was a snapshot; specs evolve. Saved ~2 hr of redundant edits.
+
+### Carry-forward for Session 47+
+**Next code-touching session.** Required reading per recap.md CURRENT TASK:
+- `artifacts/recap.md`
+- `artifacts/master-schematics.md` § DB Schema (v2 + v3 strings) + § Service Layer + § Decisions #24–#29 + § ExerciseSearchModal Spec + § Muscle Taxonomy Model
+- `memory/project_ce1_final_scope.md` (D1–D9 locks)
+- `memory/project_ce2_schema_architecture.md` (5 architecture decisions + migration plan + variant-UX wiring + custom parent picker + deletion behavior + checklist)
+- `artifacts/seed-draft.md` (compilation source — 214 full-format entries across 7 sub-sessions)
+- `artifacts/seed-tagging-principles.md` (rule reference)
+
+Scope: Dexie v2→v3 migration; compile `seed-draft.md` → `src/db/seed.ts`; ExerciseSearchModal rewrite (Decision #27); per-set RPE input on SetRow; Profile RPE toggle. May span multiple sessions.
+
+### Methodology adopted during 45f-45g (carry into future curation work)
+- **Six-coach consult panel:** Schoenfeld / Haff / Tsatsouline / Dan John / Nuckols / Poliquin — applied per entry on novel-pattern lifts.
+- **Tagging accuracy lens** (`feedback_tagging_accuracy.md`): when two tag options both fit, pick the more anatomically accurate / credible-coach-defensible one. Scope = correct-execution + common-mistake recruitment. NOT extreme edge cases.
+
+---
 
 ## Session 45b pt. 2 (2026-04-23) — Main draft completed + close-out; Session 45b CLOSED
 
