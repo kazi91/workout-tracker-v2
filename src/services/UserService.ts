@@ -20,12 +20,16 @@ export async function getProfile(userId: number): Promise<User | null> {
 /**
  * Updates one or more profile fields for the given user.
  * Partial update — only the provided fields are written; others are untouched.
- * Called by: ProfilePage on blur (name, height, weight) and unit preference toggle.
+ * `rpeEnabled` (Decision #26) gates the per-set RPE input on SetRow.
+ * `trainingAge` (forward-compat for F30 onboarding / F37 Galpin recovery modifier).
+ * Called by: ProfilePage on blur and toggle handlers.
  * Returns: void
  */
 export async function updateProfile(
   userId: number,
-  data: Partial<Pick<User, 'name' | 'height' | 'weight' | 'unitPreference'>>,
+  data: Partial<
+    Pick<User, 'name' | 'height' | 'weight' | 'unitPreference' | 'rpeEnabled' | 'trainingAge'>
+  >,
 ): Promise<void> {
   await db.users.update(userId, data);
 }

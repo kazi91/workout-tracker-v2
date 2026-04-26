@@ -889,6 +889,43 @@ Run against the full 27 entries above (18 Seed non-parent + 9 P0 + 1 missed-pare
 
 ---
 
+### 12. Machine Row (P1 #9)
+
+*(Session 48 catch-up — closes 212→214 curation gap)*
+
+- **primary:** `lats`, `upperBack` *(co-primary per Horizontal pull template)*
+- **secondary:**
+  - `rearDelts` — synergist
+  - `biceps` — synergist
+  - `brachialis` — synergist
+  - `forearms` — stabilizer *(grip)*
+- **equipment:** `machine`
+- **parentExerciseId:** `null`
+- **Template:** Horizontal pull — chest-supported / pad-supported plate-loaded row. Inherits Iso-Lateral Low Row map (chest-support drops `lowerBack (stab)` per chest-support precedent).
+- **Group derivation:** lats → `back`.
+- **Notes:** 4 secondaries. Same map as Iso-Lateral Low Row (#10) and Chest-Supported DB Row (#7). Closes the 212→214 curation gap surfaced Session 48.
+
+---
+
+### 13. Neutral-Grip Pull-Up (P1 #8)
+
+*(Session 48 catch-up — closes 212→214 curation gap; structural variant referenced in 45e close-out at line 3242 but never tagged)*
+
+- **primary:** `lats`, `upperBack` *(co-primary; pure inheritance from Pull-Up parent — neutral grip not in EMG override queue, so no Rule 1 override applied)*
+- **secondary:**
+  - `biceps` — synergist
+  - `brachialis` — synergist
+  - `rearDelts` — synergist *(horizontal abduction component at top)*
+  - `forearms` — stabilizer *(grip)*
+- **equipment:** `bodyweight`
+- **gripOrientation:** `neutral`
+- **parentExerciseId:** `→ Pull-Up (Seed #7)` *(structural variant per CE2 architecture; inherits parent map — no divergence)*
+- **Template:** Vertical pull — Pull-Up override inherited.
+- **Group derivation:** lats → `back`.
+- **Notes:** 4 secondaries. Distinct from Chin-Up + Narrow-Grip Pull-Up which carry Rule 1 overrides (`[lats, biceps]`); Neutral-Grip retains parent map per principles-doc EMG policy (parallel-grip not in queued override list).
+
+---
+
 #### Shoulders (9)
 
 ### 12. Arnold Press (P1 #25)

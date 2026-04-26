@@ -67,10 +67,12 @@ export async function getPreviousData(
  * Adds a new set to a logExercise with empty weight/reps (0) and looks up previous data.
  * setNumber is assigned as the next integer (existing count + 1, 1-based).
  * previousWeight/previousReps populated from getPreviousData for the "Best" column.
+ * Optional `rpe` writes through unchanged — usually omitted (Decision #26: no pre-fill;
+ * value entered later via SetRow gated by users.rpeEnabled).
  * Called by: WorkoutDetailPage "+ Add Set" button on an exercise card.
  * Returns: the newly created LogSet with id populated.
  */
-export async function add(logExerciseId: number): Promise<LogSet> {
+export async function add(logExerciseId: number, rpe: number | null = null): Promise<LogSet> {
   const existing = await db.logSets.where('logExerciseId').equals(logExerciseId).toArray();
   const setNumber = existing.length + 1;
 
@@ -83,6 +85,7 @@ export async function add(logExerciseId: number): Promise<LogSet> {
     reps: 0,
     previousWeight: prev?.weight ?? null,
     previousReps: prev?.reps ?? null,
+    rpe,
   } as LogSet);
 
   const set = await db.logSets.get(id);
@@ -91,15 +94,16 @@ export async function add(logExerciseId: number): Promise<LogSet> {
 }
 
 /**
- * Updates weight and/or reps on a set. Auto-saves on input blur.
+ * Updates weight, reps, and/or RPE on a set. Auto-saves on input blur.
  * Weight is always stored in lb — caller must convert from kg before calling if user is metric.
- * Guards: weight must be >= 0; reps must be >= 0 and a whole number; both must be finite numbers.
+ * Guards: weight must be >= 0; reps must be >= 0 and a whole number;
+ * rpe must be 1–10 in 0.5 increments OR null (Decision #26 — null never blocks save).
  * Called by: SetRow onBlur handler after input validation passes.
  * Returns: void
  */
 export async function update(
   id: number,
-  data: Partial<Pick<LogSet, 'weight' | 'reps'>>,
+  data: Partial<Pick<LogSet, 'weight' | 'reps' | 'rpe'>>,
 ): Promise<void> {
   if (data.weight !== undefined) {
     if (!Number.isFinite(data.weight)) throw new Error('Enter a valid weight');
@@ -109,6 +113,12 @@ export async function update(
     if (!Number.isFinite(data.reps)) throw new Error('Enter a valid rep count');
     if (data.reps < 0) throw new Error('Reps must be 0 or greater');
     if (!Number.isInteger(data.reps)) throw new Error('Reps must be a whole number');
+  }
+  if (data.rpe !== undefined && data.rpe !== null) {
+    if (!Number.isFinite(data.rpe)) throw new Error('Enter a valid RPE');
+    if (data.rpe < 1 || data.rpe > 10) throw new Error('RPE must be between 1 and 10');
+    // 0.5-step check: rpe * 2 must be a whole number
+    if (!Number.isInteger(data.rpe * 2)) throw new Error('RPE must be in half-point increments');
   }
   await db.logSets.update(id, data);
 }

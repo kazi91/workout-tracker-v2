@@ -139,6 +139,48 @@ describe('update — guards', () => {
   });
 });
 
+// ── update — rpe (Decision #26) ────────────────────────────────────────────
+
+describe('update — rpe', () => {
+  let setId: number;
+
+  beforeEach(async () => {
+    const leId = await seedLogExercise();
+    const set = await add(leId);
+    setId = set.id!;
+  });
+
+  it('accepts whole numbers in 1–10', async () => {
+    await update(setId, { rpe: 8 });
+    expect((await db.logSets.get(setId))!.rpe).toBe(8);
+  });
+
+  it('accepts half-point increments', async () => {
+    await update(setId, { rpe: 7.5 });
+    expect((await db.logSets.get(setId))!.rpe).toBe(7.5);
+  });
+
+  it('accepts null to clear', async () => {
+    await update(setId, { rpe: 9 });
+    await update(setId, { rpe: null });
+    expect((await db.logSets.get(setId))!.rpe).toBeNull();
+  });
+
+  it('throws below 1', async () => {
+    await expect(update(setId, { rpe: 0.5 })).rejects.toThrow('RPE must be between 1 and 10');
+  });
+
+  it('throws above 10', async () => {
+    await expect(update(setId, { rpe: 10.5 })).rejects.toThrow('RPE must be between 1 and 10');
+  });
+
+  it('throws on non-half-point decimals', async () => {
+    await expect(update(setId, { rpe: 7.3 })).rejects.toThrow(
+      'RPE must be in half-point increments',
+    );
+  });
+});
+
 // ── deleteSet ──────────────────────────────────────────────────────────────
 
 describe('deleteSet', () => {

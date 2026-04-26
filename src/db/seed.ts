@@ -3,7 +3,7 @@
  * Triggered once by App.tsx when db.exercises.count() === 0.
  * Module-level flag guards against React Strict Mode double-invocation.
  *
- * Source: artifacts/seed-draft.md (sessions 45a–g, 212 tagged entries).
+ * Source: artifacts/seed-draft.md (sessions 45a–g + Session 48 P1 catch-up, 214 tagged entries).
  * Curation rules: artifacts/seed-tagging-principles.md.
  *
  * 2-pass insert: parents first, then variants resolve parentExerciseId via name lookup.
@@ -50,7 +50,7 @@ function e(
   };
 }
 
-// ── Catalog (212 entries) ──────────────────────────────────────────────────
+// ── Catalog (214 entries) ──────────────────────────────────────────────────
 
 export const SEED_ENTRIES: SeedEntry[] = [
   // ── Session 45a: 11 parents ──
@@ -254,6 +254,14 @@ export const SEED_ENTRIES: SeedEntry[] = [
   e('Overhead Dumbbell Extension', null, ['triceps'],
     [b('forearms'), b('rotatorCuff')],
     'dumbbell', { gripOrientation: 'neutral' }),
+  // Session 48 catch-up — 2 P1 entries surfaced in 212→214 curation gap audit
+  e('Machine Row', null, ['lats', 'upperBack'],
+    [s('rearDelts'), s('biceps'), s('brachialis'), b('forearms')],
+    'machine'),
+  // Neutral-Grip Pull-Up: structural variant of Pull-Up, pure inheritance (no Rule 1 override)
+  e('Neutral-Grip Pull-Up', 'Pull-Up', ['lats', 'upperBack'],
+    [s('biceps'), s('brachialis'), s('rearDelts'), b('forearms')],
+    'bodyweight', { gripOrientation: 'neutral' }),
 
   // ── Session 45d: 27 P1 lower-body + core ──
   e('Trap Bar Deadlift', null, ['glutes', 'hamstrings'],
@@ -736,7 +744,7 @@ export const SEED_ENTRIES: SeedEntry[] = [
 // ── Insertion ──────────────────────────────────────────────────────────────
 
 /**
- * Populates the exercises table with the 212-entry library on first install.
+ * Populates the exercises table with the 214-entry library on first install.
  * Idempotent: returns early if seedStarted flag set or table already populated.
  * 2-pass: parents inserted first (parentExerciseId: null), then variants resolve
  * parentExerciseId via name lookup against the just-inserted parents.
