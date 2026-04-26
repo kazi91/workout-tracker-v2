@@ -192,7 +192,8 @@
   background: none;
   border: none;
   cursor: pointer;
-  font-size: 22px;
+  font-size: 28px;
+  font-weight: 700;
   color: var(--color-text-secondary);
   transition: transform 0.15s;
 }

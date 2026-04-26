@@ -25,11 +25,12 @@ export async function getAll(): Promise<Exercise[]> {
 }
 
 /**
- * Filters the library by name substring + muscle tag matches + optional broad group.
- * Match semantics (D7): case-insensitive substring on `name`; OR muscle id / display
- * label (MUSCLE_LABELS) appears in primary/secondary tags. Background muscles
- * (neck, rotatorCuff) never surface via tag match (D6.4) — name match still works.
- * Empty query returns all entries (group-filtered if `group` provided).
+ * Filters the library by name substring + primary-muscle tag matches + optional broad group.
+ * Match semantics (D7, amended Session 53 #17): case-insensitive substring on `name`;
+ * OR muscle id / display label (MUSCLE_LABELS) appears in PRIMARY tags only. Secondary
+ * muscles never surface via tag match (e.g. "biceps" no longer flood-matches every row).
+ * Background muscles (neck, rotatorCuff) never surface via tag match (D6.4) — name match
+ * still works. Empty query returns all entries (group-filtered if `group` provided).
  * Group filter derived via getExerciseGroup() — no stored category column.
  * Called by: ExerciseSearchModal as user types or chip changes.
  * Returns: Exercise[] sorted alphabetically by name
@@ -51,11 +52,6 @@ function matchesMuscleTag(normalized: string, ex: Exercise): boolean {
     if (BACKGROUND_MUSCLES.has(m)) continue;
     if (m.toLowerCase().includes(normalized)) return true;
     if (MUSCLE_LABELS[m].toLowerCase().includes(normalized)) return true;
-  }
-  for (const sm of ex.secondaryMuscles) {
-    if (BACKGROUND_MUSCLES.has(sm.muscle)) continue;
-    if (sm.muscle.toLowerCase().includes(normalized)) return true;
-    if (MUSCLE_LABELS[sm.muscle].toLowerCase().includes(normalized)) return true;
   }
   return false;
 }

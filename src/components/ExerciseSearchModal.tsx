@@ -354,7 +354,6 @@ export default function ExerciseSearchModal({ onSelect, onClose }: ExerciseSearc
               <button className={styles.rowMain} onClick={() => onSelect(v)}>
                 <span className={styles.variantPrefix}>↳</span>
                 <span className={styles.exerciseName}>{v.name}</span>
-                {renderMuscleMeta(v)}
               </button>
               <div className={styles.rowActions}>
                 {v.isCustom && (
@@ -374,20 +373,16 @@ export default function ExerciseSearchModal({ onSelect, onClose }: ExerciseSearc
   }
 
   function renderMuscleMeta(ex: Exercise) {
+    // Session 53 #18: secondaries hidden from picker rows; F19 capsule UI restores
+    // role-tagged secondary visibility later. Future direction (post-EMG calibration):
+    // display top-N highest-activated muscles regardless of primary/secondary class.
     const primaries = ex.primaryMuscles.filter((m) => !BACKGROUND_MUSCLES.has(m));
-    const secondaries = ex.secondaryMuscles.filter((s) => !BACKGROUND_MUSCLES.has(s.muscle));
     return (
       <span className={styles.muscleMeta}>
         {primaries.map((m, i) => (
           <span key={`p-${m}`} className={styles.musclePrimary}>
             {MUSCLE_LABELS[m]}
-            {(i < primaries.length - 1 || secondaries.length > 0) && ', '}
-          </span>
-        ))}
-        {secondaries.map((s, i) => (
-          <span key={`s-${s.muscle}`} className={styles.muscleSecondary}>
-            {MUSCLE_LABELS[s.muscle]}
-            {i < secondaries.length - 1 && ', '}
+            {i < primaries.length - 1 && ', '}
           </span>
         ))}
       </span>
@@ -599,15 +594,12 @@ function roleClass(role: RoleState): string {
 }
 
 function matchesMuscleTag(normalized: string, ex: Exercise): boolean {
+  // Session 53 #17: primary-only muscle match (mirrors ExerciseService.matchesMuscleTag).
+  // Secondary muscles never surface via tag match — typing "biceps" no longer floods every pull.
   for (const m of ex.primaryMuscles) {
     if (BACKGROUND_MUSCLES.has(m)) continue;
     if (m.toLowerCase().includes(normalized)) return true;
     if (MUSCLE_LABELS[m].toLowerCase().includes(normalized)) return true;
-  }
-  for (const sm of ex.secondaryMuscles) {
-    if (BACKGROUND_MUSCLES.has(sm.muscle)) continue;
-    if (sm.muscle.toLowerCase().includes(normalized)) return true;
-    if (MUSCLE_LABELS[sm.muscle].toLowerCase().includes(normalized)) return true;
   }
   return false;
 }

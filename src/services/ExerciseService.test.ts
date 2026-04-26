@@ -85,9 +85,11 @@ describe('search', () => {
     expect(results.map((e) => e.name)).toEqual(['Lateral Raise']);
   });
 
-  it('matches secondary muscles', async () => {
+  it('does not match by secondary muscle (Session 53 #17)', async () => {
+    // Squat fixture has glutes as a secondary (synergist); after Session 53 #17,
+    // muscle text search is primary-only — typing a syn/stab muscle returns nothing.
     const results = await search('glutes');
-    expect(results.map((e) => e.name)).toEqual(['Squat']);
+    expect(results).toHaveLength(0);
   });
 
   it('does not surface entries via background-muscle tag match (D6.4)', async () => {
