@@ -1,944 +1,606 @@
-# HANDOFF — NEW INSTANCE START HERE
-Last updated: 2026-04-26 (session 52 CLOSED — partial Step 7 of 7. Vitest coverage shipped (26 ExerciseSearchModal cases, 130/130 across 11 files). **Decisions #30 + #31 + #32 locked + SetRow stepper rebuild + F40/F41 logged.** #32 = `bias` → `modifications` rename + multi-select reshape (`string[]` default `[]`); value enum extended with `deficit` to 7; word `bias` reserved for a future muscle-loading-emphasis field (deferred to next cycle / F39). Manual smoke + Issue Tracker scrub + remaining ~14-item smoke punch list deferred to Session 53. SetRow rebuilt with custom `[− input +]` pill stepper per cell (native browser spinner hidden via CSS); grid retuned (BEST 44px, LB `minmax(72px, 1fr)`, REPS 56px, RPE 76px, gap 2px, buttons 18×36); ExerciseCard column-header grid synced to same template so labels stay over inputs; save logic split into `saveWeight`/`saveReps`/`saveRpe` (blank field never fail-validates an adjacent field's save). Closes punch-list #2 (3+ digit weight clipping) and #3 (negative-value cap — buttons clamp at 0). F40 (picker filter revamp 3-row UX layout) locked; F41 (per-exercise `aliases: string[]` v4 schema bump) added — closes-by absorbs punch-list #4/#5/#14. Verification: tsc clean, vite build clean, 130/130 tests across 11 files. Punch-list state for Session 53 enumerated below.)
+# Handoff — Session History
+> Last touched: 2026-04-26 (consolidation sweep) — append-only; read on demand only.
+> Newest at top. What changed → see git log. Why we chose this → here.
 
-## Session 53 — punch-list triage + smoke (next session, queued)
+---
 
-**14 open items + 2 findings.** All emerged during Session 52 smoke setup. Each tagged with build-now feasibility vs needs-decision:
+## Session 53 (2026-04-26) — punch-list triage + smoke close-out
 
-**Quick wins (decision + build):**
-- **#6** ✅ CLOSED Session 53 — renamed `45° Hyperextension` → `Back Hyperextension` (Option C: drop angle now, plan parent slot for future 90° / Roman-chair variant). Glute-Ham Raise stays a peer entry — different muscle map, can't merge under Parent/Variant Rule. Edits: [seed.ts:303](../src/db/seed.ts#L303), [exercise-bank.md:168](exercise-bank.md#L168) curator note added.
-- **#13** ✅ CLOSED Session 53 — added Deficit RDL as variant of Romanian Deadlift. `bias: 'lengthened'` per [seed-tagging-principles.md:262](seed-tagging-principles.md#L262) enumerated set (locked over `'deficit'` — would have required principles patch + sweep). Edits: [seed.ts:407](../src/db/seed.ts#L407), [exercise-bank.md:352](exercise-bank.md#L352).
-- **#15** ✅ CLOSED Session 53 — renamed `B-Stance RDL` → `Staggered-Stance RDL`. F41 Closes-by row appended with `aliases: ["b-stance", "b stance"]` to preserve searchability after F41 ships. Edits: [seed.ts:622](../src/db/seed.ts#L622), [exercise-bank.md:246](exercise-bank.md#L246), [master-schematics.md:660](master-schematics.md#L660) F41 row.
+**Scope:** Step 7 close-out. 14 punch-list items + 2 findings from S52 smoke-setup processed.
 
-**Picker UX (need decision before build):**
-- **#1** ✅ DEFERRED Session 53 → F42. All three patches (label / total-display / two-fields) rejected as insufficient — needs dedicated bodyweight + added-resistance redesign cycle (likely v4 schema add: `LogSet.addedWeight` + `LogSet.userBodyweight` snapshot, plus `Exercise.loadModel` flag). Scope = pull-ups/dips/push-ups + select plyometrics with weighted progression. v4 bundling candidate with F40+F41. See [master-schematics.md F42](master-schematics.md#L661) and `memory/project_bodyweight_added_resistance.md`.
-- **#7** ✅ CLOSED Session 53 — added `autoCapitalize="sentences"` to picker custom-create name input only ([ExerciseSearchModal.tsx:420](../src/components/ExerciseSearchModal.tsx#L420)). User-specified semantics: first letter only, rest left to user. Differs from existing 10 inputs which still use `autoCapitalize="words"` — broader retroactive sweep deferred to user's later UI/formatting standards pass. Search input stays bare (it's a query).
-- **#9** ✅ DEFERRED Session 53 — no path chosen. Already covered by F40 (Row B equipment-chip filter — `'olympic lift'` is in the spec) and F32 (feature toggle menu absorbs per-dimension opt-ins). Implementation path picked when F40 / F32 land. No standalone work this cycle.
-- **#10** ✅ CLOSED Session 53 — Path B chosen (drill-down chips via F40 Row C, no taxonomy split). F40 spec annotated with 4 lock-ins: (1) state cleanup on group change, (2) any-primary filter semantics (so RDL surfaces under Hamstrings even though glutes is first primary), (3) conditional Row C visibility (≥2 sub-muscles), (4) 3-row chip stack UX cost flag for 480px. Tap-active-chip-again toggles off (today's behavior, no extra X button needed). See [master-schematics.md F40](master-schematics.md#L660). No code this session — F40 is Phase 6+.
-- **#11** ✅ DEFERRED Session 53 — cardio resolution waits on per-category tracking-options + toggle switches architecture being built first (F32 + F39 + multi-shape tracking). Cardio is the second consumer of that architecture, not a standalone build. F38 row + `memory/project_cardio_tracking.md` updated with dependency lock. No standalone work this cycle.
-- **#12** ✅ CLOSED Session 53 — Path A (always hide) shipped. Variant rows now render `↳ [name]` only; muscle meta removed. Edit: [ExerciseSearchModal.tsx:357](../src/components/ExerciseSearchModal.tsx#L357) — removed `renderMuscleMeta(v)` call from variant row block; helper still used by parent rows. **User direction note:** broader muscle-group declutter pass planned — this isn't a one-off, future picker UX work should lean toward less meta noise. No test edits needed (no test asserted on variant meta). **Sub-fix during smoke:** chevron glyph bumped 22px → 28px + `font-weight: 700` ([ExerciseSearchModal.module.css:195-196](../src/components/ExerciseSearchModal.module.css#L195)) — 44×44 tap target unchanged, only the visible `›` enlarged for tap-target perception. Path A redesign (row-tap-to-expand, two-tap-to-select) considered + rejected — would have caused two-tap-select regression on the most common action.
+**Decisions / direction:**
+- **#1 (bodyweight) → F42.** All three patches (label / total-display / two-fields) rejected as insufficient. Why: pull-ups/dips/push-ups + select plyometrics need a dedicated load-model redesign with `addedWeight` + `userBodyweight` snapshot. v4 schema candidate; bundles with F40+F41.
+- **#10 (drill-down chips) → F40 Row C.** Path B (drill-down chips) chosen over Path A (taxonomy split). Why: keeps muscle taxonomy clean; F40 already owns chip-stack UX. 4 lock-ins annotated to F40: state cleanup on group change, any-primary filter semantics (RDL surfaces under Hamstrings even though glutes is first primary), conditional Row C visibility (≥2 sub-muscles), 3-row UX cost flag for 480px.
+- **#12 (variant muscle meta) → always hide.** Path A. Why: user direction is broader declutter pass — future picker UX should lean toward less meta noise. Considered "only when variant has divergent map" — rejected (rare edge case, adds branching for negligible gain).
+- **#17 (search semantics) → primary-only.** Coaches' panel (6/6) favored primary-only over secondary-inclusive. Why: synergist discovery belongs in tutorial pages, not in the picker. Slang/alias search (e.g. "RDL", "BP") belongs to F41 — different search dimension.
+- **#18 (picker row meta) → primary-only now; EMG-driven top-N later.** Path A shipped. Why: industry standard (Hevy/Strong both do this). F19 (role-tagged capsules) absorbed into the future EMG cycle — capsule UI should display top-N highest-activated muscles regardless of primary/secondary classification once EMG values are calibrated.
+- **#15 alias preserved via F41.** Renamed B-Stance RDL → Staggered-Stance RDL; aliases `["b-stance", "b stance"]` queued on F41 row to preserve searchability.
+- **#13 (Deficit RDL) → variant of RDL with `bias: 'lengthened'`.** Why: rejected `'deficit'` value (would have required principles patch + sweep); existing enumerated set covers the case.
+- **#7 (autoCapitalize) → picker custom-create input only.** Why: user spec is first-letter-only, rest left to user. Broader sweep deferred to a later UI/formatting standards pass.
+- **#8 (edit log datetime) → memory-only.** No F-row. Why: the schema fields exist (`workoutLogs.startedAt/finishedAt`); pairs with future import/manual-entry flows.
+- **#9 (olympic-lift visibility) → defer to F40 Row B + F32.** No standalone work — already covered by `'olympic lift'` in F40 equipment-chip filter and per-dimension toggles in F32.
+- **#11 (cardio rendering) → defer to multi-shape tracking arch.** Not standalone — second consumer of toggle/multi-shape architecture being built first via F32 + F39 + F38.
+- **#19 (role-tagged capsules) → absorbed into EMG cycle.** No standalone F-row.
 
-**Search behavior (one quick yes/no, then build):**
-- **#17** ✅ CLOSED Session 53 — Path A (primary-only) shipped. Dropped secondary-muscle for-loop in [ExerciseService.ts:55-59](../src/services/ExerciseService.ts#L55); JSDoc updated to reflect amended D7 semantics. Test rewritten — [ExerciseService.test.ts:88-93](../src/services/ExerciseService.test.ts#L88) now asserts `search('glutes')` returns 0 (Squat has glutes as syn). Slang/alias name search (e.g. "RDL", "BP", "fly") deferred to F41 — different search dimension. Synergist discovery trade-off accepted (per-exercise tutorial pages handle anatomy learning, picker handles "find what to log"). Coaches' panel verdict: 6/6 favor primary-only. **Sub-fix during smoke:** picker had a duplicate local copy of `matchesMuscleTag` at [ExerciseSearchModal.tsx:596](../src/components/ExerciseSearchModal.tsx#L596) that was not updated by the service-layer fix — caused continued secondary-flood on smoke. Picker copy now mirrors service (primary-only) with explanatory comment. Future cleanup candidate: extract to shared helper to prevent this drift; deferred (refactor scope).
+**Findings logged:**
+- CP2 — exercise-bank.md group labels drifted out of sync with muscleTaxonomy.ts (post-#30/#31 rename); doc audit pending.
+- CP3 — mid-trap function captured implicitly via `upperBack`; no separate `midTraps` taxon — document for curators.
 
-**Two-stage shipping (now + later):**
-- **#18** ✅ CLOSED Session 53 — Path A shipped. Secondaries hidden from picker rows; row meta now primary-only. Edit: [ExerciseSearchModal.tsx:375-389](../src/components/ExerciseSearchModal.tsx#L375) — dropped secondaries map + variable + comma-join condition. `.muscleSecondary` CSS class kept (unused but cheap; F19 will re-use). Inline comment added documenting the EMG-future direction. **Future direction note:** once EMG activation values are calibrated and stored, picker row should display top-N highest-activated muscles regardless of primary/secondary classification — supersedes both #18 (primary-only) and F19 (role-tagged capsules). See `memory/project_emg_top_n_display.md`. Risks accepted: same-primary-blob (Bench/Push-Up/Fly all show "Chest"), custom-create syn/stab tags invisible until F19, quick-context loss for power users between now and F19. Industry-standard behavior (Hevy/Strong both do this). No test edits needed.
-- **#19** ✅ DEFERRED Session 53 — absorbed into the EMG value system planning cycle (no standalone F-row). User direction: capsule UI design waits on EMG data architecture being planned + mapped first; the EMG cycle covers both the data model AND the display approach. See `memory/project_emg_top_n_display.md` (updated with scope absorption note). `.muscleSecondary` CSS class kept intentionally unused for that future cycle to reuse.
+**Resolved:**
+- F8 superseded by F42 → moved to Resolved Issues. Why: F8 was just `isBodyweight` boolean patch; F42 covers display AND stats honesty.
 
-**Defer to memory:**
-- **#8** ✅ DEFERRED Session 53 — saved to `memory/project_log_datetime_edit.md` per user direction (memory entry only, no F-row). Captures: ability to edit `workoutLogs.startedAt`/`finishedAt` for retrospective fixes (forgot to start timer, wrong day, backfill); no schema bump needed (fields exist); future service `WorkoutLogService.updateTimestamps`; pairs with future import/manual-entry flows.
+**Mid-smoke gap fix:** picker had a duplicate local copy of `matchesMuscleTag` (in `ExerciseSearchModal.tsx`) that the service-layer #17 fix didn't update. Patched in-place; refactor to shared helper deferred (refactor scope).
 
-**Findings (log to Issue Tracker, not user-facing):**
-- exercise-bank.md group labels drifted out of sync with muscleTaxonomy.ts (shrugs labeled Shoulders in doc — now correct post-#30; carries labeled Back in doc — now correct post-#31; doc may have other drift, audit).
-- Mid-trap function captured implicitly via `upperBack` (no separate `midTraps` taxon). Document so curators don't tag rows with `upperTraps` when meaning mid-traps.
+**Memory adds:** `project_bodyweight_added_resistance.md` (F42), `project_emg_top_n_display.md`, `project_log_datetime_edit.md`, `feedback_ask_dont_lean.md`, `feedback_question_format.md`.
 
-**Closed in Session 52 (no Session 53 work):**
-- #2 weight clipping → SetRow stepper rebuild shipped.
-- #3 negative cap → folded into #2 (buttons clamp at 0; mobile decimal keyboards lack `−`).
-- #4 / #5 / #14 search-aliasing → absorbed into F41 (per-exercise `aliases: string[]` v4 schema).
-- #16 (synonym pass) → became F41 directly.
+**What changed:** see commit `cd723e0`.
+
+**Verification:** PENDING — agent shell can't reach npx; user runs `npm run build && npx vitest run` before commit.
 
 ---
 
 ## Session 52 (2026-04-26) — CE1/CE2 v3 BUILD STEP 7 of 7 — CLOSED partial
 
-**Scope:** Single-step session per build rule. Step 7 = (a) Vitest coverage for ExerciseSearchModal, (b) manual smoke pass, (c) Issue Tracker close-out for CE1 + CE2 entries newly resolvable post-Step 6, (d) commit.
+**Scope:** Vitest coverage for ExerciseSearchModal + 3 mid-session decisions. SetRow rebuild folded in. Smoke + Issue Tracker scrub deferred to S53.
 
-**Vitest coverage added — 26 cases across 4 describe blocks:**
-- `browse mode` (10): parents-only render when query empty, chevron expand/collapse, search-mode flat (no chevron), search by muscle tag, group chip filter, row-click → onSelect, backdrop close, drawer-click does not close, empty-state, trash button only on custom rows, footer button → create flow.
-- `create flow — Step 1` (4): Next disabled until name + group set, parent picker excludes variants, valid Next advances to Step 2, Back returns to browse.
-- `create flow — Step 2` (6): four-state role cycle (verified via class-name match: Neutral → Primary → Synergist → Stabilizer → Neutral), save with no primary blocks with inline error, save with valid roles posts correct Exercise shape + fires onSelect, save passes parentExerciseId when picked, role tags drop when group unticked between Step 2 → Step 1 → Step 2, Back from Step 2 preserves Step 1 state.
-- `delete flow` (5): 0-variant → simple Modal (no radio), ≥1-variant → choice modal with orphan as default, orphan delete passes `cascade: false`, cascade delete passes `cascade: true`, cancel does not delete.
+**Decisions locked:**
+- **#30 — `upperTraps` group derivation back → shoulders.** Lower traps stays in back (scap retraction + depression with rhomboids/mid traps). Why: bodybuilding shoulder-day convention; scap-elevation kinematics align with delts. Considered keeping all traps in back → rejected because shoulder-chip routing breaks. Tag assignments on individual exercises unchanged — only broad-group derivation moved.
+- **#31 — Farmer + Suitcase Carry primary order swap to `[upperTraps, forearms]`.** Routes both to Shoulders chip alongside shrugs. Why: heavy-carry trap stimulus dominates training adaptation; forearms is the limit but not the primary tissue. Hevy/Strong file these under traps/back. Considered leaving order as-is → rejected because Shoulders chip is internally consistent post-#30. Co-primary status preserved on both — only order swapped.
+- **#32 — `bias` → `modifications` rename + multi-select reshape.** `string | null` → `string[]` (default `[]`). Value enum extended with `deficit` to 7 (`paused / tempo / partial / lengthened / peak-contraction / explosive / deficit`). Considered: `variant` (collides with `parentExerciseId`), `modifier` (singular). Picked `modifications` — plural, no collision, multi-select natural. Word `bias` reserved for future muscle-loading-emphasis field (F39).
 
-**Decision #30 locked mid-session — `upperTraps` group derivation back → shoulders:**
-- User raised the question during smoke setup ("change traps to shoulder muscle group from back").
-- Discussion: scope = upper traps only, not lower. Anatomically defensible — upper traps drive scapular elevation (shrug), bodybuilding convention groups them with shoulder day. Lower traps stay in back (scap retraction + depression with rhomboids/mid traps).
-- Edits: `MUSCLE_TO_GROUP['upperTraps']` flipped from `'back'` to `'shoulders'` in [src/db/muscleTaxonomy.ts](../src/db/muscleTaxonomy.ts); inline comment added explaining rationale and the lower-traps split. `seed-tagging-principles.md` Group-specific conventions section updated (Back gains a `lowerTraps` line; Shoulders gains an `upperTraps` line). master-schematics.md Muscle Taxonomy Model updated (MUSCLE_TO_GROUP listing + new note); Decision #30 row added; Changelog row added.
-- **Tag assignments on individual exercises unchanged.** Only the broad-group derivation moved. No re-curation needed.
-- Effects: picker Step 2 muscle-chip section moves upperTraps from Back to Shoulders; "Shoulders" group chip filter now includes any exercise with upperTraps as first primary (currently zero in seed library); future F27/F24 stat roll-ups will count upperTraps under shoulders.
-- Verified post-edit: 130/130 tests still passing; tsc clean; build clean.
+**Curator flag (deferred):** Suitcase Carry obliques arguably co-primary — anti-lateral flexion is its differentiating stimulus vs Farmer Carry. Logged on Decision #31; memory entry `project_suitcase_carry_obliques_flag.md`. Out of scope for #31 itself.
 
-**Tests + typecheck + build all clean post-decision.** Smoke + Issue Tracker scrub + recap.md/CLAUDE.md updates + commit still ahead.
+**Build work:**
+- Vitest coverage: 26 ExerciseSearchModal cases (130/130 across 11 files). Closes the modal's test gap.
+- SetRow rebuild: custom `[− input +]` pill stepper per cell; native browser spinner hidden via CSS. Grid retuned (BEST 44px, LB minmax(72px, 1fr), REPS 56px, RPE 76px, gap 2px, buttons 18×36). Save logic split into `saveWeight`/`saveReps`/`saveRpe` (blank field never fail-validates an adjacent field's save). Closes punch-list #2 + #3.
+- F40 (picker filter revamp 3-row UX) locked + v4 bundling note. F41 (per-exercise `aliases: string[]` v4 schema bump) added — closes-by absorbs punch-list #4/#5/#14.
 
-**Decision #31 locked mid-session (sequel to #30) — Farmer Carry + Suitcase Carry primary order swap:**
-- User raised the question after #30 in a parallel research window: "traps should be a co-primary in farmers carry."
-- Audit revealed both carries already had upperTraps as co-primary, but `forearms` was first → `getExerciseGroup()` was routing them to Arms chip. Reordering to `['upperTraps', 'forearms']` routes them to Shoulders chip alongside shrugs.
-- Rationale: heavy carries are functionally a shrug-for-time isometric. Upper trap stimulus dominates the training response; forearms is the limiting factor (grip fails first) but not the primary tissue adaptation. Hevy/Strong file these under traps/back — Shoulders is internally consistent post-#30.
-- Audit of all 4 carry exercises:
-  - **Farmer Carry** ([seed.ts:603](../src/db/seed.ts#L603)) → reordered, now Shoulders chip ✅
-  - **Suitcase Carry** ([seed.ts:606](../src/db/seed.ts#L606)) → reordered, now Shoulders chip ✅
-  - **Overhead Carry** → already Shoulders (`frontDelts` first primary), unchanged
-  - **Zercher Carry** → already Back (`upperBack` first primary), unchanged
-- Tag membership unchanged — only the order of primaries swapped on the two affected entries. Inline comment added at seed.ts:602 explaining the convention.
-- Co-primary status (both forearms and upperTraps tagged primary) preserved on both — only order swapped.
-- **Curator flag (deferred):** Suitcase Carry currently has `obliques` as synergist. Should arguably be co-primary since anti-lateral flexion is its differentiating stimulus vs Farmer Carry. Logged on Decision #31 row for a future tagging audit pass — not in scope for #31 itself. Memory entry created: `project_suitcase_carry_obliques_flag.md`.
-- Spec sync: `master-schematics.md` Decision #31 row appended (#30+1); changelog entry added; `exercise-bank.md` rows 32 + 33 augmented with chip-routing notes.
-- Test file typing fix: `src/components/ExerciseSearchModal.test.tsx` lines 56–57 + import line — `let onSelect: ReturnType<typeof vi.fn>` → `let onSelect: Mock<(exercise: Exercise) => void>` (and equivalent for onClose); imports `Mock` from vitest. Pre-existing issue from Session 52 partial commit (d989d05) — runtime tests passed (130/130) but `tsc -b` build mode failed. Surgical fix to unblock build verification; no test logic changed.
-- Verified post-edit: 130/130 tests still passing; tsc clean; build clean (781ms / 1694 modules).
-
-**Decision #32 locked mid-session (separate from #30/#31) — `bias` → `modifications` rename + multi-select reshape:**
-- User raised the question in a parallel research window: "I need to rename from bias to variant. bias is meant to represent which muscle group takes on the load more as a result of the variant."
-- Naming collision concern surfaced: `parentExerciseId` already defines variant relationships, so a field named `variant` would overlap. Settled on **`modifications`** (clean, plural, idiomatic for multi-select).
-- Multi-select reshape: `Exercise.bias: string \| null` → `Exercise.modifications: string[]` (default `[]`). A single exercise can now carry multiple modification tags (e.g., a Paused Deficit RDL could be `['paused', 'deficit']`).
-- Value enum extended: existing 6 (`paused / tempo / partial / lengthened / peak-contraction / explosive`) + new `deficit` = 7.
-- **Word "bias" reserved for a future field** capturing which muscle takes more load as a result of a modification (e.g., Deficit RDL biases hamstrings within its `[glutes, hamstrings]` co-primary). Shape + UX of the future `bias` field deferred to next dev cycle (rolls into F39 — Group 2 dimensions).
-- **Code (10 files):** `types/index.ts` field rename + shape; `seed.ts` Tier3 alias + helper default + 11 entries (each single-string value wrapped as one-element array); `ExerciseSearchModal.tsx` custom-create payload; 6 test fixture files (`bias: null` → `modifications: []`); `ExerciseSearchModal.test.tsx` fixture.
-- **Spec (3 files):** `master-schematics.md` schema row + Decision #32 row + changelog + Decision #28 v3 hop note + F32 + F39 (`bias` reservation note); `seed-tagging-principles.md` conventions table line 33 + value enum line 262 + reservation paragraph; `seed-draft.md` 11 schema lines + 7 prose rewrites (drop "X-bias variant" → "X variant" per option B; colloquial "bias" uses describing muscle-loading emphasis kept as-is — they already align with the future bias meaning).
-- **Memory (3 files):** `project_ce1_final_scope.md` schema row + D10 entry + curation cadence + UI checklist; `project_feature_toggle_menu.md` queue entry + applicability rule; `project_stat_weights_calibration.md` lengthened-modification multiplier row.
-- **Pre-launch safety:** No DB migration needed — Decision #28 nukes-and-reseeds on v3 hop, renamed property repopulates from fresh seed run. Old logged data unaffected (LogSet doesn't carry the field).
-- **Verified post-edit:** 130/130 tests still passing; tsc clean; build clean (2.89s / 1694 modules).
-- **Stale reference noted:** `handoff.md` line 10 (Session 53 punch-list close-out for #13 Deficit RDL) still cites `bias: 'lengthened'` — the actual code at [seed.ts:407](../src/db/seed.ts#L407) is now `modifications: ['lengthened']`. Historical close-out note kept as-is (documents the decision at the time it was made).
+**What changed:** see commits `3ff891e`, `d989d05`, `d77d17f`.
 
 ---
 
-## Session 51 (2026-04-26) — CE1/CE2 v3 BUILD STEP 6 of 7 CLOSED — ExerciseSearchModal full rewrite
+## Session 51 (2026-04-26) — CE1/CE2 v3 BUILD STEP 6 of 7 — CLOSED
 
-**Scope:** Single-step session per build rule. Step 6 = full rewrite of `ExerciseSearchModal` to land Decision #27 (D6 + D7) + CE2 EB2 (chevron variant expansion) + CE2 EB5 (parent picker in custom create) + CE2 deletion choice modal. Service layer untouched — `ExerciseService.search / create / deleteExercise` contracts already shipped Session 49.
+**Scope:** ExerciseSearchModal full rewrite per Decision #27 + CE2 EB2/EB5.
 
-**Decision #27 amendment (locked this session):**
-- Original D6.2 (two-tap cycle: neutral → synergist → stabilizer → neutral) + D6.3 (long-press to promote to primary) **replaced** with: four-state tap cycle: **neutral → primary → synergist → stabilizer → neutral**.
-- Rationale: frequency-weighted — most common action (mark as main mover) is one tap. No long-press gesture to discover; cycle is self-discoverable via tapping. Removes the F30 tutorial-hint dependency for primary promotion.
-- Original "auto-promote first tagged on save with no primary" guard **replaced** with: **block save with inline error** ("At least one main mover required"). Rationale: with 1st-tap = primary, the only path to "no primary" is actively cycling past it on every chip — the user meant to do that; a silent override would feel wrong.
-- All three changes apply only to the Step 2 muscle-chip interaction. Browse mode + Step 1 unaffected.
-- `master-schematics.md` Decision #27 row + ExerciseSearchModal Spec section updated inline (no re-spec round).
+**Decisions:**
+- **#27 amended.** Four-state tap cycle (neutral → primary → synergist → stabilizer → neutral) replaces D6.2 two-tap + D6.3 long-press. Why: long-press was unintuitive on mobile; four-state cycle is one consistent gesture. Considered keeping long-press for promote → rejected (no discoverability + collides with iOS context menu).
+- **Save with no primary blocks with inline error** (vs. auto-promote). Why: silent auto-promote masks user intent; inline error invites correction without losing state.
 
-**Files changed (2 src/):**
-- **`src/components/ExerciseSearchModal.tsx`** — full rewrite (~360 lines).
-  - Three view modes (`browse` | `createStep1` | `createStep2`) selected via local `mode` state.
-  - **Browse mode:** loads `getAll()` once on mount; renders flat results when `query !== ''` (CE2 #5 — variants surface as peers; no chevrons), renders parents-only when `query === ''` (each parent with ≥1 variant gets a `›` chevron toggle). `variantsByParentId` memo computed once per `allExercises` change. Chevron tap toggles `expandedParentIds: Set<number>`; rotated 90° via CSS class. Custom rows show 🗑 trash button (≥44pt tap target).
-  - **Sticky create footer:** "＋ Create custom exercise" button anchored at bottom of drawer, always visible regardless of search/scroll state (replaces original empty-state-only affordance — discoverability win).
-  - **Step 1:** name input (blank → "Name can't be blank" inline error), 6 multi-select group chips, optional parent picker `<select>` populated from parent-level exercises (`parentExerciseId === null`) sorted alphabetically. "Next" disabled until name non-blank AND ≥1 group selected.
-  - **Step 2:** muscle chips sectioned by selected groups in `MUSCLE_GROUPS` order; background muscles (`neck`, `rotatorCuff`) excluded per D6.4. Each chip cycles through 4 role states via `cycleRole(muscle)` using `ROLE_CYCLE` const. Save calls `ExerciseService.create({...})` with `parentExerciseId` from Step 1, then `onSelect(created)` (parent component unmounts modal).
-  - **Step 1 → Step 2 → Step 1 navigation** preserves form state. Returning to Step 1 and unticking a group drops role tags for muscles in that group on next "Next" (kept simple — explicit user action).
-  - **Delete:** `openDelete(ex)` sets `deleteTarget`; render branches on `variantsByParentId.get(target.id)?.length`: 0 → reuses `Modal` component (text body sufficient); ≥1 → bespoke choice modal inline (radio group not supported by `Modal.body: string` API). Default radio = "Delete this exercise only" (cascade=false). After delete: refresh library + collapse chevron if target was expanded.
-  - **Tap outside drawer** → `onClose()` from any mode (form state lost).
-  - JSDoc header documents the three modes, deletion behavior, and Decision #27 amendment.
-- **`src/components/ExerciseSearchModal.module.css`** — full rewrite (~270 lines).
-  - Existing classes (`.backdrop` / `.drawer` / `.searchInput` / `.chips` / `.chip` / `.chipActive` / `.list`) retained.
-  - Old `.listItem` row replaced with `.rowGroup` > `.row` > `.rowMain` (button) + `.rowActions` (trash + chevron). Custom muscle metadata via `.muscleMeta` / `.musclePrimary` (bold, primary text color) + `.muscleSecondary` (secondary text color), comma-separated.
-  - `.variantRow` (tinted bg, indented `.rowMain`) + `.variantPrefix` (`↳`).
-  - `.chevronBtn` (44×44, `transform: rotate(90deg)` via `.chevronExpanded`), `.trashBtn` (44×44, `:active` → red).
-  - `.createFooterBtn` (sticky bottom, green outline + green text).
-  - Form: `.formHeader` / `.formBackBtn` / `.formTitle` / `.fieldLabel` / `.fieldHint` (with `.hintPrimary` / `.hintSynergist` / `.hintStabilizer` color spans) / `.formInput` / `.formInputError` / `.formSelect` / `.fieldError` / `.formPrimaryBtn` (with `:disabled` opacity).
-  - Step 2: `.muscleSections` (scrollable) / `.muscleSection` / `.sectionHeader` / `.muscleChipRow` / `.muscleChip` + 4 role states (`.muscleChipNeutral` / `.muscleChipPrimary` / `.muscleChipSynergist` / `.muscleChipStabilizer`). Color tokens are placeholder per user — designer will swap palette.
-  - Delete choice modal: `.deleteBackdrop` (z-index 300, layered above drawer's 200) / `.deleteCard` / `.deleteTitle` / `.deleteBody` / `.deleteOption` (with `.deleteOptionHint`) / `.deleteActions` / `.deleteBtnSecondary` / `.deleteBtnDestructive`. Radio uses native `accent-color: var(--color-green)`.
+**Build:**
+- Three view modes: browse / createStep1 / createStep2. Browse renders flat in search and parents-with-chevron in browse mode (CE2 #5). Sticky `+ Create custom exercise` footer.
+- Bespoke radio choice modal for ≥1-variant delete (default = null-orphan, safer than cascade).
+- No service edits — `ExerciseService.search/create/deleteExercise` contracts already shipped Session 49.
+- No test edits — modal had no existing test file (S52 added).
 
-**Files NOT changed (intentional):**
-- `src/services/ExerciseService.ts` — contracts already locked Session 49; `getVariants` was briefly added then reverted (variant lookup uses already-loaded `allExercises` in-memory, no extra service method needed).
-- `WorkoutDetailPage` / `WorkoutTemplatePage` — `onSelect` / `onClose` props unchanged; consumers untouched.
-- No test edits — modal has no existing test file (added to Step 7 backlog if pre-launch desired).
-
-**Verification:**
-- `npx tsc --noEmit` — exit 0
-- `npm run build` — exit 0; 1694 modules; 645ms
-- `npx vitest run` — 10 files / 104 tests passed (no regressions)
-
-**Carry-forward for Session 52 (Step 7 — final smoke + close-out):**
-- Required reading: recap.md (Session 51 entry), `artifacts/master-schematics.md` § Issue Tracker (look for CE1 + CE2 must-fix items still open), the new modal + service files.
-- Tasks: (1) `npm run dev` smoke pass — exercise the full picker (browse + chevron + custom create + variant nesting + trash + cascade modal); (2) close-out CE1 + CE2 must-fix entries in Issue Tracker; (3) commit. Step 7 is the easiest of the 7 — should land in a single short session.
-
-**Open punch list for Step 7:**
-- [ ] Designer color pass on Step 2 muscle chips (4 role states currently use placeholder green/outline tokens).
-- [ ] Decide whether to write a Vitest suite for the modal (chevron toggle, role cycle, save guard, delete cascade-vs-orphan paths). Currently zero modal test coverage. Defer if Step 7 is tight.
-- [ ] Issue Tracker scrub for any CE1/CE2 entries newly resolvable post-Step 6.
+**What changed:** see commit `918baef`.
 
 ---
 
-## Session 50 (2026-04-26) — CE1/CE2 v3 BUILD STEPS 4 + 5 of 7 CLOSED — RPE plumbing
+## Session 50 (2026-04-26) — CE1/CE2 v3 BUILD STEPS 4 + 5 of 7 — CLOSED
 
-**Scope:** Steps 4 + 5 bundled per CLAUDE.md plan (settings ↔ UI consumer tightly coupled). Step 4 = wire `rpeEnabled` into `UserSettingsContext` + Profile toggle. Step 5 = SetRow per-set RPE input gated by toggle, auto-saves through `LogSetService.update({ rpe })`.
+**Scope:** Steps 4 + 5 bundled (settings ↔ UI consumer tightly coupled). Step 4 = `rpeEnabled` into `UserSettingsContext` + Profile toggle. Step 5 = SetRow per-set RPE input gated by toggle.
 
-**Files changed (7 src/):**
-- **`src/context/UserSettingsContext.tsx`** — added `rpeEnabled: boolean` to interface + memo, derived from `user?.rpeEnabled ?? false` (matches `unitPreference` hydration pattern). Memo dep array now `[user?.unitPreference, user?.rpeEnabled]`.
-- **`src/pages/ProfilePage/index.tsx`** — new `handleRpeToggle(next: boolean)` calls `UserService.updateProfile({ rpeEnabled })` then `updateUser({ rpeEnabled })`. New "RPE Tracking" Off/On toggle field in Preferences section, mirrors Imperial/Metric pattern.
-- **`src/pages/WorkoutDetailPage/index.tsx`** — reads `rpeEnabled` from `useUserSettings`. `handleSetUpdate` rewired to accept `data: { weight?, reps?, rpe? }` and spread into `LogSetService.update` + state setter (was `(weightLb, reps)` two-arg). Passes `rpeEnabled` to ExerciseCard.
-- **`src/pages/WorkoutDetailPage/components/ExerciseCard.tsx`** — accepts + forwards `rpeEnabled`. Conditionally renders RPE column header. `onSetUpdate` signature partial-style.
-- **`src/pages/WorkoutDetailPage/components/ExerciseCard.module.css`** — `.colHeadersWithRpe` 6-col grid override + `.colRpe` text-align.
-- **`src/pages/WorkoutDetailPage/components/SetRow.tsx`** — accepts `rpeEnabled`. New `rpeStr`/`rpeError` state. New `saveRpe` validator: blank → `onUpdate({ rpe: null })` (clear), otherwise validates 1–10 with `Number.isInteger(n*2)` half-step check, fires `onUpdate({ rpe: n })`. Conditional 5th-column input with `min=1 max=10 step=0.5` and spinner-immediate-save matching weight/reps pattern. ReadOnly mode renders RPE static value or "—".
-- **`src/pages/WorkoutDetailPage/components/SetRow.module.css`** — `.rowWithRpe` 6-col grid override (`24px 1fr 1fr 1fr 1fr 28px`).
+**Public contract change:** `SetRow.onUpdate` and `ExerciseCard.onSetUpdate` switched from `(setId, weightLb, reps)` to `(setId, data: { weight?, reps?, rpe? })`. Why: RPE saves independently of weight/reps so a user can enter or clear RPE at any time, and "null never blocks save" per Decision #26. Cleaner than a parallel `onRpeUpdate` callback.
 
-**Public contract change:** `SetRow.onUpdate` and `ExerciseCard.onSetUpdate` switched from `(setId, weightLb, reps)` to `(setId, data: { weight?: number; reps?: number; rpe?: number | null })`. Reason: RPE saves independently of weight/reps so a user can enter or clear RPE at any time, and "null never blocks save" per Decision #26. Cleaner than a parallel `onRpeUpdate` callback.
+**RPE-derived stats deferred** to next dev cycle per `project_rpe_deferred_features.md` (volume modifier, fatigue, autoregulation cues, target-RPE programming, history charts). This cycle ships entry + collection + toggle only.
 
-**Verification:**
-- `npx tsc --noEmit` — exit 0
-- `npm run build` — exit 0; 1694 modules; 426ms
-- `npx vitest run` — 10 files / 104 tests passed (no regressions, no test edits — existing `useUserSettings` mock returns no `rpeEnabled` → undefined → falsy → RPE column hidden in test render)
-
-**Carry-forward for Session 51 (Step 6 — ExerciseSearchModal rewrite per Decision #27):**
-- Required reading: recap.md (Session 50 entry), `artifacts/master-schematics.md` § ExerciseSearchModal Spec (Decision #27 — chevron variant expander, two-step custom create with optional parent picker, deletion choice modal mapping to `deleteExercise(id, { cascade })`), `src/components/ExerciseSearchModal.tsx` (current state — chip filter is already MuscleGroup-based, create form already stripped, ready for full rewrite), `src/services/ExerciseService.ts` (`search` / `create` / `deleteExercise` contracts already locked — do NOT modify), `src/types/index.ts` (Exercise shape).
-- Step 6 is the biggest single piece in the build cycle. Step 7 (manual smoke + Issue Tracker close-out for CE1 + CE2) may fold into 51 if context allows.
-
-**RPE deferred for next dev cycle (per `project_rpe_deferred_features.md`):** RPE-derived stats (volume modifier, fatigue, autoregulation cues, target-RPE programming, history charts) — only entry + collection + toggle ship this cycle. Session 50 lands the entry + toggle; collection happens organically as users log sets with the toggle on.
+**What changed:** see commit `b91386f`.
 
 ---
 
-## Session 47 (2026-04-25) — CE1/CE2 v3 BUILD STEP 1 of 7 CLOSED — foundation layer
+## Session 49 (2026-04-25) — CE1/CE2 v3 BUILD STEP 3 of 7 — CLOSED
 
-**Scope:** First code-touching session of CE1/CE2 v3 build. Step 1 = types + Muscle Taxonomy module + Dexie schema bump. Per the 7-step plan agreed at session start (after Q&A on Dexie version + pending v2-era additions + pacing).
+**Scope:** ExerciseService rewrite + LogSetService RPE wiring + UserService profile-update extension. P1 curation gap closed inline (212 → 214 entries).
+
+**Decisions / why:**
+- `purgeExerciseRecord` uses `.filter()` because `exerciseId` is not indexed on `logExercises`/`workoutExercises`. Acceptable at MVP scale; runs only on rare custom-delete path.
+- P1 catch-up done inline rather than spinning a separate session: Machine Row (P1 #9, parent-level, inherits Iso-Lat Low Row map — `[lats, upperBack]` co-primary) + Neutral-Grip Pull-Up (P1 #8, structural variant of Pull-Up with parent-map inheritance — no Rule 1 override since neutral grip is not in EMG override queue). SEED_ENTRIES.length now matches exercise-bank.md tier counts (P1=56, total=214).
+
+**What changed:** see commit `3af0209`. 22 new ExerciseService tests + 6 LogSetService RPE tests; 104/104 across 10 files.
+
+---
+
+## Session 48 (2026-04-25) — CE1/CE2 v3 BUILD STEP 2 of 7 — CLOSED
+
+**Scope:** Seed library compiled — 212-entry catalog from `seed-draft.md` → typed-Exercise `SEED_ENTRIES` + 2-pass `seedExercises` (parents → variants resolve `parentExerciseId` via name lookup).
+
+**What changed:** see commit `29a836c`.
+
+---
+
+## Session 47 (2026-04-25) — CE1/CE2 v3 BUILD STEP 1 of 7 — CLOSED
+
+**Scope:** Foundation layer. Types + Muscle Taxonomy module + Dexie schema bump. First code-touching session of the CE1/CE2 v3 build cycle.
 
 **Decisions locked at session start:**
-1. **Dexie in-code version = `3`.** Code originally had only `version(1)`; never declared `version(2)`. Picked `3` to match planning-doc labels (master-schematics § Dexie Schema String — v3) over code's natural progression. `version(1)` retained alongside `version(3)`; `version(2)` skipped (no v2 was ever shipped).
-2. **Pending v2-era schema additions stay deferred.** `bodyMetrics`, `dailyCheckins`, `workoutLogs.rating`, `users.goalWeight` were specced in master-schematics line 326 as "bundle into the same v3 hop" but none exist in `src/db/db.ts`. Deferred until the relevant feature ships rather than adding no-op forward-compat columns now.
-3. **Pacing = Option A (4 sessions) revised to ~5 mid-execution.** Original plan put Steps 1+2+3 in Session 47. Reading `seed-draft.md` size up close (3,676 lines × 214 entries × ~17 lines each) revealed Step 2 alone deserves its own session. Stopped after Step 1 per build rule "Prefer finishing the current file/component cleanly over starting a new one."
+- **Dexie in-code version = `3`** (not `2`). Why: code originally had only `version(1)`; never declared `version(2)`. Picked `3` to match planning-doc labels (master-schematics § Dexie Schema String — v3) over code's natural progression. `version(1)` retained alongside `version(3)`; `version(2)` skipped (no v2 was ever shipped to anyone).
+- **Pending v2-era schema additions stay deferred** (`bodyMetrics`, `dailyCheckins`, `workoutLogs.rating`, `users.goalWeight`). Why: bundle into the schema bump when their features actually ship, not now — avoids no-op forward-compat columns.
+- **Pacing = Option A revised mid-execution to ~5 sessions.** Stopped after Step 1 per build rule "Prefer finishing the current file/component cleanly over starting a new one." Reading `seed-draft.md` size up close (3,676 lines × 214 entries × ~17 lines each) revealed Step 2 alone deserves its own session.
 
-**Files changed (8):**
-- **`src/types/index.ts`** — added `Muscle` (24 user-surfaced + 2 background = 26-entry union, camelCase per Decision #29), `MuscleGroup` (6 broad), `SecondaryRole`, `SecondaryMuscle { muscle, role }`. Rewrote `Exercise`: dropped `category`; added `parentExerciseId: number | null` (CE2), `primaryMuscles: Muscle[]`, `secondaryMuscles: SecondaryMuscle[]`, plus 6 Tier 3 forward-compat (`equipment`, `gripWidth`, `gripOrientation`, `stanceWidth`, `bias` all `string | null`; `jointLoad: string[]`). Added `User.rpeEnabled: boolean` + `User.trainingAge: string | null`. Added `LogSet.rpe: number | null`.
-- **`src/db/muscleTaxonomy.ts`** *(NEW)* — single source of truth: `MUSCLE_LABELS` (Title Case), `MUSCLE_TO_GROUP` (specific → broad with neck → shoulders), `RECOVERY_WINDOWS` (Decision #25 — large 60h × 9 / small 36h × 15 / background-small 36h × 2), `SECONDARY_VOLUME_MULTIPLIER = 0.5`, `MUSCLE_GROUPS` readonly, `MUSCLE_GROUP_LABELS`, `getExerciseGroup()` helper (first-primary-wins tiebreak per Decision #28).
-- **`src/db/db.ts`** — declared `version(3)` with new schema string (`exercises: '++id, name, parentExerciseId'`) and `.upgrade()` hook that nukes `logSets` → `logExercises` → `exercises` (cascade order). `version(1)` retained. App.tsx's existing count-zero check reseeds on next mount post-nuke.
-- **`src/db/seed.ts`** — stubbed: keeps `seedExercises()` export so App.tsx still compiles, but body is a no-op until Step 2 fills in 214-entry compilation. Picker shows empty list until Step 2 lands.
-- **`src/services/ExerciseService.ts`** — trimmed to `getAll()`. Removed `search(query, category)` (unused) and `create(name, category)` (only called from the stripped modal create form). Step 3 reintroduces all three with new signatures.
-- **`src/services/AuthService.ts`** — signup now sets `rpeEnabled: false` + `trainingAge: null` defaults so new users get explicit values rather than `undefined`.
-- **`src/components/ExerciseSearchModal.tsx`** — chip filter switched from stored `Exercise['category']` to derived `MuscleGroup` via `getExerciseGroup()`. Inline custom-create form stripped entirely (state, handlers, JSX). Step 6 rebuilds full Decision #27 picker (variant chevron, two-step custom create with parent picker, deletion choice modal).
-- **4 test files patched** (`LogSetService.test.ts`, `WorkoutExerciseService.test.ts`, `WorkoutLogService.test.ts`, `WorkoutService.test.ts`) — `db.exercises.add()` calls in `seedX` helpers now construct `Exercise` with new shape (parentExerciseId: null, primaryMuscles: ['quads'], empty secondaries, all Tier 3 nulls/empty arrays).
-
-**Verification:**
-- `npx tsc --noEmit` — exit 0 (no type errors)
-- `npm run build` — exit 0; 1694 modules transformed; bundled in 6.99s
-- `npx vitest run` — 8 files / 72 tests passed (no regressions)
-
-**Carry-forward for Session 48 (Step 2 — seed compile):**
-- Required reading: recap.md (Session 47 entry), `artifacts/seed-draft.md`, `artifacts/seed-tagging-principles.md`, `src/types/index.ts` (target shape), `src/db/muscleTaxonomy.ts` (verify Muscle union covers every muscle in seed-draft).
-- Approach: hand-translate each markdown entry → typed `Exercise` literal. 2-pass insertion: 188 parents via `bulkAdd` → build name→id map → ~26 variants resolve `parentExerciseId` via map.
-- Add vitest asserting post-seed count = 214, every variant FK resolves, zero Rule 1 violations.
-- Recommend bulk-rewriting `src/db/seed.ts` rather than incremental edits.
-
-**Remaining steps (Sessions 49–52±):**
-- Session 49 = Step 3: ExerciseService rebuild (search w/ muscle tags, create w/ new schema + parentExerciseId validation, deleteExercise(id, { cascade })). LogSetService.add/update accept rpe. UserService.updateProfile accepts rpeEnabled + trainingAge.
-- Session 50 = Steps 4–5: UserSettingsContext.rpeEnabled hydration + Profile RPE toggle + per-set RPE input on SetRow gated by toggle.
-- Session 51 = Step 6: ExerciseSearchModal full rewrite per Decision #27 — biggest single piece (variant chevron, two-step custom create with parent picker, deletion choice modal).
-- Session 52 = Step 7: manual smoke + Issue Tracker close-out for CE1 + CE2. May fold into Session 51 if context allows.
+**What changed:** see commit (Session 47 — was the first build session of v3).
 
 ---
 
+## Sessions 45c–46 (2026-04-23 to 2026-04-24) — Seed re-curation closing batch
 
+Compact summaries; full per-session detail in commits + `artifacts/archive/seed-draft.md` § per-session blocks.
 
-## Sessions 45c–46 catch-up (2026-04-23 to 2026-04-24) — CONSOLIDATED
+### Session 46 (2026-04-24) — Pre-build gap-audit batch CLOSED (11 items)
+- 7 of 8 Pre-build items already resolved inline during sessions 41–44 spec patching. Audit doc was authored before some of those sessions completed; work happened along the way but audit wasn't updated.
+- Already-resolved (audit-log only): GA-02, GA-17, GA-18, GA-19, GA-20, GA-44, GA-45.
+- Newly fixed: GA-01 (v3 Dexie schema code block + GA-13 mislabeled header), GA-42 (`project_state.md` rewritten to post-45g state), GA-43 (MEMORY.md index refresh), GA-46 (`project_artifact_fixes.md` restructured: 4 of 6 sub-items already done).
+- Gap-audit.md status: 13/51 closed; 38 hygiene+cosmetic remain (deferrable, roll out as artifacts touched).
+- **Methodology note:** Audit-before-edit revealed the cleanest way to "execute a batch" is to first verify each item against the audit's claim. The audit was a snapshot; specs evolve. Saved ~2 hr of redundant edits.
 
-Six sessions ran back-to-back without per-session handoff entries. Compact summaries below; full detail in `artifacts/recap.md` § SESSION HISTORY.
+### Session 45g (2026-04-24) — P4 OL + KB-ballistic CLOSED (12 entries); SEED RE-CURATION COMPLETE 214/214
+- 12 previously-parked entries tagged: 3 Cleans (Power, Hang, C&J — **C&J 13-sec NEW LIBRARY KINETIC-CHAIN CEILING**, supersedes Overhead Carry at 10), 2 Snatches (Power, Hang — **12-sec snatch-family ceiling**), 2 Pulls (Clean Pull, Snatch Pull — Snatch-grip upperBack syn promotion per Poliquin), 3 Jerks/Push Press, 2 KB-ballistic (KB Clean, KB Snatch).
+- **New movement-pattern template codified:** "Olympic lift / ballistic triple extension" with 3 sub-patterns (Pulling = Hinge base + catch additions; Jerk = Vertical push + leg drive; KB-ballistic = KB Swing base + catch additions).
+- **Six-coach panel formalized + expanded:** Poliquin added alongside Schoenfeld / Haff / Tsatsouline / Dan John / Nuckols. Poliquin lens drove snatch-grip upperBack syn promotion + cuff stab on overhead heavy free-path.
+- **Tagging accuracy lens formally codified** per `feedback_tagging_accuracy.md` — correct-execution + common-mistake recruitment scope. NOT extreme edge cases. Drove broad lats-on-OL-pulls + upperBack-stab-on-jerks + calves-on-KB-Clean + sideDelts-on-KB-Snatch additions.
+- 4 new EMG overrides added (Olympic Cleans / Snatches / Jerks / KB-ballistic).
+- Cross-curation validation: 16 existing 45a–f overrides re-verified valid; group-derivations clean across full 120-entry curation corpus.
+- **Library re-curation COMPLETE** as of close-out — all 214 entries tagged across 7 sub-sessions (45a–g).
 
-### Session 45c (2026-04-23) — P1 upper body, 27 entries CLOSED
-- 6 Chest + 5 Back + 9 Shoulders + 5 Biceps + 2 Triceps tagged in `seed-draft.md` § Session 45c.
-- 1 EMG override locked: Close-Grip Bench `[chest, triceps]` (Barnett 1995) — closes principles-doc queue for 45c.
-- 6 exceptions logged: Close-Grip Bench co-primary; Arnold Press 6-sec (Vertical push); Machine Assisted Dip inherited co-primary on machine; Iso-Lat High Row naming/template mismatch; Landmine Press hybrid angle; Upright Row hybrid pattern.
-- Machine discipline applied consistently (Machine Chest Press 2 sec, Machine SP 4 sec, Machine Assisted Pull-Up 5 sec). Pec Deck + Rear Delt Pec Deck held to strict isolation.
+### Session 45f (2026-04-24) — P4 plyo + KB + conditioning CLOSED (19 entries) + 12 parked
+- 7 Plyometric + 4 of 6 Kettlebell + 8 Conditioning tagged. 12 entries parked pending OL template research (resolved 45g).
+- **Push-Up promoted to 12th library parent** via Clap Push-Up variant linkage.
+- **Sled Pull split** into backward-walk default (P4 #25) + Sled Row (P4 #31 NEW). Library 213 → 214.
+- New Tier 3 `bias: 'explosive'` value introduced (Clap Push-Up).
+- **Panel-of-coaches consult methodology introduced by user** (5 coaches; expanded to 6 in 45g).
+- 2 new EMG overrides: Turkish Get-Up `[abs, obliques]` (first library abs+obliques pairing); Sprint `[hamstrings, glutes]` (max-velocity locomotion novel outside any template).
 
-### Session 45d (2026-04-23) — P1 lower body + core, 27 entries CLOSED
-- 3 Hinge + 8 Quads + 2 Hamstrings + 4 Glutes + 2 Calves + 7 Core + 1 Triceps catch-up tagged in `seed-draft.md` § Session 45d.
+### Session 45e (2026-04-23) — P5 + P2 + P3 CLOSED (89 entries)
+- Largest single sub-session. 25 P5 variants + 53 P2 + 11 P3 tagged.
+- 1 EMG override locked: Narrow-Grip Pull-Up `[lats, biceps]` (Pull-Up Rule 1 override).
+- **Principles-doc Rule 5 patched:** `rotatorCuff` may be tagged primary on dedicated cuff-isolation exercises (Cable ER P2 #19 + DB ER P2 #20 only library cases). Group derivation → `shoulders`. Cuff stays excluded from picker chips. Considered keeping cuff strictly background-only → rejected because anatomically the cuff IS the only mover on dedicated isolation; Rule 5 was over-broad.
+- Considered flipping Overhead Carry to cuff-as-primary co-primary → rejected; kept cuff-as-syn (face-pull-style synergist exception stands).
+- 18 exceptions logged in seed-draft.md. Notable: Loaded Carry template flags 4 entries at 6+ secondaries (template-driven, accepted); Cable Y-Raise canonical lowerTraps-primary; Zercher Carry unique `[upperBack, biceps]` co-primary.
+
+### Session 45d (2026-04-23) — P1 lower body + core CLOSED (27 entries)
+- 3 Hinge + 8 Quads + 2 Hamstrings + 4 Glutes + 2 Calves + 7 Core + 1 Triceps catch-up tagged.
 - No new EMG overrides; principles applied as-written.
 - 6 exceptions logged: Front Squat 6-sec (Squat precedent w/ upperBack-for-calves swap); Sumo DL adductor re-add (closes 45a Deadlift loop); 45° Hyperextension `lowerBack (syn)` per Rule 6 explicit exception; Bird Dog glutes-on-core; Side Plank abductors + obliques-primary; Machine Tricep Extension scope catch-up from 45c.
 
-### Session 45e (2026-04-23) — P5 + P2 + P3, 89 entries CLOSED
-- 25 P5 variants + 53 P2 + 11 P3 tagged in `seed-draft.md` § Session 45e. Largest single sub-session.
-- 1 EMG override locked: Narrow-Grip Pull-Up `[lats, biceps]` (Pull-Up Rule 1 override) — closes principles-doc queue for 45e.
-- 18 exceptions logged. Most consequential: **Cable ER + DB ER `rotatorCuff` as primary** per new Rule 5 Dedicated-cuff-isolation exception (principles-doc Rule 5 patched concurrently); Overhead Carry kept cuff-as-syn (Rule 5 face-pull-style exception extended); Reverse Curl + Decline Sit-Up + Zercher Carry added to EMG list; Loaded Carry template flags 4 entries at 6+ secondaries; Good Morning + Reverse Hyper close out Rule 6 lowerBack-syn explicit-exception list; Cable Y-Raise as canonical lowerTraps-primary; Zercher Carry unique `[upperBack, biceps]` co-primary.
-- 1 principles-doc Rule 5 patch APPLIED at close-out: cuff may be primary on dedicated cuff-isolation exercises (Cable ER + DB ER only library cases).
-
-### Session 45f (2026-04-24) — P4 plyo + KB + conditioning, 19 entries CLOSED + 12 parked
-- 7 Plyometric + 4 of 6 Kettlebell + 8 Conditioning tagged in `seed-draft.md` § Session 45f.
-- 12 entries parked pending Olympic-lift template research (deferred to 45g).
-- 2 new EMG overrides: Turkish Get-Up `[abs, obliques]` (first library abs+obliques pairing); Sprint `[hamstrings, glutes]` (max-velocity locomotion novel outside any template).
-- **Push-Up promoted to 12th library parent** via Clap Push-Up variant linkage. Exercise-bank.md updated concurrently.
-- **Sled Pull split** into backward-walk default (P4 #25) + Sled Row (P4 #31 NEW) per user direction. Library 213 → 214; P4 30 → 31.
-- New Tier 3 `bias: 'explosive'` value introduced (Clap Push-Up).
-- **Panel-of-coaches consult methodology introduced by user** (Schoenfeld / Haff / Tsatsouline / Dan John / Nuckols — applied per entry).
-- Cross-curation validation pass executed alongside (14 existing 45a–e overrides re-verified valid; FK consistency clean).
-
-### Session 45g (2026-04-24) — P4 OL + KB-ballistic, 12 parked entries CLOSED; SEED RE-CURATION COMPLETE 214/214
-- 12 previously-parked entries tagged in `seed-draft.md` § Session 45g: Group A Cleans (Power, Hang, C&J) + Group B Snatches (Power, Hang) + Group C Pulls (Clean Pull, Snatch Pull) + Group D Jerks/Push Press (Push Jerk, Split Jerk, Push Press) + 2 KB-ballistic (KB Clean, KB Snatch).
-- **New movement-pattern template codified** in principles doc: "Olympic lift / ballistic triple extension" with 3 sub-patterns (Pulling = Hinge base + catch additions; Jerk = Vertical push + leg drive; KB-ballistic = KB Swing base + catch additions).
-- **Six-coach panel expanded:** Poliquin formally added alongside the 5-coach panel from 45f. Poliquin lens drove snatch-grip upperBack syn promotion + cuff stab on overhead heavy free-path.
-- **Tagging accuracy lens formally codified** per `feedback_tagging_accuracy.md` (saved outside repo per CLAUDE.md auto-memory): correct-execution + common-mistake recruitment scope. NOT extreme edge cases. Drove broad lats-on-OL-pulls + upperBack-stab-on-jerks + calves-on-KB-Clean + sideDelts-on-KB-Snatch additions.
-- **NEW LIBRARY KINETIC-CHAIN CEILING:** Clean & Jerk at 13 secondaries; Power/Hang Snatch at 12 — supersede Overhead Carry (10) per six-coach consensus on OL full-body demand.
-- 4 new EMG overrides added (Olympic Cleans + Snatches + Jerks + KB-ballistic).
-- Cross-curation validation: 16 existing overrides re-verified valid; group-derivations clean across full 120-entry curation corpus.
-- **Library re-curation COMPLETE** as of 45g close-out. All 214 entries tagged. `seed-draft.md` ready for compilation to `src/db/seed.ts` at Session 47+ build.
-- Catch-up: Session 45f history entry — missing from prior recap.md close-out — added retroactively in 45g.
-
-### Session 46 (2026-04-24) — Pre-build gap-audit batch CLOSED (11 items)
-- Pre-edit audit revealed 7 of 8 Pre-build items already resolved inline during sessions 41–44 spec patching (gap-audit was authored before some of those sessions completed; the work happened along the way but the audit doc was never updated).
-- **Already-resolved (audit-log only):** GA-02 (`ExerciseService.create()` already includes `parentExerciseId`); GA-17 (`logs.md` already shows `getByWorkoutLogId`); GA-18 (`statistics.md` already shows `getNeglectedGroups`); GA-19 (Overview Dashboard table — no adherence row); GA-20 (`getAdherenceRate` not present in either service table); GA-44 (CE2 memory v3 schema example already drops `category`); GA-45 (CE2 memory already points to master-schematics § ExerciseSearchModal Spec).
-- **Newly fixed (4 items):** **GA-01** — added explicit v3 Dexie schema code block alongside v2 in `master-schematics.md` § Dexie Schema String; v3 string adds `parentExerciseId` as secondary index. Concurrent close-out of **GA-13** (mislabeled v3 header). **GA-42** — rewrote `project_state.md` body to post-45g state. **GA-43** — refreshed MEMORY.md project_state index line. **GA-46** — restructured `project_artifact_fixes.md`: 4 of 6 sub-items resolved (page title done s30; FAB states done s30; color-preview moot; CLAUDE.md Post-Demo Cleanup section deleted s28); remaining 2 (FAB size 56→52px, FAB position) re-pointed at GA-40 + GA-41 as canonical trackers.
-- Gap-audit.md status header bumped: **13/51 closed** (Pre-45a 2 + Pre-build 8 + Cross-conversation safety 3); 38 hygiene+cosmetic remain (deferrable).
-- **Methodology note:** Audit-before-edit revealed the cleanest way to "execute a batch" is to first verify each item's current state. The audit was a snapshot; specs evolve. Saved ~2 hr of redundant edits.
-
-### Carry-forward for Session 47+
-**Next code-touching session.** Required reading per recap.md CURRENT TASK:
-- `artifacts/recap.md`
-- `artifacts/master-schematics.md` § DB Schema (v2 + v3 strings) + § Service Layer + § Decisions #24–#29 + § ExerciseSearchModal Spec + § Muscle Taxonomy Model
-- `memory/project_ce1_final_scope.md` (D1–D9 locks)
-- `memory/project_ce2_schema_architecture.md` (5 architecture decisions + migration plan + variant-UX wiring + custom parent picker + deletion behavior + checklist)
-- `artifacts/seed-draft.md` (compilation source — 214 full-format entries across 7 sub-sessions)
-- `artifacts/seed-tagging-principles.md` (rule reference)
-
-Scope: Dexie v2→v3 migration; compile `seed-draft.md` → `src/db/seed.ts`; ExerciseSearchModal rewrite (Decision #27); per-set RPE input on SetRow; Profile RPE toggle. May span multiple sessions.
-
-### Methodology adopted during 45f-45g (carry into future curation work)
-- **Six-coach consult panel:** Schoenfeld / Haff / Tsatsouline / Dan John / Nuckols / Poliquin — applied per entry on novel-pattern lifts.
-- **Tagging accuracy lens** (`feedback_tagging_accuracy.md`): when two tag options both fit, pick the more anatomically accurate / credible-coach-defensible one. Scope = correct-execution + common-mistake recruitment. NOT extreme edge cases.
+### Session 45c (2026-04-23) — P1 upper body CLOSED (27 entries)
+- 6 Chest + 5 Back + 9 Shoulders + 5 Biceps + 2 Triceps tagged.
+- 1 EMG override locked: Close-Grip Bench `[chest, triceps]` (Barnett 1995).
+- 6 exceptions: Close-Grip Bench co-primary; Arnold Press 6-sec (Vertical push); Machine Assisted Dip inherited co-primary on machine; Iso-Lat High Row naming/template mismatch; Landmine Press hybrid angle; Upright Row hybrid pattern.
+- **Machine discipline applied consistently:** Machine Chest Press 2 sec, Machine SP 4 sec, Machine Assisted Pull-Up 5 sec. Pec Deck + Rear Delt Pec Deck held to strict isolation (fly exception NOT extended to pad-supported machines).
 
 ---
 
-## Session 45b pt. 2 (2026-04-23) — Main draft completed + close-out; Session 45b CLOSED
+## Session 45b pt. 2 (2026-04-23) — Main draft completed + close-out
 
-**Scope:** Resume pt. 1 mid-draft at entry #14; finish remaining 14 entries; run end-of-session close-out. Research + artifact mode. No code, no `src/` edits.
-
-**Accomplished:**
-- **14 full-format entries written** (continuing sequence from pt. 1):
-  - **Seed Arms + Core (5):**
-    - `#14 Hammer Curl (Seed #22)` — co-primary `[biceps, brachialis]` per Curl template neutral-grip note. 2 secondaries (forearms syn, abs stab matching Barbell Curl).
-    - `#15 Tricep Pushdown (Seed #23)` — expanded pre-lock 7. `frontDelts (stab)` per Rule 2 execution-standard addendum.
-    - `#16 Crunch (Seed #27)` — 0 secondaries (strictest core-direct isolation).
-    - `#17 Hanging Leg Raise (Seed #28)` — expanded pre-lock 4. Co-primary `[abs, hipFlexors]` per training-intent override.
-    - `#18 Ab Wheel Rollout (Seed #29)` — 4 secondaries (lats syn, obliques/triceps/serratus stab). Equipment = `other`.
-  - **P0 (9):**
-    - `#19 DB Bench Press (P0 #1)` — 3 secondaries (same template as Bench, lats not tagged — no bar-pull cue).
-    - `#20 Incline DB Bench (P0 #2)` — 4 secondaries, inherits Incline BB Bench frontDelts-before-triceps ordering.
-    - `#21 DB Row (P0 #3)` — one-arm neutral grip; 5 secondaries (full Horizontal pull template; reduced lowerBack demand vs BB row but still tagged).
-    - `#22 Chin-Up (P0 #4)` — expanded pre-lock 1. Co-primary `[lats, biceps]` per Rule 1 override. parentExerciseId → Pull-Up (Seed #7) despite map divergence — exception logged.
-    - `#23 Bulgarian Split Squat (P0 #5)` — expanded pre-lock 2. Co-primary `[quads, glutes]` per Lunge / split-stance template.
-    - `#24 Barbell Hip Thrust (P0 #6)` — single-primary `glutes` (Contreras EMG — hip thrust is glute-dominant, NOT co-primary with hamstrings). Exception logged.
-    - `#25 DB Shoulder Press (P0 #7)` — inherits OHP Vertical push template; 6 secondaries (same flag as OHP).
-    - `#26 Barbell Shrug (P0 #8)` — `upperTraps` primary + `forearms/lowerBack/neck (stab)`. Rule 5 neck use case.
-    - `#27 DB Curl (P0 #9)` — same map as Barbell Curl (supinated single-primary).
-- **Close-out complete:**
-  - **8 sanity checks** run on full 27 entries — all pass. 2 flagged accepted:
-    - OHP at 6 secondaries (full Vertical push template; same pattern as Squat in 45a).
-    - DB Shoulder Press at 6 secondaries (inherits OHP template).
-  - **7 exceptions appended** to seed-draft.md exception log:
-    - OHP 6-secondary flag (template-standard, accepted).
-    - DB Shoulder Press 6-secondary flag (OHP precedent).
-    - Push-Up serratus-as-synergist (vs default stab; distinct from flat bench due to free scap movement).
-    - DB Fly fly-exception (extended from cable-only to DB fly per equivalent cuff vulnerability at loaded stretch).
-    - Chin-Up map divergence from Pull-Up parent despite parentExerciseId linkage (designated case for CE2 architecture).
-    - Hip Thrust single-primary glutes (rejects Hinge-template co-primary per Contreras EMG).
-    - Ab Wheel Rollout equipment = `other` (wheel not in standard categories).
-  - **EMG co-primary reference list** in `seed-tagging-principles.md` updated — new "Non-parents + missed parent (session 45b)" section with 5 entries: OHP (canonical rejected for vertical press), Chin-Up, Bulgarian Split Squat, Hammer Curl (template-default, low citation burden), Hanging Leg Raise. "Queued" list trimmed to: Close-Grip Bench (45c), Narrow-Grip Pull-Up (45e).
-  - **Revision log entries** added to both seed-draft.md and seed-tagging-principles.md for session 45b pt. 1 + pt. 2 combined.
+**Scope:** Resume pt. 1 mid-draft at entry #14; finish 14 remaining entries (5 Seed + 9 P0); run end-of-session close-out. Research + artifact mode.
 
 **Decisions made this session:**
-1. ✅ **Include OHP as late-caught parent** (not deferred to Session 45c). Rationale: it's a Seed-table parent with known variants (DB Shoulder Press P0 #7, Machine Shoulder Press P1 #26, others in P1/P5); deferring would push dependent inheritance out one session for no benefit. Decision codified in seed-draft.md § Full entry blocks — #1 OHP under "Missed parent (omitted from 45a scope)" subsection.
-2. ✅ **Extend fly-exception from cable to DB fly.** Principles doc Isolation template originally specified the rotatorCuff exception for "cable fly / crossover." DB fly has equivalent or greater rotator cuff vulnerability at the loaded-stretch position (heavier stretch, no cable-assist tension). Rationale: the exception is about the movement class (fly) not the implement (cable). Applied to DB Fly entry; Incline DB Fly (P2 #4) will inherit on 45e.
-3. ✅ **Push-Up serratus tagged as synergist** (not stabilizer). Distinct from flat bench because push-up allows free scapular movement while bench pins the scap against the pad. Free scap = full upward-rotation cycle = concentric serratus work, qualifies as synergist under the chest convention "press-past-horizontal." Incline DB Bench + Incline BB Bench don't get this override (bench pins scap).
+1. **Include OHP as late-caught parent** (not deferred to S45c). Why: it's a Seed-table parent with known variants in P0/P1/P5; deferring would push dependent inheritance one full session for no benefit.
+2. **Extend fly-exception from cable to DB fly.** Why: DB fly has equivalent or greater rotator cuff vulnerability at the loaded-stretch position (heavier stretch, no cable-assist tension). The exception is about the movement class (fly), not the implement (cable).
+3. **Push-Up serratus tagged as synergist** (not stabilizer). Why: distinct from flat bench because push-up allows free scapular movement (full upward rotation cycle = concentric work). Bench pins the scap.
 
-**Pre-existing pt. 1 decisions carried forward:**
-- OHP scope gap correction (18 Seed, not 17).
-- 2 labeling error fixes in pre-lock section (Face Pull #18→#20; Lateral Raise #15→#18).
+**7 exceptions appended to seed-draft.md:**
+- OHP 6-sec (template-standard, accepted, same pattern as Squat 45a).
+- DB Shoulder Press 6-sec (OHP precedent).
+- Push-Up serratus-syn (vs default stab).
+- DB Fly fly-exception (extended from cable-only).
+- Chin-Up map divergence from Pull-Up parent despite parentExerciseId linkage.
+- Hip Thrust single-primary glutes (rejects Hinge-template co-primary per Contreras EMG).
+- Ab Wheel Rollout equipment = `other`.
 
-**Artifact changes:**
-- `artifacts/seed-draft.md`: 14 new full-format entries (#14–#27); `## Session 45b — End-of-session sanity check` section added; 7 exception log entries appended under new `### Session 45b exceptions` subsection; revision log entry added.
-- `artifacts/seed-tagging-principles.md`: EMG co-primary reference list restructured — "Queued for 45b onward" renamed to "Queued for 45c onward"; new "Non-parents + missed parent (session 45b)" section inserted above it with 5 entries; revision log entry added.
-- `artifacts/recap.md`: Session 45b pt. 2 entry prepended to SESSION HISTORY; CURRENT TASK block updated to reflect session CLOSED + Session 45c as next action.
-- `CLAUDE.md`: CURRENT TASK block updated.
-- `artifacts/handoff.md`: this entry.
-
-**No code written. No `src/` edits. Zero CE1/CE2 scope changes. Zero memory-file edits. Zero principles-doc patches (all patches done during 45b opening).**
-
-**Next session target:** Session 45c — P1 upper body (~20-25 entries, est ~2h). Apply templates + variant inheritance from 45a parents + 45b full-entry blocks. Lock Close-Grip Bench `[chest, triceps]` co-primary per queued list.
+**EMG list updated:** "Non-parents + missed parent (session 45b)" added with 5 entries (OHP, Chin-Up, Bulgarian Split Squat, Hammer Curl template-default, Hanging Leg Raise). Queued list trimmed to: Close-Grip Bench (45c), Narrow-Grip Pull-Up (45e).
 
 ---
 
-## Session 45b pt. 1 (2026-04-23) — Main draft started, 13 of 27 entries written, PAUSED mid-draft
+## Session 45b pt. 1 (2026-04-23) — Main draft started, 13 of 27 written, paused
 
-**Scope:** Resume Session 45b main draft using the 7 pre-locks + principles-doc patches persisted during 45b opening. User paused mid-work after entry #13. Research + artifact mode. No code, no `src/` edits.
+**Scope correction:** OHP (Seed #17) was missing from both the 45a parent list AND the 45b scope count in CLAUDE.md (said "17 remaining Seed"; actual = 18). Added OHP as late-caught parent. True 45b scope = 18 Seed + 9 P0 = 27 entries.
 
-**Accomplished:**
-- **Scope correction — OHP omission patched.** Overhead Press (Seed #17) was missing from both the 45a parent list AND the 45b scope list in CLAUDE.md ("17 remaining Seed" — actual count is 18). Tracked the discrepancy back through exercise-bank.md seed table (29 entries), 45a parent count (11), and 45b listed count (17) — 11 + 17 = 28, off by one. OHP added as late-caught parent at top of the 45b full-entry blocks. True 45b scope = **18 Seed + 9 P0 = 27 entries**, not 26.
-- **Labeling errors fixed** in seed-draft.md § Session 45b pre-lock section:
-  - Item 3 `Face Pull (Seed #18)` → `Face Pull (Seed #20)` (seed #18 is Lateral Raise).
-  - Item 6 `Lateral Raise (Seed #15)` → `Lateral Raise (Seed #18)` (seed #15 is Leg Extension).
-  - Pre-lock content intact; only seed-table numbers corrected.
-- **New compilation-ready subsection** added to seed-draft.md: `### Full entry blocks — Session 45b`. Matches the format of the 45a parent entries (primary + role-tagged secondaries + equipment + Tier 3 + template + group derivation + notes). Pre-lock section above it is preserved as the decision record.
-- **13 full-format entries written** in sequence (all under § Full entry blocks — Session 45b):
-  - `#1 Overhead Press (Seed #17)` — missed parent. 6 secondaries (full Vertical push template); flagged per ≤5 soft threshold, accepted same as Squat (6 template-standard). Single-primary confirmed (co-primary rejected per principles doc).
-  - `#2 Incline BB Bench (Seed #2)` — expanded from pre-lock 5. `frontDelts` precedes `triceps` per EMG. serratus (stab) tagged per pre-lock.
-  - `#3 DB Fly (Seed #3)` — fly exception applied; `rotatorCuff (stab)` tagged per Isolation template fly exception.
-  - `#4 Push-Up (Seed #4)` — serratus as **synergist** (not stabilizer) due to free scap movement at top; distinct from flat bench where scap is pinned.
-  - `#5 Bent-Over BB Row (Seed #8)` — full Horizontal pull template. 5 secondaries.
-  - `#6 Seated Cable Row (Seed #10)` — same map as Bent-Over Row; lowerBack (stab) justified by forward cable-pull moment.
-  - `#7 Leg Press (Seed #13)` — 3 secondaries (machine eliminates the stability demand; discipline below squat-pattern ceiling).
-  - `#8 Lying Leg Curl (Seed #14)` — 1 secondary (calves as gastroc knee-flexor).
-  - `#9 Leg Extension (Seed #15)` — 0 secondaries (strictest isolation in library).
-  - `#10 Standing Calf Raise BW (Seed #16)` — 0 secondaries; bodyweight only, no axial load.
-  - `#11 Lateral Raise (Seed #18)` — expanded from pre-lock 6. `upperTraps (syn)` + `rotatorCuff (stab)`.
-  - `#12 Front Raise (Seed #19)` — 1 secondary (upperTraps syn for scap rotation).
-  - `#13 Face Pull (Seed #20)` — expanded from pre-lock 3. `rotatorCuff (syn)` per Rule 5 synergist exception.
+**Labeling fixes in pre-lock section:** Face Pull #18 → #20; Lateral Raise #15 → #18.
 
-**Decisions made this session:**
-1. ✅ **Include OHP as late-caught parent** (not as a separate Session 45c entry). Reason: it's a Seed-table parent with known variants (DB Shoulder Press P0 #7, others in P1/P5); treating it as P1-era work would defer the dependent inheritance one full session. Added under `#### Missed parent (omitted from 45a scope)` with an inline scope note.
-2. ✅ **Fly exception applies to DB Fly too.** Principles doc specifies "cable fly / crossover" — applied same rationale to dumbbell fly (equivalent or greater cuff vulnerability at loaded stretch). Noted in DB Fly entry as the justification.
-3. ✅ **Push-Up serratus = synergist, not stabilizer.** Distinction from flat bench: pinned scap on bench = serratus only isometric; free scap on push-up = full upward rotation cycle = concentric work. Noted inline.
-
-**Pending close-out (for Session 45b pt. 2 resume):**
-- 14 entries remaining to draft:
-  - **Seed (5):** `#14 Hammer Curl` (co-primary `[biceps, brachialis]` per Curl template), `#15 Tricep Pushdown` (expand pre-lock 7), `#16 Crunch`, `#17 Hanging Leg Raise` (expand pre-lock 4 — co-primary `[abs, hipFlexors]`), `#18 Ab Wheel Rollout`.
-  - **P0 (9):** `#19 DB Bench Press`, `#20 Incline DB Bench`, `#21 DB Row` (one-arm, neutral grip), `#22 Chin-Up` (expand pre-lock 1 — co-primary `[lats, biceps]`), `#23 Bulgarian Split Squat` (expand pre-lock 2 — co-primary `[quads, glutes]`), `#24 Barbell Hip Thrust` (single-primary `glutes` — not co-primary; hip thrust is glute-dominant per Contreras), `#25 DB Shoulder Press` (inherits OHP template, 6 secondaries flag), `#26 Barbell Shrug` (tag `neck (stab)` per Rule 5), `#27 DB Curl`.
-- Re-run 8 sanity checks on the full 18+9 set.
-- Append exception log entries (OHP 6-secondary flag; any new exceptions from remaining 14).
-- Add EMG co-primary reference list entries to `seed-tagging-principles.md`: Chin-Up, Bulgarian Split Squat, Hammer Curl (template-default — low citation burden), Hanging Leg Raise.
-- Add seed-draft.md revision log entry for session 45b pt. 1 + pt. 2 combined.
-
-**Artifact changes:**
-- `artifacts/seed-draft.md`: 2 labeling fixes in pre-lock section; new `### Full entry blocks — Session 45b` subsection with 13 entries; batch-continuation placeholder at bottom.
-- `artifacts/recap.md`: Session 45b pt. 1 entry prepended to SESSION HISTORY; CURRENT TASK block updated with scope correction + pause state + resume instructions.
-- `CLAUDE.md`: CURRENT TASK block updated to reflect pt. 1 pause and pt. 2 scope.
-- `artifacts/handoff.md`: this entry.
-
-**No code written. No `src/` edits. Zero CE1/CE2 scope changes. Zero memory-file edits. Zero principles-doc patches (done during 45b opening).**
-
-**Next session target:** Session 45b pt. 2 — resume at entry #14 Hammer Curl; finish 14 remaining entries; run close-out (sanity + exceptions + EMG list + revision log). Est ~1–1.5h.
+**Decisions:** identical to pt. 2 (carried forward — OHP inclusion, fly-exception extension, Push-Up serratus-syn). Documented at first occurrence in pt. 1.
 
 ---
 
-## Session 45b opening (2026-04-23) — Poliquin audit + methodology refinement + 7 pre-locks; main draft deferred
+## Session 45b opening (2026-04-23) — Poliquin audit + methodology refinement + 7 pre-locks
 
-**Scope:** Begin Session 45b — 26 non-parent entries. Three methodology challenges from user triggered a full audit pass over 45a parents before drafting. Main 26-entry draft deferred when session scope filled. Research + artifact mode. No code, no `src/` edits.
-
-**Accomplished:**
-- **Poliquin-audit pass on all 11 parents** (retroactive). 8 additive stabilizers accepted by user in one batch ("accept all they are all correct technically"):
-  - Squat +`calves (stab)` *(ankle/balance chain)*
-  - Bench Press +`lats (stab)` *(active pull-to-bar + bench tightness)*
-  - Dips +`upperBack (stab)` *(scap-packed position)*
-  - RDL +`abs (stab)` *(anti-flexion under axial load)*
-  - Skull Crusher +`rotatorCuff (stab)` *(supine weighted tricep eccentric)*
-  - Barbell Curl +`abs (stab)` *(anti-extension on standing axial isolation)*
-  - Plank +`rotatorCuff (stab)` *(glenohumeral position under bodyweight hold)*
-  - Cable Crossover +`rotatorCuff (stab)` *(multi-plane cable tension; isolation template exception)*
-- All additive — zero primary changes, zero group-derivation changes. Squat pushed to 6 secondaries — flagged against ≤5 soft threshold; accepted as Poliquin-driven exception.
-- **`seed-tagging-principles.md` patched** in parallel:
-  - Rule 2 gained **Execution standard** addendum — "tag stabilizers engaged under normal competent execution; exclude compensation-from-form-breakdown muscles."
-  - Rule 5 `rotatorCuff` use-case list expanded (+ skull crusher supine weighted, + plank bodyweight hold, + cable fly/crossover multi-plane); synergist exception added for face pull (concentric external rotation).
-  - Rule 6 `abs` exclusion row updated — axial-loaded standing isolation now qualifies for `abs (stab)` tagging.
-  - Isolation template gained cable-fly exception to "0 or 1 secondary" rule.
-  - Revision log entry added.
-- **7 pre-locks for 45b main persisted to `seed-draft.md` § Session 45b scaffold:** Chin-Up `[lats, biceps]` co-primary (Rule 1 override); Bulgarian Split Squat `[quads, glutes]` co-primary (unilateral shift — taxonomy exemplar); Face Pull 4-muscle tag w/ `rotatorCuff (syn)` synergist exception; Hanging Leg Raise `[abs, hipFlexors]` co-primary (user preference over anatomy-only); Incline BB Bench order `frontDelts` before `triceps` (EMG-corrected); Lateral Raise +`upperTraps (syn)` +`rotatorCuff (stab)`; Tricep Pushdown +`frontDelts (stab)` (competent-execution policy).
+**Scope:** Three user-driven methodology challenges resolved before drafting; full Poliquin-audit retroactive pass over 11 parents; main 26-entry draft deferred (session scope filled).
 
 **Decisions made this session:**
+1. **Incline bench ≠ flat bench + extras.** Why: EMG evidence — incline has ~30–45% more upper chest, ~58.5% less triceps. Resolution: on incline variants reorder secondaries so `frontDelts (syn)` precedes `triceps (syn)`.
+2. **Lateral raise traps engage at/above 90°.** Why: EMG-confirmed. Resolution: tag = `sideDelts (primary) + upperTraps (syn) + rotatorCuff (stab)`.
+3. **Normal competent execution policy.** Why: user challenged "perfect form" assumption for tricep pushdown. Resolution: tag stabilizers engaged under good-but-imperfect form (e.g. anterior shoulder bracing on pushdown); exclude compensation-from-breakdown muscles. Codified as Rule 2 addendum.
+4. **Poliquin-audit batch accept** — 8 additive stabilizers across the 11 parents. User: "accept all they are all correct technically. i dont want to lose credibility." All 8 applied retroactively. Squat pushed to 6 secondaries (over ≤5 soft threshold) — accepted as Poliquin-driven exception.
 
-1. ✅ **Incline bench ≠ flat bench + extras.** User challenged assistant's "bench + serratus" framing. EMG evidence reviewed: incline has ~30–45% more upper chest activation, ~58.5% less triceps, more front delts than flat. **Resolution:** On incline variants, reorder secondaries so `frontDelts (syn)` precedes `triceps (syn)`. Applied to the Incline BB Bench pre-lock; will apply to Incline DB Bench in 45b main.
-2. ✅ **Lateral raise trap recruitment.** User challenged "side shoulder only." EMG confirms upper traps engage meaningfully at/above 90° arm elevation. **Resolution:** Tag = `sideDelts (primary) + upperTraps (syn) + rotatorCuff (stab)`. Applied to Lateral Raise pre-lock.
-3. ✅ **Normal competent execution policy.** User challenged tricep pushdown tag assuming perfect form. **Resolution:** Adopted hybrid — tag stabilizers engaged under good-but-imperfect form (e.g. anterior shoulder bracing on pushdown); exclude compensation-from-breakdown muscles (those that kick in only when technique fails). Principles Rule 2 addendum codifies this. Tricep Pushdown gains `frontDelts (stab)`.
-4. ✅ **Poliquin-audit batch accept.** After user requested "audit with Poliquin as consultant; propose changes," 8 additions proposed; user "accept all they are all correct technically. i dont want to lose credibility." All 8 applied retroactively to 45a parents.
+**Principles-doc patches applied:**
+- Rule 2 Execution-standard addendum.
+- Rule 5 `rotatorCuff` use-case expansion (+ skull crusher supine, + plank bodyweight, + cable fly multi-plane); face-pull synergist exception.
+- Rule 6 `abs` exclusion row updated — axial-loaded standing isolation now qualifies for `abs (stab)`.
+- Isolation template gained cable-fly exception to "0 or 1 secondary" rule.
 
-**Artifact changes:**
-- `artifacts/seed-draft.md`: 11 parent entries updated with Poliquin adds (footnoted); 45b scaffold populated with 7 pre-locks + 19-entry remainder list; revision log entry added (45b opening); sanity-check re-run logged.
-- `artifacts/seed-tagging-principles.md`: Rule 2 execution-standard addendum; Rule 5 `rotatorCuff` use-case expansion + face pull synergist exception; Rule 6 `abs` axial-loaded-standing-isolation row; Isolation template cable-fly exception; revision log entry.
-- `artifacts/recap.md`: 45b opening entry in SESSION HISTORY; CURRENT TASK timestamp + next-action clarified (still 45b main draft, but now pre-locks are persisted).
-- `CLAUDE.md`: CURRENT TASK block clarified — 45a fully closed (parents + audit + principles patches); 45b main draft (26 entries) remains next action with pre-locks now in seed-draft.md.
-- `artifacts/handoff.md`: this entry.
-
-**No code written. No `src/` edits. Zero CE1/CE2 scope changes. Zero memory-file edits.**
-
-**Next session target:** Session 45b main draft — 26 non-parent entries (17 remaining Seed + 9 P0). 7 pre-locks apply verbatim (see seed-draft.md § Session 45b). 19 remaining entries draft normally per principles templates. Est ~2h.
+**7 pre-locks persisted** to `seed-draft.md` for 45b main: Chin-Up `[lats, biceps]`; Bulgarian Split Squat `[quads, glutes]`; Face Pull 4-muscle w/ `rotatorCuff (syn)`; Hanging Leg Raise `[abs, hipFlexors]`; Incline BB Bench frontDelts-before-triceps; Lateral Raise +upperTraps/+rotatorCuff; Tricep Pushdown +frontDelts.
 
 ---
 
 ## Session 45a (2026-04-23) — 11 parent muscle maps locked
 
-**Scope:** Session 45a per `artifacts/exercise-bank.md` § Build sequencing § Phase 1 — lock primary + role-tagged secondaries + opportunistic Tier 3 fields for the 11 parent exercises. Research + artifact mode. No code, no `src/` edits.
-
-**Accomplished:**
-- **New artifact: `artifacts/seed-draft.md`** — intermediate curation output for Sessions 45a–f. Will compile to `src/db/seed.ts` at Session 47+ build. Structure: per-session header with entries, exception log, end-of-session sanity check, revision log.
-- **11 parents fully tagged:**
-  - Squat — `quads` single-primary (Path A confirmed post-review)
-  - Deadlift — `[glutes, hamstrings]` co-primary (Hinge template); adductors dropped for conventional narrow stance
-  - Bench Press — `chest` single-primary (Horizontal push template)
-  - Dips — `[chest, triceps]` co-primary (EMG override per Dickie 2017); group derives as **chest** (overrides seed Arms)
-  - Pull-Up — `[lats, upperBack]` co-primary (Rule 1 override; upperBack demoted from secondary list)
-  - Lat Pulldown — `lats` single-primary (template default; no Pull-Up override for cable work)
-  - RDL — `[glutes, hamstrings]` co-primary (Hinge template)
-  - Skull Crusher — `triceps` single-primary; 1 secondary (forearms)
-  - Barbell Curl — `biceps` single-primary (supinated grip, Curl template)
-  - Plank — `abs` single-primary; obliques tagged as stabilizer despite exclusion-rule lean
-  - Cable Crossover — `chest` single-primary (Isolation template)
-- **EMG co-primary reference list seeded in `seed-tagging-principles.md`:** 4 parents locked (Deadlift, Dips, Pull-Up, RDL), 4 queued for 45b–e (Chin-Up, Bulgarian Split Squat, Close-Grip Bench, Narrow-Grip Pull-Up), 4 rejected co-primary claims recorded (Bench, Squat, OHP, Lat Pulldown).
-- **All 8 end-of-session sanity checks passed.**
+**Scope:** Lock primary + role-tagged secondaries + opportunistic Tier 3 fields for the 11 parent exercises. New artifact: `seed-draft.md`.
 
 **Decisions made this session:**
+1. **Dips co-primary `[chest, triceps]`** — group changes from seed Arms → Chest. Why: bodyweight closed-chain dip EMG supports.
+2. **RDL order `[glutes, hamstrings]`** — template default; both in legs group (tiebreak cosmetic).
+3. **Deadlift drop adductors** — conventional narrow stance. Sumo will re-add in 45b.
+4. **Plank obliques as stabilizer** — anti-extension core work; EMG supports oblique bracing (despite exclusion-rule lean).
+5. **Skull Crusher minimal secondaries** — only `forearms (stab)` per Extension template discipline.
+6. **Squat single-primary `quads` (Path A)** — challenged mid-review; 6-expert panel researched (Nippard / Contreras / Nuckols / Schoenfeld / Horschig / Escamilla). Panel split 3:2:1 single-primary vs co-primary vs context-dependent. Key evidence: Contreras' own 2015 EMG shows upper glute 29.4% mean (squat) vs 69.5% (hip thrust) → squat is not the glute exercise. Bulgarian Split Squat remains the taxonomy's designated co-primary squat-pattern exemplar; dedicated Hip Thrust + RDL entries cover glute volume tracking.
 
-6 decision points surfaced; 5 pre-approved inline; Squat challenged mid-review → full panel research → resolved.
-
-1. ✅ **Dips co-primary `[chest, triceps]`** — group changes from seed Arms → Chest. Bodyweight closed-chain dip EMG supports.
-2. ✅ **RDL order `[glutes, hamstrings]`** — template default kept; both in legs group, tiebreak cosmetic.
-3. ✅ **Deadlift drop adductors** — conventional narrow stance; sumo will re-add in 45b.
-4. ✅ **Plank obliques as stabilizer** — plank is anti-extension core work; EMG supports oblique bracing.
-5. ✅ **Skull Crusher minimal secondaries** — only `forearms (stab)` per Extension template discipline.
-6. ✅ **Squat single-primary `quads` (Path A)** — challenged mid-review; 6-expert panel researched (Nippard, Contreras, Nuckols, Schoenfeld, Horschig, Escamilla). Panel split 3:2:1 single-primary vs co-primary vs context-dependent. Key evidence: Contreras' own 2015 EMG shows upper glute 29.4% mean (squat) vs 69.5% (hip thrust) → squat is not the glute exercise. User confirmed Path A; co-primary rejected. Bulgarian Split Squat remains the taxonomy's designated co-primary squat-pattern exemplar; dedicated Hip Thrust + RDL entries cover glute volume tracking.
-
-**Artifact changes:**
-- `artifacts/seed-draft.md`: created (new file, ~11 parent entries + scaffolding for 45b–f)
-- `artifacts/seed-tagging-principles.md`: EMG co-primary reference list seeded (new section); revision log entry added
-- `artifacts/recap.md`: top timestamp + CURRENT TASK block + KEY FILES + SESSION HISTORY entry
-- `CLAUDE.md`: CURRENT TASK block rolled forward to Session 45b
-- `artifacts/handoff.md`: this entry
-
-**No code written. No `src/` edits. Zero CE1/CE2 scope changes.**
-
-**Next session target:** Session 45b — 26 non-parent entries (17 remaining Seed + 9 P0). Chin-Up override `[lats, biceps]` + Bulgarian Split Squat co-primary `[quads, glutes]` land here. Append to `seed-draft.md` under "Session 45b" header. Est ~2h.
+**EMG co-primary reference list seeded:** 4 parents locked (Deadlift, Dips, Pull-Up, RDL); 4 queued (Chin-Up, Bulgarian Split Squat, Close-Grip Bench, Narrow-Grip Pull-Up); 4 rejected (Bench, Squat, OHP, Lat Pulldown).
 
 ---
 
-## Session 44 summary (2026-04-23)
+## Session 44 (2026-04-23) — Execute on session 43 decisions
 
-**Scope:** Execute on the four decisions locked end-of-session-43 (EB4-ownership=CE2, EB5=allow, CE1 scope=all tiers, EB7 already-done). Research + planning artifacts only; no code.
+**Scope:** Execute on the four decisions locked end-of-session-43 (EB4-ownership=CE2, EB5=allow, CE1 scope=all tiers, EB7 already-done). Multiple follow-ups same session. Research + planning artifacts only; no code.
 
-**Accomplished:**
-- **Item 1 — CE2 planning doc created:** `memory/project_ce2_schema_architecture.md` fully populated with concrete content (Karpathy-check passed, no empty shell). All 5 CE2 architecture decisions locked:
-  - #1 Secondary index on `parentExerciseId` = **yes** (chevron expansion is a hot path)
-  - #2 Deletion behavior = **choice modal** (user picks cascade or null-orphan at delete time)
-  - #3 Hierarchy = **flat / forbid grandchildren** (mobile picker UX is the binding constraint)
-  - #4 Custom parent restriction = **any parent-level exercise** (seed or custom both qualify)
-  - #5 Search for variants = **direct results** (flat; no parent-grouping)
-- **Item 2 — CE1 scope memo rewritten:** `memory/project_ce1_final_scope.md` supersedes the prior "library expansion deferred" stance. New scope ships full 213-entry library in CE1. Added D-new-4 (library expansion) + D-new-5 (pointer to CE2) to Tier 1. Updated curation effort estimate from ~2hrs to 15–20hrs. Reordered Next Steps around sessions 44/45/46. Added sibling-doc reference to CE2.
-- **MEMORY.md index refreshed:** added CE2 entry; refreshed CE1 description (was "Tier 1 + Tier 3 forward-compat"; now "full 213-entry library + parentExerciseId coordination via CE2").
-- **recap.md + CLAUDE.md CURRENT TASK blocks synced:** timestamp bumped; status flipped to "session 44 in progress"; next-action narrowed to items 3 and 4 only; required-reading list updated for pickup (adds CE2, adds programs.md/profile.md, drops stale "CE1 memo to be rewritten").
+**5 CE2 architecture decisions locked:**
+- #1 Secondary index on `parentExerciseId` = **yes** (chevron expansion is a hot path).
+- #2 Deletion behavior = **choice modal** (user picks cascade or null-orphan at delete time).
+- #3 Hierarchy = **flat / forbid grandchildren** (mobile picker UX is the binding constraint).
+- #4 Custom parent restriction = **any parent-level exercise** (seed or custom both qualify).
+- #5 Search for variants = **direct results** (flat; no parent-grouping).
 
-**Items remaining for session 44 continuation or session 45:**
-- **Item 3** — Rewrite Build sequencing section in `artifacts/exercise-bank.md`. Old pass 1/2/3/etc. plan is stale now that CE1 scope = full library. Needs a fresh sequence aligned with the locked full-library scope.
-- **Item 4** — Integrate EB5 (custom-exercise `parentExerciseId` picker) into custom-exercise form spec. Read `artifacts/tabs/programs.md` and `artifacts/tabs/profile.md` first to decide which owns the custom-exercise form, then spec the optional parent-picker dropdown there.
-- **Item 5 (optional)** — ✅ DONE 2026-04-23 (see follow-up entry below).
+**CE1 scope memo rewritten:** `project_ce1_final_scope.md` supersedes prior "library expansion deferred" stance. Full 213-entry library ships in CE1. P4 stays UX-gated via feature toggle, not seed-gated. D-new-4 (library expansion) + D-new-5 (CE2 pointer) added to Tier 1.
 
-Both remaining items are mechanical (no fresh architecture decisions required).
+### 2nd follow-up — Items 3 + 4 closed
+- **New artifact: `seed-tagging-principles.md`** (~270 lines) — 6 rules + 10 movement templates + 5 group conventions + Tier 3 cadence + EMG policy + sanity checklist.
+- **Item 3 — exercise-bank.md Build sequencing rewritten.** Old "pass 1/2/3" replaced with 3-phase plan: Phase 1 Curation (45a–f, ~13h) → Phase 2 Coordination (CE1 + CE2 share single v3 bump) → Phase 3 Build (S47+).
+- **Item 4 — EB5 integrated into master-schematics.md § ExerciseSearchModal Spec.** Optional "Nest under a parent exercise" dropdown on Step 1 of custom-create flow. Location finding: custom-exercise form lives in master-schematics.md (S41 rewrite moved it there), not profile.md or programs.md as the S44 plan speculated.
 
-**Artifact changes:**
-- `memory/project_ce2_schema_architecture.md`: created (new file)
-- `memory/project_ce1_final_scope.md`: substantial rewrite
-- `memory/MEMORY.md`: CE2 entry added; CE1 description refreshed
-- `artifacts/recap.md`: CURRENT TASK block updated for session 44 status
-- `CLAUDE.md`: CURRENT TASK block synced with recap
-- `artifacts/handoff.md`: this entry
+### 3rd follow-up — Comprehensive gap audit (51 gaps)
+- Full audit across 22 artifacts + CLAUDE.md + 18 memory files (~41 files, ~5,900 lines). Six phases: Foundation → Tab specs → Exercise library → UIdesign/process → Memory → Synthesis. Severity 🔴/🟠/🟡/⚪.
+- **51 gaps logged.** 4 🔴 / 13 🟠 / 29 🟡 / 5 ⚪. New artifact: `gap-audit.md` (now archived).
+- **High-impact clusters:** parentExerciseId schema coverage drift (GA-01/02/44); project_state.md + MEMORY.md drift (GA-42/43); Pull-Up taxonomy contradiction (GA-32 — Rule 1 says co-primary, Vertical pull template says single-primary); broken cross-drive memory link (GA-31); S4 adherence residuals (GA-19/20); stale service names (GA-17/18); coreprocess.md vs recap.md authority conflict (GA-38).
+- **Pre-45a fix batch executed:** GA-31 (broken link stripped) + GA-32 (Pull-Up promoted to explicit Rule-1 override; template default kept at `lats` single-primary for Lat Pulldown). Pull-Up parent map deterministic for S45a.
 
-**No code written.** No `src/` edits. Research + planning only.
+### Follow-ups — Big-3 + OHP guides + Guide style refresh
+- 3 new guides authored under template v2: squat.md, bench-press.md, overhead-press.md. All 4 classic compound barbell lifts now have v2 guides (squat/bench/deadlift/OHP).
+- Guide style refresh: Tier 1 universal cuts (Severity definitions block, Plain English on deload, Pre-Rep Checklist) + universal Quick Cues block at top + Tier 2 surgical edits + step compression on paused-squat/smith-machine-squat (8 → 6). Net: ~115 lines lighter across 8-guide corpus.
 
 ---
 
-## Session 44 3rd follow-up (2026-04-23) — Comprehensive gap audit
+## Session 43 (2026-04-22) — Exercise bank build-out
 
-**Scope:** Full gap audit across all 22 artifacts + CLAUDE.md + 18 memory files (~41 files total, ~5,900+ lines). Research mode with explicit permission to edit a single new artifact (`gap-audit.md`) and execute the smallest possible fix batch before next session. No code, no `src/` edits.
-
-**Methodology:** Option C hybrid (layered by authority). Six sequential phases: Foundation → Tab specs → Exercise library → UIdesign/process → Memory → Synthesis. Severity taxonomy: 🔴 Blocker / 🟠 Must-fix / 🟡 Nice-to-have / ⚪ Cosmetic. All findings recorded inline in `artifacts/gap-audit.md` with GA-nn IDs and proposed fixes.
-
-**Results: 51 gaps logged.** 4 🔴 / 13 🟠 / 29 🟡 / 5 ⚪.
-
-**High-impact clusters:**
-- **`parentExerciseId` schema coverage (GA-01, GA-02, GA-44)** — session 44 handoff claimed EB5 was integrated but master-schematics DB schema table, v3 delta, Dexie schema string, and `ExerciseService.create()` row all still miss the field. CE2 memory doc's v3 schema example retains `category` (contradicts CE1 Decision #28). Session 47+ build silently miss-risk.
-- **`project_state.md` + MEMORY.md index drift (GA-42, GA-43)** — memory claims Phase 4 / 17 tests / Service layer audit next. Reality: Phase 5 / 72 tests / Session 45a queued. Any future Claude instance reading this gets a 15-session-old snapshot.
-- **Pull-Up taxonomy contradiction (GA-32)** — seed-tagging-principles.md Rule 1 lists Pull-Up as co-primary `lats + upperBack`; Vertical pull template says single-primary `lats`. Directly blocks Session 45a parent-map lock on Pull-Up.
-- **Broken cross-drive memory link (GA-31)** — seed-tagging-principles.md line 9 references memory via `../../../.claude/...` — can't resolve (memory on `C:`, artifacts on `D:`; depth wrong regardless).
-- **S4 adherence residuals (GA-19, GA-20)** — feature removed session 36 but `getAdherenceRate` service method + Overview Dashboard row both survived in statistics.md + master-schematics.md.
-- **Stale service names (GA-17, GA-18)** — `getByWorkoutId` should be `getByWorkoutLogId` (logs.md); `getNeglectedCategories` should be `getNeglectedGroups` (statistics.md).
-- **Authority model conflict (GA-38)** — coreprocess.md says "lower-numbered doc wins" (CLAUDE.md #2 beats recap #3); recap.md says "recap wins on CURRENT TASK." Unreconciled.
-
-**Pre-45a fix batch executed this session (2/51 gaps closed):**
-
-- **GA-31** — `seed-tagging-principles.md:9` — stripped broken markdown link syntax, kept plain-text reference with CLAUDE.md § auto-memory pointer.
-- **GA-32** — `seed-tagging-principles.md` Vertical pull template — Pull-Up promoted to explicit Rule-1 override (co-primary `lats + upperBack`, with demote-secondary instruction to prevent double-counting). Template default kept at `lats` single-primary for Lat Pulldown et al. Chin-Up / Narrow-Grip Pull-Up override restructured as a sibling bullet for parity. Resolution direction: Rule 1 is authoritative for exercise-specific calls; templates are pre-specific defaults. Pull-Up parent map is now deterministic for Session 45a.
-
-**Fix batches queued (not executed this session):**
-
-1. **Pre-build batch** (~1.5–2 hr, 8 must-fix items before Session 47+ CE1/CE2 build):
-   - GA-01, GA-02, GA-44: add `parentExerciseId` to master-schematics DB schema + v3 delta + Dexie schema string + `ExerciseService.create()` row; fix CE2 v3 example (drop `category`)
-   - GA-45: update CE2 memory's custom-form location pointer to master-schematics.md § ExerciseSearchModal Spec
-   - GA-17: `getByWorkoutId` → `getByWorkoutLogId` in logs.md
-   - GA-18: `getNeglectedCategories` → `getNeglectedGroups` in statistics.md
-   - GA-19: drop adherence row from Overview Dashboard table
-   - GA-20: drop `getAdherenceRate` from service tables in both statistics.md and master-schematics.md
-
-2. **Cross-conversation safety batch** (~30 min, 3 gaps):
-   - GA-42: rewrite `memory/project_state.md` body to current Phase 5 state
-   - GA-43: rewrite MEMORY.md index line for project_state
-   - GA-46: either close `memory/project_artifact_fixes.md` or update it to reflect what's done vs still-open
-
-3. **Hygiene batch** (~2 hr rolling, 29 nice-to-have items) — fold into sessions as artifacts are touched.
-
-4. **Cosmetic batch** (~30 min, 5 items).
-
-**Artifact changes this session:**
-- `artifacts/gap-audit.md`: created (new file — scaffold + 51 gaps + synthesis + session log; disposable, delete once all items close)
-- `artifacts/seed-tagging-principles.md`: GA-31 + GA-32 edits applied
-- `artifacts/recap.md`: top timestamp + CURRENT TASK required-reading + SESSION HISTORY entry
-- `artifacts/handoff.md`: top timestamp + this entry
-
-**No code written. No `src/` edits.**
-
-**Next session target:** Session 45a — lock 11 parent muscle maps per `seed-tagging-principles.md`. Est ~1.5h. Pull-Up will use co-primary `lats + upperBack` per GA-32 resolution. Alternative: run the Pre-build fix batch first if Session 47+ coordinated CE1/CE2 build is imminent (would clean up 8 must-fix items for ~1.5–2h before the build session).
-
----
-
-## Session 44 2nd follow-up (2026-04-23) — Principles doc + items 3 & 4 closed
-
-**Scope:** Finish session 44 open items (rewrite `exercise-bank.md` Build sequencing; integrate EB5 into custom-exercise form spec) + draft seed-tagging reference doc. Research + artifact mode; no code, no `src/` edits.
-
-**Accomplished:**
-- **Strategy brainstorm for Session 45 (seed re-curation):** 6-session plan across 213 entries, ~13h total. Hybrid batching = parents first (leverage inheritance) then by muscle group within priority band. Tiered EMG research budget. Intermediate output in `seed-draft.md` (markdown), compiled to `seed.ts` at build time.
-- **New artifact: `artifacts/seed-tagging-principles.md`** (~270 lines):
-  - 6 rules: primary selection, secondary selection, role assignment, parent/variant inheritance, background muscles, exclusion defaults
-  - 10 movement-pattern templates (horizontal/vertical push + pull, squat, hinge, lunge, carry, curl, extension, isolation)
-  - 5 group-specific convention blocks (chest / back / shoulders / arms / legs / core)
-  - Tier 3 tagging cadence (equipment always; grip/stance/bias opportunistic; jointLoad skip)
-  - EMG reference policy tiered by priority
-  - End-of-session sanity checklist + exception log format for `seed-draft.md`
-- **Item 3 CLOSED — `artifacts/exercise-bank.md` Build sequencing rewritten.** Stale "pass 1/2/3/etc." replaced with 3-phase plan:
-  - Phase 1 Curation (Sessions 45a–f, ~13h, no code) — session-by-session table with scope + estimate
-  - Phase 2 Coordination — CE1 + CE2 share single Dexie v3 bump
-  - Phase 3 Build (Session 47+) — 10-item schema + UI checklist
-- **Item 4 CLOSED — EB5 integrated into `master-schematics.md` § ExerciseSearchModal Spec.** Step 1 of custom-create flow gains optional "Nest under a parent exercise" dropdown. Dropdown contents = all exercises with `parentExerciseId === null`, sorted alphabetically. Selection sets `parentExerciseId` on save; unselected → null. No muscle-map pre-fill from parent this cycle (post-MVP polish). `ExerciseService.create()` signature updated to include `parentExerciseId`.
-- **Location finding:** The session 44 plan speculated the custom-exercise form lived in `profile.md` or `programs.md`. Actually it's specced in `master-schematics.md` § ExerciseSearchModal Spec (Session 41 rewrite moved the picker spec there). No tab-artifact edits needed.
-- **State docs synced:** `recap.md` + `CLAUDE.md` CURRENT TASK + `handoff.md` all rolled forward to Session 45a scope.
-
-**Decisions locked this session:**
-- None fresh. All CE1 + CE2 + EB decisions already locked. This session executed on open items from the session 44 plan.
-
-**Artifact changes:**
-- `artifacts/seed-tagging-principles.md`: created (new file, ~270 lines)
-- `artifacts/exercise-bank.md`: Build sequencing section rewritten
-- `artifacts/master-schematics.md`: ExerciseSearchModal Spec § Custom exercise creation Step 1 + Save line updated for EB5
-- `artifacts/recap.md`: top timestamp + CURRENT TASK block + state summary + KEY FILES + SESSION HISTORY entry
-- `CLAUDE.md`: CURRENT TASK block rolled forward to Session 45a
-- `artifacts/handoff.md`: top timestamp + this entry
-
-**No code written.** No `src/` edits.
-
-**Next session target:** Session 45a — lock 11 parent muscle maps per `seed-tagging-principles.md`. Output goes into new `artifacts/seed-draft.md`. Est ~1.5h.
-
----
-
-## Session 44 follow-up (2026-04-23) — Guide style refresh
-
-**Scope:** Review-driven cleanup of all 8 exercise guides + template v2. User asked: "find ways we can improve them. i want to add value not clutter." Applied Tier 1 universal cuts + Tier 2 surgical edits + step compression on the two over-segmented guides. Research/artifact-authoring only, no code.
-
-**Tier 1 (universal — all 8 guides + `_template.md`):**
-- Cut inline `Severity definitions` boilerplate (5-line block × 8 — values self-evident in column context)
-- Cut `Plain English on deload` paragraph from Programming sections (3-line block × 8)
-- Cut `**Cues — pick ONE per set:**` labels above each B/I/A cue trio
-- Replaced `## Pre-Rep Checklist` (4–6 redundant bullets) with `## Mid-set check` (single diagnostic line)
-- Added `## Quick cues` block at top of every guide (3 bullets, strict cap) — for in-app glance use
-- Stripped `*Catalog entry: ... — prose ...*` to bare `*Catalog: [ref] · Template: v2*`
-
-**Tier 2 (surgical):**
-- Hook sharpens (drop "Builds X, Y, Z" filler): squat.md, bench-press.md, overhead-press.md, deadlift.md
-- deadlift.md: added Right when/Wrong when to Step 5 (the pull); added `Log:` grip used
-- pull-up.md: added `Log:` bodyweight at session
-- incline-dumbbell-press.md: dropped arbitrary "Pair with" line
-- paused-squat.md: 8 steps → 6 (folded Walk Out + Stance + Brace into one "Get Into Position" step); `Log:` pause length
-- smith-machine-squat.md: 8 steps → 6 (folded Bar Position + Unrack + Brace into one "Set Up and Unrack" step); `Log:` foot position
-
-**Template (`_template.md`):**
-- All universal edits applied
-- Right when/Wrong when rule strengthened: mandatory on every step a beginner can't visually self-validate (was optional)
-- Tone rules: added italic = cue / bold = key term
-- Optional `**Log:**` bullet added to Programming example
-
-**Net impact:** ~115 lines lighter across 8 guides; one new mid-set value-add per guide.
-
-**Skipped from review proposals:** What You Should Feel ↔ Common Mistakes dedupe — apparent duplicates serve different framings (felt sensation vs visible pattern); pulling them thinned the felt-diagnostic block too much.
-
-**Artifact changes:**
-- `artifacts/exercises/_template.md`: 9 edits
-- `artifacts/exercises/{squat, bench-press, overhead-press, deadlift, pull-up, incline-dumbbell-press, paused-squat, smith-machine-squat}.md`: universal Tier 1 edits + per-file surgical
-- `artifacts/exercise-bank.md`: revision log entry added
-- `artifacts/recap.md`: SESSION HISTORY entry added
-- `artifacts/handoff.md`: this entry
-
-**No code written.** No `src/` edits.
-
----
-
-## Session 44 follow-up (2026-04-23) — Big-3 + OHP guides
-
-**Scope:** Item 5 from session 44 plan — author next batch of exercise guides under template v2. Research / artifact-authoring only; no code, no `src/` edits.
-
-**Accomplished:**
-- 3 new guides written under template v2:
-  - `artifacts/exercises/squat.md` — Seed #11 (high-bar back squat default; Big-3 → Recovery Notes included)
-  - `artifacts/exercises/bench-press.md` — Seed #1 (flat barbell touch-and-go default; Recovery Notes included)
-  - `artifacts/exercises/overhead-press.md` — Seed #17 (standing barbell strict press default; Recovery Notes + "Can't Press Bodyweight Yet?" Progression Path included)
-- All 3 follow the v2 contract: tiered B/I/A cues on movement steps, "What You Should Feel" proprioceptive map, severity column on Common Mistakes, Red Flags, progression criteria + deload trigger in Programming, split Advanced (Form / Intensity), Plain English closer.
-- Naming pattern: title includes the parent default in parentheses (e.g., "Squat (High-Bar Back Squat)") to match EB1 lock; non-default variants will get separate guides via `parentExerciseId` once CE2 lands.
-- `artifacts/exercise-bank.md`: Tutorial Content index expanded to 8 entries, re-ordered by tier rank; revision log entry added under "session 44 follow-up — Big-3 + OHP guides".
-- `artifacts/recap.md`: KEY FILES line updated, item 5 marked done, new SESSION HISTORY entry added.
-
-**Coverage milestone:** all 4 classic compound barbell lifts (squat / bench / deadlift / OHP) now have v2 guides.
-
-**Next-priority gaps** (suggested for next guide-writing session):
-- Bulgarian Split Squat (P0 #5)
-- Barbell Hip Thrust (P0 #6)
-- Dumbbell Row (P0 #3)
-- Chin-Up (P0 #4) — natural pair with `pull-up.md`, can lean on it for shared portions
-- Remaining Seed entries (Romanian Deadlift, Barbell Curl, etc.)
-
-**Artifact changes:**
-- `artifacts/exercises/squat.md`: created (new file, ~190 lines)
-- `artifacts/exercises/bench-press.md`: created (new file, ~190 lines)
-- `artifacts/exercises/overhead-press.md`: created (new file, ~210 lines)
-- `artifacts/exercise-bank.md`: index updated, revision log entry added
-- `artifacts/recap.md`: timestamp + KEY FILES + item 5 status + SESSION HISTORY entry
-- `artifacts/handoff.md`: this entry
-
-**No code written.** Item 3 (Build sequencing rewrite) and Item 4 (EB5 form integration) still pending.
-
----
-
-
-
-## Session 43 summary (2026-04-22)
-
-**Scope:** Exercise bank refinement. Originally planned as session 43 item 4 ("update exercise-bank.md decisions"); expanded into a comprehensive bank build-out once work began.
-
-**Accomplished:**
-- Library: 29 → 213 entries, 6 priority tiers (Seed=29, P0=9, P1=56, P2=53, P3=11, P4=30, P5=25).
-- Batch A (machines, 24 entries): iso-lateral plate-loaded (Chest Press, High/Low Row, Shoulder Press), Smith variants (Bench, Incline Bench, Row, OHP, Hip Thrust, Calf Raise), dedicated machines (Hip Thrust, Glute Kickback, Preacher Curl, Bicep Curl, Tricep Extension, Shrug, Tricep Dip, Crunch, Assisted Pull-Up, Vertical Leg Press, Plate-Loaded Hack Squat, Reverse Hyperextension, 45° Hyperextension, Captain's Chair).
-- Batch B (parent-family variants, 11 entries): Lat Pulldown grips (Close/V-Bar/Reverse), Paused RDL, Narrow-Grip Pull-Up, Skull Crusher variants (DB/Incline), Strict Curl, Plank variants (Knee/Weighted), plus Dumbbell Curl promoted to P0.
-- Batch C: Pendulum/Belt Squat split into 2 P2 entries (Pendulum Squat, Belt Squat); Cable Crossover restructured as parent+variants (High/Low → P5, Mid deduped).
-- Batch D (standalone gaps, 8 entries): Upright Row, Split Squat (non-Bulgarian), Forward Lunge, Tibialis Raise, Single-Leg Hip Thrust ×3 implements (bodyweight/Smith/machine), Single-Leg DB Calf Raise.
+**Scope:** Originally planned as S43 item 4 ("update exercise-bank.md decisions"); expanded into comprehensive bank build-out once work began. Library 29 → 213 entries across 6 priority tiers (Seed=29, P0=9, P1=56, P2=53, P3=11, P4=30, P5=25).
 
 **Decisions locked:**
-- EB1 — parent defaults: high-bar Squat, conventional Deadlift, flat BB Bench Press, bodyweight Dips; later expanded: Pull-Up pronated, Lat Pulldown wide-grip, RDL barbell, Skull Crusher EZ-bar, Barbell Curl standing, Plank forearm, Cable Crossover mid-height.
-- EB2 — variant exposure: chevron expander on parent rows + search always indexes variant names. No toggle. Progressive disclosure.
-- EB4 architecture — `parentExerciseId: number | null` FK on `exercises` table. Each variant keeps its own row, ID, tutorial file, GIF, progression history. Decided using Option B from 3-way analysis (flat vs parent+FK vs swap-under-parent).
+- **EB1 — parent defaults:** high-bar Squat, conventional Deadlift, flat BB Bench Press, bodyweight Dips, Pull-Up pronated, Lat Pulldown wide-grip, RDL barbell, Skull Crusher EZ-bar, Barbell Curl standing, Plank forearm, Cable Crossover mid-height.
+- **EB2 — variant exposure:** chevron expander on parent rows + search always indexes variant names. No toggle. Why: progressive disclosure beats either always-show or hide-behind-toggle for mobile.
+- **EB4 architecture — `parentExerciseId: number | null` FK on `exercises` table.** Each variant keeps its own row, ID, tutorial file, GIF, progression history. Decided using Option B from 3-way analysis (flat vs parent+FK vs swap-under-parent).
 
-**Decisions still open (session 44):**
-- EB3 — Stats rollup (per-variant only vs parent rollup). Deferred — revisit during Stats visual design.
-- EB6 — P4 toggle categories (naming + default state). Deferred to toggle menu build.
+**Decisions closed end-of-session:**
+- **EB4-ownership = CE2.** New planning doc `memory/project_ce2_schema_architecture.md` to be populated S44.
+- **EB5 = allow** custom exercises to set optional `parentExerciseId` on any seeded parent. Zero schema cost (field from EB4); one optional dropdown.
+- **EB7 executed externally:** all 5 inline guides migrated to `artifacts/exercises/[slug].md`; template v2 locked at `_template.md`.
+- **CE1 scope = all tiers.** Full 213-exercise library ships in CE1. Prior "library expansion deferred" stance superseded.
 
-**Decisions closed end-of-session 43:**
-- **EB4-ownership = CE2** spin-up. New planning doc `memory/project_ce2_schema_architecture.md` to be populated session 44 with concrete content (schema spec, migration plan, variant-UX wiring). Karpathy caveat applied: no empty shell.
-- **EB5 = allow** custom exercises to set optional `parentExerciseId` on any seeded parent. Zero schema cost (field from EB4), one optional parent-picker dropdown in custom-exercise form.
-- **EB7 executed externally** during session 43: all 5 inline guides migrated to `artifacts/exercises/[slug].md`, template v2 locked at `artifacts/exercises/_template.md`.
-- **CE1 scope = all tiers.** Full 213-exercise library ships in CE1. `memory/project_ce1_final_scope.md` to be rewritten session 44 (prior "library expansion deferred" stance superseded). P4 stays UX-gated via feature toggle, not seed-gated. Build plans to be rewritten.
+**Decisions deferred:**
+- **EB3 (Stats rollup — per-variant only vs parent rollup)** — revisit during Stats visual design.
+- **EB6 (P4 toggle categories naming + default state)** — to toggle menu build.
 
-**Parent/Variant Rule confirmed:**
-Variant = same primary/secondary muscle map as parent; differs only in execution style, range, or implement. Different muscle map = separate exercise. Applied: Paused Squat (variant), Box Squat (variant), Front Squat (separate — quad-dominant shift), Sumo Deadlift (separate — adductor shift), Stiff-Leg Deadlift (separate — hamstring-dominant), Tricep/Chest Dips (variants — emphasis within same muscle set).
+**Parent/Variant Rule confirmed:** Variant = same primary/secondary muscle map as parent; differs only in execution style, range, or implement. Different muscle map = separate exercise. Applied: Paused Squat (variant), Box Squat (variant), Front Squat (separate — quad-dominant shift), Sumo DL (separate — adductor shift), Stiff-Leg DL (separate — hamstring-dominant), Tricep/Chest Dips (variants — emphasis within same muscle set).
 
-**Tutorial content authored:**
-5 entries (Incline DB Press, Deadlift Conventional, Paused High-Bar Squat, Smith Machine Squat, Pull-Ups). Initially inline in exercise-bank.md; migrated to `artifacts/exercises/[slug].md` (one file per exercise) and upgraded to template v2 by end of session (see EB7 closure note above). Template v2 format: title + catalog entry + hook → Setup steps (with optional right-when/wrong-when on non-obvious steps) → Movement steps with **tiered cue blocks (Beginner = internal+analogy, Intermediate = outcome, Advanced = external+terse)** → "What You Should Feel" proprioceptive map → Pre-Rep Checklist with "if it feels off" troubleshoot line → Common Mistakes table with **Severity column (Form-only / Strength-leak / Injury-risk)** + severity definitions block → Red Flags → Beginner Programming with progression criteria + deload trigger + plain-English deload gloss → optional "Can't Do It Yet? Progression Path" with stage targets (mandatory for bodyweight lifts with entry barriers) → optional Recovery Notes (mandatory for Big-3) → Advanced split into Form refinements vs Intensity techniques → Plain English closer. Length target 200–500 lines/guide. Template locked at `artifacts/exercises/_template.md`. Tier review (S/A/B/C) used to decide section inclusion; B-tier and C-tier additions (metadata strip, variations table, rename, timeline) skipped to keep guides lean.
-
-**Artifact changes:**
-- `artifacts/exercise-bank.md`: created and fully populated (this session).
-- `CLAUDE.md`: added exercise-bank.md pointer to "Reference only" block.
-- `artifacts/recap.md`: CURRENT TASK updated to session 44 pickup.
+**Tutorial template v2 locked.** Tier review (S/A/B/C) used to decide section inclusion; B-tier and C-tier additions (metadata strip, variations table, rename, timeline) skipped to keep guides lean.
 
 **Numbering gaps intentional:** P1 #4, P2 #2/3, P3 #2 vacated by Batch C moves/dedupes. Renumbering 100+ rows would cost more than it's worth; gaps annotated under each tier header.
 
-**No code written.** No `src/` edits. Research session only.
+---
+
+## Session 42 (2026-04-22) — SPEC PATCH 2/3 — tab artifacts
+
+**Scope:** Align logs.md, profile.md, statistics.md, programs.md with CE1 locks from S41. No code.
+
+**Decisions locked extending #26:**
+1. **RPE toggle lives in UserSettingsContext** (not raw AuthContext.user). Why: matches `unitPreference` pattern; clean separation of preferences from identity state.
+2. **RPE introduced via F30 first-run tutorial** (not silent toggle).
+
+**Sequencing change end-of-session:** Seed re-curation deferred from S43 → S44. Why: `exercise-bank.md` has active expansion planning that will change the final CE1 seed set; curating 29 current seeds now would need redoing post-expansion.
 
 ---
 
+## Session 41 (2026-04-22) — SPEC PATCH 1/3 — master-schematics.md
 
+**Scope:** Path A spec patch against master-schematics.md per `project_ce1_final_scope.md`. No code.
+
+**Planning resolutions locked before writing:**
+1. **`exercises.category` DROPPED.** Broad group derived via `getExerciseGroup()` with "first primary wins" tiebreaker. Why: chosen Option C of 3 — keeps a single source of truth (specific muscles); broad group always derivable.
+2. **`secondaryMuscles` shape = `{ muscle: Muscle; role }[]`** (structured, not parallel arrays). Why: easier to filter/map, no index-pairing risk.
+3. **`primaryMuscles: Muscle[]`** to support co-primaries per D3.
+4. **Six separate decision rows #24–#29** (not one combined). Why: each is independently revisitable.
+5. **Deferred items assigned F31–F39.**
+6. **No Dexie multi-entry index on primaryMuscles.** Why: JS filter <1ms at 29 rows; not worth the index complexity.
+
+**Issue Tracker:** CE1 → Resolved. Added F31 Injury-Warning, F32 feature toggle menu, F33 jointLoad UI, F34 RPE-derived stats, F35 library expansion, F36 cues/instructions, F37 training-age modifier, F38 cardio tracking, F39 Group 2 dimensions.
 
 ---
 
-## Read These Files First
-Check **CLAUDE.md → CURRENT TASK** for session scope and required reading.
-Always read `artifacts/recap.md`. Read other files only as scoped by CURRENT TASK.
+## Session 40 (2026-04-22) — CE1 PLANNING CLOSED
 
-Full file index (reference — do not read all of these every session):
-1. `artifacts/recap.md`             — current state, decisions summary, next steps
-2. `artifacts/master-schematics.md` — DB schema, service layer, all locked decisions, issue tracker
-3. `artifacts/tabs/logs.md`         — Logs tab spec (user flows complete)
-4. `artifacts/tabs/programs.md`     — Programs tab spec (user flow complete)
-5. `artifacts/tabs/profile.md`      — Profile tab spec (placeholder — no flow for MVP)
-6. `artifacts/tabs/statistics.md`   — Statistics tab spec (revised session 33 — fluff removed, PR celebration + feel rating + Logs indicator added; build deferred to post-D5)
-7. `artifacts/UIdesign.md`          — UI standards, color palette, component specs, design brainstorm
+**Scope:** Resumed from S39 pickup; carried planning to full completion.
+
+**Decisions locked (across many sub-forks):**
+- **D4 LOCKED at B-lite** — role tag synergist/stabilizer on secondaries; both 0.5× in MVP math; future calibration without re-curation.
+- **D5 (recovery windows):** 9 large (60h), 15 small (36h), 2 background-small (36h). Adductors moved from large to small per user. Galpin training-age modifier deferred entirely.
+- **D-new-3 (RPE per set):** `logSets.rpe` (1–10 with half-points, nullable, optional), `users.rpeEnabled` toggle (default false), per-set entry UI gated on toggle. ALL RPE-derived stats deferred.
+- **D6 across 4 sub-forks:** D6.1 multi-select Step 1 + sectioned Step 2; D6.2 two-tap chip cycle; D6.3 long-press to promote (later replaced S51); D6.4 seed-only background muscles. User pushed back with alternative 3-field dropdown at D6.2 — reviewed honestly, defended Option A; user agreed.
+- **D7 across 4 sub-forks:** 6 broad chips, single-select, primary + secondaries with role color, name + muscle-tag search.
+- **D8 across 5 sub-forks:** D8.1 nuke and reseed (B2 — drop exercises + logExercises + logSets); D8.3 silent migration; D8.4 single Dexie v3 bump bundles all changes; D8.5 add S2 (jointLoad) + S3 (trainingAge) as forward-compat fields.
+- **D9 across 5 sub-forks:** camelCase IDs, Title Case labels, single MUSCLE_LABELS map, TS string union.
+- **D15.1 LOCKED at Option C** (equipment as forward-compat nullable field). D15.2–D15.5 deferred.
+
+**Path A LOCKED:** simplified scope. Tier 1 (D1-D9 + D-new-3) + Tier 3 forward-compat schema fields. Tier 2 (D10–D17 full UX work + library expansion + cues/instructions) deferred.
+
+**User pushback noted:** (1) wanted stabilizers tracked after originally agreeing to skip → D4 reopened; (2) flagged scope was too big → Path A simplified scope chosen.
+
+---
+
+## Session 39 (2026-04-22) — PAUSED MID-PLANNING
+
+**Scope:** CE1 deep dive expanded far beyond original 4 sub-questions into full muscle taxonomy + exercise dimensions + injury-warning system planning. Coach review panel set up: Poliquin / Galpin / Rambod / Tuchscherer (Israetel/Cressey/Thibaudeau dropped).
+
+**Decisions locked:**
+- **D1:** 24 user-surfaced + 2 background = 26 muscles. Expanded from 17. Additions: lower traps (split from "traps"), brachialis, hip flexors, serratus, adductors, abductors, tibialis, neck (background), rotator cuff (background). Renamed: "traps" → "upper traps". Rambod's call for further splits explicitly **rejected** (bias dimension handles those).
+- **D2:** 6 broad groups derived from specific muscle (storage = specific only).
+- **D3:** Primary 1.0× / secondary 0.5×. Co-primaries when EMG supports. No data cap. UI displays ALL secondaries in declared order.
+- **D4 reopened:** stabilizers tracked. 14 stabilizer muscles confirmed. Architecture options A/B/C/B-lite presented; user leaning B or C.
+- **D5 paused mid-discussion.**
+
+**Modern training metrics validated:** hard sets per muscle/week (Schoenfeld), RPE/RIR (RP/Tuchscherer), e1RM tracking (Brzycki/Epley), MEV/MAV/MRV bands (Israetel), EWMA over ACWR (Wang 2020 critique on math), per-joint load tracking.
+
+**New decisions surfaced:** D-new (feature toggle menu — deferred next dev cycle), D-new-2 (joint load tags), D-new-3 (RPE per set — accepted), D-new-4 (rest tracking — toggle menu), D-new-5 (lengthened bias / RoM — toggle menu), F-new (Injury-Warning system, F31).
+
+---
+
+## Session 38 (2026-04-21) — Housekeeping
+
+Sessions 31–37 landed in 3 logical commits on main: `69ab01c` (U4/U5 guards + D5 ErrorContext), `3f48f05` (service test audit + U4/U5 RTL tests), `e0e8917` (Statistics spec revision). Pre-commit verification: build clean + 72/72 tests passing.
+
+---
+
+## Session 37 (2026-04-21) — Statistics research
+
+**Decisions locked:**
+- F26–F28 logged: Workout Stats Card (most skipped, volume by muscle group, balance).
+- **Time filters:** 30 / 90 / 365 / all time (7-day dropped).
+- **Volume tracking without RPE:** tonnage (weight × reps) + set count per muscle group per week.
+- F28 display approach TBD (raw % split vs push/pull/legs ratio vs imbalance flag).
+
+---
+
+## Session 36 (2026-04-21) — S4 resolution
+
+**Decision:** **Weekly adherence metric DROPPED.** Why: no honest denominator without active program tracking. Replaced by Program Intelligence feature set: F20 (favorite exercises), F21 (program usage), F22 (current split detection), F23 (program efficacy), F24 (neglected categories), F25 (de facto program inference). All derivable from existing schema; no new tables. "Stint" renamed to "current split."
+
+---
+
+## Session 35 (2026-04-21) — Statistics decisions
+
+- P5 / S4 / OD6 deferred — decide inline at their respective build steps.
+- **Body fat %:** manual entry + Navy formula "Estimate for me" button.
+- **Neck circumference (`neckIn`):** stored in `bodyMetrics` table alongside waist/hip.
+- **Body metrics pre-fill:** form pre-populates from most recent saved entry; user updates only changed fields.
+
+---
+
+## Session 34 (2026-04-21) — D5 complete
+
+ErrorContext wired into ProgramDetailPage + WorkoutTemplatePage + WorkoutDetailPage. WorkoutDetailPage.test.tsx mocked ErrorContext (useError must be inside ErrorProvider — test render wrappers don't include it).
+
+---
+
+## Session 33 (2026-04-21) — Statistics spec revision + D5 partial
+
+**Statistics spec — removed:** HRV (wearable-only), hunger rating (nutrition app feature), arm/thigh circumference (low fill rate), protein/step/sleep targets from Goals card (targets without tracking loops).
+
+**Added:** post-workout feel rating (`workoutLogs.rating` nullable 1–3, at finish flow); PR celebration at set-save (`StatisticsService.checkForPR`, non-blocking) + finish summary; Logs tab consistency indicator.
+
+**Schema trimmed:** users → goalWeight only; dailyCheckins → sleepHours + steps; bodyMetrics → weight/bodyFatPct/waistIn/hipIn; workoutLogs.rating added.
+
+**Decisions:** S1 closed; device integration (Capacitor) deferred as architectural session.
+
+---
+
+## Session 32 (2026-04-21) — Service layer test audit
+
+5 new test files + 3 guard tests added to WorkoutLogService.test.ts. 72/72 passing across 8 files.
+
+**Test patterns:**
+- Nested `beforeEach` inside guard describe blocks seeds a shared record (weId/setId) to avoid repeating seeding in every guard test.
+- `localStorage.clear()` required in AuthService beforeEach to prevent session bleed between tests.
+
+---
+
+## Session 31 (2026-04-21) — U4 + U5 UI guards
+
+**Built:** new hook `useScrollToError` (IntersectionObserver-based; returns `arrowDir: 'up' | 'down' | null`). U4: Finish blocked with 0 exercises → red outline on Add Exercise + bounce arrow in footer. U5: Save Edits blocked for blank name (inline error) or 0 exercises (same arrow pattern).
+
+**RTL test pattern:** IntersectionObserver stubbed as a class in beforeEach (arrow functions can't be constructors in jsdom); `vi.clearAllMocks()` required to reset call counts between tests.
+
+---
+
+## Session 30 (2026-04-21) — Service guards + artifact cleanup
+
+**Built:** service layer guards added to 7 services (LogSetService.update NaN/negative/decimal, WorkoutExerciseService.update positive bounds, WorkoutLogService.create/finish, AuthService.signup, ProgramService.create, WorkoutService.create). All throw user-facing Error messages.
+
+**Decisions:** duplicate exercises allowed; U4 block finish with 0 exercises (UI-level); U5 block Save Edits on validation failure.
+
+**Artifact cleanup:** S1 F13 schema claim corrected; A1 page title 20px/600 → 24px/700; A2 FAB states split (disabled/inert vs hidden); A3 Phase 4 status update; A4 repo visibility; A5 project_state.md memory rewritten; M1 B1 row normalized; B3 closed.
+
+---
+
+## Session 29 (2026-04-21) — D8 test infrastructure
+
+Vitest 4.1.5 + RTL 16 + @testing-library/jest-dom + fake-indexeddb + jsdom installed. DB isolation via `db.delete() + db.open()` in beforeEach. 17/17 pass (units.test.ts + WorkoutLogService.test.ts).
+
+---
+
+## Session 28 (2026-04-20) — CLAUDE.md overhaul
+
+- Added Session Start — Opening Message Protocol (research vs. build mode distinction).
+- Removed Model Selection Guide (preserved "always ask before recommending Opus" as Working Style bullet).
+- Removed "Always ask before making edits" (replaced by new protocol).
+- Strengthened "Surface confusion" to unconditional.
+- Deleted Post-Demo Cleanup section; deleted build step reading table.
+- recap.txt → recap.md, UIdesign.txt → UIdesign.md, coreprocess.txt → coreprocess.md (git mv); active references updated across 9 files.
+
+---
+
+## Session 27 (2026-04-19) — Future feature planning
+
+Logged F13 (daily protein tracker), F14 (`proteinResetHour` on users), F15 (lock screen widget — native only), F16 (bio-metric equation engine — brainstorm needed), F17 (body fat predictor — US Navy method candidate), F18 (sleep analysis), F19 (step quality — needs native integration). Phase 4 task list compiled: D8 → D5 → Statistics build.
+
+---
+
+## Session 26 (2026-04-18) — Statistics tab spec expansion
+
+Full body recomposition tracking system scoped (Tier 1 + Tier 2; Tier 3 out of scope). New tables: `bodyMetrics` + `dailyCheckins`. New users fields: goalWeight, proteinTarget, stepTarget, sleepTarget. New services: BodyMetricsService, DailyCheckinService, StatisticsService (7 methods). Open issues S1–S4 added. **S2 (Goals card field location):** deferred — re-evaluate after Statistics is built.
+
+---
+
+## Session 25 (2026-04-17) — Demo + repo public
+
+Demo complete. Deleted demo-seed.js, PRESENTATION_AID.md, PRESENTATION_AID.html. Created README.md. Added "Portfolio Legibility" principle to UIdesign.md and handoff.md (now in this file's tail section).
+
+---
+
+## Session 24 (2026-04-16) — Karpathy guardrails
+
+Three additive guardrails added to CLAUDE.md (no existing rules changed):
+- Working Style: "Surface confusion" + "Surgical changes only".
+- Session discipline: "Simplicity check" before finishing a file.
+- Pre-completion checklist: bug fix reproducing test requirement.
+
+---
+
+## Session 23 (2026-04-15) — B2 fix + tooling
+
+**Bug fix B2:** spinner arrows on weight/reps inputs now save. `handleWeightBlur`/`handleRepsBlur` replaced with shared `saveSet()` helper; `onChange` fires on `inputType: 'insertReplacementText'` (spinner only); `onBlur` fires for keyboard input. **Blue bubble fix:** `min="0"`/`min="1"` removed (validation handled by `saveSet`). **0 reps now valid** (represents missed attempt).
+
+**CLAUDE.md:** Tech Stack / Working Style / Document Editing sections added. TypeScript hook operational rule added; `.claude/settings.json` created (postToolUse runs tsc --noEmit on Edit/Write).
+
+F12 logged: log history date context + calendar view (post-MVP).
+
+---
+
+## Session 21 (2026-04-14) — F11 FAB inert mode
+
+FAB no longer hidden on `/logs/:id` active workout page. `return null` → disabled/inert button render (opacity 0.35, pointer-events none, no onClick). Why: keeps nav center slot filled; future hook for intra-workout tool hub.
+
+---
+
+## Session 20 (2026-04-14) — Bug fix
+
+ExerciseSearchModal category filter chips were hidden behind exercise list on smaller viewports. Added `flex-shrink: 0` to `.chips`.
+
+---
+
+## Session 18 (2026-04-10) — F7 resolved + UI polish
+
+Target weight display "@ x lbs" → "| top set: x lbs" (F7 resolved). WorkoutTemplatePage doneBtn + deleteBtn flex: 1 fix. F8/F9/F10 logged. OD6 (CSS button token standards) added to UIdesign.md.
+
+---
+
+## Session 17 (2026-04-10) — FAB inline rebuild
+
+FAB moved from `position: fixed` floating element into BottomNav center flex slot — eliminates overlap on all pages. WorkoutFAB always renders (no null after auth checks); non-/logs tap navigates to /logs. Committed `abdc304`.
+
+---
+
+## Session 16 (2026-04-10) — Pre-demo code review
+
+All critical flows verified clean: auth, quick-start, from-program start, finish flows (all 4 state machine paths + skip + from-program sync), read-only/edit modes, B1 edge case, Programs CRUD with cascades. **False positive documented:** ExerciseSearchModal modal closure after custom exercise creation works correctly via parent's `onSelect` handler — do not re-flag.
+
+---
+
+## Session 15 (2026-04-10) — UI polish
+
+ProfilePage unit labels in label text ("Height (in)" / "Weight (lb)"); all 4 tab page titles standardized to 24px/700; `autocapitalize="words"` added to all name inputs across app.
+
+---
+
+## Session 14 (2026-04-10) — UI polish pass
+
+Trash icons replace text Remove/Delete buttons throughout; set-delete changed to red X. WorkoutTemplatePage button layout redesigned. FAB centered. Page titles centered. Empty states updated. **Bug fixes:** from-program exercises now copy correctly on workout start; Save Edits reloads from Dexie; seed deduplication for React Strict Mode.
+
+---
+
+## Session 13 (2026-04-09) — Step 6 build
+
+UserService, ProfilePage (auto-save name/height/weight, unit toggle, logout), StatisticsPage placeholder.
+
+---
+
+## Sessions 8–12 (2026-04-09) — Build steps 4–5c
+
+Steps 4 (Programs tab), 5a (Logs list + active workout), 5b (finish flows: quick-start 4-step state machine, from-program sync modal), 5c (read-only + edit modes; Delete Workout flow) built across 4 sessions in a single day.
+
+---
+
+## Sessions 1–7 (2026-04-02 to 2026-04-09) — Planning + foundations
+
+- **Sessions 1–3:** project scoped, tech stack selected, DB schema v2 designed, 23 decisions locked, user flows complete.
+- **Sessions 4–6:** CLAUDE.md created, GitHub repo set up, UIdesign.md expanded, pre-build gap audit (D1–D8), Issue Tracker established.
+- **Sessions 7–8:** pre-build decisions locked (D4/D7/N3/N4 — see master-schematics.md § Key Design Decisions). Steps 1–3 built (scaffold, auth, shared components).
 
 ---
 
 ## Project Info
 - GitHub repo: https://github.com/kazi91/workout-tracker-v2 (public)
-- CLAUDE.md active at project root (auto-loaded by Claude instances)
-- .gitignore created at project root
+- CLAUDE.md active at project root
+- Schema: v3 live (parentExerciseId + Muscle taxonomy + RPE + Tier 3 forward-compat)
 
 ---
 
-## Build State
-**Phase 3 Build is complete.** All 6 steps built, verified, and committed. UI polish pass complete. Demo delivered.
-**Phase 4 — Testing & cleanup: CLOSED 2026-04-22.** D8 + service layer test audit + D5 (ErrorContext) all complete. 72/72 tests passing.
-**Phase 5 — Statistics page + new features planning (in progress).** CE1 spec patches active (session 41 = master-schematics.md done; sessions 42/43 = tabs + seed re-curation). Statistics research done (session 35) — spec updated, key UX decisions locked. Statistics build follows CE1 build.
+## Active items (do not close without discussion)
+- **R3:** Plain-text password — replace when backend is added.
+- **P5:** Charting library — decide before Statistics build (Recharts recommended).
+- **S2:** Goals card field location — re-evaluate after Statistics is built.
+- **S3:** Wearable API integration — post-MVP; manual entry only.
+- **F1–F6, F8 (resolved by F42), F9–F10:** future features — see Issue Tracker.
+- **F31–F42:** see Issue Tracker.
+- **OD6:** CSS button token standards — brainstorm session pending before enforcing.
+- **CP1–CP3:** cleanup items from S39/S52/S53 — exercise-bank.md drift audit, mid-trap clarification, Coach Review Panel deletion.
 
-### What is built
-- **Step 1** — Vite scaffold, Dexie schema (8 tables), 29 seed exercises, routing stubs, dark theme CSS variables
-- **Step 2** — AuthService, AuthContext, AuthGuard, LoginPage, SignupPage (with unit preference toggle)
-- **Step 3** — UserSettingsContext, ActiveWorkoutContext, units.ts helpers, ExerciseService, WorkoutLogService (partial), BottomNav, Modal, ExerciseSearchModal, WorkoutFAB (full visibility/hidden logic)
-- **Step 4** — ProgramService, WorkoutService, WorkoutExerciseService; ProgramsPage, ProgramDetailPage, WorkoutTemplatePage (inc. Edit Targets Modal)
-- **Step 5a** — LogExerciseService, LogSetService; WorkoutDetailPage active mode, ExerciseCard, SetRow
-- **Step 5b** — WorkoutDetailPage finish flows: quick-start 4-step state machine, from-program sync modal
-- **Step 5c** — WorkoutDetailPage read-only and edit modes; Delete Workout flow
-- **Step 6** — UserService, ProfilePage (auto-save name/height/weight, unit toggle, logout), StatisticsPage placeholder
+---
 
-### UI polish pass (2026-04-10)
-- Trash icons replace text Remove/Delete buttons throughout; set-delete changed to red X
-- WorkoutTemplatePage button layout: shorter labels, auto-width centered, Start/Done/Delete row layout
-- FAB centered (left: 50% / translateX); all 4 tab page titles standardized to 24px/700
-- ProgramsPage "New Program" button moved below list; LogsPage empty state updated
-- ProfilePage unit labels moved into label text ("Height (in)", "Weight (lb)")
-- autocapitalize="words" on all name inputs across the app
-- Bug fixes: from-program exercises now copy correctly on workout start; Save Edits reloads from Dexie; seed deduplication fix for React Strict Mode
-
-### Active items (do not close without discussion)
-- R3: Plain-text password — replace when backend is added
-- P5: Charting library — decide before Statistics build (Recharts recommended)
-- S1: Energy/hunger selector UX — chips vs stepper; decide at Statistics build step 7
-- S2: Goals card field location — re-evaluate after Statistics is built; profile.md untouched for now
-- S3: Wearable API integration — post-MVP; manual entry only. Body fat % uses manual entry + Navy formula "Estimate for me" button (session 35). Neck circumference (`neckIn`) stored in `bodyMetrics` table alongside waist/hip (session 35).
-- S4: Weekly adherence edge cases — no active program, multiple programs; decide at Statistics build step 9
-- D5: ErrorContext — replace console.error with user-facing error surface
-- **D8: Test infrastructure** — DONE (session 29): Vitest + RTL + fake-indexeddb + jsdom installed; 20 tests passing across units.test.ts, WorkoutLogService.test.ts, WorkoutDetailPage.test.tsx; see recap.md TEST COVERAGE
-- F1–F6, F8–F10: future features — see Issue Tracker
-- OD6: CSS button token standards — brainstorm session pending before enforcing
-- **Post-demo cleanup:** DONE (session 25) — demo-seed.js, PRESENTATION_AID.md, PRESENTATION_AID.html deleted; README.md created; repo public
-- **Statistics spec:** DONE (session 26) — full body recomposition feature set specced; 2 new tables, 4 new user fields, 3 new services; build deferred until after testing phase
-
-### Resolved (record only — do not reopen)
-- F7: Target weight display — resolved session 18 ("| top set: x lbs")
-- All planning items P1–P4, P6–P9 — resolved during Phase 2
-- All gaps G1–G3, G5–G7 — resolved during Phase 3 build
-- All pre-build gaps D1–D4, D6–D7 — resolved before or during build
-- B1: Dangling workoutId on program delete — resolved session 11
+## Resolved (record only — do not reopen)
+- F7 (Target weight display) — S18.
+- F8 (bodyweight tracking patch) — superseded by F42 (S53).
+- All planning items P1–P4, P6–P9 — Phase 2.
+- All gaps G1–G3, G5–G7 — Phase 3.
+- All pre-build gaps D1–D4, D6–D7 — pre/during build.
+- B1 (Dangling workoutId on program delete) — S11.
+- D5 (ErrorContext) — S34.
+- D8 (test infrastructure) — S29.
+- Phase 4 (Testing & cleanup) — closed 2026-04-22.
+- CE1 (custom exercise spec) — Decisions #24–#29 + Tier 3 schema fields.
+- S1, S4 — closed in stats spec revision (S33/S36).
 
 Do not re-open planning decisions unless the user explicitly raises them.
 
 ---
 
-## Phase 4 Close-Out (historical — closed 2026-04-22)
-
-D8 complete. Infrastructure in place: Vitest + RTL + fake-indexeddb + jsdom. DB isolation pattern: `beforeEach(() => db.delete() + db.open())` on the singleton.
-U4 + U5 UI guards complete (session 31): finish blocked with 0 exercises; Save Edits blocked on blank name or 0 exercises; useScrollToError hook with IntersectionObserver bounce arrow; 3 RTL tests added.
-
-D5 complete (session 34): all 12 files wired with ErrorContext try/catch. WorkoutDetailPage.test.tsx updated with ErrorContext mock. 72/72 tests passing.
-
-Test coverage at Phase 4 close: 72/72 across 8 files (see recap.md TEST COVERAGE block). Test items still outstanding — carried into Phase 5 when touched:
-1. ~~WorkoutLogService (create, finish, delete cascade)~~ — DONE (session 29)
-2. ~~U4 + U5 WorkoutDetailPage guards~~ — DONE (session 31)
-3. ~~Service layer audit~~ — DONE (session 32)
-4. Finish flow state machine paths (all 4 quick-start paths + from-program sync) — deferred into Phase 5
-5. Auth flow (signup → login → logout) — deferred into Phase 5
-6. ActiveWorkoutContext initialization — deferred into Phase 5
-
----
-
-## Phase 5 State (active)
-
-**CE1 spec patches in flight:**
-- Session 41 (DONE 2026-04-22): master-schematics.md patched across 7 sections + Changelog. New schema fields on exercises/users/logSets; `exercises.category` dropped (derived via `getExerciseGroup()`); Muscle Taxonomy Model sub-section added; Decisions #24–#29 locked; Issue Tracker = CE1 resolved + F31–F39 added.
-- Session 42 (DONE 2026-04-22): tab artifacts aligned. logs.md = SetRow RPE input gated on `UserSettingsContext.rpeEnabled` + ExerciseSearchModal cross-ref to Decision #27. profile.md = "Enable RPE per set" toggle under Preferences + F30 first-run tutorial intro + F32 migration note. statistics.md = Section 7 CE1 upgrade callout + 4 `category` residuals scrubbed to `getExerciseGroup()`. programs.md = single-line modal cross-ref. master-schematics.md Decision #26 patched (RPE toggle → UserSettingsContext.rpeEnabled, hydrated from AuthContext.user on login, F30 tutorial introduces it). memory/project_tutorial_hints_queue.md = RPE first-run hint added.
-- Session 43 (DONE 2026-04-22): exercise-bank.md built out to 213 entries across 6 priority tiers (Batches A/B/C/D). All major EB decisions closed: EB1 (parent defaults) / EB2 (chevron expander + search) / EB4 architecture (`parentExerciseId` nullable FK) / EB4-ownership = CE2 / EB5 = allow / EB7 = per-file guides with template v2. CE1 scope = full 213-library. EB3 + EB6 deferred to their respective build sessions. 5 tutorial guides authored, migrated to `artifacts/exercises/[slug].md`, upgraded to template v2. See Session 43 summary at top of file for full detail.
-- Session 44 (NEXT): EXECUTE on session 43 decisions. (1) Create `memory/project_ce2_schema_architecture.md` with concrete content (schema spec for `parentExerciseId`, v2→v3 migration plan, variant-UX wiring: picker chevron + search indexing). (2) Rewrite `memory/project_ce1_final_scope.md` to supersede prior "library expansion deferred" stance — new scope ships all 213 entries (P4 stays UX-gated via feature toggle, not seed-gated). (3) Rewrite Build Sequencing section in exercise-bank.md aligned with full-library CE1 scope (prior pass 1/2/3 plan stale). (4) Integrate EB5 (custom exercise `parentExerciseId` nesting = allow) into custom-exercise form spec — flag for profile.md / programs.md / master-schematics.md update. (5) Optional: more guide drafting if bandwidth.
-- Session 45 (DEFERRED): seed re-curation over the final locked CE1 exercise set. Full CE1-schema tagging per EMG citations. Output = spec table (artifact), not code.
-
-**After CE1 spec patches:** CE1 build (Dexie v3 migration + schema wiring + ExerciseSearchModal rewrite + RPE input). Then Statistics build (resolve P5 charting library + OD6 button tokens first). Then iteration on new feature sets (F20–F39).
-
----
-
-## Recent Sessions (most recent first)
-
-**Session 42 — 2026-04-22 (SPEC PATCH 2/3 COMPLETE — tab artifacts):** Research/spec-patch mode — no code written. Aligned all four tab specs + master-schematics Decision #26 + tutorial-hints memory with the CE1 locks from session 41. **logs.md** — Active-mode SetRow gains optional RPE input (1–10 with half-points, nullable, no pre-fill, never blocks save); column header conditionally adds RPE column when `UserSettingsContext.rpeEnabled === true`; Services Used rows updated to `LogSetService.add(logExerciseId, rpe?)` and `update(id, data)` (data may include `rpe`); "+ Add Exercise" cross-refs master-schematics § ExerciseSearchModal Spec (Decision #27 — D6 two-step create + D7 6-group chip + muscle-tag search). **profile.md** — Preferences gains "Enable RPE per set" toggle (default OFF; persists to `users.rpeEnabled` via `UserService.updateProfile`; surfaced app-wide via `UserSettingsContext.rpeEnabled`); inline notes call out F30 first-run tutorial introduction + F32 feature toggle menu migration; Services Used row updated (rpeEnabled + trainingAge accepted); Context Used row updated (UserSettingsContext now exposes rpeEnabled alongside unitPreference, hydrated from AuthContext.user on login, reset on logout). **statistics.md** — Section 7 Program Intelligence gains CE1 upgrade callout: `exercises.category` dropped, `getExerciseGroup(exercise)` derives broad group, specific-muscle granularity unlocks F27/F28/F29 without further schema work (stat features land in a later cycle). Four `category` residuals scrubbed → "broad group via `getExerciseGroup()`" (7a favorite + frequency rows, 7d neglected insight, 7e `getFavoriteExercises` services row). **programs.md** — one-liner cross-ref added to "+ Add Exercise" pointing at ExerciseSearchModal Spec (Decision #27); no other picker callouts existed. **master-schematics.md Decision #26 patched** — explicitly locks: RPE toggle exposed via `UserSettingsContext.rpeEnabled` (hydrated from `AuthContext.user` on login, reset on logout — same pattern as `unitPreference`); feature introduced via F30 first-run tutorial. **memory/project_tutorial_hints_queue.md** — new "RPE toggle — first-run introduction" hint prepended to the muscle-picker hints (covers what RPE measures, half-point scale, optional nature, opt-in during tutorial, default-off honesty for tutorial-skippers). **Decisions locked extending #26:** (1) RPE toggle lives in UserSettingsContext — matches unit-preference pattern, clean separation of preferences from identity state; (2) RPE introduced via F30 tutorial, not silent toggle. **Ready for Session 43:** seed re-curation table — 29 exercises tagged with `primaryMuscles[]` + role-tagged `secondaryMuscles[]` + Tier 3 forward-compat fields; EMG citations per Decision #24 sourcing standard; output is a spec artifact, not code.
-
-**Session 40 — 2026-04-22 (CE1 PLANNING CLOSED — ready for spec patch):** Research session — no code written. Resumed CE1 planning from session 39's pickup point and carried it to full completion. **Locked D4 (B-lite — role tag synergist/stabilizer on secondaries; both 0.5× MVP math); D5 (recovery windows: 9 large 60h / 15 small 36h / 2 background-small 36h; adductors moved to small; Galpin training-age modifier deferred entirely); D-new-3 (RPE per set: logSets.rpe 1-10 with half-points, users.rpeEnabled toggle, opt-in via Profile, all RPE-derived stats deferred); D6 (4 sub-forks — multi-select Step 1 + sectioned Step 2; two-tap chip cycle; long-press promote; seed-only background); D7 (4 sub-forks — 6 broad chips, single-select, primary + all secondaries with role color, name+muscle search); D8 (5 sub-forks — nuke and reseed B2; N/A auto-map; silent migration; single Dexie v3; S2/S3 forward-compat fields); D9 (5 sub-forks — camelCase IDs, Title Case labels, single map, TS string union); D15.1 (Option C — equipment as forward-compat nullable field).** **Path A LOCKED:** simplified scope (Tier 1 already-locked + Tier 3 forward-compat schema fields). **Tier 2 deferred:** D10-D17 full UX work, library expansion, cues/instructions, all RPE stats, joint load curation, injury warning system, feature toggle menu. User pushed back twice this session: (1) wanted stabilizers tracked after originally skipping → D4 reopened; (2) flagged scope too big for one cycle → Path A chosen. User also proposed alternative 3-field dropdown picker UX at D6.2; reviewed honestly, defended Option A; user agreed. Memory files created/updated: project_rpe_deferred_features.md (NEW), project_picker_ux_post_build.md (NEW), project_tutorial_hints_queue.md (NEW), project_post_launch_migration_pattern.md (NEW), project_ce1_final_scope.md (NEW — supersedes planning_state), project_stat_weights_calibration.md (UPDATED for Galpin defer). **Spec patch session split agreed:** Session 41 = master-schematics.md (7 sections: DB Schema, Dexie schema string + version note, Service Layer, Exercise Library, ExerciseSearchModal Spec, Key Design Decisions, Issue Tracker + Changelog); Session 42 = tab artifacts (logs.md, profile.md, statistics.md); Session 43 = seed re-curation with EMG citations. **Pickup point:** read memory/project_ce1_final_scope.md (mandatory authoritative scope) + MEMORY.md index, then begin master-schematics.md edits per the 7-section plan in CURRENT TASK.
-
-**Session 39 — 2026-04-22 (PAUSED MID-PLANNING):** Research session — no code written. CE1 deep dive expanded far beyond original 4 sub-questions into full muscle taxonomy + exercise dimensions + injury-warning system planning. Coach panel set up at session start (Poliquin / Galpin / Rambod / Tuchscherer — Israetel/Cressey/Thibaudeau dropped); panel saved to statistics.md § Coach Review Panel; CP1 logged. **Brainstorm closed**: active dimensions narrowed to 8 (bias, fatigue ratio, grip width, grip orientation, stance width, equipment, tempo, bilateral) after parking body position, loading vector, RoM, skill, stability. Coach panel critique surfaced critical gaps: RPE absent, rest absent, RoM cut prematurely, recovery windows treated as universal. **Planning phase: D1, D2, D3 LOCKED. D4 REOPENED. D5 PAUSED.** D1 = 24+2 muscle taxonomy (additions: lower traps, brachialis, hip flexors, serratus, adductors, abductors, tibialis, neck/rotator cuff as background). D2 = 6 broad groups derived from specific muscle (storage = specific only). D3 = primary 1.0× / secondary 0.5× with co-primaries when EMG-supported, no display cap, declared order, named constant. D4 reopened (user reversed "skip stabilizers"); 14 stabilizer muscles confirmed; user leaning B or C; research strongly supports B-lite (role tag synergist/stabilizer on secondaries; both 0.5× MVP math). D5 paused mid-bucket-discussion. Modern training metrics research validated: hard sets per muscle/week (Schoenfeld), RPE/RIR per set, e1RM tracking, MEV/MAV/MRV bands (Israetel), EWMA over ACWR for injury risk (Wang 2020 critique). Schema improvements proposed S1–S10 (top 3: S1 logSets.rpe, S2 exercises.jointLoad, S3 users.trainingAge). New decisions surfaced: D-new (feature toggle menu — next dev cycle), D-new-2 (joint load tags), D-new-3 (RPE accepted), D-new-4 (rest tracking — toggle menu), D-new-5 (lengthened bias — toggle menu), F-new (Injury-Warning system, likely F31). Memory files created: project_feature_toggle_menu.md, project_cardio_tracking.md, project_stat_weights_calibration.md, project_ce1_planning_state.md. **Pickup point: D4 (B-lite) → D5 → D-new-3 RPE spec → D6–D9 → D10–D17.**
-
-**Session 38 — 2026-04-21:** Housekeeping — commit cleanup. Sessions 31–37 landed on main in 3 logical commits: `69ab01c` (U4/U5 guards + D5 ErrorContext), `3f48f05` (service test audit + U4/U5 RTL tests — 72/72 green), `e0e8917` (Statistics spec revision: F20–F30, CE1, S1/S4 resolved). Pre-commit verification: build clean + 72/72 tests passing. Working tree clean; 3 commits ahead of origin/main (not pushed). No code changes. Next: Session 39 — CE1 deep dive (research mode) per cycle plan (A→B→C: commit → CE1 research → finish-flow/ActiveWorkoutContext tests → Phase 4 close → Statistics build).
-
-**Session 36 — 2026-04-21:** S4 research and resolution — no code written. Weekly adherence metric dropped: lacks honest denominator without active program tracking. Replaced by Program Intelligence feature set (F20–F25): favorite exercises per muscle group, program usage frequency, current split detection (retroactive from log history — ≥60% of week's workouts from one program), program efficacy (PR density + volume growth per split), neglected category callout, de facto program inference. All derivable from existing schema; no new tables. "Stint" renamed to "current split". All features logged as Future in Issue Tracker; Section 7 added to statistics.md. OD6 (button tokens) deferred — research not started.
-
-**Session 37 — 2026-04-21:** Statistics research continued — no code written. F26–F28 logged (Workout Stats Card: most skipped, volume by muscle group, balance). Time filters locked: 30/90/365/all (7-day dropped). Volume tracking without RPE: tonnage + weekly set count per muscle group. Custom exercise UX gaps identified — CE1 logged in Issue Tracker. F28 display approach TBD. Next: CE1 deep dive research session.
-
-**Session 35 — 2026-04-21:** Statistics research session — no code written. P5/S4/OD6 deferred to their respective build steps. Locked: body fat % = manual entry + Navy formula "Estimate for me" button; neck circumference (`neckIn`) in `bodyMetrics` table; body metrics form pre-fills from most recent entry. statistics.md updated.
-
-**Session 34 — 2026-04-21:** D5 complete. Finished wiring ErrorContext try/catch into the 3 remaining page files. Fixed WorkoutDetailPage.test.tsx to mock ErrorContext (useError must be used inside ErrorProvider — test render wrappers don't include it). Build clean; 72/72 passing. Next: Statistics build — resolve P5/S4/OD6 first; read artifacts/tabs/statistics.md.
-
-- `src/pages/ProgramDetailPage/index.tsx` — loadData, handleNameBlur, submitAddWorkout, handleConfirmDelete wrapped
-- `src/pages/WorkoutTemplatePage/index.tsx` — import + useError added; loadData, handleNameBlur, handleExerciseSelect, handleRemoveExercise, handleSaveTargets, handleStartWorkout, handleConfirmDelete wrapped
-- `src/pages/WorkoutDetailPage/index.tsx` — import + useError added; loadData, handleNameBlur, handleExerciseSelect, handleRemoveExercise, handleAddSet, handleSetUpdate, handleSetDelete, handleSaveEdits, handleDeleteWorkout, handleConfirmDiscard, handleFinish, handleSaveNewProgram, handleSaveToExistingProgram, handleUpdateTemplate wrapped
-- `src/pages/WorkoutDetailPage/WorkoutDetailPage.test.tsx` — added `vi.mock('../../context/ErrorContext', ...)` stub
-
-**Session 33 — 2026-04-21:** Two parts. (1) Statistics spec research + revision: removed HRV, hunger rating, arm/thigh circumference, orphaned goal targets (protein/step/sleep); added post-workout feel rating (`workoutLogs.rating` nullable 1–3), PR celebration at set-save (`StatisticsService.checkForPR()`, non-blocking) + finish summary, Logs tab consistency indicator. Schema trimmed across users/bodyMetrics/dailyCheckins; S1 closed; device sync deferred (Capacitor). (2) D5 partial build: ErrorContext + ErrorBanner infrastructure created; App.tsx + 9 files wired; ProgramDetailPage import/useError added but handlers not wrapped.
-
-Files DONE (no further edits needed):
-- `src/context/ErrorContext.tsx` — NEW: ErrorProvider, useError(), toUserMessage()
-- `src/components/ErrorBanner/index.tsx` + `ErrorBanner.module.css` — NEW: fixed top banner, red, X dismiss, z-index 300
-- `src/App.tsx` — ErrorProvider wraps everything; ErrorBanner renders inside it; seed .catch(console.error) intentionally left (App can't call useError — it's the provider's parent)
-- `src/context/ActiveWorkoutContext.tsx` — .catch(console.error) → .catch((e) => showError(toUserMessage(e)))
-- `src/components/ExerciseSearchModal.tsx` — getAll .catch replaced; handleCreate wrapped
-- `src/pages/LoginPage/index.tsx` — handleSubmit wrapped
-- `src/pages/SignupPage/index.tsx` — handleSubmit wrapped
-- `src/pages/ProfilePage/index.tsx` — all 4 handlers wrapped
-- `src/pages/ProgramsPage/index.tsx` — loadData + submitCreate wrapped
-
-Files PARTIALLY done (import + useError added, handlers NOT yet wrapped):
-- `src/pages/ProgramDetailPage/index.tsx` — import and `const { showError } = useError()` added; still need try/catch on: loadData, handleNameBlur, submitAddWorkout, handleConfirmDelete
-
-File NOT started:
-- `src/pages/WorkoutTemplatePage/index.tsx` — needs import + useError + try/catch on: loadData, handleNameBlur, handleExerciseSelect, handleRemoveExercise, handleSaveTargets, handleStartWorkout, handleConfirmDelete
-- `src/pages/WorkoutDetailPage/index.tsx` — needs import + useError + try/catch on: loadData, handleNameBlur, handleExerciseSelect, handleRemoveExercise, handleAddSet, handleSetUpdate, handleSetDelete, handleSaveEdits, handleDeleteWorkout, handleConfirmDiscard, handleFinish, handleSaveNewProgram, handleSaveToExistingProgram, handleUpdateTemplate
-
-Pattern for every handler (uniform — no variation):
-```tsx
-async function handleFoo() {
-  try {
-    await SomeService.method(args);
-    setState(...);
-  } catch (e) {
-    showError(toUserMessage(e));
-  }
-}
-```
-
-After all edits: run `npm run build` to verify clean compile, then `npx vitest run` to confirm 72 tests still pass. Then update artifacts.
-
-**Session 32 — 2026-04-21:** Service layer test audit. 5 new test files created: AuthService.test.ts (16), ProgramService.test.ts (8), WorkoutService.test.ts (7), LogSetService.test.ts (11), WorkoutExerciseService.test.ts (7). 3 guard tests added to WorkoutLogService.test.ts (create guard, finish × 2). All service guards now covered. 72/72 passing. Test pattern: nested `beforeEach` inside guard describe blocks seeds a shared record (weId/setId) to avoid repeating seeding in every guard test. localStorage.clear() required in AuthService beforeEach to prevent session bleed between tests. D5 (ErrorContext) is next.
-
-**Session 31 — 2026-04-21:** U4 + U5 guards built in WorkoutDetailPage. New hook: `src/hooks/useScrollToError.ts` — IntersectionObserver-based, returns `arrowDir: 'up' | 'down' | null`; arrow points toward error element, clears when element scrolls into view. U4: Finish blocked with 0 exercises → exerciseError state → red outline on Add Exercise button + bounce arrow in footer. U5: Save Edits blocked for (a) blank name → nameError inline error, (b) 0 exercises → same arrow pattern. exerciseError clears when exercise is added via handleExerciseSelect. RTL test pattern: IntersectionObserver stubbed as a class in beforeEach (arrow functions can't be constructors in jsdom); vi.clearAllMocks() required to reset call counts between tests. 3 new tests in WorkoutDetailPage.test.tsx. Build clean; 20/20 passing.
-
-**Session 30 — 2026-04-21:** Artifact/doc cleanup only — no code written. S1: F13 false schema claim corrected ("already defined" → "specced in Statistics phase (session 26); not yet built"). A1: UIdesign.md page title 20px/600 → 24px/700 (matches actual implementation). A2: UIdesign.md FAB states split — disabled/inert (WorkoutDetailPage active mode) vs hidden (/login, /signup); Decision #15 in master-schematics.md updated to match. A3: Phase 4 status "not started" → "in progress". A4: repo visibility "(private)" → "(public)". A5: project_state.md memory rewritten to reflect Phase 4 current state. M1: B1 row normalized (Severity + Area columns added); B3 closed as Resolved.
-
-**Session 30 — 2026-04-21:** Research: full artifact audit (22 gaps identified). Build: service layer guards added to 7 services — LogSetService.update (NaN/negative/decimal reps), WorkoutExerciseService.update (targetSets/targetReps >= 1, targetWeight >= 0), WorkoutLogService.create (throw if active exists), WorkoutLogService.finish (throw if not found or already finished), AuthService.signup (name/email/password), ProgramService.create (name blank), WorkoutService.create (name blank). All guards throw user-facing Error messages. WorkoutLogService.test.ts: TypeScript fixes + counter test updated for new active workout guard. master-schematics.md service table corrected (getByWorkoutId → getByWorkoutLogId). Decisions: duplicate exercises allowed; U4 block finish with 0 exercises (UI-level, not yet built); U5 block Save Edits on validation failure (not yet built). Build clean; 17/17 passing.
-
-**Session 29 — 2026-04-21:** D8 complete — Vitest test infrastructure installed and verified. Packages: vitest 4.1.5, @vitest/coverage-v8, @testing-library/react 16, @testing-library/jest-dom, @testing-library/user-event, fake-indexeddb, jsdom. Config: vitest.config.ts (jsdom, globals, setupFiles). Setup: src/test/setup.ts (fake-indexeddb/auto + jest-dom). Tests: units.test.ts (8 tests, all converters), WorkoutLogService.test.ts (9 tests: create quick-start, create from-program, finish, deleteLog cascade). DB isolation via db.delete() + db.open() in beforeEach. 17/17 pass.
-
-**Session 28 — 2026-04-20:** CLAUDE.md overhaul + artifact housekeeping. No code written.
-- Added Session Start — Opening Message Protocol (research vs. build mode distinction, pre-build confirmation checklist, stop condition)
-- Removed Model Selection Guide section; preserved "always ask before recommending Opus" as a Working Style bullet
-- Removed "Always ask before making edits" bullet (replaced by new protocol)
-- Strengthened "Surface confusion" to unconditional version (mandatory inference/assumption separation before building)
-- Deleted Post-Demo Cleanup section (files already gone)
-- Renamed recap.txt → recap.md, UIdesign.txt → UIdesign.md, coreprocess.txt → coreprocess.md via git mv; updated active references across 9 files (CLAUDE.md, recap.md, UIdesign.md, coreprocess.md, handoff.md, master-schematics.md, tabs/login.md, tabs/logs.md, WorkoutFAB.tsx); session history/changelog entries preserved as-is
-- Deleted build step reading table from CLAUDE.md (steps 1–6 complete; git history is the archive)
-
-**Session 27 — 2026-04-19:** Future feature planning. Logged F13 (daily protein tracker), F14 (protein reset time setting — Profile tab, `proteinResetHour` field on users), F15 (lock screen widget — native only), F16 (bio-metric equation engine — brainstorm needed), F17 (body fat predictor — US Navy method candidate), F18 (sleep analysis — quality signals from dailyCheckins), F19 (step quality — cadence data needs native integration). Phase 4 task list compiled: D8 → D5 → Statistics build. Next session starts D8.
-
-**Session 25 — 2026-04-17:** Demo complete. Repo prepped for public GitHub. Deleted demo-seed.js, PRESENTATION_AID.md, PRESENTATION_AID.html. Created README.md (demo link, tech stack, local setup, auth disclaimer, copyright). Added "Portfolio Legibility" principle to UIdesign.txt section 1 and handoff.md. Post-demo cleanup item closed.
-
-**Session 21 — 2026-04-14:** F11: FAB no longer hidden on /logs/:id active workout page. Changed `return null` to a disabled/inert button render (styles.fabDisabled: opacity 0.35, pointer-events none, no onClick). Keeps nav center slot filled; future hook for intra-workout tool hub (see UIdesign.txt brainstorm). Updated Decision #15 + N1 in master-schematics.md.
-
-**Session 20 — 2026-04-14:** Bug fix: ExerciseSearchModal category filter chips (Arms, Legs, Chest, etc.) were hidden behind the exercise results list on smaller viewports. Added `flex-shrink: 0` to `.chips` in ExerciseSearchModal.module.css so the chip row never collapses.
-
-**Session 18 — 2026-04-10:** Target display "@ x lbs" → "| top set: x lbs" (F7 resolved). WorkoutTemplatePage doneBtn + deleteBtn flex: 1 fix. Issue Tracker: F7 resolved, F8/F9/F10 logged. OD6 added to UIdesign.txt (CSS button token standards). demo-seed.js created (not committed).
-
-**Session 17 — 2026-04-10:** FAB moved from fixed floating to inline BottomNav center slot — eliminates all page overlap. BottomNav refactored LEFT_TABS + fabSlot + RIGHT_TABS. WorkoutFAB always renders (no empty center slot). App.tsx no longer owns FAB. ProfilePage + StatisticsPage top padding fixed. Post-Demo Cleanup section added to CLAUDE.md. Committed: abdc304.
-
-**Session 16 — 2026-04-10:** Pre-demo code review — all critical flows verified clean, no blockers. False positive documented in Issue Tracker: ExerciseSearchModal modal closure after custom exercise creation works correctly via parent's onSelect handler (do not re-flag).
-
-**Session 15 — 2026-04-10:** ProfilePage unit labels in label text; tab titles 24px/700 across all 4; autocapitalize="words" on all name inputs app-wide.
-
-**Session 14 — 2026-04-10:** UI polish pass — trash icons, button redesign, FAB centered, page title centering, empty states, LogsPage text, bug fixes (from-program exercises, Save Edits reload, seed deduplication).
-
-**Session 13 — 2026-04-09:** Step 6 — UserService, ProfilePage, StatisticsPage placeholder.
-
-**Session 12 — 2026-04-09:** Step 5c — WorkoutDetailPage read-only and edit modes.
-
-**Sessions 8–11 — 2026-04-09:** Steps 1–5b built in a single day.
-
----
-
 ## Portfolio Legibility Standard (locked)
-- Distinctive, descriptive file/folder names — no generic names (utils.js, helpers.ts, App.js)
-- Folder organization must communicate purpose at a glance
-- Comments explain non-obvious decisions (why, not what)
-- Rationale: repo is public; recruiters read source code
+- Distinctive, descriptive file/folder names — no generic names (utils.js, helpers.ts, App.js).
+- Folder organization must communicate purpose at a glance.
+- Comments explain non-obvious decisions (why, not what).
+- Rationale: repo is public; recruiters read source code.
 
 ---
 
 ## What Is Fully Locked
+> Moved to artifacts/decisions-locked.md
+
+## Rejected Options — Do Not Re-Propose
 > Moved to artifacts/decisions-locked.md
 
 ---
@@ -946,19 +608,16 @@ After all edits: run `npm run build` to verify clean compile, then `npx vitest r
 ## UI Standards Summary (UIdesign.md — session 4)
 These are locked. Do not redesign around them.
 
-- Nature theme: color evokes natural world — felt, not illustrated (no leaf icons etc.)
-- Colors: Green=action, Gold=achievement, Red=danger, White=content — strict, no mixing
-- Surface tints: #1A1A17 / #242420 / #2E2E29 (warm undertone locked)
-- Text tiers: #FFFFFF primary / #C0C0C0 label (card descriptors) / #8A8A8A secondary / #4A4A4A disabled
-- Nav: 14px labels, 2px accent line above active tab
-- Alignment: page titles + focal-point content centered; multi-element lists/rows left-aligned
-- Buttons: 44px min height, flat, no gradients, title case, 15px/600 — see section 8 in UIdesign.md
-- Light mode: palette locked for post-MVP, values in UIdesign.md section 4c
-
-## Rejected Options — Do Not Re-Propose
-> Moved to artifacts/decisions-locked.md
+- Nature theme: color evokes natural world — felt, not illustrated (no leaf icons etc.).
+- Colors: Green=action, Gold=achievement, Red=danger, White=content — strict, no mixing.
+- Surface tints: #1A1A17 / #242420 / #2E2E29 (warm undertone locked).
+- Text tiers: #FFFFFF primary / #C0C0C0 label / #8A8A8A secondary / #4A4A4A disabled.
+- Nav: 14px labels, 2px accent line above active tab.
+- Alignment: page titles + focal-point content centered; multi-element lists/rows left-aligned.
+- Buttons: 44px min height, flat, no gradients, title case, 15px/600 — see UIdesign.md § 8.
+- Light mode: palette locked for post-MVP, values in UIdesign.md § 4c.
 
 ---
 
 ## Keeping This File Current
-Update `handoff.md` and `recap.md` whenever a decision is made, locked, or reversed — without waiting to be asked.
+Update `handoff.md` and `recap.md` whenever a decision is made, locked, reversed, or a new gap is found — without waiting to be asked.
