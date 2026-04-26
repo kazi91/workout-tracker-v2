@@ -31,7 +31,7 @@ async function seedWorkout(): Promise<{ workoutId: number; exerciseId: number }>
     gripWidth: null,
     gripOrientation: null,
     stanceWidth: null,
-    bias: null,
+    modifications: [],
     jointLoad: [],
   } as Exercise)) as number;
 

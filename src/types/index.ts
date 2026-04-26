@@ -75,7 +75,11 @@ export interface Exercise {
   gripWidth: string | null;
   gripOrientation: string | null;
   stanceWidth: string | null;
-  bias: string | null;
+  // Decision #32 (Session 52): renamed from `bias` and shape changed to multi-select string[].
+  // The word "bias" is reserved for a future field capturing muscle-loading emphasis as a result
+  // of a modification (deferred to next dev cycle). Conventional values:
+  // paused / tempo / partial / lengthened / peak-contraction / explosive / deficit
+  modifications: string[];
   jointLoad: string[]; // forward-compat for Injury-Warning system (F31); default []
 }
 

@@ -25,7 +25,7 @@ type SeedEntry = Omit<Exercise, 'id' | 'parentExerciseId'> & {
   parentName: string | null;
 };
 
-type Tier3 = Partial<Pick<Exercise, 'gripWidth' | 'gripOrientation' | 'stanceWidth' | 'bias'>>;
+type Tier3 = Partial<Pick<Exercise, 'gripWidth' | 'gripOrientation' | 'stanceWidth' | 'modifications'>>;
 
 function e(
   name: string,
@@ -45,7 +45,7 @@ function e(
     gripWidth: tier3.gripWidth ?? null,
     gripOrientation: tier3.gripOrientation ?? null,
     stanceWidth: tier3.stanceWidth ?? null,
-    bias: tier3.bias ?? null,
+    modifications: tier3.modifications ?? [],
     jointLoad: [],
   };
 }
@@ -300,7 +300,7 @@ export const SEED_ENTRIES: SeedEntry[] = [
   e('Seated Leg Curl', null, ['hamstrings'],
     [s('calves')],
     'machine'),
-  e('45° Hyperextension', null, ['glutes', 'hamstrings'],
+  e('Back Hyperextension', null, ['glutes', 'hamstrings'],
     [s('lowerBack'), b('abs')],
     'bodyweight'),
   e('Glute Bridge', null, ['glutes'],
@@ -350,10 +350,10 @@ export const SEED_ENTRIES: SeedEntry[] = [
   // P5 — Bench Press variants (2)
   e('Paused Bench Press', 'Bench Press', ['chest'],
     [s('triceps'), s('frontDelts'), b('rotatorCuff'), b('lats')],
-    'barbell', { gripWidth: 'medium', gripOrientation: 'pronated', bias: 'paused' }),
+    'barbell', { gripWidth: 'medium', gripOrientation: 'pronated', modifications: ['paused'] }),
   e('Spoto Press', 'Bench Press', ['chest'],
     [s('triceps'), s('frontDelts'), b('rotatorCuff'), b('lats')],
-    'barbell', { gripWidth: 'medium', gripOrientation: 'pronated', bias: 'paused' }),
+    'barbell', { gripWidth: 'medium', gripOrientation: 'pronated', modifications: ['paused'] }),
   // P5 — Squat variants (4)
   e('Low-Bar Back Squat', 'Squat', ['quads'],
     [s('glutes'), s('adductors'), s('hamstrings'), b('lowerBack'), b('abs'), b('calves')],
@@ -363,20 +363,20 @@ export const SEED_ENTRIES: SeedEntry[] = [
     'barbell', { stanceWidth: 'shoulder' }),
   e('Box Squat', 'Squat', ['quads'],
     [s('glutes'), s('adductors'), s('hamstrings'), b('lowerBack'), b('abs'), b('calves')],
-    'barbell', { stanceWidth: 'shoulder', bias: 'paused' }),
+    'barbell', { stanceWidth: 'shoulder', modifications: ['paused'] }),
   e('Paused Squat', 'Squat', ['quads'],
     [s('glutes'), s('adductors'), s('hamstrings'), b('lowerBack'), b('abs'), b('calves')],
-    'barbell', { stanceWidth: 'shoulder', bias: 'paused' }),
+    'barbell', { stanceWidth: 'shoulder', modifications: ['paused'] }),
   // P5 — Deadlift variants (4)
   e('Rack Pull', 'Deadlift', ['glutes', 'hamstrings'],
     [s('quads'), b('lowerBack'), b('upperBack'), b('forearms')],
-    'barbell', { bias: 'partial' }),
+    'barbell', { modifications: ['partial'] }),
   e('Block Pull', 'Deadlift', ['glutes', 'hamstrings'],
     [s('quads'), b('lowerBack'), b('upperBack'), b('forearms')],
-    'barbell', { bias: 'partial' }),
+    'barbell', { modifications: ['partial'] }),
   e('Deficit Deadlift', 'Deadlift', ['glutes', 'hamstrings'],
     [s('quads'), b('lowerBack'), b('upperBack'), b('forearms')],
-    'barbell', { bias: 'lengthened' }),
+    'barbell', { modifications: ['lengthened'] }),
   e('Snatch-Grip Deadlift', 'Deadlift', ['glutes', 'hamstrings'],
     [s('quads'), b('lowerBack'), b('upperBack'), b('forearms')],
     'barbell', { gripWidth: 'wide', gripOrientation: 'pronated' }),
@@ -400,10 +400,13 @@ export const SEED_ENTRIES: SeedEntry[] = [
   e('Reverse-Grip Lat Pulldown', 'Lat Pulldown', ['lats'],
     [s('upperBack'), s('biceps'), s('brachialis'), s('rearDelts'), b('forearms')],
     'cable', { gripWidth: 'medium', gripOrientation: 'supinated' }),
-  // P5 — RDL variant (1)
+  // P5 — RDL variants (2)
   e('Paused RDL', 'Romanian Deadlift', ['glutes', 'hamstrings'],
     [b('upperBack'), b('lowerBack'), b('abs'), b('forearms')],
-    'barbell', { bias: 'paused' }),
+    'barbell', { modifications: ['paused'] }),
+  e('Deficit RDL', 'Romanian Deadlift', ['glutes', 'hamstrings'],
+    [b('upperBack'), b('lowerBack'), b('abs'), b('forearms')],
+    'barbell', { modifications: ['lengthened'] }),
   // P5 — Pull-Up variant (1) with DIVERGENT map (Rule 1 override)
   e('Narrow-Grip Pull-Up', 'Pull-Up', ['lats', 'biceps'],
     [s('upperBack'), s('brachialis'), s('rearDelts'), b('forearms')],
@@ -414,7 +417,7 @@ export const SEED_ENTRIES: SeedEntry[] = [
     'dumbbell'),
   e('Incline Skull Crusher', 'Skull Crusher', ['triceps'],
     [b('forearms'), b('rotatorCuff')],
-    'barbell', { bias: 'lengthened' }),
+    'barbell', { modifications: ['lengthened'] }),
   // P5 — Barbell Curl variant (1)
   e('Strict Curl', 'Barbell Curl', ['biceps'],
     [s('brachialis'), s('forearms'), b('abs')],
@@ -616,7 +619,7 @@ export const SEED_ENTRIES: SeedEntry[] = [
   e('Sissy Squat', null, ['quads'],
     [b('abs')],
     'bodyweight'),
-  e('B-Stance RDL', null, ['glutes', 'hamstrings'],
+  e('Staggered-Stance RDL', null, ['glutes', 'hamstrings'],
     [b('upperBack'), b('lowerBack'), b('abs'), b('obliques'), b('forearms')],
     'dumbbell'),
   e('Donkey Calf Raise', null, ['calves'],
@@ -660,7 +663,7 @@ export const SEED_ENTRIES: SeedEntry[] = [
   // Clap Push-Up: variant of Push-Up, inherit map
   e('Clap Push-Up', 'Push-Up', ['chest'],
     [s('triceps'), s('frontDelts'), s('serratus'), b('abs'), b('rotatorCuff')],
-    'bodyweight', { bias: 'explosive' }),
+    'bodyweight', { modifications: ['explosive'] }),
   e('Medicine Ball Slam', null, ['lats'],
     [s('abs'), b('frontDelts')],
     'other'),

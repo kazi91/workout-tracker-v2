@@ -165,7 +165,7 @@ Includes Sumo Deadlift and Stiff-Leg Deadlift **graduated from P5** (different m
 | 48 | Iso-Lateral Low Row | Back | Plate-loaded. Seated row-angle. |
 | 49 | Machine Assisted Pull-Up | Back | Assistance machine (kneeling pad). Direct counterpart to Machine Assisted Dip. |
 | 50 | Iso-Lateral Shoulder Press | Shoulders | Plate-loaded. Unilateral option. |
-| 51 | 45° Hyperextension | Hamstrings | Back extension bench. Hams + glutes + erectors. |
+| 51 | Back Hyperextension | Hamstrings | Back extension bench. Hams + glutes + erectors. Default = 45° angle; promote to parent if 90° / horizontal variant added later (Session 53 #6). |
 | 52 | Machine Hip Thrust | Glutes | Dedicated hip thrust machine (no barbell/plate setup needed). |
 | 53 | Machine Preacher Curl | Biceps | Plate-loaded or selectorized. |
 | 54 | Machine Tricep Extension | Triceps | Seated, selectorized. |
@@ -243,7 +243,7 @@ Includes Sumo Deadlift and Stiff-Leg Deadlift **graduated from P5** (different m
 |---|---|---|---|
 | 1 | Meadows Row | Back | Landmine |
 | 3 | Sissy Squat | Quads | |
-| 4 | B-Stance RDL | Glutes | |
+| 4 | Staggered-Stance RDL | Glutes | Renamed from "B-Stance RDL" Session 53 #15. F41 alias: `["b-stance", "b stance"]`. |
 | 5 | Donkey Calf Raise | Calves | |
 | 6 | Cable Y-Raise | Shoulders | |
 | 7 | JM Press | Triceps | |
@@ -349,6 +349,7 @@ Parent defaults (12 library parents):
 | 15 | Lat Pulldown | V-Bar Lat Pulldown | Neutral-grip V-bar attachment. |
 | 16 | Lat Pulldown | Reverse-Grip Lat Pulldown | Supinated grip — bicep-bias. |
 | 17 | Romanian Deadlift | Paused RDL | 1–3s pause at mid-shin. Hamstring-stretch emphasis. |
+| 17b | Romanian Deadlift | Deficit RDL | Standing on plate/block; deeper bottom position. `bias: 'lengthened'` (Session 53 #13). |
 | 18 | Pull-Up | Narrow-Grip Pull-Up | Hands ~shoulder-width or closer; pronated. |
 | 19 | Skull Crusher | Dumbbell Skull Crusher | Can be done with both DBs or one in each hand. |
 | 20 | Skull Crusher | Incline Skull Crusher | Bench at slight incline — changes stretch and triceps emphasis. |

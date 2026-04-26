@@ -22,7 +22,7 @@ function makeExercise(overrides: Partial<Exercise> & Pick<Exercise, 'id' | 'name
     gripWidth: null,
     gripOrientation: null,
     stanceWidth: null,
-    bias: null,
+    modifications: [],
     jointLoad: [],
     ...overrides,
   };

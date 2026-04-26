@@ -246,7 +246,7 @@ export default function ExerciseSearchModal({ onSelect, onClose }: ExerciseSearc
         gripWidth: null,
         gripOrientation: null,
         stanceWidth: null,
-        bias: null,
+        modifications: [],
         jointLoad: [],
       });
       onSelect(created);
@@ -417,6 +417,7 @@ export default function ExerciseSearchModal({ onSelect, onClose }: ExerciseSearc
             setName(e.target.value);
             if (nameError) setNameError('');
           }}
+          autoCapitalize="sentences"
           autoFocus
         />
         {nameError && <p className={styles.fieldError}>{nameError}</p>}

@@ -30,7 +30,7 @@ function exerciseLike(overrides: Partial<Exercise> = {}): Omit<Exercise, 'id'> {
     gripWidth: null,
     gripOrientation: null,
     stanceWidth: null,
-    bias: null,
+    modifications: [],
     jointLoad: [],
     ...overrides,
   };

@@ -30,10 +30,12 @@ Status: draft, session 44 (2026-04-23). Living doc — update as exceptions surf
 | `equipment: string \| null` | Tier 3 forward-compat | yes — always populate |
 | `gripWidth`, `gripOrientation` | Tier 3 | opportunistic |
 | `stanceWidth` | Tier 3 | opportunistic |
-| `bias` | Tier 3 | yes for named-bias variants (Paused, Tempo, Partial, etc.) |
+| `modifications: string[]` | Tier 3 | yes for named modification variants (Paused, Tempo, Partial, Deficit, etc.); multi-select |
 | `jointLoad: string[]` | Tier 3 | skip — stays `[]` this cycle |
 
-Schema note: all Tier 3 fields are `string | null` (or `string[]`) — no enum constraint locked. Values in tables below are conventions, not types. Typos will be silent; rely on manual consistency + the value conventions in the Tier 3 section.
+Schema note: Tier 3 fields are mostly `string | null` (with `modifications` and `jointLoad` as `string[]` defaulting to `[]`) — no enum constraint locked. Values in tables below are conventions, not types. Typos will be silent; rely on manual consistency + the value conventions in the Tier 3 section.
+
+> **Naming reservation (Decision #32, Session 52):** the field formerly called `bias` is now `modifications`. The word **`bias` is reserved for a future field** capturing which muscle takes more load as a result of a modification (e.g., Deficit RDL biases `hamstrings` within its `[glutes, hamstrings]` co-primary). Don't use the word `bias` for execution style — that's `modifications` now. The future `bias` field rolls into F39 (Group 2 dimensions) next dev cycle.
 
 ---
 
@@ -259,7 +261,7 @@ Base = KB Swing map (NOT barbell-clean derivative — per Tsatsouline framework,
 | `gripWidth` | Only when implied by exercise name | `narrow` / `medium` / `wide` |
 | `gripOrientation` | Populate for curls / rows / pulls | `pronated` / `supinated` / `neutral` / `alternating` |
 | `stanceWidth` | Only when implied by exercise name | `narrow` / `shoulder` / `wide` / `sumo` |
-| `bias` | Populate for named-bias variants only | `paused` / `tempo` / `partial` / `lengthened` / `peak-contraction` / `explosive` |
+| `modifications` | Multi-select string[]. Populate for named modification variants only. Default `[]`. | `paused` / `tempo` / `partial` / `lengthened` / `peak-contraction` / `explosive` / `deficit` |
 | `jointLoad` | Skip. Empty array `[]` on every entry. | — |
 
 ---

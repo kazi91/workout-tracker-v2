@@ -380,7 +380,7 @@ Pre-lock items (Chin-Up, Bulgarian Split Squat, Face Pull, Hanging Leg Raise, In
 - **parentExerciseId:** `null`
 - **Template:** Isolation. Gastrocnemius co-contracts as a knee flexor under knee-flexion isolation — the one justified secondary for leg curl work.
 - **Group derivation:** hamstrings → `legs`.
-- **Notes:** Shortened-bias variant (prone hip = shortened hamstring position). Paired with Seated Leg Curl (P1 #19 = lengthened-bias). 1 secondary — isolation discipline maintained.
+- **Notes:** Shortened variant (prone hip = shortened hamstring position). Paired with Seated Leg Curl (P1 #19 = lengthened). 1 secondary — isolation discipline maintained.
 
 ---
 
@@ -684,7 +684,7 @@ Pre-lock items (Chin-Up, Bulgarian Split Squat, Face Pull, Hanging Leg Raise, In
 - **parentExerciseId:** `null`
 - **Template:** Curl — supinated single-primary (not hammer). Identical template treatment to Barbell Curl.
 - **Group derivation:** biceps → `arms`.
-- **Notes:** 3 secondaries. Same map as Barbell Curl — these are implement variants with identical muscle activation. Incline DB Curl (P1 #34) shifts to lengthened-bias but keeps the same muscle map.
+- **Notes:** 3 secondaries. Same map as Barbell Curl — these are implement variants with identical muscle activation. Incline DB Curl (P1 #34) shifts to a lengthened variant but keeps the same muscle map.
 
 ---
 
@@ -1111,9 +1111,9 @@ Run against the full 27 entries above (18 Seed non-parent + 9 P0 + 1 missed-pare
 - **equipment:** `dumbbell`
 - **gripOrientation:** `supinated`
 - **parentExerciseId:** `null`
-- **Template:** Curl — supinated single-primary. Lengthened-bias variant (incline bench stretches biceps at starting position). Reclined seated position drops `abs (stab)` — no standing axial anti-extension demand.
+- **Template:** Curl — supinated single-primary. Lengthened variant (incline bench stretches biceps at starting position). Reclined seated position drops `abs (stab)` — no standing axial anti-extension demand.
 - **Group derivation:** biceps → `arms`.
-- **Notes:** 2 secondaries — matches Preacher Curl profile (bench-supported = no abs). Lengthened-bias is stretch emphasis, not a map change.
+- **Notes:** 2 secondaries — matches Preacher Curl profile (bench-supported = no abs). Lengthened variant is stretch emphasis, not a map change.
 
 ---
 
@@ -1403,9 +1403,9 @@ Run against the full 27 entries above (6 Chest + 5 Back + 9 Shoulders + 5 Biceps
   - `calves` — synergist *(gastrocnemius crosses the knee; assists knee flexion in both lying and seated positions)*
 - **equipment:** `machine`
 - **parentExerciseId:** `null`
-- **Template:** Isolation — same map as Lying Leg Curl (45b #8). Seated position puts hamstring in lengthened starting position (hip-flexed) — lengthened-bias variant, but same muscle map.
+- **Template:** Isolation — same map as Lying Leg Curl (45b #8). Seated position puts hamstring in lengthened starting position (hip-flexed) — lengthened variant, but same muscle map.
 - **Group derivation:** hamstrings → `legs`.
-- **Notes:** 1 secondary. Paired with Lying Leg Curl (shortened-bias) — same map, different bias emphasis.
+- **Notes:** 1 secondary. Paired with Lying Leg Curl (shortened) — same map, different emphasis.
 
 ---
 
@@ -1641,7 +1641,7 @@ Run against the full 27 entries above (3 Hinge + 8 Quads + 2 Hamstrings + 4 Glut
 **Scope:** 25 P5 variants (inherit from 45a parents — light pass per Rule 4) + 53 P2 + 11 P3 (medium pass per principles EMG policy). Final EMG override from principles-doc queued list locks here: **Narrow-Grip Pull-Up** (P5 #18) `[lats, biceps]` per Pull-Up Rule 1 override.
 
 **Conventions for this session:**
-- P5 variants follow Rule 4: `parentExerciseId` set; muscles noted as `// inherit from parent`. Tier 3 fields (bias, grip, stance) populated per variant identity.
+- P5 variants follow Rule 4: `parentExerciseId` set; muscles noted as `// inherit from parent`. Tier 3 fields (modifications, grip, stance) populated per variant identity.
 - P2/P3 entries get full muscle blocks; cite template / parent precedent inline.
 - Machine discipline applied per Leg Press / Hack Squat / Machine Chest Press precedents.
 
@@ -1655,7 +1655,7 @@ Run against the full 27 entries above (3 Hinge + 8 Quads + 2 Hamstrings + 4 Glut
 - **equipment:** `barbell`
 - **gripWidth:** `medium`
 - **gripOrientation:** `pronated`
-- **bias:** `paused`
+- **modifications:** [`paused`]
 - **parentExerciseId:** Bench Press (Seed #1)
 - **Notes:** 1–3s pause at chest. Timing variant — Rule 4 inherit, no map change.
 
@@ -1667,7 +1667,7 @@ Run against the full 27 entries above (3 Hinge + 8 Quads + 2 Hamstrings + 4 Glut
 - **equipment:** `barbell`
 - **gripWidth:** `medium`
 - **gripOrientation:** `pronated`
-- **bias:** `paused`
+- **modifications:** [`paused`]
 - **parentExerciseId:** Bench Press (Seed #1)
 - **Notes:** ~1" floating pause above chest. Eccentric-control emphasis; same recruitment as parent per Rule 4.
 
@@ -1700,7 +1700,7 @@ Run against the full 27 entries above (3 Hinge + 8 Quads + 2 Hamstrings + 4 Glut
 - **muscles:** inherit from parent
 - **equipment:** `barbell`
 - **stanceWidth:** `shoulder`
-- **bias:** `paused`
+- **modifications:** [`paused`]
 - **parentExerciseId:** Squat (Seed #11)
 - **Notes:** Brief seated pause on box at parallel/below. Pause/timing variant — same map.
 
@@ -1711,7 +1711,7 @@ Run against the full 27 entries above (3 Hinge + 8 Quads + 2 Hamstrings + 4 Glut
 - **muscles:** inherit from parent
 - **equipment:** `barbell`
 - **stanceWidth:** `shoulder`
-- **bias:** `paused`
+- **modifications:** [`paused`]
 - **parentExerciseId:** Squat (Seed #11)
 - **Notes:** 1–3s pause at bottom. Timing variant.
 
@@ -1723,7 +1723,7 @@ Run against the full 27 entries above (3 Hinge + 8 Quads + 2 Hamstrings + 4 Glut
 
 - **muscles:** inherit from parent
 - **equipment:** `barbell`
-- **bias:** `partial` *(pin-set partial ROM from above-knee or mid-shin)*
+- **modifications:** [`partial`] *(pin-set partial ROM from above-knee or mid-shin)*
 - **parentExerciseId:** Deadlift (Seed #6)
 - **Notes:** Partial-ROM Hinge variant — same map (lockout-emphasis, not a map shift).
 
@@ -1733,7 +1733,7 @@ Run against the full 27 entries above (3 Hinge + 8 Quads + 2 Hamstrings + 4 Glut
 
 - **muscles:** inherit from parent
 - **equipment:** `barbell`
-- **bias:** `partial`
+- **modifications:** [`partial`]
 - **parentExerciseId:** Deadlift (Seed #6)
 - **Notes:** Plates resting on blocks (typically mid-shin). Partial-ROM variant — same map.
 
@@ -1743,7 +1743,7 @@ Run against the full 27 entries above (3 Hinge + 8 Quads + 2 Hamstrings + 4 Glut
 
 - **muscles:** inherit from parent
 - **equipment:** `barbell`
-- **bias:** `lengthened` *(extended ROM from elevated platform → deeper hip flexion at start)*
+- **modifications:** [`lengthened`] *(extended ROM from elevated platform → deeper hip flexion at start)*
 - **parentExerciseId:** Deadlift (Seed #6)
 - **Notes:** Extended ROM increases bottom-position quad/hamstring stretch — emphasis shift, not map change.
 
@@ -1830,7 +1830,7 @@ Run against the full 27 entries above (3 Hinge + 8 Quads + 2 Hamstrings + 4 Glut
 
 - **muscles:** inherit from parent
 - **equipment:** `barbell`
-- **bias:** `paused`
+- **modifications:** [`paused`]
 - **parentExerciseId:** Romanian Deadlift (Seed #12)
 - **Notes:** 1–3s pause at mid-shin (hamstring-stretch emphasis). Timing variant — same map.
 
@@ -1871,9 +1871,9 @@ Run against the full 27 entries above (3 Hinge + 8 Quads + 2 Hamstrings + 4 Glut
 
 - **muscles:** inherit from parent
 - **equipment:** `barbell` *(EZ-bar default)*
-- **bias:** `lengthened` *(incline bench → triceps long-head stretched at top)*
+- **modifications:** [`lengthened`] *(incline bench → triceps long-head stretched at top)*
 - **parentExerciseId:** Skull Crusher (Seed #24)
-- **Notes:** Slight bench incline — stretches long head of triceps. Emphasis shift (lengthened-bias), same map.
+- **Notes:** Slight bench incline — stretches long head of triceps. Emphasis shift (lengthened variant), same map.
 
 ---
 
@@ -2994,7 +2994,7 @@ Scope: 18 P4 entries (Plyometric 7 + Kettlebell 4 of 6 + Conditioning 7) + 1 new
 - **primary:** `chest` *(inherit from Push-Up Seed #4)*
 - **secondary:** *(inherit from parent)*
 - **equipment:** `bodyweight`
-- **bias:** `explosive` *(plyo intensity variant — new Tier 3 `bias` value; flag for principles-doc convention update)*
+- **modifications:** [`explosive`] *(plyo intensity variant — new Tier 3 `modifications` value; flag for principles-doc convention update)*
 - **parentExerciseId:** `<Push-Up Seed #4>`
 - **Template:** Horizontal push — plyo variant of Push-Up. Same muscle map; explosive concentric is timing variant (Rule 4 inherit-from-parent).
 - **Group derivation:** chest → `chest` (inherited).
@@ -3666,7 +3666,7 @@ All 45a–45g co-primary entries tiebreak-resolved consistently:
 
 ### Session 45f exceptions
 
-- **Clap Push-Up (P4 #15)** — promotes Push-Up from seed non-parent → **12th library parent**. Originally 45a documented 11 parents (Squat, Deadlift, Bench Press, Dips, Pull-Up, Lat Pulldown, RDL, Skull Crusher, Barbell Curl, Plank, Cable Crossover). Clap Push-Up variant linkage triggers Push-Up promotion per CE2 decision "any parent-level exercise qualifies as parent." New Tier 3 `bias: 'explosive'` value introduced — flag for principles-doc conventions update.
+- **Clap Push-Up (P4 #15)** — promotes Push-Up from seed non-parent → **12th library parent**. Originally 45a documented 11 parents (Squat, Deadlift, Bench Press, Dips, Pull-Up, Lat Pulldown, RDL, Skull Crusher, Barbell Curl, Plank, Cable Crossover). Clap Push-Up variant linkage triggers Push-Up promotion per CE2 decision "any parent-level exercise qualifies as parent." New Tier 3 `modifications: ['explosive']` value introduced — flag for principles-doc conventions update.
 - **Medicine Ball Slam (P4 #16)** — Rule 6 audit trimmed original draft (5 sec → 2 sec): obliques dropped (slam is sagittal, not rotational; `obliques` tag-when specifies direct rotation / anti-rotation / unilateral loaded carry); lowerBack dropped (medicine-ball load < bodyweight, not a hinge, no axial demand meeting `lowerBack` tag-when threshold). Abs-as-synergist kept (trunk flexion is concentric drive, not isometric bracing — elevated role vs standard standing-compound abs-stab).
 - **Turkish Get-Up (P4 #22)** — co-primary `[abs, obliques]` per user preference (alternative to draft's single-primary `frontDelts`). Trunk control across all supine-to-standing phases is rep-limiter; abs drives anti-extension, obliques drives lateral flexion through side-bridge/roll phases. Group derivation: abs → `core` (changed from shoulders per tiebreak with abs-first order). **Novel co-primary pattern** — first library entry pairing abs + obliques; added to EMG reference list. 6 secondaries accepted per multi-planar template precedent (Overhead Carry at 10).
 - **Sprint (P4 #30)** — co-primary `[hamstrings, glutes]` not covered by any existing template. Max-velocity sprint mechanics: ham-dominant hip extension + knee-flex recovery (hamstring strain is most common sprinting injury per Schoenfeld/Nuckols/Haff panel consensus). Only library entry tagged with ham-first primary order. Added to EMG reference list as "max-velocity sprint mechanics" exemplar.
