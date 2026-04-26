@@ -36,6 +36,8 @@ export async function signup(
     unitPreference,
     height: 0,
     weight: 0,
+    rpeEnabled: false,
+    trainingAge: null,
     createdAt: new Date(),
   } as User);
 

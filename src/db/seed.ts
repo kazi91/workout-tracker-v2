@@ -1,63 +1,19 @@
 /**
- * seed.ts — populates the exercises table with 29 pre-built exercises across 6 categories.
- * Triggered once on first install by App.tsx (when db.exercises.count() === 0).
- * Never runs again after initial seed — count check in App.tsx is the guard.
+ * seed.ts — populates the exercises table on first install.
+ * Triggered once by App.tsx when db.exercises.count() === 0.
+ * Module-level flag guards against React Strict Mode double-invocation.
+ *
+ * STEP 1 STUB: 214-entry seed compilation (Step 2) replaces this no-op.
+ * Until then, the picker will be empty after a fresh install or a v3 migration nuke.
  */
 import { db } from './db';
-import type { Exercise } from '../types';
 
-const SEED_EXERCISES: Omit<Exercise, 'id'>[] = [
-  // Chest
-  { name: 'Bench Press', category: 'chest', isCustom: false },
-  { name: 'Incline Bench Press', category: 'chest', isCustom: false },
-  { name: 'Dumbbell Fly', category: 'chest', isCustom: false },
-  { name: 'Push-Up', category: 'chest', isCustom: false },
-  { name: 'Cable Fly', category: 'chest', isCustom: false },
-  // Back
-  { name: 'Deadlift', category: 'back', isCustom: false },
-  { name: 'Pull-Up', category: 'back', isCustom: false },
-  { name: 'Barbell Row', category: 'back', isCustom: false },
-  { name: 'Lat Pulldown', category: 'back', isCustom: false },
-  { name: 'Seated Cable Row', category: 'back', isCustom: false },
-  // Legs
-  { name: 'Squat', category: 'legs', isCustom: false },
-  { name: 'Romanian Deadlift', category: 'legs', isCustom: false },
-  { name: 'Leg Press', category: 'legs', isCustom: false },
-  { name: 'Leg Curl', category: 'legs', isCustom: false },
-  { name: 'Leg Extension', category: 'legs', isCustom: false },
-  { name: 'Calf Raise', category: 'legs', isCustom: false },
-  // Shoulders
-  { name: 'Overhead Press', category: 'shoulders', isCustom: false },
-  { name: 'Lateral Raise', category: 'shoulders', isCustom: false },
-  { name: 'Front Raise', category: 'shoulders', isCustom: false },
-  { name: 'Face Pull', category: 'shoulders', isCustom: false },
-  // Arms
-  { name: 'Barbell Curl', category: 'arms', isCustom: false },
-  { name: 'Hammer Curl', category: 'arms', isCustom: false },
-  { name: 'Tricep Pushdown', category: 'arms', isCustom: false },
-  { name: 'Skull Crusher', category: 'arms', isCustom: false },
-  { name: 'Dips', category: 'arms', isCustom: false },
-  // Core
-  { name: 'Plank', category: 'core', isCustom: false },
-  { name: 'Crunch', category: 'core', isCustom: false },
-  { name: 'Hanging Leg Raise', category: 'core', isCustom: false },
-  { name: 'Ab Wheel Rollout', category: 'core', isCustom: false },
-];
-
-// Guards against React Strict Mode double-invoking effects in development.
-// The module-level flag is checked synchronously before any async work, so
-// the second call from Strict Mode bails before it can race the first seed.
 let seedStarted = false;
 
-/**
- * Inserts all 29 seed exercises into the exercises table in a single bulk operation.
- * Called by: App.tsx on mount, only when exercises table is empty.
- * Idempotent: the module-level flag and count check together prevent double-seeding.
- */
 export async function seedExercises(): Promise<void> {
   if (seedStarted) return;
   seedStarted = true;
   const count = await db.exercises.count();
   if (count > 0) return;
-  await db.exercises.bulkAdd(SEED_EXERCISES as Exercise[]);
+  // Step 2 fills in the 214-entry library here (2-pass: parents → variants).
 }

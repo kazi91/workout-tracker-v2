@@ -1,5 +1,45 @@
 # HANDOFF — NEW INSTANCE START HERE
-Last updated: 2026-04-24 (session 46 CLOSED — pre-build gap-audit batch resolved 11 items, 7 already-done audit-only + 4 newly fixed; ready for Session 47+ CE1/CE2 v3 build. Seed re-curation COMPLETE (45a–g, 214/214 entries). Compact catch-up block below covers sessions 45c through 46; per-session detail lives in `recap.md` § SESSION HISTORY.)
+Last updated: 2026-04-25 (session 47 CLOSED — CE1/CE2 v3 build STEP 1 of 7 complete. Foundation layer landed: new Muscle taxonomy types + `src/db/muscleTaxonomy.ts` + Dexie `version(3)` with nuke-upgrade + seed.ts/ExerciseService/ExerciseSearchModal stubs/trims pending later steps. tsc clean, build clean, 72/72 tests passing. Pacing revised 4 → 5 sessions. Next: Session 48 = Step 2 = compile `seed-draft.md` → `src/db/seed.ts` (214 entries, 2-pass insertion).)
+
+## Session 47 (2026-04-25) — CE1/CE2 v3 BUILD STEP 1 of 7 CLOSED — foundation layer
+
+**Scope:** First code-touching session of CE1/CE2 v3 build. Step 1 = types + Muscle Taxonomy module + Dexie schema bump. Per the 7-step plan agreed at session start (after Q&A on Dexie version + pending v2-era additions + pacing).
+
+**Decisions locked at session start:**
+1. **Dexie in-code version = `3`.** Code originally had only `version(1)`; never declared `version(2)`. Picked `3` to match planning-doc labels (master-schematics § Dexie Schema String — v3) over code's natural progression. `version(1)` retained alongside `version(3)`; `version(2)` skipped (no v2 was ever shipped).
+2. **Pending v2-era schema additions stay deferred.** `bodyMetrics`, `dailyCheckins`, `workoutLogs.rating`, `users.goalWeight` were specced in master-schematics line 326 as "bundle into the same v3 hop" but none exist in `src/db/db.ts`. Deferred until the relevant feature ships rather than adding no-op forward-compat columns now.
+3. **Pacing = Option A (4 sessions) revised to ~5 mid-execution.** Original plan put Steps 1+2+3 in Session 47. Reading `seed-draft.md` size up close (3,676 lines × 214 entries × ~17 lines each) revealed Step 2 alone deserves its own session. Stopped after Step 1 per build rule "Prefer finishing the current file/component cleanly over starting a new one."
+
+**Files changed (8):**
+- **`src/types/index.ts`** — added `Muscle` (24 user-surfaced + 2 background = 26-entry union, camelCase per Decision #29), `MuscleGroup` (6 broad), `SecondaryRole`, `SecondaryMuscle { muscle, role }`. Rewrote `Exercise`: dropped `category`; added `parentExerciseId: number | null` (CE2), `primaryMuscles: Muscle[]`, `secondaryMuscles: SecondaryMuscle[]`, plus 6 Tier 3 forward-compat (`equipment`, `gripWidth`, `gripOrientation`, `stanceWidth`, `bias` all `string | null`; `jointLoad: string[]`). Added `User.rpeEnabled: boolean` + `User.trainingAge: string | null`. Added `LogSet.rpe: number | null`.
+- **`src/db/muscleTaxonomy.ts`** *(NEW)* — single source of truth: `MUSCLE_LABELS` (Title Case), `MUSCLE_TO_GROUP` (specific → broad with neck → shoulders), `RECOVERY_WINDOWS` (Decision #25 — large 60h × 9 / small 36h × 15 / background-small 36h × 2), `SECONDARY_VOLUME_MULTIPLIER = 0.5`, `MUSCLE_GROUPS` readonly, `MUSCLE_GROUP_LABELS`, `getExerciseGroup()` helper (first-primary-wins tiebreak per Decision #28).
+- **`src/db/db.ts`** — declared `version(3)` with new schema string (`exercises: '++id, name, parentExerciseId'`) and `.upgrade()` hook that nukes `logSets` → `logExercises` → `exercises` (cascade order). `version(1)` retained. App.tsx's existing count-zero check reseeds on next mount post-nuke.
+- **`src/db/seed.ts`** — stubbed: keeps `seedExercises()` export so App.tsx still compiles, but body is a no-op until Step 2 fills in 214-entry compilation. Picker shows empty list until Step 2 lands.
+- **`src/services/ExerciseService.ts`** — trimmed to `getAll()`. Removed `search(query, category)` (unused) and `create(name, category)` (only called from the stripped modal create form). Step 3 reintroduces all three with new signatures.
+- **`src/services/AuthService.ts`** — signup now sets `rpeEnabled: false` + `trainingAge: null` defaults so new users get explicit values rather than `undefined`.
+- **`src/components/ExerciseSearchModal.tsx`** — chip filter switched from stored `Exercise['category']` to derived `MuscleGroup` via `getExerciseGroup()`. Inline custom-create form stripped entirely (state, handlers, JSX). Step 6 rebuilds full Decision #27 picker (variant chevron, two-step custom create with parent picker, deletion choice modal).
+- **4 test files patched** (`LogSetService.test.ts`, `WorkoutExerciseService.test.ts`, `WorkoutLogService.test.ts`, `WorkoutService.test.ts`) — `db.exercises.add()` calls in `seedX` helpers now construct `Exercise` with new shape (parentExerciseId: null, primaryMuscles: ['quads'], empty secondaries, all Tier 3 nulls/empty arrays).
+
+**Verification:**
+- `npx tsc --noEmit` — exit 0 (no type errors)
+- `npm run build` — exit 0; 1694 modules transformed; bundled in 6.99s
+- `npx vitest run` — 8 files / 72 tests passed (no regressions)
+
+**Carry-forward for Session 48 (Step 2 — seed compile):**
+- Required reading: recap.md (Session 47 entry), `artifacts/seed-draft.md`, `artifacts/seed-tagging-principles.md`, `src/types/index.ts` (target shape), `src/db/muscleTaxonomy.ts` (verify Muscle union covers every muscle in seed-draft).
+- Approach: hand-translate each markdown entry → typed `Exercise` literal. 2-pass insertion: 188 parents via `bulkAdd` → build name→id map → ~26 variants resolve `parentExerciseId` via map.
+- Add vitest asserting post-seed count = 214, every variant FK resolves, zero Rule 1 violations.
+- Recommend bulk-rewriting `src/db/seed.ts` rather than incremental edits.
+
+**Remaining steps (Sessions 49–52±):**
+- Session 49 = Step 3: ExerciseService rebuild (search w/ muscle tags, create w/ new schema + parentExerciseId validation, deleteExercise(id, { cascade })). LogSetService.add/update accept rpe. UserService.updateProfile accepts rpeEnabled + trainingAge.
+- Session 50 = Steps 4–5: UserSettingsContext.rpeEnabled hydration + Profile RPE toggle + per-set RPE input on SetRow gated by toggle.
+- Session 51 = Step 6: ExerciseSearchModal full rewrite per Decision #27 — biggest single piece (variant chevron, two-step custom create with parent picker, deletion choice modal).
+- Session 52 = Step 7: manual smoke + Issue Tracker close-out for CE1 + CE2. May fold into Session 51 if context allows.
+
+---
+
+
 
 ## Sessions 45c–46 catch-up (2026-04-23 to 2026-04-24) — CONSOLIDATED
 

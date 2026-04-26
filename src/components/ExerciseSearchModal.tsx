@@ -1,20 +1,22 @@
 /**
- * ExerciseSearchModal — bottom drawer overlay for selecting or creating an exercise.
- * Loads all exercises on open, then filters client-side by name query + category chip.
- * Inline custom exercise creation: name input + category picker → ExerciseService.create() → auto-selects.
+ * ExerciseSearchModal — bottom drawer overlay for selecting an exercise.
+ * Loads all exercises on open, then filters client-side by name query + broad-group chip
+ * (chip group derived via getExerciseGroup — no stored category).
  * Tap outside the drawer → onClose() with no selection.
  * Tap an exercise row → onSelect(exercise) → modal closes.
  * Used by: WorkoutDetailPage (active/edit mode), WorkoutTemplatePage.
- * Props: onSelect (callback with chosen Exercise), onClose (dismiss with no selection)
+ *
+ * STEP 1: simplified for v3 migration. Step 6 brings back the full Decision #27 picker
+ * (variant chevron expand/collapse, name+muscle-tag search, two-step custom create with
+ * optional parent picker, deletion choice modal).
  */
 
 import { useEffect, useState } from 'react';
 import * as ExerciseService from '../services/ExerciseService';
 import { useError, toUserMessage } from '../context/ErrorContext';
-import type { Exercise } from '../types';
+import type { Exercise, MuscleGroup } from '../types';
+import { MUSCLE_GROUPS, MUSCLE_GROUP_LABELS, getExerciseGroup } from '../db/muscleTaxonomy';
 import styles from './ExerciseSearchModal.module.css';
-
-const CATEGORIES: Array<Exercise['category']> = ['chest', 'back', 'legs', 'shoulders', 'arms', 'core'];
 
 interface ExerciseSearchModalProps {
   onSelect: (exercise: Exercise) => void;
@@ -25,38 +27,17 @@ export default function ExerciseSearchModal({ onSelect, onClose }: ExerciseSearc
   const { showError } = useError();
   const [allExercises, setAllExercises] = useState<Exercise[]>([]);
   const [query, setQuery] = useState('');
-  const [activeCategory, setActiveCategory] = useState<Exercise['category'] | null>(null);
-  const [showCreateForm, setShowCreateForm] = useState(false);
+  const [activeGroup, setActiveGroup] = useState<MuscleGroup | null>(null);
 
-  // Create form state
-  const [newName, setNewName] = useState('');
-  const [newCategory, setNewCategory] = useState<Exercise['category']>('chest');
-  const [nameError, setNameError] = useState('');
-
-  // Load all exercises once on open
   useEffect(() => {
     ExerciseService.getAll().then(setAllExercises).catch((e) => showError(toUserMessage(e)));
   }, []);
 
-  // Client-side filter — fast enough for 29 items, no debounce needed
   const filtered = allExercises.filter((ex) => {
     const matchesQuery = query.trim() === '' || ex.name.toLowerCase().includes(query.toLowerCase());
-    const matchesCategory = !activeCategory || ex.category === activeCategory;
-    return matchesQuery && matchesCategory;
+    const matchesGroup = !activeGroup || getExerciseGroup(ex) === activeGroup;
+    return matchesQuery && matchesGroup;
   });
-
-  async function handleCreate() {
-    if (!newName.trim()) {
-      setNameError("Name can't be blank");
-      return;
-    }
-    try {
-      const exercise = await ExerciseService.create(newName.trim(), newCategory);
-      onSelect(exercise);
-    } catch (e) {
-      showError(toUserMessage(e));
-    }
-  }
 
   function handleBackdropClick(e: React.MouseEvent<HTMLDivElement>) {
     if (e.target === e.currentTarget) onClose();
@@ -65,7 +46,6 @@ export default function ExerciseSearchModal({ onSelect, onClose }: ExerciseSearc
   return (
     <div className={styles.backdrop} onClick={handleBackdropClick}>
       <div className={styles.drawer}>
-        {/* Search input */}
         <input
           className={styles.searchInput}
           type="text"
@@ -75,26 +55,24 @@ export default function ExerciseSearchModal({ onSelect, onClose }: ExerciseSearc
           autoFocus
         />
 
-        {/* Category filter chips */}
         <div className={styles.chips}>
           <button
-            className={`${styles.chip} ${activeCategory === null ? styles.chipActive : ''}`}
-            onClick={() => setActiveCategory(null)}
+            className={`${styles.chip} ${activeGroup === null ? styles.chipActive : ''}`}
+            onClick={() => setActiveGroup(null)}
           >
             All
           </button>
-          {CATEGORIES.map((cat) => (
+          {MUSCLE_GROUPS.map((group) => (
             <button
-              key={cat}
-              className={`${styles.chip} ${activeCategory === cat ? styles.chipActive : ''}`}
-              onClick={() => setActiveCategory(activeCategory === cat ? null : cat)}
+              key={group}
+              className={`${styles.chip} ${activeGroup === group ? styles.chipActive : ''}`}
+              onClick={() => setActiveGroup(activeGroup === group ? null : group)}
             >
-              {cat.charAt(0).toUpperCase() + cat.slice(1)}
+              {MUSCLE_GROUP_LABELS[group]}
             </button>
           ))}
         </div>
 
-        {/* Results list */}
         <div className={styles.list}>
           {filtered.length > 0 ? (
             filtered.map((ex) => (
@@ -104,62 +82,12 @@ export default function ExerciseSearchModal({ onSelect, onClose }: ExerciseSearc
                 onClick={() => onSelect(ex)}
               >
                 <span className={styles.exerciseName}>{ex.name}</span>
-                <span className={styles.exerciseCategory}>{ex.category}</span>
+                <span className={styles.exerciseCategory}>{getExerciseGroup(ex)}</span>
               </button>
             ))
           ) : (
             <div className={styles.emptyState}>
               <p className={styles.emptyText}>No exercises found.</p>
-              {!showCreateForm && (
-                <button
-                  className={styles.listItem}
-                  onClick={() => setShowCreateForm(true)}
-                >
-                  <span className={styles.exerciseName}>+ Create custom exercise</span>
-                </button>
-              )}
-            </div>
-          )}
-
-          {/* "Create custom exercise" always accessible below results */}
-          {filtered.length > 0 && !showCreateForm && (
-            <button
-              className={styles.listItem}
-              onClick={() => setShowCreateForm(true)}
-            >
-              <span className={styles.exerciseName}>+ Create custom exercise</span>
-            </button>
-          )}
-
-          {/* Inline create form */}
-          {showCreateForm && (
-            <div className={styles.createForm}>
-              <span className={styles.createFormTitle}>New exercise</span>
-              <div>
-                <input
-                  className={`${styles.createInput} ${nameError ? styles.createInputError : ''}`}
-                  type="text"
-                  autoCapitalize="words"
-                  placeholder="Exercise name"
-                  value={newName}
-                  onChange={(e) => { setNewName(e.target.value); setNameError(''); }}
-                />
-                {nameError && <span className={styles.fieldError}>{nameError}</span>}
-              </div>
-              <select
-                className={styles.categorySelect}
-                value={newCategory}
-                onChange={(e) => setNewCategory(e.target.value as Exercise['category'])}
-              >
-                {CATEGORIES.map((cat) => (
-                  <option key={cat} value={cat}>
-                    {cat.charAt(0).toUpperCase() + cat.slice(1)}
-                  </option>
-                ))}
-              </select>
-              <button className={styles.createBtn} onClick={handleCreate}>
-                Save Exercise
-              </button>
             </div>
           )}
         </div>

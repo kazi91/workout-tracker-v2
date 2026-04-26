@@ -105,7 +105,19 @@ describe('deleteWorkout — cascade', () => {
 describe('createFromLog', () => {
   it('creates a workout with workoutExercises derived from the log', async () => {
     const { userId, programId } = await seedUserAndProgram();
-    const exerciseId = (await db.exercises.add({ name: 'Squat', category: 'legs', isCustom: false } as Exercise)) as number;
+    const exerciseId = (await db.exercises.add({
+      name: 'Squat',
+      isCustom: false,
+      parentExerciseId: null,
+      primaryMuscles: ['quads'],
+      secondaryMuscles: [],
+      equipment: null,
+      gripWidth: null,
+      gripOrientation: null,
+      stanceWidth: null,
+      bias: null,
+      jointLoad: [],
+    } as Exercise)) as number;
 
     const logId = (await db.workoutLogs.add({
       userId,

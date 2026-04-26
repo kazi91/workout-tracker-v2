@@ -23,8 +23,16 @@ async function seedLogExercise(): Promise<number> {
 
   const exerciseId = (await db.exercises.add({
     name: 'Squat',
-    category: 'legs',
     isCustom: false,
+    parentExerciseId: null,
+    primaryMuscles: ['quads'],
+    secondaryMuscles: [],
+    equipment: null,
+    gripWidth: null,
+    gripOrientation: null,
+    stanceWidth: null,
+    bias: null,
+    jointLoad: [],
   } as Exercise)) as number;
 
   const logId = (await db.workoutLogs.add({
