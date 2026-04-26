@@ -20,59 +20,18 @@
 | 2. Blueprint | Architecture, DB schema, component plan, contracts | Complete — Phase 2 locked decisions #1–23; Decisions #24–29 added later during Phase 5 CE1 spec patches |
 | 3. Build | Implement step by step — frontend first, backend later | Complete — all 6 steps built |
 | 4. Test | Unit → integration → e2e, bug tracking | Complete — closed 2026-04-22. 72 tests passing across 8 files; service layer guards complete; ErrorContext + ErrorBanner wired app-wide. Remaining flow-level tests (finish state machine, auth, ActiveWorkoutContext init) carried into Phase 5 when touched. |
-| 5. Iteration | Statistics page build + new feature sets (repeat phases 1–4 per feature) | In progress — CE1 + CE2 spec patches done (sessions 41–44); full-library seed re-curation in progress (sessions 45a–e closed, 45f next); CE1/CE2 coordinated build (Session 47+), Statistics build, and F20–F39 iteration queued |
+| 5. Iteration | Statistics page build + new feature sets (repeat phases 1–4 per feature) | In progress — see `artifacts/recap.md` for current session state; Statistics build and F20–F39 iteration queued |
 
 ---
 
 ## Phase Contracts
 
-> Decisions locked per phase. Do not revisit without explicit discussion. Add entries here after each phase is agreed on.
+> One-line locked summary per completed phase. Bullet detail lives in Key Design Decisions (architecture) and `artifacts/recap.md` + `artifacts/handoff.md` (history). Phase 5 is in flight — see `recap.md`.
 
-**Phase 1 — Research (locked)**
-- Problem: cluttered, unintuitive apps that don't fit a gym workflow
-- Target user: gym-goer logging workouts on their phone
-- Core value: fast, clean workout logging with progress visibility
-- Competition: heavy — Hevy, Strong, JEFIT, MyFitnessPal; differentiate on simplicity, speed, no paywall
-- Re-run competitor research before each major feature iteration to validate we're solving a real gap
-
-**Phase 2 — Blueprint MVP (complete — all decisions locked)**
-- React + TypeScript frontend, Vite, React Router v7, CSS Modules
-- Dexie.js (IndexedDB) for local storage — no backend for MVP
-- Service layer abstraction — swap Dexie for API calls later without touching components
-- Mobile-only layout (480px max-width), bottom nav, 4 tabs
-- Local auth (plain text, localStorage) — replaced when backend is added
-- Unit storage: all weights in lb, heights in inches — canonical; convert at display time via UserSettingsContext; unitPreference: 'imperial' | 'metric'
-- DB schema v2 (replaces v1): 8 tables — users, exercises, programs, workouts, workoutExercises, workoutLogs, logExercises, logSets; `programExercises` removed; `workoutLogs.workoutId` (nullable) replaces `programId`; `logExercises.notes` (nullable string) added
-- Program → Workout → Exercise hierarchy; every workout belongs to a program; no standalone workout templates
-- Quick-start logs have `workoutId: null` — valid unassigned logs
-- New services: WorkoutService, WorkoutExerciseService; removed: ProgramExerciseService
-- New page: WorkoutTemplatePage — editing workout templates (exercises + targets); separate from WorkoutDetailPage (active/past logs)
-- New routes: /programs/:programId/workouts/new, /programs/:programId/workouts/:workoutId
-- Refactoring: see Development Philosophy — service layer and type definitions are the primary surfaces to review before future integration phases (backend, mobile, devices)
-- Free navigation during active workout — workout persists in Dexie (finishedAt === null) until explicitly finished or deleted; user can navigate all tabs freely
-- ActiveWorkoutContext — global context initialized on app mount (not just login) — checks Dexie for finishedAt === null; drives WorkoutFAB state app-wide
-- WorkoutFAB visibility rules: "Start Workout" on Logs tab only (no active workout); "Resume Workout" all tabs (active workout); disabled/inert (visible, no action) on /logs/:id active mode; hidden on /login, /signup
-- WorkoutLogService.getActive() — new method returns active log or null for current user
-- Auto-save on all editable pages except WorkoutDetailPage edit mode — changes persist to Dexie on blur; no explicit save buttons on Profile or active workout inputs
-- WorkoutDetailPage edit mode — keeps explicit "Save Edits" as commit point; "← Back" without saving discards changes
-- Input validation + inline error — invalid numeric input shows "Enter a valid number" below field; blank text shows "Name can't be blank"; clears on valid input
-- Confirm prompt only on destructive actions — delete workout, delete program, discard active session; all other navigation always safe
-
-> Phase 2 is locked. Do not reopen decisions without explicit discussion.
-
-**Phase 3 — Build MVP (complete — 2026-04-10)**
-- Build order: project setup → auth → shared components → Programs tab → Logs tab → Profile tab → Statistics placeholder
-- All 6 steps built and verified. UI polish pass complete. See recap.md for full session history.
-
-**Phase 4 — Test MVP (complete — 2026-04-22)**
-- Vitest 4.1.5 + RTL 16 + fake-indexeddb + jsdom installed (session 29)
-- 72 tests passing across 8 files (service layer guards + UI guards)
-- Service layer guards on 7 services (session 30)
-- ErrorContext + ErrorBanner wired app-wide (session 34 — D5 closed)
-
-**Phase 5 — Statistics page + new features planning (in progress)**
-- Active: CE1 spec patches (sessions 41–43) → CE1 build → Statistics build → F20–F39 iteration
-- Repeat phases 1–4 loop applies to each new feature set
+- **Phase 1 — Research (locked):** Problem, target user, competitive landscape, differentiation thesis. Re-run competitor research before each major feature iteration.
+- **Phase 2 — Blueprint MVP (locked):** React + TS + Vite + Dexie + service-layer architecture, mobile-only 480px, schema baseline. All bullet-level decisions captured in Key Design Decisions (#1–23). Schema later migrated to v3 under Decisions #24–29 during Phase 5 CE1/CE2.
+- **Phase 3 — Build MVP (complete — 2026-04-10):** All 6 build steps verified; UI polish pass done.
+- **Phase 4 — Test MVP (complete — 2026-04-22):** Vitest + RTL + fake-indexeddb + jsdom; service-layer guards; ErrorContext + ErrorBanner wired app-wide (D5 closed). Live test counts in the test runner, not here.
 
 ---
 
@@ -414,52 +373,82 @@ All services are plain modules exporting functions. Currently call Dexie directl
 - Search/filter by name + muscle tags + broad-group chip (D7); background muscles (`neck`, `rotatorCuff`) never surface in picker or search
 - Surfaced via `ExerciseSearchModal` (bottom drawer overlay) — used by both Programs and Logs tabs
 
-### ExerciseSearchModal Spec (C5 resolved — rewritten Session 41 for Decisions #27 (D6, D7))
+### ExerciseSearchModal Spec (C5 resolved — rewritten Session 41 for Decisions #27 (D6, D7); Session 51 amendment: D6.2 + D6.3 tap scheme replaced; chevron + sticky create footer + trash + delete-choice modal landed)
 
-Bottom drawer overlay. Used from WorkoutDetailPage (active/edit) and WorkoutTemplatePage. Picker + filter behavior locked via Decision #27.
+Bottom drawer overlay. Used from WorkoutDetailPage (active/edit) and WorkoutTemplatePage. Picker + filter behavior locked via Decision #27 (Session 51 amendment).
 
-#### Filter / browse mode (D7)
+#### Filter / browse mode (D7 + CE2 EB2)
 
 **Filter bar:**
 - Broad-group chips: All | Chest | Back | Shoulders | Arms | Legs | Core — "All" selected by default, **single-select**
 - Broad group per exercise computed via `getExerciseGroup(exercise)` — no stored category
-- Search input — instant filter as user types; no debounce (29 items; sub-millisecond JS filter). Matches exercise `name` **and** muscle tags in `primaryMuscles` / `secondaryMuscles[].muscle` (e.g. typing "triceps" surfaces any exercise where triceps appears as primary or secondary)
+- Search input — instant filter as user types; no debounce (~214 items; sub-millisecond JS filter). Matches exercise `name` **and** muscle tags in `primaryMuscles` / `secondaryMuscles[].muscle` (e.g. typing "triceps" surfaces any exercise where triceps appears as primary or secondary). Background muscles (`neck`, `rotatorCuff`) excluded from tag matches; name match still works.
+
+**Two render modes (driven by query):**
+- **Browse mode (query blank):** show parent-level exercises only (`parentExerciseId === null`). Each parent with ≥1 variant renders a `›` chevron with its own ≥44pt tap zone, separated from the row tap target. Tap chevron → inline-expand variants beneath the parent row; chevron rotates 90° to indicate expanded state. Tap chevron again → collapse. Variants render with `↳` prefix and a tinted background. No auto-scroll on expand.
+- **Search mode (query non-blank):** flat results per CE2 #5 — parents and variants intermixed as peer entries; chevrons not rendered. Variants surface directly without needing parent expansion.
 
 **Results list row metadata:**
 - Exercise name (primary line)
-- Primary muscles (bold / accent color) + all secondaries in declared order
-- Role distinguished by UI color — specific visual element (chip tint / text color / badge) TBD pre-build, flagged for design pass
+- Primary muscles (bold) + all secondaries (muted, in declared order) — comma-separated, single line
+- No role distinction in browse rows (kept clean — role only matters during create)
 - Background muscles (`neck`, `rotatorCuff`) never shown in row metadata (D6.4)
 
+**Row actions (right side):**
+- Custom rows render a 🗑 trash button (≥44×44pt tap target). Tap → opens delete flow (see Deletion below).
+- Parent-with-variants in browse mode renders the `›` chevron after the trash (if applicable).
+- Seed rows have no trash and no edit affordance (read-only).
+
 **Selection:**
-- Tap exercise row → modal closes → exercise added to workout (`LogExerciseService.add()` or `WorkoutExerciseService.add()` depending on caller context)
+- Tap exercise row body (anywhere except the chevron / trash) → modal closes → exercise added to workout (`LogExerciseService.add()` or `WorkoutExerciseService.add()` depending on caller context).
 
 **Empty state:**
-- "No exercises found" + "＋ Create custom exercise" affordance → transitions to creation mode
+- "No exercises found." — when filter combination yields zero results.
+
+**Sticky create footer:**
+- "＋ Create custom exercise" button anchored at the bottom of the drawer, always visible regardless of search/scroll state (Session 51 — replaces original "empty-state-only" affordance for discoverability). Tap → enters Step 1.
 
 #### Custom exercise creation (D6 — two-step inline flow, no new page)
 
 **Step 1 — Name + broad groups (multi-select) + optional parent (EB5):**
 - Name input (required; blank → "Name can't be blank")
 - 6 broad-group chips: Chest, Back, Shoulders, Arms, Legs, Core — **multi-select** (tap to toggle; at least one required)
-- **Optional parent-exercise picker (EB5 — CE2):** labeled "Nest under a parent exercise (optional)"; default unselected. Dropdown contents = all exercises where `parentExerciseId === null`, sorted alphabetically (seed parents + any parent-level customs). Selecting a parent sets `parentExerciseId` on save; unselected → `parentExerciseId = null` (new custom becomes a parent-level entry itself). Per CE2 Rule 1 (flat hierarchy), variants cannot become parents — dropdown is self-filtering. No muscle-map pre-fill from parent this cycle; user still completes Step 2 manually (pre-fill is a polish item for post-MVP).
-- "Next" advances when name is non-blank AND ≥1 group selected. Parent selection is never required.
+- **Optional parent-exercise picker (EB5 — CE2):** labeled "Nest under a parent exercise (optional)"; default "None — top-level exercise". Dropdown contents = all exercises where `parentExerciseId === null`, sorted alphabetically (seed parents + any parent-level customs). Selecting a parent sets `parentExerciseId` on save; unselected → `parentExerciseId = null`. Per CE2 Rule 1 (flat hierarchy), variants cannot become parents — dropdown is self-filtering. No muscle-map pre-fill from parent this cycle; user still completes Step 2 manually (pre-fill is a polish item for post-MVP).
+- "Next" enabled when name is non-blank AND ≥1 group selected. Parent selection is never required.
 
-**Step 2 — Muscle tagging (D6.1 sectioned by selected group, D6.2 two-tap cycle, D6.3 long-press promote):**
-- Muscles listed under each group header (only groups selected in Step 1 are shown)
-- Background muscles (`neck`, `rotatorCuff`) are NOT shown — seed-only (D6.4)
-- Each muscle is a tappable chip with three role states (**two-tap cycle**):
-  1. Neutral (nothing tagged) → tap to mark as **synergist**
-  2. Synergist → tap to cycle to **stabilizer**
-  3. Stabilizer → tap to remove (back to neutral)
-- Role visual distinction uses the same UI color rule as filter row metadata (element TBD pre-build)
-- Primary selection: **long-press on any tagged muscle → promote to primary** (D6.3). Long-pressing a second tagged muscle creates co-primaries. Long-press on a primary demotes it back to synergist. Tutorial hint queued for F30 (first-run onboarding).
-- At least one primary is required to save. If user saves without promoting anything, first selected muscle is auto-promoted (guard — UX copy TBD pre-build).
-- **Save** → `ExerciseService.create({ name, primaryMuscles, secondaryMuscles, parentExerciseId, equipment: null, gripWidth: null, gripOrientation: null, stanceWidth: null, bias: null, jointLoad: [], isCustom: true })` → new exercise added to list and immediately selected → modal closes. `parentExerciseId` comes from Step 1 parent picker (null if unselected).
+**Step 2 — Muscle tagging (D6.1 sectioned by selected group; Session 51 tap scheme replaces D6.2 + D6.3):**
+- Muscles listed under each group header (only groups selected in Step 1 are shown).
+- Background muscles (`neck`, `rotatorCuff`) are NOT shown — seed-only (D6.4).
+- Each muscle is a tappable chip with **four-state tap cycle** (Session 51 amendment — frequency-weighted; most common action is one tap):
+  1. Neutral (no taps) → tap to mark as **primary** (main mover)
+  2. Primary → tap to cycle to **synergist** (helper)
+  3. Synergist → tap to cycle to **stabilizer**
+  4. Stabilizer → tap to remove (back to neutral)
+- Long-press is unused (no gesture conflict; cycle is self-discoverable).
+- Co-primaries allowed (multiple chips can be at primary simultaneously).
+- Role visual distinction: 4 distinct CSS classes (`muscleChipNeutral` / `muscleChipPrimary` / `muscleChipSynergist` / `muscleChipStabilizer`) — color tokens placeholder, designer to swap.
+- A small one-line caption above the chip sections explains the cycle: "Tap a muscle to cycle: main mover → helper → stabilizer → none".
+- **Save guard (Session 51 amendment):** at least one primary required. If user taps Save with zero primaries (e.g. cycled past primary on every chip), inline error appears under chips: "At least one main mover required" — Save does NOT silently auto-promote (replaces original auto-promote-first-tagged guard). Error clears on next chip tap.
+- **Save** → `ExerciseService.create({ name, primaryMuscles, secondaryMuscles, parentExerciseId, equipment: null, gripWidth: null, gripOrientation: null, stanceWidth: null, bias: null, jointLoad: [], isCustom: true })` → new exercise immediately selected via `onSelect(created)` → modal closes (parent component unmounts on `onSelect`).
 
 **Dismissal:**
-- Tap outside overlay → modal closes, no exercise added (from any step)
-- Back from Step 2 → returns to Step 1 with name + group selections preserved
+- Tap outside drawer → modal closes, no exercise added (from any mode).
+- "‹ Back" from Step 1 → returns to browse mode (form state discarded).
+- "‹ Back" from Step 2 → returns to Step 1 with name + group selections + parent picker preserved. If user untickes a group on Step 1 then re-advances, role tags for muscles in that dropped group are dropped (kept simple — explicit user action).
+
+#### Deletion (custom only — CE2)
+
+- Tap 🗑 on a custom row → service queries variant count.
+- **0 variants:** standard `Modal` confirm — "Delete \"[name]\"?" → Cancel | Delete → `ExerciseService.deleteExercise(id, { cascade: false })`.
+- **≥1 variants:** bespoke choice modal (`Modal.tsx` body is text-only and doesn't support a radio group):
+  - Title: "Delete \"[name]\"?"
+  - Body: "This exercise has N variant(s) nested under it."
+  - Two radio options:
+    1. **"Delete this exercise only"** — variants become standalone (`parentExerciseId` set to null). Default selected (safer — less data loss).
+    2. **"Delete this exercise and all variants"** — removes the whole group, including variant log history (`logExercises → logSets`).
+  - Actions: Cancel | Delete → `ExerciseService.deleteExercise(id, { cascade: chosen })`.
+- After successful delete: refresh the library list, collapse the chevron if the deleted exercise was an expanded parent.
+- Seed exercises have no trash affordance; service-layer guard rejects seeded delete as defense-in-depth.
 
 **Picker UX alternatives parked for post-build review** (see `memory/project_picker_ux_post_build.md`): Option 2 (two-pane Step 1) and Option 4 (combo shortcuts for common muscle clusters). D6.4 alternatives (B: show background muscles collapsed; C: separate advanced mode) also parked.
 
@@ -567,7 +556,7 @@ src/
 | 24 | Muscle taxonomy + volume model (CE1 — D1, D2, D3, D4) | 24 user-surfaced + 2 background muscles (`neck`, `rotatorCuff`). 6 broad groups (chest/back/shoulders/arms/legs/core) **derived** from specific muscle via static `MUSCLE_TO_GROUP` map — no stored `category`. Primary 1.0× / secondary 0.5× via `SECONDARY_VOLUME_MULTIPLIER`. Co-primaries allowed when EMG/research supports; no cap on secondaries. Each secondary tagged with role `synergist \| stabilizer` (D4 B-lite — both 0.5× in MVP; future calibration without re-curation). Broad group determined by `getExerciseGroup()` — first declared primary wins tiebreaker. |
 | 25 | Recovery windows (CE1 — D5) | Static `RECOVERY_WINDOWS` config, no UI this cycle. Large bucket 60h (9 muscles), small bucket 36h (15), background-small 36h (2). Referenced by future fatigue/recovery stats (F29 Muscle Fatigue Avatar). Galpin training-age modifier deferred to F37; `users.trainingAge` ships forward-compat in v3 so the modifier lands without a schema bump. |
 | 26 | RPE per set — opt-in (CE1 — D-new-3) | `users.rpeEnabled` (default `false`). When true, per-set RPE input (1–10 scale, half-points allowed: 7.5, 8.5) in active workout and edit mode. Optional even when enabled — never blocks set save. No pre-fill (always starts blank). Toggle exposed app-wide via `UserSettingsContext.rpeEnabled` (hydrated from `AuthContext.user` on login alongside `unitPreference`; reset on logout). Toggle surfaced in Profile for MVP; introduced to users via first-run onboarding tutorial (F30); moves to feature toggle menu next cycle (F32). All RPE-derived stats (e1RM, RPE-adjusted volume, fatigue curves, etc.) deferred to F34 — only raw capture ships this cycle. |
-| 27 | Exercise picker + filter UX (CE1 — D6, D7) | **Filter:** 6 broad-group chips single-select + name/tag search (matches name AND muscle tags). Row metadata shows primary + all secondaries; role distinguished by UI color (specific element TBD pre-build). **Custom create:** two-step flow — Step 1 name + multi-select broad groups → Step 2 sectioned muscle chips with two-tap role cycle (neutral → synergist → stabilizer → remove); long-press to promote to primary (co-primaries allowed). Background muscles never surface in picker or row metadata (D6.4). |
+| 27 | Exercise picker + filter UX (CE1 — D6, D7; amended Session 51) | **Filter:** 6 broad-group chips single-select + name/tag search (matches name AND muscle tags). Row metadata shows primary (bold) + all secondaries (muted) — same line, no role distinction in browse rows. **Custom create:** two-step flow — Step 1 name + multi-select broad groups + optional parent picker (EB5) → Step 2 sectioned muscle chips with **four-state tap cycle: neutral → primary → synergist → stabilizer → neutral** (Session 51 amendment — replaces original two-tap + long-press scheme; long-press removed entirely). Co-primaries allowed (multiple chips at primary). Save blocked with inline error if no primary tagged (no silent auto-promote — Session 51 amendment). Background muscles never surface in picker or row metadata (D6.4). **Variant chevron (CE2 EB2):** parent rows with ≥1 variant render a `›` chevron in browse mode (query blank); tap chevron toggles inline expansion (rotated 90° = expanded). In search mode (query non-blank) results are flat per CE2 #5 — no chevrons. **Delete (custom only):** trash icon on custom rows; 0 variants → simple confirm; ≥1 variants → choice modal (cascade vs null-orphan, default null-orphan). |
 | 28 | Schema migration to v3 — nuke and reseed (CE1 — D8) | v3 bump drops `exercises` + `logExercises` + `logSets` and repopulates from re-curated seed (D8.1 sub-option B2). Silent migration, no banner (D8.3) — pre-launch only; post-launch pattern switches to in-place + banner (see `memory/project_post_launch_migration_pattern.md`). All new/renamed fields bundle into a single v3 hop (D8.4). `exercises.category` removed; broad group derived via `getExerciseGroup()`. Tier 3 forward-compat fields (`equipment`, `gripWidth`, `gripOrientation`, `stanceWidth`, `bias`, `jointLoad`) added nullable so future Group 2 dimensions (F39) land without a schema bump. |
 | 29 | Naming conventions for muscle taxonomy (CE1 — D9) | `Muscle` IDs camelCase (`frontDelts`, `upperBack`, `rotatorCuff`). Display labels Title Case (`Front Delts`, `Upper Back`, `Rotator Cuff`) sourced from single `MUSCLE_LABELS: Record<Muscle, string>` map. `Muscle` and `MuscleGroup` are TS string unions for type safety. All related concepts (groups, roles, buckets, tiers) also camelCase. |
 

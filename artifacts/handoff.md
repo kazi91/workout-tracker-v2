@@ -1,5 +1,58 @@
 # HANDOFF — NEW INSTANCE START HERE
-Last updated: 2026-04-26 (session 50 CLOSED — CE1/CE2 v3 build STEPS 4 + 5 of 7 complete. RPE plumbing wired end-to-end: `UserSettingsContext.rpeEnabled` derived from User record, `ProfilePage` Off/On toggle in Preferences, `SetRow` 5th-column RPE input gated by toggle (number, step=0.5, 1–10), `LogSetService.update({ rpe })` strict-validation already lived from Session 49. Public contract change: `SetRow.onUpdate` and `ExerciseCard.onSetUpdate` switched from `(setId, weightLb, reps)` to partial `(setId, data: { weight?, reps?, rpe? })` so RPE saves independently per Decision #26. tsc + build + 104/104 tests all clean (no test edits — existing useUserSettings mock returns no rpeEnabled → falsy → RPE column hidden in test render). Next: Session 51 = Step 6 = ExerciseSearchModal full rewrite per Decision #27 — chevron variant expander, two-step custom create with optional parent picker, deletion choice modal.)
+Last updated: 2026-04-26 (session 51 CLOSED — CE1/CE2 v3 build STEP 6 of 7 complete. ExerciseSearchModal fully rewritten per Decision #27 + CE2 EB2/EB5: chevron expander on parent rows in browse mode, search mode flat per CE2 #5, two-step custom-create flow (Step 1 name + multi-select group chips + optional parent picker; Step 2 sectioned muscle chips with new four-state tap cycle), trash icon on custom rows, deletion choice modal (cascade vs null-orphan, default null-orphan), sticky "+ Create custom exercise" footer. **Decision #27 amended this session:** four-state tap cycle (neutral → primary → synergist → stabilizer → neutral) replaces original two-tap cycle + long-press-promote scheme; long-press removed entirely. Save-with-no-primary now blocks with inline error rather than silent auto-promote. tsc + build (645ms / 1694 modules) + 104/104 tests all clean — no test edits. Next: Session 52 = Step 7 (manual smoke + Issue Tracker close-out for CE1 + CE2). Step 6 came in tight enough to leave Step 7 standalone.)
+
+## Session 51 (2026-04-26) — CE1/CE2 v3 BUILD STEP 6 of 7 CLOSED — ExerciseSearchModal full rewrite
+
+**Scope:** Single-step session per build rule. Step 6 = full rewrite of `ExerciseSearchModal` to land Decision #27 (D6 + D7) + CE2 EB2 (chevron variant expansion) + CE2 EB5 (parent picker in custom create) + CE2 deletion choice modal. Service layer untouched — `ExerciseService.search / create / deleteExercise` contracts already shipped Session 49.
+
+**Decision #27 amendment (locked this session):**
+- Original D6.2 (two-tap cycle: neutral → synergist → stabilizer → neutral) + D6.3 (long-press to promote to primary) **replaced** with: four-state tap cycle: **neutral → primary → synergist → stabilizer → neutral**.
+- Rationale: frequency-weighted — most common action (mark as main mover) is one tap. No long-press gesture to discover; cycle is self-discoverable via tapping. Removes the F30 tutorial-hint dependency for primary promotion.
+- Original "auto-promote first tagged on save with no primary" guard **replaced** with: **block save with inline error** ("At least one main mover required"). Rationale: with 1st-tap = primary, the only path to "no primary" is actively cycling past it on every chip — the user meant to do that; a silent override would feel wrong.
+- All three changes apply only to the Step 2 muscle-chip interaction. Browse mode + Step 1 unaffected.
+- `master-schematics.md` Decision #27 row + ExerciseSearchModal Spec section updated inline (no re-spec round).
+
+**Files changed (2 src/):**
+- **`src/components/ExerciseSearchModal.tsx`** — full rewrite (~360 lines).
+  - Three view modes (`browse` | `createStep1` | `createStep2`) selected via local `mode` state.
+  - **Browse mode:** loads `getAll()` once on mount; renders flat results when `query !== ''` (CE2 #5 — variants surface as peers; no chevrons), renders parents-only when `query === ''` (each parent with ≥1 variant gets a `›` chevron toggle). `variantsByParentId` memo computed once per `allExercises` change. Chevron tap toggles `expandedParentIds: Set<number>`; rotated 90° via CSS class. Custom rows show 🗑 trash button (≥44pt tap target).
+  - **Sticky create footer:** "＋ Create custom exercise" button anchored at bottom of drawer, always visible regardless of search/scroll state (replaces original empty-state-only affordance — discoverability win).
+  - **Step 1:** name input (blank → "Name can't be blank" inline error), 6 multi-select group chips, optional parent picker `<select>` populated from parent-level exercises (`parentExerciseId === null`) sorted alphabetically. "Next" disabled until name non-blank AND ≥1 group selected.
+  - **Step 2:** muscle chips sectioned by selected groups in `MUSCLE_GROUPS` order; background muscles (`neck`, `rotatorCuff`) excluded per D6.4. Each chip cycles through 4 role states via `cycleRole(muscle)` using `ROLE_CYCLE` const. Save calls `ExerciseService.create({...})` with `parentExerciseId` from Step 1, then `onSelect(created)` (parent component unmounts modal).
+  - **Step 1 → Step 2 → Step 1 navigation** preserves form state. Returning to Step 1 and unticking a group drops role tags for muscles in that group on next "Next" (kept simple — explicit user action).
+  - **Delete:** `openDelete(ex)` sets `deleteTarget`; render branches on `variantsByParentId.get(target.id)?.length`: 0 → reuses `Modal` component (text body sufficient); ≥1 → bespoke choice modal inline (radio group not supported by `Modal.body: string` API). Default radio = "Delete this exercise only" (cascade=false). After delete: refresh library + collapse chevron if target was expanded.
+  - **Tap outside drawer** → `onClose()` from any mode (form state lost).
+  - JSDoc header documents the three modes, deletion behavior, and Decision #27 amendment.
+- **`src/components/ExerciseSearchModal.module.css`** — full rewrite (~270 lines).
+  - Existing classes (`.backdrop` / `.drawer` / `.searchInput` / `.chips` / `.chip` / `.chipActive` / `.list`) retained.
+  - Old `.listItem` row replaced with `.rowGroup` > `.row` > `.rowMain` (button) + `.rowActions` (trash + chevron). Custom muscle metadata via `.muscleMeta` / `.musclePrimary` (bold, primary text color) + `.muscleSecondary` (secondary text color), comma-separated.
+  - `.variantRow` (tinted bg, indented `.rowMain`) + `.variantPrefix` (`↳`).
+  - `.chevronBtn` (44×44, `transform: rotate(90deg)` via `.chevronExpanded`), `.trashBtn` (44×44, `:active` → red).
+  - `.createFooterBtn` (sticky bottom, green outline + green text).
+  - Form: `.formHeader` / `.formBackBtn` / `.formTitle` / `.fieldLabel` / `.fieldHint` (with `.hintPrimary` / `.hintSynergist` / `.hintStabilizer` color spans) / `.formInput` / `.formInputError` / `.formSelect` / `.fieldError` / `.formPrimaryBtn` (with `:disabled` opacity).
+  - Step 2: `.muscleSections` (scrollable) / `.muscleSection` / `.sectionHeader` / `.muscleChipRow` / `.muscleChip` + 4 role states (`.muscleChipNeutral` / `.muscleChipPrimary` / `.muscleChipSynergist` / `.muscleChipStabilizer`). Color tokens are placeholder per user — designer will swap palette.
+  - Delete choice modal: `.deleteBackdrop` (z-index 300, layered above drawer's 200) / `.deleteCard` / `.deleteTitle` / `.deleteBody` / `.deleteOption` (with `.deleteOptionHint`) / `.deleteActions` / `.deleteBtnSecondary` / `.deleteBtnDestructive`. Radio uses native `accent-color: var(--color-green)`.
+
+**Files NOT changed (intentional):**
+- `src/services/ExerciseService.ts` — contracts already locked Session 49; `getVariants` was briefly added then reverted (variant lookup uses already-loaded `allExercises` in-memory, no extra service method needed).
+- `WorkoutDetailPage` / `WorkoutTemplatePage` — `onSelect` / `onClose` props unchanged; consumers untouched.
+- No test edits — modal has no existing test file (added to Step 7 backlog if pre-launch desired).
+
+**Verification:**
+- `npx tsc --noEmit` — exit 0
+- `npm run build` — exit 0; 1694 modules; 645ms
+- `npx vitest run` — 10 files / 104 tests passed (no regressions)
+
+**Carry-forward for Session 52 (Step 7 — final smoke + close-out):**
+- Required reading: recap.md (Session 51 entry), `artifacts/master-schematics.md` § Issue Tracker (look for CE1 + CE2 must-fix items still open), the new modal + service files.
+- Tasks: (1) `npm run dev` smoke pass — exercise the full picker (browse + chevron + custom create + variant nesting + trash + cascade modal); (2) close-out CE1 + CE2 must-fix entries in Issue Tracker; (3) commit. Step 7 is the easiest of the 7 — should land in a single short session.
+
+**Open punch list for Step 7:**
+- [ ] Designer color pass on Step 2 muscle chips (4 role states currently use placeholder green/outline tokens).
+- [ ] Decide whether to write a Vitest suite for the modal (chevron toggle, role cycle, save guard, delete cascade-vs-orphan paths). Currently zero modal test coverage. Defer if Step 7 is tight.
+- [ ] Issue Tracker scrub for any CE1/CE2 entries newly resolvable post-Step 6.
+
+---
 
 ## Session 50 (2026-04-26) — CE1/CE2 v3 BUILD STEPS 4 + 5 of 7 CLOSED — RPE plumbing
 

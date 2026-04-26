@@ -44,14 +44,13 @@
   color: var(--color-text-secondary);
 }
 
-/* ── Category filter chips ── */
+/* ── Group filter chips ── */
 .chips {
   display: flex;
   flex-shrink: 0;
+  flex-wrap: wrap;
   gap: 8px;
-  overflow-x: auto;
   padding-bottom: 2px;
-  /* Hide scrollbar — chips scroll naturally on mobile */
   scrollbar-width: none;
 }
 
@@ -86,27 +85,44 @@
   flex-direction: column;
 }
 
-.listItem {
+.rowGroup {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 14px 4px;
-  border-bottom: 1px solid var(--color-surface-2);
-  cursor: pointer;
-  background: none;
-  border-left: none;
-  border-right: none;
-  border-top: none;
-  text-align: left;
-  width: 100%;
+  flex-direction: column;
 }
 
-.listItem:last-child {
+.row {
+  display: flex;
+  align-items: stretch;
+  border-bottom: 1px solid var(--color-surface-2);
+}
+
+.rowGroup:last-child > .row:last-child {
   border-bottom: none;
 }
 
-.listItem:active {
+.rowMain {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 12px 4px;
+  background: none;
+  border: none;
+  text-align: left;
+  cursor: pointer;
+  color: inherit;
+}
+
+.rowMain:active {
   background-color: var(--color-surface-2);
+}
+
+.rowActions {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding-left: 4px;
 }
 
 .exerciseName {
@@ -114,10 +130,75 @@
   color: var(--color-text-primary);
 }
 
-.exerciseCategory {
-  font-size: 13px;
+/* ── Muscle metadata under each exercise name ── */
+.muscleMeta {
+  font-size: 12px;
+  line-height: 1.3;
+  display: block;
+}
+
+.musclePrimary {
+  color: var(--color-text-primary);
+  font-weight: 600;
+}
+
+.muscleSecondary {
   color: var(--color-text-secondary);
-  text-transform: capitalize;
+}
+
+/* ── Variant row (chevron-expanded children) ── */
+.variantRow {
+  background-color: var(--color-surface-2);
+}
+
+.variantRow .rowMain {
+  padding-left: 20px;
+  flex-direction: row;
+  align-items: baseline;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.variantPrefix {
+  color: var(--color-text-secondary);
+  font-size: 14px;
+}
+
+/* ── Trash button (custom rows only) ── */
+.trashBtn {
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+  color: var(--color-text-secondary);
+}
+
+.trashBtn:active {
+  color: var(--color-red);
+}
+
+/* ── Chevron toggle (parent rows with variants) ── */
+.chevronBtn {
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 22px;
+  color: var(--color-text-secondary);
+  transition: transform 0.15s;
+}
+
+.chevronExpanded {
+  transform: rotate(90deg);
 }
 
 /* ── Empty state ── */
@@ -133,26 +214,83 @@
   color: var(--color-text-secondary);
 }
 
-/* ── Inline custom exercise creation ── */
-.createForm {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  padding: 12px;
+/* ── Sticky "Create custom exercise" footer ── */
+.createFooterBtn {
+  flex-shrink: 0;
+  height: 44px;
   background-color: var(--color-surface-2);
-  border-radius: var(--radius-card);
+  color: var(--color-green);
+  border-radius: var(--radius-input);
+  font-size: 15px;
+  font-weight: 600;
+  border: 1px solid var(--color-green);
+  cursor: pointer;
+  margin-top: 4px;
 }
 
-.createFormTitle {
+.createFooterBtn:active {
+  opacity: 0.85;
+}
+
+/* ── Create form (Step 1 + Step 2 shared) ── */
+.formHeader {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.formBackBtn {
+  height: 32px;
+  padding: 0 8px;
+  background: none;
+  border: none;
+  color: var(--color-green);
   font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.formTitle {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--color-text-primary);
+  margin: 0;
+}
+
+.fieldLabel {
+  font-size: 13px;
   font-weight: 600;
   color: var(--color-text-label);
+  margin: 0;
 }
 
-.createInput {
+.fieldHint {
+  font-size: 12px;
+  color: var(--color-text-secondary);
+  margin: 0;
+  line-height: 1.4;
+}
+
+.hintPrimary {
+  color: var(--color-green);
+  font-weight: 600;
+}
+
+.hintSynergist {
+  color: var(--color-text-primary);
+  font-weight: 500;
+}
+
+.hintStabilizer {
+  color: var(--color-text-secondary);
+  font-style: italic;
+}
+
+.formInput {
   height: 44px;
   padding: 0 12px;
-  background-color: var(--color-surface-1);
+  background-color: var(--color-surface-2);
   border: 1px solid transparent;
   border-radius: var(--radius-input);
   font-size: 16px;
@@ -161,24 +299,19 @@
   transition: border-color 0.15s;
 }
 
-.createInput:focus {
+.formInput:focus {
   border-color: var(--color-green);
   outline: none;
 }
 
-.createInputError {
+.formInputError {
   border-color: var(--color-red);
 }
 
-.fieldError {
-  font-size: 12px;
-  color: var(--color-red);
-}
-
-.categorySelect {
+.formSelect {
   height: 44px;
   padding: 0 12px;
-  background-color: var(--color-surface-1);
+  background-color: var(--color-surface-2);
   border: 1px solid transparent;
   border-radius: var(--radius-input);
   font-size: 16px;
@@ -187,12 +320,19 @@
   appearance: none;
 }
 
-.categorySelect:focus {
+.formSelect:focus {
   border-color: var(--color-green);
   outline: none;
 }
 
-.createBtn {
+.fieldError {
+  font-size: 12px;
+  color: var(--color-red);
+  margin: 0;
+}
+
+.formPrimaryBtn {
+  flex-shrink: 0;
   height: 44px;
   background-color: var(--color-green);
   color: #fff;
@@ -201,8 +341,175 @@
   font-weight: 600;
   border: none;
   cursor: pointer;
+  margin-top: 4px;
 }
 
-.createBtn:active {
+.formPrimaryBtn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.formPrimaryBtn:active:not(:disabled) {
+  opacity: 0.85;
+}
+
+/* ── Step 2: muscle role chips ── */
+.muscleSections {
+  overflow-y: auto;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding-bottom: 4px;
+}
+
+.muscleSection {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.sectionHeader {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-text-label);
+  margin: 0;
+}
+
+.muscleChipRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+/* Color placeholders — swap palette tokens as desired. Each role state needs to be
+   distinguishable at a glance. Shapes/borders can be swapped for chip tints later. */
+.muscleChip {
+  flex-shrink: 0;
+  height: 32px;
+  padding: 0 12px;
+  border-radius: 16px;
+  font-size: 13px;
+  font-weight: 500;
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: background-color 0.15s, color 0.15s, border-color 0.15s;
+}
+
+.muscleChipNeutral {
+  background-color: var(--color-surface-2);
+  color: var(--color-text-secondary);
+}
+
+.muscleChipPrimary {
+  background-color: var(--color-green);
+  color: #fff;
+}
+
+.muscleChipSynergist {
+  background-color: transparent;
+  color: var(--color-text-primary);
+  border-color: var(--color-green);
+}
+
+.muscleChipStabilizer {
+  background-color: transparent;
+  color: var(--color-text-secondary);
+  border-color: var(--color-text-secondary);
+  border-style: dashed;
+}
+
+/* ── Delete choice modal (radio variant) ── */
+.deleteBackdrop {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 300;
+  padding: 16px;
+}
+
+.deleteCard {
+  width: 100%;
+  max-width: 360px;
+  background-color: var(--color-surface-1);
+  border-radius: var(--radius-modal);
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.deleteTitle {
+  font-size: 17px;
+  font-weight: 600;
+  color: var(--color-text-primary);
+  margin: 0;
+}
+
+.deleteBody {
+  font-size: 14px;
+  color: var(--color-text-secondary);
+  margin: 0;
+}
+
+.deleteOption {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  padding: 10px 8px;
+  border-radius: var(--radius-input);
+  background-color: var(--color-surface-2);
+  cursor: pointer;
+  font-size: 14px;
+  color: var(--color-text-primary);
+  line-height: 1.35;
+}
+
+.deleteOption input[type='radio'] {
+  margin-top: 2px;
+  accent-color: var(--color-green);
+}
+
+.deleteOptionHint {
+  font-size: 12px;
+  color: var(--color-text-secondary);
+}
+
+.deleteActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.deleteBtnSecondary {
+  height: 40px;
+  padding: 0 16px;
+  background-color: transparent;
+  color: var(--color-text-primary);
+  border: 1px solid var(--color-surface-2);
+  border-radius: var(--radius-input);
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.deleteBtnDestructive {
+  height: 40px;
+  padding: 0 16px;
+  background-color: var(--color-red);
+  color: #fff;
+  border: none;
+  border-radius: var(--radius-input);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.deleteBtnDestructive:active,
+.deleteBtnSecondary:active {
   opacity: 0.85;
 }
