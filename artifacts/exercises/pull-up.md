@@ -1,4 +1,5 @@
 # Pull-Ups (Bodyweight or Weighted) — Beginner's Guide
+> Last touched: 2026-04-23 (session 44 follow-up) — v2 migration + style refresh
 
 *Catalog: Seed #7 · Template: v2*
 

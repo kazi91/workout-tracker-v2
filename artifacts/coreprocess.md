@@ -1,6 +1,6 @@
 CORE DEVELOPMENT PROCESS
 =========================
-Last updated: 2026-04-13
+> Last touched: 2026-04-24 (session 44) — GA-38 authority conflict resolved
 
 ---
 

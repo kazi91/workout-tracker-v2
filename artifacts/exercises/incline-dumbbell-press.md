@@ -1,4 +1,5 @@
 # Incline Dumbbell Press — Beginner's Guide
+> Last touched: 2026-04-23 (session 44 follow-up) — v2 migration + style refresh
 
 *Catalog: P0 #2 · Template: v2*
 

@@ -1,4 +1,5 @@
 # Workouts — Schematic (Resolved)
+> Last touched: 2026-04-05 (session 1) — resolved P6: workout detail stays in logs.md
 
 > **Status:** Resolved — P6 closed (Decision #21).
 >

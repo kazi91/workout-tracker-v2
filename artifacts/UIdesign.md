@@ -1,6 +1,6 @@
 WORKOUT TRACKER V2 — UI DESIGN REFERENCE
 ==========================================
-Last updated: 2026-04-21 (session 30 — most recent edit; FAB states split, page title 24px, Portfolio Legibility add)
+> Last touched: 2026-04-24 (session 44) — gap-audit batch (FAB size/position re-pointed to GA-40/41)
 
 Purpose: Establish UI standards before build begins. Brainstorm visual features and ideas,
 note what aligns with current plans and what changes each idea would require.

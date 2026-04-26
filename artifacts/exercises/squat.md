@@ -1,4 +1,5 @@
 # Squat (High-Bar Back Squat) — Beginner's Guide
+> Last touched: 2026-04-23 (session 44) — Big-3 v2 guide authored + style refresh
 
 *Catalog: Seed #11 · Template: v2*
 

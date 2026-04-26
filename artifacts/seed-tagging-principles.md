@@ -1,4 +1,5 @@
 # Seed Tagging Principles
+> Last touched: 2026-04-26 (session 52) — Decision #30/#31 group conventions sync (upperTraps → shoulders; carry routing)
 
 Working reference for Sessions 45a–f (seed re-curation). Purpose: prevent drift across 213 entries by encoding rules that cascade from ~30 decisions down to all entries.
 

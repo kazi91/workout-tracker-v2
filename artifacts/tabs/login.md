@@ -1,4 +1,5 @@
 # Login Tab — Schematic
+> Last touched: 2026-04-21 (session 28) — txt → md migration
 
 > **Status:** Stub — spec deferred from pre-build audit (C4). Resolve before build step 2 (Auth).
 > **Cross-reference:** `artifacts/master-schematics.md` auth section, `artifacts/tabs/programs.md` for comparable form decisions.

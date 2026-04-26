@@ -1,4 +1,5 @@
 # Deadlift (Conventional) — Beginner's Guide
+> Last touched: 2026-04-23 (session 44 follow-up) — v2 migration + style refresh
 
 *Catalog: Seed #6 · Template: v2*
 

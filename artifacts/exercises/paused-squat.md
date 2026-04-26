@@ -1,4 +1,5 @@
 # Paused High-Bar Squat — Beginner's Guide
+> Last touched: 2026-04-23 (session 44 follow-up) — v2 migration + style refresh + step compression (8 → 6)
 
 *Catalog: P5 #6 · Template: v2*
 

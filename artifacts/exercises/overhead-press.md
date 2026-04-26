@@ -1,4 +1,5 @@
 # Overhead Press (Standing Barbell) — Beginner's Guide
+> Last touched: 2026-04-23 (session 44) — Big-3 + OHP v2 guide authored + style refresh
 
 *Catalog: Seed #17 · Template: v2*
 

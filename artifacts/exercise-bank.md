@@ -1,4 +1,5 @@
 # Exercise Bank
+> Last touched: 2026-04-26 (session 53) — Hyperextension rename + Deficit RDL + Staggered-Stance RDL
 
 > **Purpose:** Single source of truth for the exercise library — current seed, priority-ordered expansion list, parent/variant rules, and open decisions. Future home for per-exercise tutorial content.
 > **Status:** Research/planning draft. No seed changes until tiers + variant architecture are approved.

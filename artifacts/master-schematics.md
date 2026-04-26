@@ -1,4 +1,5 @@
 # Workout Tracker — Master Schematic
+> Last touched: 2026-04-26 (session 53) — Issue Tracker: F40 Row C lock-ins, F41 closes-by, F42 added, F8 → Resolved, CP2/CP3 added
 
 > **Purpose:** Source of truth for the entire application. Covers architecture, tech stack, DB schema, service layer, routing, state, and cross-cutting concerns. Update this file whenever a decision changes at the app level. Sub-schematics (per tab) live in `artifacts/tabs/` and are the source of truth for individual tab features.
 >

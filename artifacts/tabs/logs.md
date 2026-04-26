@@ -1,4 +1,5 @@
 # Logs Tab — Schematic
+> Last touched: 2026-04-24 (session 44) — GA-17 service-name fix (`getByWorkoutId` → `getByWorkoutLogId`)
 
 > **Purpose:** Detailed spec for the Logs tab. Use this as the source of truth when building or modifying anything under `/logs`. Cross-reference with master schematic (`artifacts/master-schematics.md`) for DB schema, services, and shared components.
 

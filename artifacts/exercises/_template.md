@@ -1,4 +1,5 @@
 # Exercise Guide Template — v2
+> Last touched: 2026-04-23 (session 44 follow-up) — v2 template + style refresh
 
 > **Purpose:** Reusable structure for writing beginner-to-advanced exercise guides under `artifacts/exercises/[slug].md`.
 > **Status:** Locked v2. S-tier and A-tier additions folded in (per coaches panel review, session ~41).

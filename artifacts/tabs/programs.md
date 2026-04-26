@@ -1,4 +1,5 @@
 # Programs Tab — Schematic
+> Last touched: 2026-04-22 (session 42) — ExerciseSearchModal cross-ref (CE1 spec patch 2/3)
 
 > **Purpose:** Detailed spec for the Programs tab. Use this as the source of truth when building or modifying anything under `/programs`. Cross-reference with master schematic (`artifacts/master-schematics.md`) for DB schema, services, and shared components.
 
