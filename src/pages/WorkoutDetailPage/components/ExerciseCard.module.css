@@ -44,11 +44,11 @@
   margin: 0 0 10px;
 }
 
-/* ── Column headers ── */
+/* ── Column headers — must match SetRow grid exactly so labels stay over inputs. ── */
 .colHeaders {
   display: grid;
-  grid-template-columns: 24px 1fr 1fr 1fr 28px;
-  gap: 8px;
+  grid-template-columns: 20px 44px minmax(72px, 1fr) 56px 24px;
+  gap: 2px;
   padding: 0 0 4px;
   font-size: 12px;
   font-weight: 500;
@@ -58,7 +58,7 @@
 }
 
 .colHeadersWithRpe {
-  grid-template-columns: 24px 1fr 1fr 1fr 1fr 28px;
+  grid-template-columns: 20px 44px minmax(72px, 1fr) 56px 64px 24px;
 }
 
 .colSet,

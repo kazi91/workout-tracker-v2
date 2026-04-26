@@ -1,7 +1,46 @@
 # HANDOFF — NEW INSTANCE START HERE
-Last updated: 2026-04-26 (session 52 IN PROGRESS — CE1/CE2 v3 build STEP 7 of 7. Vitest coverage added for ExerciseSearchModal: 26 new cases (browse / search / create flow / delete flow / role cycle / save guard / cascade-vs-orphan paths). Full suite 130/130 across 11 files (was 104/104 across 10). Mid-session **Decision #30 locked: `upperTraps` group derivation back → shoulders.** Mapping flipped in `MUSCLE_TO_GROUP`; `lowerTraps` stays in back. Bodybuilding shoulder-day convention; scap-elevation kinematics align with delts. Tag assignments on individual exercises unchanged. seed-tagging-principles.md group conventions synced inline. tsc clean, build clean (6.96s / 1694 modules). Manual smoke + Issue Tracker scrub still pending before commit.)
+Last updated: 2026-04-26 (session 52 CLOSED — partial Step 7 of 7. Vitest coverage shipped (26 ExerciseSearchModal cases, 130/130 across 11 files). **Decisions #30 + #31 locked + SetRow stepper rebuild + F40/F41 logged.** Manual smoke + Issue Tracker scrub + remaining ~14-item smoke punch list deferred to Session 53. SetRow rebuilt with custom `[− input +]` pill stepper per cell (native browser spinner hidden via CSS); grid retuned (BEST 44px, LB `minmax(72px, 1fr)`, REPS 56px, RPE 76px, gap 2px, buttons 18×36); ExerciseCard column-header grid synced to same template so labels stay over inputs; save logic split into `saveWeight`/`saveReps`/`saveRpe` (blank field never fail-validates an adjacent field's save). Closes punch-list #2 (3+ digit weight clipping) and #3 (negative-value cap — buttons clamp at 0). F40 (picker filter revamp 3-row UX layout) locked; F41 (per-exercise `aliases: string[]` v4 schema bump) added — closes-by absorbs punch-list #4/#5/#14. Verification: tsc clean, vite build clean, 130/130 tests across 11 files. Punch-list state for Session 53 enumerated below.)
 
-## Session 52 (2026-04-26) — CE1/CE2 v3 BUILD STEP 7 of 7 (in progress)
+## Session 53 — punch-list triage + smoke (next session, queued)
+
+**14 open items + 2 findings.** All emerged during Session 52 smoke setup. Each tagged with build-now feasibility vs needs-decision:
+
+**Quick wins (decision + build):**
+- **#6** Rename "45° Hyperextension" → "Back Hyperextension". Decision: drop 45° entirely vs parenthetical "(45°)"?
+- **#13** Add Deficit RDL as variant of Romanian Deadlift. No question — straightforward seed add.
+- **#15** Rename "B-Stance RDL" → "Staggered-Stance RDL". Decision: keep "b-stance" as a search alias (which now means populating `aliases` per F41)?
+
+**Picker UX (need decision before build):**
+- **#1** Pull-up bodyweight + added-weight ambiguity. Three options on the table — (a) label clarification only, (b) total-display + edit-only-the-add, (c) two fields. Hide field for unweighted bodyweight?
+- **#7** AutoCapitalize on text inputs. Mobile-only `autoCapitalize="words"` (existing convention, keyboard-only) vs JS-side capitalization (also affects desktop)?
+- **#9** Olympic-lift hide. Equipment chips? Profile toggle? Both? My lean: profile toggle (one-time, hides globally).
+- **#10** Legs split into Quads/Hams/Glutes. True taxonomy split (touches Decision #24/#29 + CE1 stats) vs drill-down chips (picker-only, no taxonomy impact). My lean: drill-down chips — also unblocks F40 Row C.
+- **#11** Cardio — defer to its own session, or scope now? Pairs with F38 + F40.
+- **#12** Hide variant muscle meta on child rows (~95% inherit from parent). Always hide vs only-when-inherited (mark divergent variants)?
+
+**Search behavior (one quick yes/no, then build):**
+- **#17** Confirm: muscle text search → primary-only? (Currently scans primary AND secondary — typing "biceps" matches every row exercise.) Name search unchanged.
+
+**Two-stage shipping (now + later):**
+- **#18** Hide secondary muscles in picker rows NOW (small `renderMuscleMeta()` edit).
+- **#19** Capsule UI for secondaries LATER → log as a F-row, defer.
+
+**Defer to memory:**
+- **#8** Edit date/time for completed log entries → next dev cycle. Memory entry only.
+
+**Findings (log to Issue Tracker, not user-facing):**
+- exercise-bank.md group labels drifted out of sync with muscleTaxonomy.ts (shrugs labeled Shoulders in doc — now correct post-#30; carries labeled Back in doc — now correct post-#31; doc may have other drift, audit).
+- Mid-trap function captured implicitly via `upperBack` (no separate `midTraps` taxon). Document so curators don't tag rows with `upperTraps` when meaning mid-traps.
+
+**Closed in Session 52 (no Session 53 work):**
+- #2 weight clipping → SetRow stepper rebuild shipped.
+- #3 negative cap → folded into #2 (buttons clamp at 0; mobile decimal keyboards lack `−`).
+- #4 / #5 / #14 search-aliasing → absorbed into F41 (per-exercise `aliases: string[]` v4 schema).
+- #16 (synonym pass) → became F41 directly.
+
+---
+
+## Session 52 (2026-04-26) — CE1/CE2 v3 BUILD STEP 7 of 7 — CLOSED partial
 
 **Scope:** Single-step session per build rule. Step 7 = (a) Vitest coverage for ExerciseSearchModal, (b) manual smoke pass, (c) Issue Tracker close-out for CE1 + CE2 entries newly resolvable post-Step 6, (d) commit.
 
@@ -20,6 +59,22 @@ Last updated: 2026-04-26 (session 52 IN PROGRESS — CE1/CE2 v3 build STEP 7 of 
 - Verified post-edit: 130/130 tests still passing; tsc clean; build clean.
 
 **Tests + typecheck + build all clean post-decision.** Smoke + Issue Tracker scrub + recap.md/CLAUDE.md updates + commit still ahead.
+
+**Decision #31 locked mid-session (sequel to #30) — Farmer Carry + Suitcase Carry primary order swap:**
+- User raised the question after #30 in a parallel research window: "traps should be a co-primary in farmers carry."
+- Audit revealed both carries already had upperTraps as co-primary, but `forearms` was first → `getExerciseGroup()` was routing them to Arms chip. Reordering to `['upperTraps', 'forearms']` routes them to Shoulders chip alongside shrugs.
+- Rationale: heavy carries are functionally a shrug-for-time isometric. Upper trap stimulus dominates the training response; forearms is the limiting factor (grip fails first) but not the primary tissue adaptation. Hevy/Strong file these under traps/back — Shoulders is internally consistent post-#30.
+- Audit of all 4 carry exercises:
+  - **Farmer Carry** ([seed.ts:603](../src/db/seed.ts#L603)) → reordered, now Shoulders chip ✅
+  - **Suitcase Carry** ([seed.ts:606](../src/db/seed.ts#L606)) → reordered, now Shoulders chip ✅
+  - **Overhead Carry** → already Shoulders (`frontDelts` first primary), unchanged
+  - **Zercher Carry** → already Back (`upperBack` first primary), unchanged
+- Tag membership unchanged — only the order of primaries swapped on the two affected entries. Inline comment added at seed.ts:602 explaining the convention.
+- Co-primary status (both forearms and upperTraps tagged primary) preserved on both — only order swapped.
+- **Curator flag (deferred):** Suitcase Carry currently has `obliques` as synergist. Should arguably be co-primary since anti-lateral flexion is its differentiating stimulus vs Farmer Carry. Logged on Decision #31 row for a future tagging audit pass — not in scope for #31 itself. Memory entry created: `project_suitcase_carry_obliques_flag.md`.
+- Spec sync: `master-schematics.md` Decision #31 row appended (#30+1); changelog entry added; `exercise-bank.md` rows 32 + 33 augmented with chip-routing notes.
+- Test file typing fix: `src/components/ExerciseSearchModal.test.tsx` lines 56–57 + import line — `let onSelect: ReturnType<typeof vi.fn>` → `let onSelect: Mock<(exercise: Exercise) => void>` (and equivalent for onClose); imports `Mock` from vitest. Pre-existing issue from Session 52 partial commit (d989d05) — runtime tests passed (130/130) but `tsc -b` build mode failed. Surgical fix to unblock build verification; no test logic changed.
+- Verified post-edit: 130/130 tests still passing; tsc clean; build clean (781ms / 1694 modules).
 
 ---
 

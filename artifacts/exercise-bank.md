@@ -209,8 +209,8 @@ Includes Sumo Deadlift and Stiff-Leg Deadlift **graduated from P5** (different m
 | 29 | Hollow Hold | Core | |
 | 30 | Russian Twist | Core | |
 | 31 | Decline Sit-Up | Core | |
-| 32 | Farmer Carry | Carries | *Carries = new category* |
-| 33 | Suitcase Carry | Carries | Unilateral |
+| 32 | Farmer Carry | Carries | *Carries = new category.* Routes to Shoulders chip (Decision #31 — upperTraps as first primary). |
+| 33 | Suitcase Carry | Carries | Unilateral. Routes to Shoulders chip (Decision #31). Obliques co-primary upgrade flagged in #31 curator note. |
 | 34 | Yates Row | Back | More upright torso than Bent-Over Barbell Row; continuous tension (unlike Pendlay dead-stop). Back-thickness bias. |
 | 35 | Smith Machine Bench Press | Chest | Fixed-path bench. High-volume / failure-safe work. |
 | 36 | Smith Machine Incline Bench Press | Chest | Fixed-path incline. |

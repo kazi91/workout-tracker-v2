@@ -1,5 +1,5 @@
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach, type Mock } from 'vitest';
 import ExerciseSearchModal from './ExerciseSearchModal';
 import type { Exercise } from '../types';
 
@@ -53,8 +53,8 @@ const customVariant = makeExercise({
 const fullLibrary = [benchPress, inclineBench, squat, customParent, customVariant];
 
 // ── Setup ──────────────────────────────────────────────────────────────────
-let onSelect: ReturnType<typeof vi.fn>;
-let onClose: ReturnType<typeof vi.fn>;
+let onSelect: Mock<(exercise: Exercise) => void>;
+let onClose: Mock<() => void>;
 
 beforeEach(() => {
   vi.clearAllMocks();

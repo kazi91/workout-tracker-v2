@@ -600,10 +600,12 @@ export const SEED_ENTRIES: SeedEntry[] = [
     [],
     'machine'),
   // P2 — Carries (2)
-  e('Farmer Carry', null, ['forearms', 'upperTraps'],
+  // Carries: upperTraps first so getExerciseGroup() routes to Shoulders chip alongside shrugs
+  // (heavy isometric trap stimulus dominates over forearm grip work). Decision #31.
+  e('Farmer Carry', null, ['upperTraps', 'forearms'],
     [b('abs'), b('obliques'), b('lowerBack'), s('quads'), s('glutes'), s('calves')],
     'dumbbell', { gripOrientation: 'neutral' }),
-  e('Suitcase Carry', null, ['forearms', 'upperTraps'],
+  e('Suitcase Carry', null, ['upperTraps', 'forearms'],
     [s('obliques'), b('abs'), b('lowerBack'), s('quads'), s('glutes'), s('calves')],
     'dumbbell', { gripOrientation: 'neutral' }),
 
