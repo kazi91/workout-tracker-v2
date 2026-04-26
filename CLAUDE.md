@@ -167,7 +167,7 @@ Each build step = one conversation. Do not combine steps. When the user starts a
 
 ## Never Do This
 
-The full list of rejected options lives in `artifacts/handoff.md` — **Rejected Options** section. Read it every session. Do not re-propose any item listed there unless the user raises it first.
+See `artifacts/decisions-locked.md` for the full rejected-options list. Do not re-propose any item there unless the user raises it first.
 
 ---
 
