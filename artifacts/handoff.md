@@ -1,5 +1,33 @@
 # HANDOFF — NEW INSTANCE START HERE
-Last updated: 2026-04-25 (session 47 CLOSED — CE1/CE2 v3 build STEP 1 of 7 complete. Foundation layer landed: new Muscle taxonomy types + `src/db/muscleTaxonomy.ts` + Dexie `version(3)` with nuke-upgrade + seed.ts/ExerciseService/ExerciseSearchModal stubs/trims pending later steps. tsc clean, build clean, 72/72 tests passing. Pacing revised 4 → 5 sessions. Next: Session 48 = Step 2 = compile `seed-draft.md` → `src/db/seed.ts` (214 entries, 2-pass insertion).)
+Last updated: 2026-04-26 (session 50 CLOSED — CE1/CE2 v3 build STEPS 4 + 5 of 7 complete. RPE plumbing wired end-to-end: `UserSettingsContext.rpeEnabled` derived from User record, `ProfilePage` Off/On toggle in Preferences, `SetRow` 5th-column RPE input gated by toggle (number, step=0.5, 1–10), `LogSetService.update({ rpe })` strict-validation already lived from Session 49. Public contract change: `SetRow.onUpdate` and `ExerciseCard.onSetUpdate` switched from `(setId, weightLb, reps)` to partial `(setId, data: { weight?, reps?, rpe? })` so RPE saves independently per Decision #26. tsc + build + 104/104 tests all clean (no test edits — existing useUserSettings mock returns no rpeEnabled → falsy → RPE column hidden in test render). Next: Session 51 = Step 6 = ExerciseSearchModal full rewrite per Decision #27 — chevron variant expander, two-step custom create with optional parent picker, deletion choice modal.)
+
+## Session 50 (2026-04-26) — CE1/CE2 v3 BUILD STEPS 4 + 5 of 7 CLOSED — RPE plumbing
+
+**Scope:** Steps 4 + 5 bundled per CLAUDE.md plan (settings ↔ UI consumer tightly coupled). Step 4 = wire `rpeEnabled` into `UserSettingsContext` + Profile toggle. Step 5 = SetRow per-set RPE input gated by toggle, auto-saves through `LogSetService.update({ rpe })`.
+
+**Files changed (7 src/):**
+- **`src/context/UserSettingsContext.tsx`** — added `rpeEnabled: boolean` to interface + memo, derived from `user?.rpeEnabled ?? false` (matches `unitPreference` hydration pattern). Memo dep array now `[user?.unitPreference, user?.rpeEnabled]`.
+- **`src/pages/ProfilePage/index.tsx`** — new `handleRpeToggle(next: boolean)` calls `UserService.updateProfile({ rpeEnabled })` then `updateUser({ rpeEnabled })`. New "RPE Tracking" Off/On toggle field in Preferences section, mirrors Imperial/Metric pattern.
+- **`src/pages/WorkoutDetailPage/index.tsx`** — reads `rpeEnabled` from `useUserSettings`. `handleSetUpdate` rewired to accept `data: { weight?, reps?, rpe? }` and spread into `LogSetService.update` + state setter (was `(weightLb, reps)` two-arg). Passes `rpeEnabled` to ExerciseCard.
+- **`src/pages/WorkoutDetailPage/components/ExerciseCard.tsx`** — accepts + forwards `rpeEnabled`. Conditionally renders RPE column header. `onSetUpdate` signature partial-style.
+- **`src/pages/WorkoutDetailPage/components/ExerciseCard.module.css`** — `.colHeadersWithRpe` 6-col grid override + `.colRpe` text-align.
+- **`src/pages/WorkoutDetailPage/components/SetRow.tsx`** — accepts `rpeEnabled`. New `rpeStr`/`rpeError` state. New `saveRpe` validator: blank → `onUpdate({ rpe: null })` (clear), otherwise validates 1–10 with `Number.isInteger(n*2)` half-step check, fires `onUpdate({ rpe: n })`. Conditional 5th-column input with `min=1 max=10 step=0.5` and spinner-immediate-save matching weight/reps pattern. ReadOnly mode renders RPE static value or "—".
+- **`src/pages/WorkoutDetailPage/components/SetRow.module.css`** — `.rowWithRpe` 6-col grid override (`24px 1fr 1fr 1fr 1fr 28px`).
+
+**Public contract change:** `SetRow.onUpdate` and `ExerciseCard.onSetUpdate` switched from `(setId, weightLb, reps)` to `(setId, data: { weight?: number; reps?: number; rpe?: number | null })`. Reason: RPE saves independently of weight/reps so a user can enter or clear RPE at any time, and "null never blocks save" per Decision #26. Cleaner than a parallel `onRpeUpdate` callback.
+
+**Verification:**
+- `npx tsc --noEmit` — exit 0
+- `npm run build` — exit 0; 1694 modules; 426ms
+- `npx vitest run` — 10 files / 104 tests passed (no regressions, no test edits — existing `useUserSettings` mock returns no `rpeEnabled` → undefined → falsy → RPE column hidden in test render)
+
+**Carry-forward for Session 51 (Step 6 — ExerciseSearchModal rewrite per Decision #27):**
+- Required reading: recap.md (Session 50 entry), `artifacts/master-schematics.md` § ExerciseSearchModal Spec (Decision #27 — chevron variant expander, two-step custom create with optional parent picker, deletion choice modal mapping to `deleteExercise(id, { cascade })`), `src/components/ExerciseSearchModal.tsx` (current state — chip filter is already MuscleGroup-based, create form already stripped, ready for full rewrite), `src/services/ExerciseService.ts` (`search` / `create` / `deleteExercise` contracts already locked — do NOT modify), `src/types/index.ts` (Exercise shape).
+- Step 6 is the biggest single piece in the build cycle. Step 7 (manual smoke + Issue Tracker close-out for CE1 + CE2) may fold into 51 if context allows.
+
+**RPE deferred for next dev cycle (per `project_rpe_deferred_features.md`):** RPE-derived stats (volume modifier, fatigue, autoregulation cues, target-RPE programming, history charts) — only entry + collection + toggle ship this cycle. Session 50 lands the entry + toggle; collection happens organically as users log sets with the toggle on.
+
+---
 
 ## Session 47 (2026-04-25) — CE1/CE2 v3 BUILD STEP 1 of 7 CLOSED — foundation layer
 

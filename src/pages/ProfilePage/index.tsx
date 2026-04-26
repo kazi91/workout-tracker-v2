@@ -96,6 +96,17 @@ export default function ProfilePage() {
     }
   }
 
+  // ── RPE toggle — saves immediately ──
+  async function handleRpeToggle(next: boolean) {
+    if (!user?.id || next === user.rpeEnabled) return;
+    try {
+      await UserService.updateProfile(user.id, { rpeEnabled: next });
+      updateUser({ rpeEnabled: next });
+    } catch (e) {
+      showError(toUserMessage(e));
+    }
+  }
+
   // ── Unit preference toggle — saves immediately ──
   async function handleUnitToggle(pref: 'imperial' | 'metric') {
     if (!user?.id || pref === user.unitPreference) return;
@@ -197,6 +208,26 @@ export default function ProfilePage() {
               onClick={() => handleUnitToggle('metric')}
             >
               Metric
+            </button>
+          </div>
+        </div>
+
+        <div className={styles.field}>
+          <span className={styles.label}>RPE Tracking</span>
+          <div className={styles.toggleGroup}>
+            <button
+              type="button"
+              className={`${styles.toggleBtn} ${!user.rpeEnabled ? styles.toggleBtnActive : ''}`}
+              onClick={() => handleRpeToggle(false)}
+            >
+              Off
+            </button>
+            <button
+              type="button"
+              className={`${styles.toggleBtn} ${user.rpeEnabled ? styles.toggleBtnActive : ''}`}
+              onClick={() => handleRpeToggle(true)}
+            >
+              On
             </button>
           </div>
         </div>

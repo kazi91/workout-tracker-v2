@@ -21,11 +21,16 @@ interface ExerciseCardProps {
   target: WorkoutExercise | null;
   weightUnit: string;
   displayWeight: (lb: number) => number;
+  /** When true: shows the RPE column on each SetRow + column header. */
+  rpeEnabled: boolean;
   /** When true: hides Remove/Add Set controls; SetRows render as static text. */
   readOnly?: boolean;
   onAddSet: () => void;
   onRemoveExercise: () => void;
-  onSetUpdate: (setId: number, weightLb: number, reps: number) => void;
+  onSetUpdate: (
+    setId: number,
+    data: { weight?: number; reps?: number; rpe?: number | null },
+  ) => void;
   onSetDelete: (setId: number) => void;
 }
 
@@ -35,6 +40,7 @@ export default function ExerciseCard({
   target,
   weightUnit,
   displayWeight,
+  rpeEnabled,
   readOnly = false,
   onAddSet,
   onRemoveExercise,
@@ -67,11 +73,12 @@ export default function ExerciseCard({
 
       {/* Column labels — only shown when there's at least one set */}
       {sets.length > 0 && (
-        <div className={styles.colHeaders}>
+        <div className={`${styles.colHeaders} ${rpeEnabled ? styles.colHeadersWithRpe : ''}`}>
           <span className={styles.colSet}>#</span>
           <span className={styles.colBest}>Best</span>
           <span className={styles.colWeight}>{weightUnit}</span>
           <span className={styles.colReps}>reps</span>
+          {rpeEnabled && <span className={styles.colRpe}>RPE</span>}
           <span className={styles.colDel} />
         </div>
       )}
@@ -84,8 +91,9 @@ export default function ExerciseCard({
           setIndex={i + 1}
           weightUnit={weightUnit}
           displayWeight={displayWeight}
+          rpeEnabled={rpeEnabled}
           readOnly={readOnly}
-          onUpdate={(setId, weightLb, reps) => onSetUpdate(setId, weightLb, reps)}
+          onUpdate={(setId, data) => onSetUpdate(setId, data)}
           onDelete={(setId) => onSetDelete(setId)}
         />
       ))}

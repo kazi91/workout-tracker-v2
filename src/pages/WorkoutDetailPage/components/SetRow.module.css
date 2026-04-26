@@ -7,6 +7,11 @@
   padding: 4px 0;
 }
 
+/* ── With RPE column: # | Best | weight | reps | RPE | delete ── */
+.rowWithRpe {
+  grid-template-columns: 24px 1fr 1fr 1fr 1fr 28px;
+}
+
 .setNum {
   font-size: 13px;
   color: var(--color-text-secondary);

@@ -1,10 +1,10 @@
 /**
  * SetRow — renders a single set within an ExerciseCard.
- * Displays: set number, Best (previousWeight × previousReps), weight input, reps input, delete button.
- * Auto-saves on blur: validates inputs, converts kg → lb if metric, calls onUpdate.
- * Best column shows previous session data in the user's preferred unit (converted from stored lb).
- * Invalid or blank inputs show inline "Enter a valid number" — field stays editable.
- * readOnly prop: renders static text spans instead of inputs; used in WorkoutDetailPage read-only mode.
+ * Displays: set number, Best (previousWeight × previousReps), weight input, reps input,
+ * optional RPE input (rpeEnabled), delete button.
+ * Auto-saves on blur: weight/reps save together; RPE saves independently (Decision #26 —
+ * RPE never blocks weight/reps save; null is a valid value).
+ * RPE column appears only when rpeEnabled is true; readOnly mode renders static text.
  */
 
 import { useState } from 'react';
@@ -18,8 +18,12 @@ interface SetRowProps {
   setIndex: number; // 1-based display number
   weightUnit: string;
   displayWeight: (lb: number) => number;
+  rpeEnabled: boolean;
   readOnly?: boolean;
-  onUpdate: (setId: number, weightLb: number, reps: number) => void;
+  onUpdate: (
+    setId: number,
+    data: { weight?: number; reps?: number; rpe?: number | null },
+  ) => void;
   onDelete: (setId: number) => void;
 }
 
@@ -28,6 +32,7 @@ export default function SetRow({
   setIndex,
   weightUnit,
   displayWeight,
+  rpeEnabled,
   readOnly = false,
   onUpdate,
   onDelete,
@@ -37,13 +42,17 @@ export default function SetRow({
     set.weight === 0 ? '' : String(Math.round(displayWeight(set.weight) * 10) / 10),
   );
   const [repsStr, setRepsStr] = useState(set.reps === 0 ? '' : String(set.reps));
+  const [rpeStr, setRpeStr] = useState(set.rpe === null ? '' : String(set.rpe));
   const [weightError, setWeightError] = useState(false);
   const [repsError, setRepsError] = useState(false);
+  const [rpeError, setRpeError] = useState(false);
 
   const bestLabel =
     set.previousWeight !== null && set.previousReps !== null
       ? `${Math.round(displayWeight(set.previousWeight) * 10) / 10} × ${set.previousReps}`
       : '—';
+
+  const rowClass = `${styles.row} ${rpeEnabled ? styles.rowWithRpe : ''}`;
 
   function saveSet(weight: string, reps: string) {
     const weightNum = parseFloat(weight);
@@ -55,25 +64,43 @@ export default function SetRow({
     setRepsError(!repsValid);
     if (!weightValid || !repsValid) return;
     const weightInLb = weightUnit === 'kg' ? kgToLb(weightNum) : weightNum;
-    onUpdate(set.id!, weightInLb, repsNum);
+    onUpdate(set.id!, { weight: weightInLb, reps: repsNum });
+  }
+
+  function saveRpe(rpe: string) {
+    // Blank clears the RPE — saves null without blocking (Decision #26)
+    if (rpe.trim() === '') {
+      setRpeError(false);
+      onUpdate(set.id!, { rpe: null });
+      return;
+    }
+    const n = parseFloat(rpe);
+    // 1–10 in 0.5 increments — n*2 must be a whole number
+    const valid = !isNaN(n) && n >= 1 && n <= 10 && Number.isInteger(n * 2);
+    setRpeError(!valid);
+    if (!valid) return;
+    onUpdate(set.id!, { rpe: n });
   }
 
   if (readOnly) {
     return (
-      <div className={styles.row}>
+      <div className={rowClass}>
         <span className={styles.setNum}>{setIndex}</span>
         <span className={styles.best}>{bestLabel}</span>
         <span className={styles.readonlyVal}>
           {set.weight === 0 ? '—' : `${Math.round(displayWeight(set.weight) * 10) / 10}`}
         </span>
         <span className={styles.readonlyVal}>{set.reps === 0 ? '—' : set.reps}</span>
+        {rpeEnabled && (
+          <span className={styles.readonlyVal}>{set.rpe === null ? '—' : set.rpe}</span>
+        )}
         <span /> {/* spacer for delete column */}
       </div>
     );
   }
 
   return (
-    <div className={styles.row}>
+    <div className={rowClass}>
       <span className={styles.setNum}>{setIndex}</span>
 
       <span className={styles.best}>{bestLabel}</span>
@@ -117,6 +144,30 @@ export default function SetRow({
         />
         {repsError && <span className={styles.fieldError}>Enter a valid number</span>}
       </div>
+
+      {rpeEnabled && (
+        <div className={styles.inputWrapper}>
+          <input
+            className={`${styles.input} ${rpeError ? styles.inputError : ''}`}
+            type="number"
+            inputMode="decimal"
+            min="1"
+            max="10"
+            step="0.5"
+            value={rpeStr}
+            onChange={(e) => {
+              setRpeStr(e.target.value);
+              setRpeError(false);
+              if ((e.nativeEvent as InputEvent).inputType === 'insertReplacementText') {
+                saveRpe(e.target.value);
+              }
+            }}
+            onBlur={() => saveRpe(rpeStr)}
+            placeholder="—"
+          />
+          {rpeError && <span className={styles.fieldError}>1–10 by 0.5</span>}
+        </div>
+      )}
 
       <button className={styles.deleteBtn} onClick={() => onDelete(set.id!)} aria-label="Delete set">
         <X size={16} />

@@ -57,10 +57,15 @@
   letter-spacing: 0.04em;
 }
 
+.colHeadersWithRpe {
+  grid-template-columns: 24px 1fr 1fr 1fr 1fr 28px;
+}
+
 .colSet,
 .colBest,
 .colWeight,
-.colReps {
+.colReps,
+.colRpe {
   text-align: center;
 }
 

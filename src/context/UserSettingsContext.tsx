@@ -1,9 +1,9 @@
 /**
- * UserSettingsContext — exposes the user's unit preference and conversion helpers.
- * Reads unitPreference directly from AuthContext.user — no independent Dexie query (N3).
+ * UserSettingsContext — exposes the user's unit preference, RPE toggle, and conversion helpers.
+ * Reads from AuthContext.user — no independent Dexie query (N3).
  * Resets automatically when AuthContext.user changes (logout → login with different account).
- * Exposes: unitPreference, displayWeight(), displayHeight(), weightUnit, heightUnit
- * Consumed by: any component that displays a weight, height, or measurement value.
+ * Exposes: unitPreference, rpeEnabled, displayWeight(), displayHeight(), weightUnit, heightUnit
+ * Consumed by: any component that displays a weight, height, or per-set RPE input.
  */
 
 import { createContext, useContext, useMemo } from 'react';
@@ -13,6 +13,8 @@ import { lbToKg, inToCm } from '../utils/units';
 
 interface UserSettingsContextValue {
   unitPreference: 'imperial' | 'metric';
+  /** Gates the per-set RPE input on SetRow (Decision #26). Defaults to false. */
+  rpeEnabled: boolean;
   /** Converts a stored lb value to the display unit. */
   displayWeight: (lb: number) => number;
   /** Converts a stored inches value to the display unit. */
@@ -38,12 +40,13 @@ export function UserSettingsProvider({ children }: { children: ReactNode }) {
 
     return {
       unitPreference: pref,
+      rpeEnabled: user?.rpeEnabled ?? false,
       displayWeight: (lb) => (isMetric ? lbToKg(lb) : lb),
       displayHeight: (inches) => (isMetric ? inToCm(inches) : inches),
       weightUnit: isMetric ? 'kg' : 'lb',
       heightUnit: isMetric ? 'cm' : 'in',
     };
-  }, [user?.unitPreference]);
+  }, [user?.unitPreference, user?.rpeEnabled]);
 
   return (
     <UserSettingsContext.Provider value={value}>

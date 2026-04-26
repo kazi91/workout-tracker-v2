@@ -38,7 +38,7 @@ type FinishFlowStep =
 export default function WorkoutDetailPage() {
   const { id } = useParams<{ id: string }>();
   const { user } = useAuth();
-  const { weightUnit, displayWeight } = useUserSettings();
+  const { weightUnit, displayWeight, rpeEnabled } = useUserSettings();
   const { setActiveWorkoutId } = useActiveWorkout();
   const navigate = useNavigate();
   const { showError } = useError();
@@ -186,13 +186,17 @@ export default function WorkoutDetailPage() {
     }
   }
 
-  async function handleSetUpdate(setId: number, leId: number, weightLb: number, reps: number) {
+  async function handleSetUpdate(
+    setId: number,
+    leId: number,
+    data: { weight?: number; reps?: number; rpe?: number | null },
+  ) {
     if (mode === 'edit') setUnsavedChanges(true);
     try {
-      await LogSetService.update(setId, { weight: weightLb, reps });
+      await LogSetService.update(setId, data);
       setSets((prev) => ({
         ...prev,
-        [leId]: (prev[leId] ?? []).map((s) => s.id === setId ? { ...s, weight: weightLb, reps } : s),
+        [leId]: (prev[leId] ?? []).map((s) => s.id === setId ? { ...s, ...data } : s),
       }));
     } catch (e) {
       showError(toUserMessage(e));
@@ -418,10 +422,11 @@ export default function WorkoutDetailPage() {
             target={workoutTargets ? workoutTargets[le.exerciseId] ?? null : null}
             weightUnit={weightUnit}
             displayWeight={displayWeight}
+            rpeEnabled={rpeEnabled}
             readOnly={mode === 'readonly'}
             onAddSet={() => handleAddSet(le.id!)}
             onRemoveExercise={() => handleRemoveExercise(le.id!)}
-            onSetUpdate={(setId, weightLb, reps) => handleSetUpdate(setId, le.id!, weightLb, reps)}
+            onSetUpdate={(setId, data) => handleSetUpdate(setId, le.id!, data)}
             onSetDelete={(setId) => handleSetDelete(setId, le.id!)}
           />
         ))}
