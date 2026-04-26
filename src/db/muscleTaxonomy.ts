@@ -43,7 +43,10 @@ export const MUSCLE_TO_GROUP: Record<Muscle, MuscleGroup> = {
   lats: 'back',
   upperBack: 'back',
   lowerBack: 'back',
-  upperTraps: 'back',
+  // Upper traps anchor to shoulders (scapular elevation / shrug — bodybuilding shoulder-day
+  // convention; scapular kinematics align with delts more than spinal stabilizers).
+  // Lower traps stay in back (scapular retraction + depression with rhomboids/mid traps).
+  upperTraps: 'shoulders',
   lowerTraps: 'back',
   frontDelts: 'shoulders',
   sideDelts: 'shoulders',

@@ -1,5 +1,27 @@
 # HANDOFF — NEW INSTANCE START HERE
-Last updated: 2026-04-26 (session 51 CLOSED — CE1/CE2 v3 build STEP 6 of 7 complete. ExerciseSearchModal fully rewritten per Decision #27 + CE2 EB2/EB5: chevron expander on parent rows in browse mode, search mode flat per CE2 #5, two-step custom-create flow (Step 1 name + multi-select group chips + optional parent picker; Step 2 sectioned muscle chips with new four-state tap cycle), trash icon on custom rows, deletion choice modal (cascade vs null-orphan, default null-orphan), sticky "+ Create custom exercise" footer. **Decision #27 amended this session:** four-state tap cycle (neutral → primary → synergist → stabilizer → neutral) replaces original two-tap cycle + long-press-promote scheme; long-press removed entirely. Save-with-no-primary now blocks with inline error rather than silent auto-promote. tsc + build (645ms / 1694 modules) + 104/104 tests all clean — no test edits. Next: Session 52 = Step 7 (manual smoke + Issue Tracker close-out for CE1 + CE2). Step 6 came in tight enough to leave Step 7 standalone.)
+Last updated: 2026-04-26 (session 52 IN PROGRESS — CE1/CE2 v3 build STEP 7 of 7. Vitest coverage added for ExerciseSearchModal: 26 new cases (browse / search / create flow / delete flow / role cycle / save guard / cascade-vs-orphan paths). Full suite 130/130 across 11 files (was 104/104 across 10). Mid-session **Decision #30 locked: `upperTraps` group derivation back → shoulders.** Mapping flipped in `MUSCLE_TO_GROUP`; `lowerTraps` stays in back. Bodybuilding shoulder-day convention; scap-elevation kinematics align with delts. Tag assignments on individual exercises unchanged. seed-tagging-principles.md group conventions synced inline. tsc clean, build clean (6.96s / 1694 modules). Manual smoke + Issue Tracker scrub still pending before commit.)
+
+## Session 52 (2026-04-26) — CE1/CE2 v3 BUILD STEP 7 of 7 (in progress)
+
+**Scope:** Single-step session per build rule. Step 7 = (a) Vitest coverage for ExerciseSearchModal, (b) manual smoke pass, (c) Issue Tracker close-out for CE1 + CE2 entries newly resolvable post-Step 6, (d) commit.
+
+**Vitest coverage added — 26 cases across 4 describe blocks:**
+- `browse mode` (10): parents-only render when query empty, chevron expand/collapse, search-mode flat (no chevron), search by muscle tag, group chip filter, row-click → onSelect, backdrop close, drawer-click does not close, empty-state, trash button only on custom rows, footer button → create flow.
+- `create flow — Step 1` (4): Next disabled until name + group set, parent picker excludes variants, valid Next advances to Step 2, Back returns to browse.
+- `create flow — Step 2` (6): four-state role cycle (verified via class-name match: Neutral → Primary → Synergist → Stabilizer → Neutral), save with no primary blocks with inline error, save with valid roles posts correct Exercise shape + fires onSelect, save passes parentExerciseId when picked, role tags drop when group unticked between Step 2 → Step 1 → Step 2, Back from Step 2 preserves Step 1 state.
+- `delete flow` (5): 0-variant → simple Modal (no radio), ≥1-variant → choice modal with orphan as default, orphan delete passes `cascade: false`, cascade delete passes `cascade: true`, cancel does not delete.
+
+**Decision #30 locked mid-session — `upperTraps` group derivation back → shoulders:**
+- User raised the question during smoke setup ("change traps to shoulder muscle group from back").
+- Discussion: scope = upper traps only, not lower. Anatomically defensible — upper traps drive scapular elevation (shrug), bodybuilding convention groups them with shoulder day. Lower traps stay in back (scap retraction + depression with rhomboids/mid traps).
+- Edits: `MUSCLE_TO_GROUP['upperTraps']` flipped from `'back'` to `'shoulders'` in [src/db/muscleTaxonomy.ts](../src/db/muscleTaxonomy.ts); inline comment added explaining rationale and the lower-traps split. `seed-tagging-principles.md` Group-specific conventions section updated (Back gains a `lowerTraps` line; Shoulders gains an `upperTraps` line). master-schematics.md Muscle Taxonomy Model updated (MUSCLE_TO_GROUP listing + new note); Decision #30 row added; Changelog row added.
+- **Tag assignments on individual exercises unchanged.** Only the broad-group derivation moved. No re-curation needed.
+- Effects: picker Step 2 muscle-chip section moves upperTraps from Back to Shoulders; "Shoulders" group chip filter now includes any exercise with upperTraps as first primary (currently zero in seed library); future F27/F24 stat roll-ups will count upperTraps under shoulders.
+- Verified post-edit: 130/130 tests still passing; tsc clean; build clean.
+
+**Tests + typecheck + build all clean post-decision.** Smoke + Issue Tracker scrub + recap.md/CLAUDE.md updates + commit still ahead.
+
+---
 
 ## Session 51 (2026-04-26) — CE1/CE2 v3 BUILD STEP 6 of 7 CLOSED — ExerciseSearchModal full rewrite
 

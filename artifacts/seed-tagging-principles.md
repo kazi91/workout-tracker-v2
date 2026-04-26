@@ -224,10 +224,12 @@ Base = KB Swing map (NOT barbell-clean derivative — per Tsatsouline framework,
 ### Back
 - `lats` + `upperBack` co-primary on horizontal pulls; `lats` single primary on vertical pulls.
 - `lowerBack` is almost always stabilizer. Synergist only on Good Morning, 45° Back Extension (spinal extension under load is the movement).
+- `lowerTraps` lives in the back group — scap retraction + depression with rhomboids/mid traps. (`upperTraps` lives in shoulders — see below.)
 - `upperTraps` vs `lowerTraps` — upper = scap elevation, lower = depression + scap upward rotation. Tag separately.
 
 ### Shoulders
 - `frontDelts` = all pressing; `sideDelts` = lateral-plane (raises, upright row); `rearDelts` = horizontal abduction / external rotation (rows, reverse flyes, face pulls).
+- `upperTraps` lives in the shoulders group (scap elevation / shrug — bodybuilding shoulder-day convention; scapular kinematics align with delts more than spinal stabilizers). Tagging behavior unchanged — only the broad-group derivation moved.
 - Default every press to at least `frontDelts + sideDelts + triceps`.
 
 ### Arms
