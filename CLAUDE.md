@@ -14,12 +14,10 @@ GitHub: https://github.com/kazi91/workout-tracker-v2 (public)
 
 ---
 
-## CURRENT TASK
-Phase: 5 — CE1/CE2 v3 build CLOSED in practical terms (Step 7 smoke + punch-list complete Session 53). Phase 6 scope to be picked at Session 54 start.
-Last session ended: Session 53 CLOSED (2026-04-26). **Punch-list triage + manual smoke pass complete.** 13 items processed: 6 shipped (#6 Hyperextension rename, #13 Deficit RDL added as variant, #15 B-Stance → Staggered-Stance RDL rename + F41 alias logged, #7 autoCapitalize sentences on picker custom-create input, #12 variant rows hide muscle meta + chevron 22→28px / weight 700, #17 muscle search primary-only + #18 picker rows hide secondaries with EMG future direction note). 7 deferred (#1 → F42 bodyweight + added-resistance redesign, #9 → F40/F32 olympic-lift visibility, #10 → F40 Row C drill-down with 4 lock-ins, #11 → multi-shape tracking-arch dependency lock on F38, #19 → absorbed into EMG cycle, #8 → memory-only). 2 findings logged as CP2 + CP3. F8 superseded by F42 → Resolved Issues. **Mid-smoke gap fix:** picker matchesMuscleTag duplicate copy patched. **3 new project memories** (project_bodyweight_added_resistance, project_emg_top_n_display, project_log_datetime_edit) + **2 new feedback memories** (feedback_ask_dont_lean, feedback_question_format). Files changed (5 src/, 4 artifacts). Verification: PENDING — agent shell can't run npx; user runs `npm run build && npx vitest run` before commit.
-Next action: **Session 54 = scope TBD.** Open candidates: (a) Phase 6 kickoff (Stats / F32 toggle menu / EMG planning); (b) cleanup pass on CP1/CP2/CP3 + remaining gap-audit items; (c) F40 Row C build (Phase 6+); (d) F41 build (per-exercise aliases — closes #4/#5/#14/#15); (e) F42 build (bodyweight + added-resistance redesign — closes #1). User picks at session start. **Outstanding from Session 53:** verify build + tests clean, then commit Session 53 work.
-Session scope (next — 54): TBD. Open with research mode unless user declares build.
-Required reading next session: recap.md (Session 53 entry — top of file), handoff.md (top of file — Session 53 punch-list closures), `artifacts/master-schematics.md` Issue Tracker (F40 Row C lock-ins, F42 added, F8 → Resolved). Open relevant memory entries via MEMORY.md index. Do NOT re-read seed-draft / seed-tagging-principles / muscleTaxonomy unless next session's scope touches those areas.
+## Where to find current state
+- `artifacts/recap.md` — current phase, next session, open decisions, load manifest
+- `artifacts/handoff.md` — session-by-session history (read on demand only)
+- `artifacts/decisions-locked.md` — rejected options, locked patterns
 
 ## Session Start — Opening Message Protocol
 
@@ -135,8 +133,9 @@ Each build step = one conversation. Do not combine steps. When the user starts a
   - [ ] No `db.ts` imports in components (service layer only)
   - [ ] `npm run build` passes clean
   - [ ] `artifacts/recap.md` and `artifacts/handoff.md` updated
-  - [ ] CLAUDE.md → CURRENT TASK updated for next session
   - [ ] For bug fixes: reproducing test written before the fix
+- **Session rotation:** When closing a session, move the oldest session entry from `recap.md` → `handoff.md`. `recap.md` body holds the last 3 sessions max.
+- **Last touched line:** Every artifact has `> Last touched: YYYY-MM-DD (session N) — short note` directly under its H1. Update when you edit the file.
 
 ### Output discipline
 - **Build, don't narrate.** Write the code. Skip the "I'm going to create..." preamble and the "Here's what I did..." recap. The user can see the diff.
@@ -174,6 +173,8 @@ See `artifacts/decisions-locked.md` for the full rejected-options list. Do not r
 ## Coding Standards
 
 Comments are written **as part of building** each step — not added retroactively at the end of a session.
+
+- **Bullets > paragraphs in artifacts.** Reserve prose for genuine narrative; default to bullets/tables for facts and decisions.
 
 ### Service functions — JSDoc above every exported function
 ```ts
