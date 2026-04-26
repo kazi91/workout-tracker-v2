@@ -384,7 +384,7 @@ Three phases: **curation** (data tagging, no code) → **coordination** (CE1+CE2
 
 ### Phase 1 — Curation (Sessions 45a–f, ~13h total, no code)
 
-Applies the rules in [`seed-tagging-principles.md`](seed-tagging-principles.md) across all 213 entries. Output: `artifacts/seed-draft.md` with per-entry tagging (primary, secondaries+role, parentExerciseId, equipment, opportunistic Tier 3 fields). Compiles to `src/db/seed.ts` during the build phase — curation does not touch `src/`.
+Applies the rules in [`seed-tagging-principles.md`](seed-tagging-principles.md) across all 213 entries. Output: `artifacts/archive/seed-draft.md` (curation closed S45g, archived in 2026-04-26 sweep) with per-entry tagging (primary, secondaries+role, parentExerciseId, equipment, opportunistic Tier 3 fields). Compiles to `src/db/seed.ts` during the build phase — curation does not touch `src/`.
 
 | Session | Scope | Est | Deliverable |
 |---|---|---|---|
@@ -568,7 +568,7 @@ Single Dexie v3 bump bundles both CE1 and CE2 schema changes (per CE2 plan). No 
 - **2026-04-24 (session 45f — CLOSED)** —
   - **P4 #25 Sled Pull split** into backward-walk default (leg-primary) + new P4 #31 Sled Row (back-primary). Conditioning count 7 → 8; P4 count 30 → 31; library total 213 → 214.
   - **Push-Up (seed #4) promoted to 12th library parent** via Clap Push-Up (P4 #15) variant linkage. Parent defaults list extended. Default = bodyweight, shoulder-width hands, neutral torso. Clap Push-Up flagged with `parentExerciseId` → Push-Up (tier remains P4, plyo toggle-gated; same model as Chin-Up P0 #4 + Neutral-Grip Pull-Up P1 #8 structural-variant treatment).
-  - **19 P4 entries tagged in `seed-draft.md`** (see `## Session 45f` section): 7 Plyometric + 4 of 6 Kettlebell + 8 Conditioning. **12 parked** (Power/Olympic 10 + KB Clean + KB Snatch) pending Olympic-lift template research.
+  - **19 P4 entries tagged in `archive/seed-draft.md`** (see `## Session 45f` section): 7 Plyometric + 4 of 6 Kettlebell + 8 Conditioning. **12 parked** (Power/Olympic 10 + KB Clean + KB Snatch) pending Olympic-lift template research.
   - **2 new EMG overrides** added to principles-doc reference list: Turkish Get-Up `[abs, obliques]` (first library abs+obliques pairing); Sprint `[hamstrings, glutes]` (novel max-velocity mechanics outside existing templates).
   - **Panel-of-coaches consult methodology** introduced by user (Schoenfeld / Haff / Tsatsouline / Dan John / Nuckols — applied per entry before tag proposal).
   - **New Tier 3 `bias: 'explosive'` value** introduced by Clap Push-Up (plyo variant of standard Push-Up). Principles doc conventions table updated.

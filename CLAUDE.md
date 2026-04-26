@@ -36,7 +36,7 @@ Behavior:
 User signals: "build," "implement," "execute [step ID]," or explicit "build session."
 
 Before writing any code:
-1. Read CLAUDE.md CURRENT TASK and `artifacts/recap.md`.
+1. Read `artifacts/recap.md` (single source of current session state).
 2. Restate where we are and what you're about to do, separated into:
    - **Direct requirements** — what the user said
    - **Inferences** — what you're assuming to fill gaps

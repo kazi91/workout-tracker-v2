@@ -16,7 +16,7 @@ Status: draft, session 44 (2026-04-23). Living doc — update as exceptions surf
 
 1. Before each Session 45 sub-session: re-read this doc top to bottom (~5 min).
 2. For each exercise, apply the decision order: **Primary → Secondaries → Roles → parentExerciseId → Tier 3 fields**.
-3. When a rule conflicts with an exercise's reality, tag the exception inline in `seed-draft.md` with a one-line rationale (see Exception log format at bottom). Flag for end-of-session audit.
+3. When a rule conflicts with an exercise's reality, tag the exception inline in `archive/seed-draft.md` with a one-line rationale (see Exception log format at bottom). Flag for end-of-session audit. (Curation closed S45g; re-curation work would land here.)
 4. At end of each sub-session, run the Sanity checks below.
 
 ---
@@ -87,7 +87,7 @@ Grey-zone guidance:
 
 Per exercise-bank.md's Parent/Variant Rule: *variant shares parent's muscle map; different map = separate exercise (not a variant).*
 
-- Variant row in seed-draft.md: set `parentExerciseId`, write `// inherit from parent` for muscles/roles. Don't restate the full map.
+- Variant row in `archive/seed-draft.md`: set `parentExerciseId`, write `// inherit from parent` for muscles/roles. Don't restate the full map.
 - Minor stimulus changes that **don't** change map → inherit:
   - Paused Squat = same map as Squat (timing variant)
   - Front Squat = same map (emphasis shift, not map shift)
@@ -306,7 +306,7 @@ Run before closing any Session 45 sub-session:
 
 ## Exception log format
 
-When breaking a principle, log inline in `artifacts/seed-draft.md`:
+When breaking a principle, log inline in `artifacts/archive/seed-draft.md`:
 
 ```
 - Close-Grip Bench Press
@@ -374,7 +374,7 @@ Living list. Append each entry that gets co-primary treatment during Sessions 45
 ### Non-parents (session 45g)
 
 - **Power Clean / Hang Clean (P4 #1, #2)** — `[glutes, hamstrings]` per OL Pulling sub-pattern (Hinge base + front-rack catch additions). Same map per Rule 4 (hang start = timing variant). 9 sec each. Canonical Olympic-clean exemplar.
-- **Clean & Jerk (P4 #3)** — `[glutes, hamstrings]` per OL Pulling + Jerk union. **13 secondaries — LIBRARY KINETIC-CHAIN CEILING** (supersedes Overhead Carry at 10; Snatch at 12). Only library entry combining two complete OL phases. Six-coach panel consensus per `seed-draft.md` § 45g.
+- **Clean & Jerk (P4 #3)** — `[glutes, hamstrings]` per OL Pulling + Jerk union. **13 secondaries — LIBRARY KINETIC-CHAIN CEILING** (supersedes Overhead Carry at 10; Snatch at 12). Only library entry combining two complete OL phases. Six-coach panel consensus per `archive/seed-draft.md` § 45g.
 - **Power Snatch / Hang Snatch (P4 #4, #5)** — `[glutes, hamstrings]` per OL Pulling sub-pattern + overhead-catch additions. **12 secondaries — snatch-family library ceiling.** UpperBack syn (not stab) per Poliquin snatch-grip rationale (wider grip = active scap retraction).
 - **Push Jerk / Split Jerk / Push Press (P4 #6, #7, #10)** — `frontDelts` single-primary per OL Jerk sub-pattern (Vertical push template + full leg drive: quads + glutes + hams + calves syn). **Co-primary `[frontDelts, quads]` rejected** per OHP precedent (leg drive is brief assist, lockout is the rep — same logic as 45b OHP rejection). 11 secondaries each. Canonical Olympic-jerk exemplar.
 - **Clean Pull / Snatch Pull (P4 #8, #9)** — `[glutes, hamstrings]` per OL Pulling sub-pattern (no catch). Cleanest exemplar of base OL Pulling map. 7 sec each. Snatch Pull promotes `upperBack` stab → syn (Poliquin snatch-grip).
