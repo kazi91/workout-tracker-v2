@@ -1,6 +1,15 @@
 # Handoff — Session History
-> Last touched: 2026-04-26 (session 53 follow-up 2) — append-only; read on demand only.
+> Last touched: 2026-04-26 (session 54) — rotated session 52 from recap.md
 > Newest at top. What changed → see git log. Why we chose this → here.
+
+---
+
+## Session 52 (2026-04-26) — CLOSED partial — rotated from recap.md S54
+- Vitest coverage: 26 ExerciseSearchModal cases (130/130 across 11 files).
+- Decisions locked: #30 (`upperTraps` group → shoulders; lowerTraps stays in back), #31 (Farmer + Suitcase Carry primary order swap to `[upperTraps, forearms]`), #32 (`bias` → `modifications` rename + multi-select `string[]` reshape; value enum extended with `deficit` to 7).
+- SetRow rebuild: custom `[− input +]` pill stepper per cell (native browser spinner hidden); grid retuned (BEST 44px, LB minmax(72px, 1fr), REPS 56px, RPE 76px); save logic split into `saveWeight`/`saveReps`/`saveRpe`. Closes punch-list #2 + #3.
+- F40 (picker filter revamp) UX layout locked to 3-row design + v4 bundling note. F41 (per-exercise `aliases: string[]` v4 schema bump) added — closes-by absorbs punch-list #4/#5/#14.
+- **What changed:** see commits 3ff891e, d989d05, d77d17f.
 
 ---
 

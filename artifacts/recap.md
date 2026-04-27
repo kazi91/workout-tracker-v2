@@ -1,15 +1,16 @@
 # Workout Tracker — Recap
-> Last touched: 2026-04-26 (session 53 follow-up 2) — UI doc split into `artifacts/UI/` subfolder
+> Last touched: 2026-04-26 (session 54) — F29 anatomy avatar pipeline research deep-dive; pipeline.md DRAFT created
 
 ## State
 - Phase: 5 — CE1/CE2 v3 build CLOSED in practical terms (Step 7 smoke + punch-list complete)
-- Tests: 130 passing across 11 files ✅ verified clean post-sweep (build 5.31s, 1694 modules)
+- Tests: 130 passing across 11 files ✅ (no app code changed in S54 — research session only)
 - Last commit: 25953a6 (Archive consolidation-plan.md — sweep executed)
 - Schema: v3 live (parentExerciseId + Muscle taxonomy + RPE + Tier 3 forward-compat fields)
 - Artifact directory: ~12,030 → 6,581 active lines (45% reduction); manifest sections live in this file
 - UI docs: split into `artifacts/UI/` (UIdesign + design-tokens + component-standards + future-ui — 273/206/255/282 lines)
+- New parallel R&D track (S54): F29 anatomy avatar — `artifacts/UI/3d-model/pipeline.md` DRAFT/IGNORED, owner to flesh out before lock
 
-## Next session (54)
+## Next session (55)
 - Mode: TBD — open with research unless user declares build
 - Scope candidates (user picks at session start):
   - (a) Phase 6 kickoff — Stats / F32 toggle menu / EMG planning
@@ -17,7 +18,9 @@
   - (c) F40 Row C build (picker filter revamp; 4 lock-ins from S53)
   - (d) F41 build (per-exercise `aliases: string[]` v4 — closes #4/#5/#14/#15)
   - (e) F42 build (bodyweight + added-resistance redesign — closes #1)
-- User signaled side tasks first before resuming planned scope — pause for user trigger
+  - (f) F29 Stage 0 cardboard cutout — buildable spec ready in pipeline.md § Stage 0; one-evening sprint
+  - (g) F29 pipeline.md mark-up / open-question resolution pass
+- User pausing F29 work to mark up DRAFT before any further deepening
 
 ## Required reading
 - This file
@@ -36,9 +39,19 @@
 ## Open decisions awaiting user input
 | # | Topic | Notes |
 |---|---|---|
-| Session 54 scope | Phase 6 kickoff vs cleanup vs F-row build | User picks at session start; side tasks queued first |
+| Session 55 scope | Phase 6 kickoff vs cleanup vs F-row build vs F29 Stage 0 vs pipeline mark-up | User picks at session start |
+| F29 pipeline open questions | See `artifacts/UI/3d-model/pipeline.md` § 9 — color hex, placement (Stats vs Profile), service formula, vertex group naming, gender variants, MVP-vs-v1.1 reveal | Resolve before locking pipeline.md |
 
 ## Recent sessions (last 3)
+
+### Session 54 (2026-04-26) — F29 anatomy avatar pipeline research — CLOSED
+- **Mode:** Research session only — no app code changed.
+- **Direction reframe:** F29 shifted from 2D SVG (anatomy doc Phases 1–5, retired) to **real 3D via React Three Fiber**. Hybrid Path F asset pipeline locked: MB-Lab body + Z-Anatomy stencil + Blender DataTransfer for muscle vertex group bake (~12–16h vs original 30–50h estimate).
+- **Artifact created:** `artifacts/UI/3d-model/pipeline.md` (DRAFT/IGNORED) — 13 stages, full buildable Stage 0 cardboard-cutout spec (executable in one evening), license log, AI-tool table per stage, cautions, open questions. Owner to flesh out before lock.
+- **Locked during research:** real 3D over 2D SVG; Cortana/Tron/Prometheus aesthetic exception zone; cheapest-first 6-layer shader recipe (Stage 11); Draco decoder self-host as default (offline-first); gltfjsx as optional convenience; bloom strategy deferred to build-time decision; Stage 0 lives on `experiment/avatar-cardboard-cutout` branch (not scratch repo); MuscleFatigueService formula sketch (ease-out 72h curve, Vitest-coverable like existing services).
+- **Memory updates:** `project_fatigue_avatar.md` rewritten + `MEMORY.md` index entry refreshed.
+- **Cross-references:** `artifacts/UI/future-ui.md` § 6 added pointing to pipeline.md.
+- **Status:** Pipeline doc DRAFT. Phase 6 unaffected. F29 is parallel R&D track (Q6b — design alongside, link later).
 
 ### Session 53 follow-up (2026-04-26) — Artifact consolidation sweep — CLOSED
 - **Scope:** Execute pre-approved 8-phase consolidation plan + verify clean.
@@ -58,15 +71,8 @@
 - **Files changed (5 src/, 4 artifacts):** seed.ts, ExerciseService.ts, ExerciseService.test.ts, ExerciseSearchModal.tsx, ExerciseSearchModal.module.css, exercise-bank.md, master-schematics.md, handoff.md, recap.md.
 - **Verification:** PENDING — agent shell can't reach npx; user runs `npm run build && npx vitest run` before commit. Expected: clean + 130/130.
 
-### Session 52 (2026-04-26) — CLOSED partial
-- Vitest coverage: 26 ExerciseSearchModal cases (130/130 across 11 files).
-- Decisions locked: #30 (`upperTraps` group → shoulders; lowerTraps stays in back), #31 (Farmer + Suitcase Carry primary order swap to `[upperTraps, forearms]`), #32 (`bias` → `modifications` rename + multi-select `string[]` reshape; value enum extended with `deficit` to 7).
-- SetRow rebuild: custom `[− input +]` pill stepper per cell (native browser spinner hidden); grid retuned (BEST 44px, LB minmax(72px, 1fr), REPS 56px, RPE 76px); save logic split into `saveWeight`/`saveReps`/`saveRpe`. Closes punch-list #2 + #3.
-- F40 (picker filter revamp) UX layout locked to 3-row design + v4 bundling note. F41 (per-exercise `aliases: string[]` v4 schema bump) added — closes-by absorbs punch-list #4/#5/#14.
-- **What changed:** see commits 3ff891e, d989d05, d77d17f.
-
 ## Older history
-→ See `artifacts/handoff.md` (sessions 51 and earlier).
+→ See `artifacts/handoff.md` (sessions 52 and earlier).
 
 ## Project context (stable)
 - Problem: existing trackers are cluttered, mobile-hostile.
