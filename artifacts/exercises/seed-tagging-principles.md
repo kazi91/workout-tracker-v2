@@ -6,7 +6,7 @@ Working reference for Sessions 45a–f (seed re-curation). Purpose: prevent drif
 Status: draft, session 44 (2026-04-23). Living doc — update as exceptions surface during curation.
 
 **Related:**
-- [artifacts/exercise-bank.md](exercise-bank.md) — library catalog + Parent/Variant Rule
+- [artifacts/exercises/exercise-bank.md](exercise-bank.md) — library catalog + Parent/Variant Rule
 - `memory/project_ce1_final_scope.md` — D1–D9 taxonomy locks (memory lives outside the repo — see CLAUDE.md "auto memory" section for path)
 - `master-schematics.md § Muscle Taxonomy Model` — schema + helpers (MUSCLE_LABELS, SECONDARY_VOLUME_MULTIPLIER, getExerciseGroup)
 

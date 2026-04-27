@@ -28,7 +28,7 @@
 
 ## Do NOT re-read
 - `artifacts/archive/*` (closed working drafts — seed-draft, gap-audit)
-- `artifacts/seed-tagging-principles.md` (locked since 45g)
+- `artifacts/exercises/seed-tagging-principles.md` (locked since 45g)
 - `src/db/muscleTaxonomy.ts` (untouched since session 47)
 - Service files (no contract changes since session 50 — RPE plumbing)
 - Decision #27 spec (locked session 51)

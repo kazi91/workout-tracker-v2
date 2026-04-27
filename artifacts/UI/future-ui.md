@@ -1,6 +1,6 @@
 WORKOUT TRACKER V2 — FUTURE UI
 ================================
-> Last touched: 2026-04-26 — created during the four-document split
+> Last touched: 2026-04-26 (session 54) — added §6 Anatomy Avatar pointer to 3d-model/pipeline.md
 
 Purpose: Track post-MVP UI ambitions in enough detail that MVP architecture doesn't
 paint future-you into a corner. Nothing here gets built before MVP ships. The point
@@ -266,6 +266,18 @@ Examples of target commands:
   how (if at all) social features fit the app's character is revisited.
   No MVP architecture should preclude this, but no MVP architecture should plan
   for it either.
+
+---
+
+6. ANATOMY AVATAR (F29)
+-------------------------
+  Status: post-MVP "tentpole" feature; R&D track in flight as of session 54.
+  Pipeline doc: `artifacts/UI/3d-model/pipeline.md` (DRAFT)
+  Direction: real 3D via React Three Fiber, holographic Tron/Prometheus aesthetic,
+  built parallel to main app and integrated when both ready (Q6b).
+  Aesthetic exception zone — explicitly breaks the flat-design rule of the rest of
+  the app. Per-muscle fatigue color (green → orange → red) mapped to CE1 taxonomy.
+  Earlier 2D bezier-SVG editor build was exploration only; retired in favor of real 3D.
 
 ---
 

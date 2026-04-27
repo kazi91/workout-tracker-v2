@@ -4,7 +4,7 @@
  * Module-level flag guards against React Strict Mode double-invocation.
  *
  * Source: artifacts/archive/seed-draft.md (sessions 45a–g + Session 48 P1 catch-up, 214 tagged entries).
- * Curation rules: artifacts/seed-tagging-principles.md.
+ * Curation rules: artifacts/exercises/seed-tagging-principles.md.
  *
  * 2-pass insert: parents first, then variants resolve parentExerciseId via name lookup.
  * Muscle inheritance for variants flagged "// inherit from parent" in the markdown

@@ -424,17 +424,17 @@ Single Dexie v3 bump bundles both CE1 and CE2 schema changes (per CE2 plan). No 
 
 ## Tutorial content — migrated to `artifacts/exercises/`
 
-> All per-exercise guides now live in `artifacts/exercises/[slug].md`, one file per exercise. Template v2 at [`exercises/_template.md`](exercises/_template.md). New guides go directly there — don't author inline.
+> All per-exercise guides now live in `artifacts/exercises/[slug].md`, one file per exercise. Template v2 at [`exercises/_template.md`](_template.md). New guides go directly there — don't author inline.
 >
 > **Index of existing guides:**
-> - [Bench Press (Flat Barbell, Touch-and-Go)](exercises/bench-press.md) (Seed #1)
-> - [Deadlift (Conventional)](exercises/deadlift.md) (Seed #6)
-> - [Pull-Ups (Bodyweight or Weighted)](exercises/pull-up.md) (Seed #7)
-> - [Squat (High-Bar Back Squat)](exercises/squat.md) (Seed #11)
-> - [Overhead Press (Standing Barbell)](exercises/overhead-press.md) (Seed #17)
-> - [Incline Dumbbell Press](exercises/incline-dumbbell-press.md) (P0 #2)
-> - [Smith Machine Squat](exercises/smith-machine-squat.md) (P1 #44)
-> - [Paused High-Bar Squat](exercises/paused-squat.md) (P5 #6)
+> - [Bench Press (Flat Barbell, Touch-and-Go)](bench-press.md) (Seed #1)
+> - [Deadlift (Conventional)](deadlift.md) (Seed #6)
+> - [Pull-Ups (Bodyweight or Weighted)](pull-up.md) (Seed #7)
+> - [Squat (High-Bar Back Squat)](squat.md) (Seed #11)
+> - [Overhead Press (Standing Barbell)](overhead-press.md) (Seed #17)
+> - [Incline Dumbbell Press](incline-dumbbell-press.md) (P0 #2)
+> - [Smith Machine Squat](smith-machine-squat.md) (P1 #44)
+> - [Paused High-Bar Squat](paused-squat.md) (P5 #6)
 >
 > The short link stubs below exist for catalog cross-reference. They will be removed once the catalog gains native guide-link support.
 
@@ -444,7 +444,7 @@ Single Dexie v3 bump bundles both CE1 and CE2 schema changes (per CE2 plan). No 
 
 *Catalog entry: P0 #2 — Incline Dumbbell Bench Press*
 
-→ Moved to [exercises/incline-dumbbell-press.md](exercises/incline-dumbbell-press.md). Upgraded to guide template v2 (tiered cues, "what you should feel," severity column, red flags). Session 43 split per EB7.
+→ Moved to [exercises/incline-dumbbell-press.md](incline-dumbbell-press.md). Upgraded to guide template v2 (tiered cues, "what you should feel," severity column, red flags). Session 43 split per EB7.
 
 ---
 
@@ -452,7 +452,7 @@ Single Dexie v3 bump bundles both CE1 and CE2 schema changes (per CE2 plan). No 
 
 *Catalog entry: Seed #6 — Deadlift (conventional default)*
 
-→ Moved to [exercises/deadlift.md](exercises/deadlift.md). Upgraded to guide template v2 (tiered cues, "what you should feel," severity column, red flags, recovery notes). Session 43 split per EB7.
+→ Moved to [exercises/deadlift.md](deadlift.md). Upgraded to guide template v2 (tiered cues, "what you should feel," severity column, red flags, recovery notes). Session 43 split per EB7.
 
 ---
 
@@ -460,7 +460,7 @@ Single Dexie v3 bump bundles both CE1 and CE2 schema changes (per CE2 plan). No 
 
 *Catalog entry: P5 #6 — Paused Squat (variant of Squat; default Squat = high-bar, so Paused Squat = Paused High-Bar Squat)*
 
-→ Moved to [exercises/paused-squat.md](exercises/paused-squat.md). Upgraded to guide template v2 (tiered cues, "what you should feel," severity column, red flags, recovery notes). Session 43 split per EB7.
+→ Moved to [exercises/paused-squat.md](paused-squat.md). Upgraded to guide template v2 (tiered cues, "what you should feel," severity column, red flags, recovery notes). Session 43 split per EB7.
 
 ---
 
@@ -468,7 +468,7 @@ Single Dexie v3 bump bundles both CE1 and CE2 schema changes (per CE2 plan). No 
 
 *Catalog entry: P1 #44 — Smith Machine Squat. Separate exercise, not a Squat variant (fixed bar path removes stabilizer involvement). P1 placement reasoning: commonly recommended for injured athletes rebuilding leg strength, since no spotter is needed and the bar can't fall.*
 
-→ Moved to [exercises/smith-machine-squat.md](exercises/smith-machine-squat.md). Upgraded to guide template v2 (tiered cues, "what you should feel," severity column, red flags). Session 43 split per EB7.
+→ Moved to [exercises/smith-machine-squat.md](smith-machine-squat.md). Upgraded to guide template v2 (tiered cues, "what you should feel," severity column, red flags). Session 43 split per EB7.
 
 ---
 
@@ -476,7 +476,7 @@ Single Dexie v3 bump bundles both CE1 and CE2 schema changes (per CE2 plan). No 
 
 *Catalog entry: Seed #7 — Pull-Up (pronated default; weighted covered via same entry + load tracking)*
 
-→ Moved to [exercises/pull-up.md](exercises/pull-up.md). Upgraded to guide template v2 (tiered cues, "what you should feel," severity column, red flags). Session 43 split per EB7.
+→ Moved to [exercises/pull-up.md](pull-up.md). Upgraded to guide template v2 (tiered cues, "what you should feel," severity column, red flags). Session 43 split per EB7.
 
 ---
 
@@ -506,11 +506,11 @@ Single Dexie v3 bump bundles both CE1 and CE2 schema changes (per CE2 plan). No 
   - **EB7 executed** — all 5 inline tutorial guides migrated to `artifacts/exercises/[slug].md`. Inline sections in this file replaced with one-line link stubs. Reduces exercise-bank.md by ~450 lines.
   - **Guide template v2 locked** at `artifacts/exercises/_template.md`. Built via coaches-panel tier review. S-tier additions: tiered cue blocks (B/I/A), "What You Should Feel" proprioceptive map, severity column in mistakes, red flags section, progression path with stage targets, progression criteria in programming. A-tier: "if it feels off" troubleshooting line, selective confirmation cues, sharpened mistake descriptions, split advanced cues (form vs. intensity), recovery notes for Big-3, deload trigger with plain-English gloss. Skipped B-tier and C-tier (metadata strip, variations table, rename, timeline) to keep guides lean.
   - **5 guides upgraded to v2:**
-    - [pull-up.md](exercises/pull-up.md) — first full v2 rewrite (reference implementation)
-    - [incline-dumbbell-press.md](exercises/incline-dumbbell-press.md) — migrated + upgraded
-    - [deadlift.md](exercises/deadlift.md) — migrated + upgraded (includes Recovery Notes as Big-3 lift)
-    - [paused-squat.md](exercises/paused-squat.md) — migrated + upgraded (includes Recovery Notes as squat-family)
-    - [smith-machine-squat.md](exercises/smith-machine-squat.md) — migrated + upgraded
+    - [pull-up.md](pull-up.md) — first full v2 rewrite (reference implementation)
+    - [incline-dumbbell-press.md](incline-dumbbell-press.md) — migrated + upgraded
+    - [deadlift.md](deadlift.md) — migrated + upgraded (includes Recovery Notes as Big-3 lift)
+    - [paused-squat.md](paused-squat.md) — migrated + upgraded (includes Recovery Notes as squat-family)
+    - [smith-machine-squat.md](smith-machine-squat.md) — migrated + upgraded
   - Template/standards work ran across sessions 42–43. No seed, schema, or catalog changes this session.
 
 - **2026-04-22 (session 43 — decision close-out)** —
@@ -527,9 +527,9 @@ Single Dexie v3 bump bundles both CE1 and CE2 schema changes (per CE2 plan). No 
 
 - **2026-04-23 (session 44 follow-up — Big-3 + OHP guides)** —
   - **3 new guides authored under template v2** (item 5 from session 44 plan):
-    - [squat.md](exercises/squat.md) — Seed #11 (high-bar back squat default; includes Recovery Notes as Big-3 lift)
-    - [bench-press.md](exercises/bench-press.md) — Seed #1 (flat barbell touch-and-go default; includes Recovery Notes)
-    - [overhead-press.md](exercises/overhead-press.md) — Seed #17 (standing barbell strict press default; includes Recovery Notes + Progression Path)
+    - [squat.md](squat.md) — Seed #11 (high-bar back squat default; includes Recovery Notes as Big-3 lift)
+    - [bench-press.md](bench-press.md) — Seed #1 (flat barbell touch-and-go default; includes Recovery Notes)
+    - [overhead-press.md](overhead-press.md) — Seed #17 (standing barbell strict press default; includes Recovery Notes + Progression Path)
   - **Tutorial Content index** in this file updated to list all 8 authored guides (re-ordered by tier rank: 5 Seed, 1 P0, 1 P1, 1 P5).
   - **Coverage status:** all 4 classic compound barbell lifts (squat / bench / deadlift / OHP) now have v2 guides. Next-priority gaps remain at Seed and P0 — Bulgarian Split Squat (P0 #5), Barbell Hip Thrust (P0 #6), Dumbbell Row (P0 #3), Chin-Up (P0 #4 — natural pair with pull-up.md), plus remaining Seed entries.
   - **No catalog, schema, or seed changes** — guide-authoring only.

@@ -277,7 +277,7 @@ Diff vs v2: only `exercises` line changes — gains a secondary index on `parent
 > **Schema version — planned v3 bump (Decision #28, locked Session 41; executes when CE1 build session lands).**
 >
 > v3 delta:
-> - **Nuke + reseed** (D8.1 sub-option B2): `exercises`, `logExercises`, `logSets` dropped and repopulated from the re-curated seed (213 entries with full-schema tagging — see `artifacts/exercise-bank.md` for tier breakdown and `artifacts/archive/seed-draft.md` for entry-level tagging). Active/historical log data on these tables is wiped.
+> - **Nuke + reseed** (D8.1 sub-option B2): `exercises`, `logExercises`, `logSets` dropped and repopulated from the re-curated seed (213 entries with full-schema tagging — see `artifacts/exercises/exercise-bank.md` for tier breakdown and `artifacts/archive/seed-draft.md` for entry-level tagging). Active/historical log data on these tables is wiped.
 > - **Silent migration** (D8.3): no banner, no confirm. Acceptable pre-launch only — post-launch updates switch to in-place + banner pattern (see `memory/project_post_launch_migration_pattern.md`).
 > - **Single version hop** (D8.4): all new/renamed fields bundle into one v3 bump — no v2.x intermediate.
 > - **Additive nullable fields** (no data loss on unaffected tables): `users.rpeEnabled` (default `false`), `users.trainingAge`; `exercises.parentExerciseId` (CE2 — nullable FK for variant architecture), `primaryMuscles`, `secondaryMuscles`, `equipment`, `gripWidth`, `gripOrientation`, `stanceWidth`, `modifications` (string[], default `[]` — renamed from `bias` per Decision #32), `jointLoad`; `logSets.rpe`.
