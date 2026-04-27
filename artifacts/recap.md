@@ -1,11 +1,12 @@
 # Workout Tracker — Recap
-> Last touched: 2026-04-26 (session 53) — punch-list triage + smoke close-out
+> Last touched: 2026-04-26 (session 53 follow-up) — artifact consolidation sweep executed + verified
 
 ## State
 - Phase: 5 — CE1/CE2 v3 build CLOSED in practical terms (Step 7 smoke + punch-list complete)
-- Tests: 130 passing across 11 files (verification of S53 patches owed: `npm run build && npx vitest run`)
-- Last commit: cd723e0 (Session 53: punch-list triage + smoke close-out)
+- Tests: 130 passing across 11 files ✅ verified clean post-sweep (build 5.31s, 1694 modules)
+- Last commit: 25953a6 (Archive consolidation-plan.md — sweep executed)
 - Schema: v3 live (parentExerciseId + Muscle taxonomy + RPE + Tier 3 forward-compat fields)
+- Artifact directory: ~12,030 → 6,581 active lines (45% reduction); manifest sections live in this file
 
 ## Next session (54)
 - Mode: TBD — open with research unless user declares build
@@ -15,7 +16,7 @@
   - (c) F40 Row C build (picker filter revamp; 4 lock-ins from S53)
   - (d) F41 build (per-exercise `aliases: string[]` v4 — closes #4/#5/#14/#15)
   - (e) F42 build (bodyweight + added-resistance redesign — closes #1)
-- Outstanding from S53: verify build + tests clean, then commit S53 work
+- User signaled side tasks first before resuming planned scope — pause for user trigger
 
 ## Required reading
 - This file
@@ -34,10 +35,16 @@
 ## Open decisions awaiting user input
 | # | Topic | Notes |
 |---|---|---|
-| Session 54 scope | Phase 6 kickoff vs cleanup vs F-row build | User picks at session start |
-| S53 verification | `npm run build && npx vitest run` | Agent shell can't run npx; user runs before commit |
+| Session 54 scope | Phase 6 kickoff vs cleanup vs F-row build | User picks at session start; side tasks queued first |
 
 ## Recent sessions (last 3)
+
+### Session 53 follow-up (2026-04-26) — Artifact consolidation sweep — CLOSED
+- **Scope:** Execute pre-approved 8-phase consolidation plan + verify clean.
+- **Shipped (8 commits):** Phase A archive seed-draft + gap-audit; Phase B extract decisions-locked.md from handoff.md; Phase C reformat recap.md (746 → 81 lines); Phase D reformat handoff.md (964 → 623 lines, drop git-duplicated prose); Phase E strip CLAUDE.md `## CURRENT TASK`, add session rotation + Last touched + Bullets-over-paragraphs rules; Phase F Last touched markers on every active artifact; Phase G memory cleanup (deleted SUPERSEDED `project_ce1_planning_state.md`, slimmed `project_state.md`, indexed orphan `project_music_cheatsheet.md`); Phase H follow-up fixes (4 stale `seed-draft.md` cross-refs in master-schematics/exercise-bank/seed-tagging-principles + dead `CURRENT TASK` pointer in CLAUDE.md). Plus archive of consolidation-plan.md itself.
+- **Metrics:** active artifact lines 12,030 → 6,581 (45% reduction); recap.md 752 → 81; handoff.md 997 → 623; CLAUDE.md no longer carries volatile state.
+- **Verification:** ✅ build clean (5.31s, 1694 modules); 130/130 tests across 11 files.
+- **What changed:** see commits 515512c → 25953a6.
 
 ### Session 53 (2026-04-26) — CLOSED
 - **Scope:** Punch-list triage + manual smoke pass (Step 7 close-out).
@@ -57,15 +64,8 @@
 - F40 (picker filter revamp) UX layout locked to 3-row design + v4 bundling note. F41 (per-exercise `aliases: string[]` v4 schema bump) added — closes-by absorbs punch-list #4/#5/#14.
 - **What changed:** see commits 3ff891e, d989d05, d77d17f.
 
-### Session 51 (2026-04-26) — CLOSED
-- Build Step 6 of 7: ExerciseSearchModal full rewrite (~360 lines TSX + ~270 lines CSS).
-- Decision #27 amended: four-state tap cycle (neutral → primary → synergist → stabilizer → neutral) replaces D6.2 + D6.3; long-press removed; save-with-no-primary blocks with inline error.
-- Three view modes: browse / createStep1 / createStep2. Browse renders flat in search and parents-with-chevron in browse mode (CE2 #5). Sticky `+ Create custom exercise` footer. Bespoke radio choice modal for ≥1-variant delete.
-- No service edits (contracts shipped Session 49). No test edits (no existing modal test).
-- **What changed:** see commit 918baef.
-
 ## Older history
-→ See `artifacts/handoff.md` (sessions 50 and earlier).
+→ See `artifacts/handoff.md` (sessions 51 and earlier).
 
 ## Project context (stable)
 - Problem: existing trackers are cluttered, mobile-hostile.

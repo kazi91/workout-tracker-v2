@@ -1,6 +1,35 @@
 # Handoff — Session History
-> Last touched: 2026-04-26 (consolidation sweep) — append-only; read on demand only.
+> Last touched: 2026-04-26 (session 53 follow-up) — append-only; read on demand only.
 > Newest at top. What changed → see git log. Why we chose this → here.
+
+---
+
+## Session 53 follow-up (2026-04-26) — Artifact consolidation sweep
+
+**Scope:** Execute pre-approved 8-phase consolidation plan + verify clean. Build session, plan approved in research session 2026-04-26.
+
+**Phases shipped (8 commits):**
+- **A** — Archive cold files: `seed-draft.md` + `gap-audit.md` → `artifacts/archive/`. `src/db/seed.ts:6` comment updated to point at archive path.
+- **B** — Extract `decisions-locked.md` (44 lines): rejected-options + What Is Fully Locked sections pulled from handoff.md; CLAUDE.md "Never Do This" reduced to 1-line pointer.
+- **C** — Reformat recap.md (746 → 81 lines): structural sections (State / Next session / Required reading / Do NOT re-read / Open decisions / Recent sessions [last 3] / Older history pointer / Project context).
+- **D** — Reformat handoff.md (964 → 623 lines): append-only history; "what changed in file X" prose dropped → commit-hash pointers; rationale + rejected paths preserved verbatim per the "if unsure, keep" rule.
+- **E** — Strip CLAUDE.md `## CURRENT TASK` (volatile state). Add "Where to find current state" pointer block. Add Session rotation rule + Last touched line rule + Bullets > paragraphs rule.
+- **F** — Add `> Last touched: YYYY-MM-DD (session N) — short note` under H1 of every active artifact (21 files); archive/ files NOT touched (frozen).
+- **G** — Memory cleanup: deleted SUPERSEDED `project_ce1_planning_state.md`; slimmed `project_state.md` (43 → 16 lines); indexed orphan `project_music_cheatsheet.md` (cross-project ref); updated `project_artifact_consolidation_plan.md` to EXECUTED state.
+- **H** — Cold-eyes verification: caught 4 stale `seed-draft.md` cross-refs in master-schematics + exercise-bank + seed-tagging-principles (Phase A's pre-validation said "src/db/seed.ts only" — was wrong) + dead `CURRENT TASK` pointer in CLAUDE.md S38 protocol. Fixed in Phase H follow-up commit. Plus archive of `consolidation-plan.md` itself (same precedent as seed-draft + gap-audit).
+
+**Decisions / direction:**
+- **Archive vs delete** for closed working drafts: archive (preserves history, cheap to grep). Same pattern applied to seed-draft, gap-audit, then consolidation-plan.
+- **Session rotation rule encoded** in CLAUDE.md: oldest session entry moves recap.md → handoff.md on close-out; recap.md body holds last 3 max.
+- **Last touched rule encoded** in CLAUDE.md: every active artifact has `> Last touched:` directly under H1, updated on edit.
+- **Bullets > paragraphs** rule encoded in Coding Standards.
+- **Music cheat sheet memory** kept as cross-project reference rather than deleted (user confirmation deferred to next session if removal wanted).
+
+**What changed:** see commits `515512c` (A), `471ca58` (B), `60f8de9` (C), `909f008` (D), `23cd4a1` (E), `79cfd48` (F), `d77c44c` (H follow-up), `25953a6` (consolidation-plan archived).
+
+**Verification:** ✅ `npm run build` clean (5.31s, 1694 modules); `npx vitest run` 130/130 across 11 files. No regressions from any sweep phase.
+
+**Metrics:** active artifact lines 12,030 → 6,581 (45% reduction); 4 daily-read files → 2 (recap + master-schematics on demand); CLAUDE.md fully stable (no volatile state).
 
 ---
 
