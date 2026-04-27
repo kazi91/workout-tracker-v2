@@ -65,7 +65,10 @@ Do not start the next build step in the same session. When the current step is d
 
 **Reference only — open when the current task requires it:**
 - `artifacts/master-schematics.md` — schema, service signatures, locked decisions, Issue Tracker. Read specific sections as needed, not the whole file.
-- `artifacts/UIdesign.md` — color, spacing, typography, component rules. Read when building or styling a new component.
+- `artifacts/UI/UIdesign.md` — UI principles, theme direction, brainstorm, open questions, decisions log. Read for design rationale.
+- `artifacts/UI/design-tokens.md` — color system, typography scale, spacing system. Read when picking values.
+- `artifacts/UI/component-standards.md` — alignment, buttons, components, interaction patterns. Read when building or styling a new component.
+- `artifacts/UI/future-ui.md` — post-MVP UI planning (AI search, voice, light mode). Read when scoping post-MVP features.
 - `artifacts/exercise-bank.md` — exercise catalog + priority tiers + Parent/Variant Rule + per-exercise tutorial content. Read when touching the exercise library, seed, picker, CE1 muscle maps, variant architecture, or the future exercise tutorial tab.
 
 `artifacts/coreprocess.md` — skip unless user asks about process.

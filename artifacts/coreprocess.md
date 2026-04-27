@@ -14,7 +14,7 @@ Document hierarchy (authority order):
   2. CLAUDE.md             — operational entry point for every Claude instance (session rules, reading order, build rules)
   3. recap.md             — current state, next action, session history
   4. handoff.md            — full session context, rejected options, reasoning
-  5. UIdesign.md          — visual standards, color system, component specs
+  5. UI/UIdesign.md       — visual standards (split: UIdesign.md + design-tokens.md + component-standards.md + future-ui.md)
   6. coreprocess.md       — this file (process philosophy + phase definitions)
   7. tabs/*.md             — per-tab feature specs
 

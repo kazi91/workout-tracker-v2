@@ -1,6 +1,34 @@
 # Handoff — Session History
-> Last touched: 2026-04-26 (session 53 follow-up) — append-only; read on demand only.
+> Last touched: 2026-04-26 (session 53 follow-up 2) — append-only; read on demand only.
 > Newest at top. What changed → see git log. Why we chose this → here.
+
+---
+
+## Session 53 follow-up 2 (2026-04-26) — UI doc split
+
+**Scope:** Split monolithic `UIdesign.md` (672 lines) into four focused docs under new `artifacts/UI/` subfolder. Drafts user-authored in advance; this session executed + verified.
+
+**Files (`artifacts/UI/`):**
+- `UIdesign.md` (273 lines) — principles, theme direction, brainstorm, open questions, decisions log
+- `design-tokens.md` (206 lines, NEW) — color system, typography scale, spacing system
+- `component-standards.md` (255 lines, NEW) — alignment, buttons, components, interaction patterns
+- `future-ui.md` (282 lines, NEW) — post-MVP planning (AI search, voice commands, light mode, leaderboards)
+
+**Decisions / direction:**
+- **MULTIMODAL READY** principle added to UIdesign.md § 1 (tap + voice + AI command must reach every primary action).
+- **Bare filename refs** OK for siblings inside `artifacts/UI/`; external refs use `UI/...` prefix from artifacts root.
+- Original UIdesign.md content fully preserved (principles + brainstorm + decisions kept; color/spacing/typography/components extracted, not dropped).
+
+**Cross-references updated (path-only fixes per "don't rewrite context" rule):**
+- `CLAUDE.md`, `coreprocess.md`, `master-schematics.md`, `handoff.md` (UI Standards Summary section), `tabs/login.md`, `tabs/logs.md`, `plugin-research/frontend-design.md` (4 markdown links + 2 plain-text refs), `plugin-research/how-to-use.md` (1 markdown link).
+
+**Sanity check caught:** 8 broken markdown links in `plugin-research/` that the original Grep tool missed (only bash `grep -rn` surfaced them). Tooling note for future verify steps.
+
+**Untouched:** `archive/` (frozen), historical session-log entries in handoff/master-schematics changelog, `src/components/WorkoutFAB.tsx:37` bare-filename code comment (grep-findable, not a path link).
+
+**Verification:** line counts match user drafts exactly (273/206/255/282); no mojibake leftover; git rename tracked correctly.
+
+**What changed:** see commit (this session).
 
 ---
 
@@ -643,8 +671,8 @@ These are locked. Do not redesign around them.
 - Text tiers: #FFFFFF primary / #C0C0C0 label / #8A8A8A secondary / #4A4A4A disabled.
 - Nav: 14px labels, 2px accent line above active tab.
 - Alignment: page titles + focal-point content centered; multi-element lists/rows left-aligned.
-- Buttons: 44px min height, flat, no gradients, title case, 15px/600 — see UIdesign.md § 8.
-- Light mode: palette locked for post-MVP, values in UIdesign.md § 4c.
+- Buttons: 44px min height, flat, no gradients, title case, 15px/600 — see UI/component-standards.md § 2 (Button Design Standards).
+- Light mode: palette locked for post-MVP, values in UI/design-tokens.md § 1d.
 
 ---
 

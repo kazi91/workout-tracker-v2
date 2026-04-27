@@ -509,7 +509,7 @@ src/
 - Fields: name, email, password, unit preference toggle (Imperial | Metric — default Imperial)
 - Validation: blank fields → "Can't be blank" (Decision #11 pattern); no duplicate email check (local-only MVP)
 - Post-signup: auto-login → `/logs`
-- Layout: full-screen dark, centered card (UIdesign.md auth layout)
+- Layout: full-screen dark, centered card (UI/component-standards.md → AUTH PAGES)
 - AuthService.signup() accepts: name, email, password, unitPreference
 
 **LoginPage spec (C4 — deferred to login.md, resolve before build step 2):**

@@ -1,5 +1,5 @@
 # Workout Tracker — Recap
-> Last touched: 2026-04-26 (session 53 follow-up) — artifact consolidation sweep executed + verified
+> Last touched: 2026-04-26 (session 53 follow-up 2) — UI doc split into `artifacts/UI/` subfolder
 
 ## State
 - Phase: 5 — CE1/CE2 v3 build CLOSED in practical terms (Step 7 smoke + punch-list complete)
@@ -7,6 +7,7 @@
 - Last commit: 25953a6 (Archive consolidation-plan.md — sweep executed)
 - Schema: v3 live (parentExerciseId + Muscle taxonomy + RPE + Tier 3 forward-compat fields)
 - Artifact directory: ~12,030 → 6,581 active lines (45% reduction); manifest sections live in this file
+- UI docs: split into `artifacts/UI/` (UIdesign + design-tokens + component-standards + future-ui — 273/206/255/282 lines)
 
 ## Next session (54)
 - Mode: TBD — open with research unless user declares build
